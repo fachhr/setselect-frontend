@@ -27,10 +27,10 @@
 # IMPORTANT: Set these in Netlify UI (Site Settings → Environment Variables)
 #
 # Required Public Variables (NEXT_PUBLIC_*):
-# - NEXT_PUBLIC_SUPABASE_URL = https://vwugqnddhdtlxmimihic.supabase.co
-# - NEXT_PUBLIC_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-# - NEXT_PUBLIC_RAILWAY_API_URL = https://silvias-list-parser-production.up.railway.app
+# - NEXT_PUBLIC_SUPABASE_URL = https://YOUR-PROJECT.supabase.co
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY = your_anon_key_here
+# - NEXT_PUBLIC_RAILWAY_API_URL = https://your-parser.up.railway.app
 #
 # Required Private Variables (server-side only):
-# - SUPABASE_SERVICE_ROLE_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-# - PARSER_API_KEY = 980BiVsk3yciUtt3nP1BiAymNcdYDsfT
+# - SUPABASE_SERVICE_ROLE_KEY = your_service_role_key_here
+# - PARSER_API_KEY = your_parser_api_key_here
