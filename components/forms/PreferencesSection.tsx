@@ -186,7 +186,7 @@ export function PreferencesSection({
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm text-gray-600">Desired monthly salary range (in thousands CHF)</span>
                 <span className="font-bold text-lg text-[var(--foreground)] bg-[var(--light-800)] px-3 py-1 rounded-md">
-                  {(salaryMin / 1000).toFixed(1)}k - {(salaryMax / 1000).toFixed(1)}k CHF
+                  {Math.round(salaryMin / 1000)}k - {Math.round(salaryMax / 1000)}k CHF
                 </span>
               </div>
 
