@@ -31,7 +31,7 @@ export function TalentPoolForm() {
     defaultValues: {
       working_capacity_percent: 50,
       salary_min: 0,
-      salary_max: 15000,
+      salary_max: 50000,
       salary_confidential: false,
       desired_locations: [],
     }

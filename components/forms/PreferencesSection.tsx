@@ -26,7 +26,7 @@ export function PreferencesSection({
 
   const workingCapacity = watch('working_capacity_percent') || 50;
   const salaryMin = watch('salary_min') || 0;
-  const salaryMax = watch('salary_max') || 15000;
+  const salaryMax = watch('salary_max') || 50000;
   const salaryConfidential = watch('salary_confidential') || false;
   const selectedLocations = watch('desired_locations') || [];
 
@@ -192,7 +192,7 @@ export function PreferencesSection({
 
               <DualRangeSlider
                 min={0}
-                max={15}
+                max={50}
                 step={0.5}
                 valueMin={salaryMin / 1000}
                 valueMax={salaryMax / 1000}
