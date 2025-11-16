@@ -106,8 +106,8 @@ export function ContactDetailsSection({
               className={`input-base ${errors.country_code ? 'input-error' : ''}`}
             >
               <option value="">Code</option>
-              {PHONE_COUNTRY_CODE_OPTIONS.map((country) => (
-                <option key={country.code} value={country.code}>
+              {PHONE_COUNTRY_CODE_OPTIONS.map((country, index) => (
+                <option key={`${country.code}-${country.label}-${index}`} value={country.code}>
                   {country.code} {country.flag}
                 </option>
               ))}
