@@ -34,6 +34,10 @@ yarn-error.log*
 .env
 SILVIAS_LIST_CREDENTIALS.txt
 
+# deployment documentation (contains secrets)
+DEPLOYMENT_STATUS.md
+PRODUCTION_DEPLOYMENT_CHECKLIST.md
+
 # vercel
 .vercel
 
