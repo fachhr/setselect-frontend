@@ -26,47 +26,47 @@
 }
 
 /* --- Global CSS Variables --- */
-/* Premium Swiss Executive Energy Palette - Deep Burgundy Sanctuary */
+/* Premium Swiss Executive Energy Palette - Deep Navy Excellence */
 :root {
-  /* Page Backgrounds - Deep Burgundy Luxury */
-  --background: #2D0A1F;              /* Very dark burgundy base */
-  --background-gradient: linear-gradient(180deg, #2D0A1F 0%, #1a0512 100%);
+  /* Page Backgrounds - Deep Navy Prestige */
+  --background: #0A1628;              /* Very dark navy base (Swiss trust) */
+  --background-gradient: linear-gradient(180deg, #0A1628 0%, #050B14 100%);
 
-  /* Surface Hierarchy - Burgundy Cards & Panels */
-  --surface-1: #550020;               /* Deep burgundy - primary cards */
-  --surface-2: #6B0026;               /* Lighter burgundy - hover/nested */
-  --surface-3: #7D1F3A;               /* Even lighter - modals/dropdowns */
+  /* Surface Hierarchy - Navy Cards & Panels */
+  --surface-1: #0D1B2E;               /* Deep navy - primary cards */
+  --surface-2: #162943;               /* Lighter navy - hover/nested */
+  --surface-3: #1F3A5F;               /* Even lighter - modals/dropdowns */
 
-  /* Legacy card colors (mapped to burgundy surfaces) */
-  --light: #550020;                   /* Cards, inputs (elevated surface 1) */
-  --light-800: #6B0026;               /* Hover states, secondary panels */
-  --light-600: #7D1F3A;               /* Modals, dropdowns */
-  --light-400: #8B4055;               /* Borders, dividers (muted rose-burgundy) */
+  /* Legacy card colors (mapped to navy surfaces) */
+  --light: #0D1B2E;                   /* Cards, inputs (elevated surface 1) */
+  --light-800: #162943;               /* Hover states, secondary panels */
+  --light-600: #1F3A5F;               /* Modals, dropdowns */
+  --light-400: #2C4A6E;               /* Borders, dividers (slate blue) */
 
-  /* Text Colors - White & Warm Grays on Dark Burgundy */
-  --text-primary: #F5F5F5;            /* Soft white - primary text */
-  --text-secondary: #D4C5C7;          /* Warm light gray - secondary text */
-  --text-tertiary: #A89091;           /* Muted gray-burgundy - tertiary */
-  --text-disabled: #6B5558;           /* Very muted - disabled states */
+  /* Text Colors - White & Cool Grays on Dark Navy */
+  --text-primary: #F8FAFC;            /* Bright white - primary text */
+  --text-secondary: #CBD5E1;          /* Cool light gray - secondary text */
+  --text-tertiary: #94A3B8;           /* Muted slate gray - tertiary */
+  --text-disabled: #64748B;           /* Very muted - disabled states */
 
   /* Legacy text colors (mapped to new text system) */
-  --dark: #F5F5F5;                    /* Primary text */
-  --dark-800: #D4C5C7;                /* Secondary text */
-  --dark-600: #A89091;                /* Tertiary text */
-  --dark-400: #6B5558;                /* Muted/disabled text */
-  --foreground: #F5F5F5;              /* Primary foreground text */
-  --gray: #A89091;
+  --dark: #F8FAFC;                    /* Primary text */
+  --dark-800: #CBD5E1;                /* Secondary text */
+  --dark-600: #94A3B8;                /* Tertiary text */
+  --dark-400: #64748B;                /* Muted/disabled text */
+  --foreground: #F8FAFC;              /* Primary foreground text */
+  --gray: #94A3B8;
 
-  /* Primary Brand - Navy (Secondary accent for links/trust elements) */
-  --primary: #1976d2;                 /* Bright navy for visibility on dark */
-  --primary-dark: #1565c0;
-  --primary-light: #42a5f5;
-  --primary-alpha: rgba(25, 118, 210, 0.15);
+  /* Primary Brand - Bright Blue (Links, secondary CTAs) */
+  --primary: #3B82F6;                 /* Bright blue for visibility on dark navy */
+  --primary-dark: #2563EB;
+  --primary-light: #60A5FA;
+  --primary-alpha: rgba(59, 130, 246, 0.15);
 
-  /* Energy Accent - Burgundy (Structural, not accent) */
-  --accent-energy: #550020;           /* Deep burgundy base */
-  --accent-energy-hover: #6B0026;     /* Lighter burgundy hover */
-  --accent-energy-alpha: rgba(85, 0, 32, 0.15);
+  /* Energy Accent - Electric Blue (Structural accents) */
+  --accent-energy: #0EA5E9;           /* Sky blue - trust & clarity */
+  --accent-energy-hover: #38BDF8;     /* Lighter sky blue hover */
+  --accent-energy-alpha: rgba(14, 165, 233, 0.15);
 
   /* Luxury Accent - CHAMPAGNE GOLD (Primary Premium Accent) */
   --accent-gold: #D4AF37;             /* Champagne gold - CTAs, highlights */
