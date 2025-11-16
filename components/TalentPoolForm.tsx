@@ -10,7 +10,6 @@ import { ContactDetailsSection } from './forms/ContactDetailsSection';
 import { PreferencesSection } from './forms/PreferencesSection';
 import { TermsSection } from './forms/TermsSection';
 import { MessageDisplay } from './ui/MessageDisplay';
-import { ErrorSummary } from './ui/ErrorSummary';
 
 export function TalentPoolForm() {
   const router = useRouter();
@@ -27,7 +26,8 @@ export function TalentPoolForm() {
     setError
   } = useForm<TalentPoolFormData>({
     resolver: zodResolver(talentPoolSchemaRefined),
-    mode: 'onBlur',
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
     defaultValues: {
       working_capacity_percent: 50,
       salary_min: 0,
@@ -107,13 +107,8 @@ export function TalentPoolForm() {
     }
   };
 
-  const hasErrors = Object.keys(errors).length > 0;
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {/* Error Summary */}
-      {hasErrors && <ErrorSummary errors={errors} />}
-
       {/* Submit Error Message */}
       {submitError && (
         <MessageDisplay
@@ -163,8 +158,8 @@ export function TalentPoolForm() {
           <TermsSection
             register={register}
             errors={errors}
+            allErrors={errors}
             isSubmitting={isSubmitting}
-            isValid={isValid && cvFile !== null}
           />
         </div>
       </div>

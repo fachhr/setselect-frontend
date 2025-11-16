@@ -106,7 +106,7 @@ export function CVUploadSection({
         className={`
           relative border-2 border-dashed rounded-lg p-8 text-center transition-all
           ${isDragging && !disabled ? 'border-primary bg-primary-alpha scale-[1.02]' : ''}
-          ${displayError ? 'border-red-500 bg-red-50' : 'border-gray-300'}
+          ${displayError ? 'border-red-500 bg-red-50 ring-2 ring-red-200' : 'border-gray-300'}
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary hover:bg-gray-50'}
           ${selectedFile && !displayError ? 'border-green-500 bg-green-50' : ''}
         `}

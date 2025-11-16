@@ -3,21 +3,23 @@
 import React from 'react';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
+import { ErrorSummary } from '../ui/ErrorSummary';
 import Link from 'next/link';
 
 interface TermsSectionProps {
   register: UseFormRegister<TalentPoolFormData>;
   errors: FieldErrors<TalentPoolFormData>;
+  allErrors: FieldErrors<TalentPoolFormData>; // All form errors for summary
   isSubmitting: boolean;
-  isValid: boolean;
 }
 
 export function TermsSection({
   register,
   errors,
-  isSubmitting,
-  isValid
+  allErrors,
+  isSubmitting
 }: TermsSectionProps) {
+  const hasErrors = Object.keys(allErrors).length > 0;
   return (
     <div className="space-y-6">
       {/* Section Header */}
@@ -69,15 +71,18 @@ export function TermsSection({
         </ul>
       </div>
 
+      {/* Error Summary - appears right before submit when there are errors */}
+      {hasErrors && <ErrorSummary errors={allErrors} />}
+
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={isSubmitting || !isValid}
+        disabled={isSubmitting}
         className={`
           w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all
-          ${isSubmitting || !isValid
+          ${isSubmitting
             ? 'bg-[var(--light-600)] text-[var(--dark-400)] cursor-not-allowed'
-            : 'bg-primary hover:bg-primary-dark text-[var(--button-text-on-primary)] shadow-md hover:shadow-lg transform hover:scale-[1.02]'
+            : 'bg-primary hover:bg-primary-dark text-[var(--button-text-on-primary)] shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]'
           }
         `}
       >
