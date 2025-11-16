@@ -2,6 +2,7 @@
 "use client"; // This component is likely to be used in client pages
 
 import React from 'react';
+import Button from './Button';
 
 interface MessageDisplayProps {
   message: string | null;
@@ -59,16 +60,18 @@ export function MessageDisplay({ message, type, onDismiss }: MessageDisplayProps
       </div>
       {onDismiss && (
         <div className="ml-4 flex-shrink-0">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onDismiss}
-            className={`-mx-1.5 -my-1.5 p-1.5 rounded-md inline-flex focus:outline-none focus:ring-2 focus:ring-offset-2 ${textColor} hover:opacity-75`}
+            className={`-mx-1.5 -my-1.5 p-1.5 ${textColor} hover:opacity-75`}
             aria-label="Dismiss"
           >
             <span className="sr-only">Dismiss</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          </Button>
         </div>
       )}
     </div>

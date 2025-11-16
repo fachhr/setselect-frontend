@@ -4,6 +4,7 @@ import React from 'react';
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 import { ErrorSummary } from '../ui/ErrorSummary';
+import Button from '../ui/Button';
 import Link from 'next/link';
 
 interface TermsSectionProps {
@@ -64,16 +65,12 @@ export function TermsSection({
       {hasErrors && <ErrorSummary errors={allErrors} />}
 
       {/* Submit Button */}
-      <button
+      <Button
         type="submit"
         disabled={isSubmitting}
-        className={`
-          w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-200
-          ${isSubmitting
-            ? 'bg-[var(--light-600)] text-[var(--dark-400)] cursor-not-allowed shadow-none'
-            : 'bg-[var(--dark-800)] text-white shadow-lg hover:shadow-xl transform hover:scale-[1.03] active:scale-[0.97] hover:bg-[var(--dark)]'
-          }
-        `}
+        variant="primary"
+        size="lg"
+        className="w-full font-bold"
       >
         {isSubmitting ? (
           <span className="flex items-center justify-center">
@@ -86,7 +83,7 @@ export function TermsSection({
         ) : (
           'Join Talent Pool →'
         )}
-      </button>
+      </Button>
 
       {/* Helper Text */}
       <p className="text-xs text-center text-[var(--dark-400)]">

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
+import Button from '../ui/Button';
 import { UploadIcon } from '../ui/icons/UploadIcon';
 import { CheckCircleIcon } from '../ui/icons/CheckCircleIcon';
 
@@ -121,13 +122,15 @@ export function CVUploadSection({
               </p>
             </div>
             {!disabled && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleRemoveFile}
-                className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                className="mt-2 text-red-600 hover:text-red-800 underline"
               >
                 Remove file
-              </button>
+              </Button>
             )}
           </div>
         ) : (

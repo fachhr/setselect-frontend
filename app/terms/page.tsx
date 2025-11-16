@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Button from '@/components/ui/Button';
 
 export default function TermsPage() {
   return (
@@ -251,14 +252,13 @@ export default function TermsPage() {
 
           {/* Back Button */}
           <div className="mt-12 text-center">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-lg text-base font-medium text-[var(--button-text-on-primary)] bg-primary hover:bg-primary-dark transition-all shadow-sm hover:shadow-md"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Back to Home
+            <Link href="/">
+              <Button variant="outline" size="lg">
+                <svg className="w-5 h-5 -ml-1 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Home
+              </Button>
             </Link>
           </div>
         </div>
