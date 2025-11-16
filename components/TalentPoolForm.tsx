@@ -183,17 +183,6 @@ export function TalentPoolForm() {
           />
         </div>
       </div>
-
-      {/* Progress Indicator */}
-      {isSubmitting && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[var(--light)] rounded-lg p-8 max-w-md mx-4 text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[var(--primary)] mx-auto mb-4"></div>
-            <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">Submitting Your Profile...</h3>
-            <p className="text-[var(--dark-600)]">Please wait while we process your information.</p>
-          </div>
-        </div>
-      )}
     </form>
   );
 }
