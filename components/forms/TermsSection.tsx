@@ -38,7 +38,7 @@ export function TermsSection({
             type="checkbox"
             {...register('accepted_terms')}
             className={`
-              h-5 w-5 flex-shrink-0 text-[var(--accent-gold)] border-[var(--light-400)] rounded focus:ring-[var(--accent-gold)] accent-[var(--accent-gold)]
+              h-5 w-5 flex-shrink-0 text-[var(--primary)] border-[var(--light-400)] rounded focus:ring-[var(--primary)] accent-[var(--primary)]
               ${errors.accepted_terms ? 'border-[var(--error-color)]' : ''}
             `}
           />
@@ -48,7 +48,7 @@ export function TermsSection({
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline font-medium"
+              className="text-[var(--primary)] hover:text-[var(--primary-light)] underline font-medium"
             >
               Terms and Conditions
             </Link>
@@ -64,11 +64,11 @@ export function TermsSection({
       {/* Error Summary - appears right before submit when there are errors */}
       {hasErrors && <ErrorSummary errors={allErrors} />}
 
-      {/* Submit Button - Premium Gold CTA */}
+      {/* Submit Button - Premium Burgundy CTA */}
       <Button
         type="submit"
         disabled={isSubmitting}
-        variant="gold"
+        variant="primary"
         size="lg"
         className="w-full font-bold"
       >

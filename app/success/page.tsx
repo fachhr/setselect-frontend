@@ -10,12 +10,12 @@ export default function SuccessPage() {
     }}>
       <div className="max-w-2xl w-full">
         <div className="bg-[var(--light)] rounded-xl p-8 sm:p-12 text-center" style={{
-          boxShadow: 'var(--shadow-xl), var(--glow-gold-subtle)'
+          boxShadow: 'var(--shadow-xl), var(--glow-burgundy-subtle)'
         }}>
-          {/* Success Icon - GOLD CELEBRATION */}
+          {/* Success Icon - BURGUNDY CELEBRATION */}
           <div className="mb-6 flex justify-center">
             <div className="rounded-full bg-[var(--success-bg)] p-4" style={{
-              boxShadow: 'var(--glow-gold-subtle)'
+              boxShadow: 'var(--glow-burgundy-subtle)'
             }}>
               <CheckCircleIcon className="h-16 w-16 text-[var(--success-color)]" />
             </div>
@@ -38,7 +38,7 @@ export default function SuccessPage() {
             </h2>
             <ul className="space-y-3 text-[var(--text-secondary)]">
               <li className="flex items-start">
-                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--accent-gold-alpha)] text-[var(--accent-gold)] font-semibold text-sm mr-3">
+                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--primary-alpha)] text-[var(--primary)] font-semibold text-sm mr-3">
                   1
                 </span>
                 <span>
@@ -46,7 +46,7 @@ export default function SuccessPage() {
                 </span>
               </li>
               <li className="flex items-start">
-                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--accent-gold-alpha)] text-[var(--accent-gold)] font-semibold text-sm mr-3">
+                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--primary-alpha)] text-[var(--primary)] font-semibold text-sm mr-3">
                   2
                 </span>
                 <span>
@@ -54,7 +54,7 @@ export default function SuccessPage() {
                 </span>
               </li>
               <li className="flex items-start">
-                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--accent-gold-alpha)] text-[var(--accent-gold)] font-semibold text-sm mr-3">
+                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-[var(--primary-alpha)] text-[var(--primary)] font-semibold text-sm mr-3">
                   3
                 </span>
                 <span>
@@ -68,7 +68,7 @@ export default function SuccessPage() {
           <div className="text-sm text-[var(--text-secondary)] space-y-2 mb-8">
             <p>
               <strong className="text-[var(--text-primary)]">Questions or updates?</strong> Feel free to reach out to us at{' '}
-              <a href="mailto:contact@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline">
+              <a href="mailto:contact@silviaslist.com" className="text-[var(--primary)] hover:text-[var(--primary-hover)] underline">
                 contact@silviaslist.com
               </a>
             </p>
@@ -85,7 +85,7 @@ export default function SuccessPage() {
               </Button>
             </Link>
             <a href="mailto:contact@silviaslist.com">
-              <Button variant="gold" size="lg">
+              <Button variant="primary" size="lg">
                 Contact Us
               </Button>
             </a>
@@ -93,9 +93,9 @@ export default function SuccessPage() {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-sm text-[var(--text-tertiary)] mt-8">
+        <p className="text-center text-sm text-[var(--foreground)] opacity-75 mt-8">
           Your privacy is important to us. All data is handled according to our{' '}
-          <Link href="/terms" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline">
+          <Link href="/terms" className="text-[var(--foreground)] hover:text-white underline">
             Terms & Conditions
           </Link>
           .

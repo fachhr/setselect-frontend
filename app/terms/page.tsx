@@ -11,7 +11,7 @@ export default function TermsPage() {
         <div className="bg-[var(--light)] rounded-xl shadow-lg p-8 sm:p-12">
           {/* Title Section */}
           <div className="mb-12 pb-8 border-b border-[var(--light-400)]">
-            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-[var(--accent-gold)])] mb-4 tracking-tight">
+            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-[var(--primary)])] mb-4 tracking-tight">
               Terms and Conditions
             </h1>
             <p className="text-[var(--text-secondary)] text-lg">
@@ -24,11 +24,11 @@ export default function TermsPage() {
             {/* Section 1 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">1</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">1</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-[var(--accent-gold)])] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--text-[var(--primary)])] mb-4">
                     Talent Pool Participation
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -36,19 +36,19 @@ export default function TermsPage() {
                   </p>
                   <ul className="space-y-3 text-[var(--text-secondary)] list-none">
                     <li className="flex items-start gap-3">
-                      <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                      <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                       <span>Store and process your professional information</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                      <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                       <span>Share your profile with potential employers and clients</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                      <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                       <span>Contact you about relevant job opportunities</span>
                     </li>
                     <li className="flex items-start gap-3">
-                      <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                      <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                       <span>Use AI technology to extract information from your CV</span>
                     </li>
                   </ul>
@@ -59,8 +59,8 @@ export default function TermsPage() {
             {/* Section 2 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">2</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">2</span>
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
@@ -77,19 +77,19 @@ export default function TermsPage() {
                       </h3>
                       <ul className="space-y-3 text-[var(--text-secondary)] list-none">
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Personal contact details (name, email, phone number, LinkedIn)</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Professional preferences (job types, locations, industries, salary expectations)</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Work availability and capacity</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Your uploaded CV document</span>
                         </li>
                       </ul>
@@ -104,23 +104,23 @@ export default function TermsPage() {
                       </p>
                       <ul className="space-y-3 text-[var(--text-secondary)] list-none">
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Education history and qualifications</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Professional work experience</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Skills and competencies</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Languages and proficiency levels</span>
                         </li>
                         <li className="flex items-start gap-3">
-                          <span className="text-[var(--accent-gold)] mt-1 flex-shrink-0">•</span>
+                          <span className="text-[var(--primary)] mt-1 flex-shrink-0">•</span>
                           <span>Certifications and licenses</span>
                         </li>
                       </ul>
@@ -133,8 +133,8 @@ export default function TermsPage() {
             {/* Section 3 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">3</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">3</span>
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
@@ -150,8 +150,8 @@ export default function TermsPage() {
             {/* Section 4 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">4</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">4</span>
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
@@ -167,8 +167,8 @@ export default function TermsPage() {
             {/* Section 5 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">5</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">5</span>
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
@@ -176,7 +176,7 @@ export default function TermsPage() {
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
                     You have the right to access, rectify, erase, port, and object to processing of your data. Contact us at{' '}
-                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold)]-dark underline">
+                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--primary)] hover:text-[var(--primary)]-dark underline">
                       privacy@silviaslist.com
                     </a>
                     {' '}to exercise these rights.
@@ -188,8 +188,8 @@ export default function TermsPage() {
             {/* Section 6 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">6</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">6</span>
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
@@ -205,8 +205,8 @@ export default function TermsPage() {
             {/* Section 7 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">7</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">7</span>
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
@@ -222,8 +222,8 @@ export default function TermsPage() {
             {/* Section 8 */}
             <section>
               <div className="flex items-start gap-4 mb-6">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--accent-gold-alpha)] flex items-center justify-center">
-                  <span className="text-[var(--accent-gold)] font-bold text-lg">8</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[var(--primary-alpha)] flex items-center justify-center">
+                  <span className="text-[var(--primary)] font-bold text-lg">8</span>
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
@@ -231,13 +231,13 @@ export default function TermsPage() {
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
                     For questions about these terms:{' '}
-                    <a href="mailto:contact@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold)]-dark underline">
+                    <a href="mailto:contact@silviaslist.com" className="text-[var(--primary)] hover:text-[var(--primary)]-dark underline">
                       contact@silviaslist.com
                     </a>
                   </p>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
                     For privacy inquiries:{' '}
-                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold)]-dark underline">
+                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--primary)] hover:text-[var(--primary)]-dark underline">
                       privacy@silviaslist.com
                     </a>
                   </p>

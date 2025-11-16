@@ -57,27 +57,28 @@
   --foreground: #F5F5F5;              /* Page-level text on burgundy background - LIGHT */
   --gray: #6B4055;
 
-  /* Primary Brand - Navy (Secondary accent for links/trust elements) */
-  --primary: #1976d2;                 /* Bright navy for visibility on dark */
-  --primary-dark: #1565c0;
-  --primary-light: #42a5f5;
-  --primary-alpha: rgba(25, 118, 210, 0.15);
+  /* Primary Accent - Bright Burgundy Red (Replaces gold) */
+  --primary: #A0153E;                 /* Rich burgundy red - CTAs, highlights */
+  --primary-dark: #800F2F;            /* Darker burgundy - pressed states */
+  --primary-light: #C41E3A;           /* Brighter burgundy - hover states */
+  --primary-alpha: rgba(160, 21, 62, 0.15);
 
-  /* Energy Accent - Burgundy (Structural, not accent) */
-  --accent-energy: #550020;           /* Deep burgundy base */
-  --accent-energy-hover: #6B0026;     /* Lighter burgundy hover */
-  --accent-energy-alpha: rgba(85, 0, 32, 0.15);
+  /* Accent Colors - Burgundy Palette Only */
+  --accent-burgundy: #A0153E;         /* Bright burgundy - primary accent */
+  --accent-burgundy-hover: #C41E3A;   /* Brighter burgundy - hover */
+  --accent-burgundy-muted: #8B1538;   /* Muted burgundy - subtle accents */
+  --accent-burgundy-alpha: rgba(160, 21, 62, 0.15);
+  --accent-burgundy-border: rgba(160, 21, 62, 0.3);
 
-  /* Luxury Accent - CHAMPAGNE GOLD (Primary Premium Accent) */
-  --accent-gold: #D4AF37;             /* Champagne gold - CTAs, highlights */
-  --accent-gold-hover: #E5C158;       /* Brighter gold - hover states */
-  --accent-gold-muted: #C5B783;       /* Subtle gold - decorative */
-  --accent-gold-alpha: rgba(212, 175, 55, 0.15);
-  --accent-gold-border: rgba(212, 175, 55, 0.3);  /* Gold borders/rims */
+  /* Deep Burgundy - Structural elements */
+  --accent-deep: #550020;             /* Deep burgundy - backgrounds */
+  --accent-deep-hover: #6B0026;       /* Lighter deep burgundy - hover */
+  --accent-deep-alpha: rgba(85, 0, 32, 0.15);
 
-  /* Warm Alternative Accent - Deep Copper */
-  --accent-copper: #B87333;
-  --accent-copper-alpha: rgba(184, 115, 51, 0.15);
+  /* Pure White Accent - For high contrast CTAs */
+  --accent-white: #FFFFFF;            /* Pure white - alternative CTAs */
+  --accent-white-hover: #F5F5F5;      /* Slightly off-white hover */
+  --accent-white-alpha: rgba(255, 255, 255, 0.15);
 
   /* Typography */
   --font-body: 'Gilroy Light', Arial, sans-serif;
@@ -103,13 +104,13 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 35px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.6);
-  --shadow-highlight: 0 0 25px rgba(212, 175, 55, 0.4);
+  --shadow-highlight: 0 0 25px rgba(160, 21, 62, 0.4);
 
-  /* Premium Glows - Gold emphasis on dark burgundy */
-  --glow-gold: 0 0 20px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
-  --glow-gold-subtle: 0 0 15px rgba(212, 175, 55, 0.25);
-  --glow-burgundy: 0 0 15px rgba(107, 0, 38, 0.4);
-  --glow-navy: 0 0 15px rgba(25, 118, 210, 0.4);
+  /* Premium Glows - Burgundy emphasis */
+  --glow-burgundy: 0 0 20px rgba(160, 21, 62, 0.5), 0 0 40px rgba(160, 21, 62, 0.2);
+  --glow-burgundy-subtle: 0 0 15px rgba(160, 21, 62, 0.25);
+  --glow-burgundy-deep: 0 0 15px rgba(107, 0, 38, 0.4);
+  --glow-white: 0 0 20px rgba(255, 255, 255, 0.3);
 
   /* Transitions */
   --transition-fast-duration: 0.2s;
@@ -133,20 +134,20 @@
   --z-normal: 1;
   --z-below: -1;
 
-  /* Semantic Colors - Adapted for dark burgundy background */
-  --error-color: #ff6b6b;
-  --error-bg: rgba(220, 38, 38, 0.15);
-  --success-color: #D4AF37;          /* Gold for premium success */
-  --success-bg: rgba(212, 175, 55, 0.15);
-  --warning-color: #fbbf24;
-  --warning-bg: rgba(251, 191, 36, 0.15);
-  --info-color: #60a5fa;
-  --info-bg: rgba(96, 165, 250, 0.15);
+  /* Semantic Colors - Burgundy & White only */
+  --error-color: #DC143C;            /* Crimson red - highly visible error */
+  --error-bg: rgba(220, 20, 60, 0.15);
+  --success-color: #A0153E;          /* Bright burgundy - success state */
+  --success-bg: rgba(160, 21, 62, 0.15);
+  --warning-color: #C41E3A;          /* Lighter burgundy - warning */
+  --warning-bg: rgba(196, 30, 58, 0.15);
+  --info-color: #8B1538;             /* Wine burgundy - info */
+  --info-bg: rgba(139, 21, 56, 0.15);
 
   /* Button Text Colors */
-  --button-text-on-primary: #ffffff;
-  --button-text-on-gold: #1a0512;    /* Dark burgundy text on gold */
-  --button-text-on-white: #1a0512;   /* Dark burgundy text on white */
+  --button-text-on-primary: #ffffff;     /* White text on burgundy */
+  --button-text-on-burgundy: #ffffff;    /* White text on burgundy */
+  --button-text-on-white: #1a0512;       /* Dark burgundy text on white */
 }
 
 /* --- No Dark Mode - Single Premium Burgundy Theme --- */
@@ -223,7 +224,7 @@ a:hover { color: var(--dark-800); }
     background-color: var(--light-600);
     border-color: var(--light-400);
     color: var(--text-primary);
-    @apply focus:outline-none focus:ring-2 focus:border-[var(--accent-gold)];
+    @apply focus:outline-none focus:ring-2 focus:border-[var(--primary)];
     @apply disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
@@ -232,8 +233,8 @@ a:hover { color: var(--dark-800); }
   }
 
   .input-base:focus {
-    box-shadow: 0 0 0 3px var(--accent-gold-alpha);
-    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px var(--primary-alpha);
+    border-color: var(--primary);
   }
 
   select.input-base {
@@ -270,12 +271,12 @@ a:hover { color: var(--dark-800); }
     color: var(--text-secondary);
   }
   .prose a {
-    color: var(--accent-gold);
+    color: var(--primary);
     text-decoration: underline;
   }
 
   .prose a:hover {
-    color: var(--accent-gold-hover);
+    color: var(--primary-light);
   }
 }
 
@@ -345,8 +346,8 @@ a:hover { color: var(--dark-800); }
   }
 
   .form-input:focus {
-    box-shadow: 0 0 0 3px var(--accent-gold-alpha);
-    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px var(--primary-alpha);
+    border-color: var(--primary);
   }
 
   .form-input::placeholder {
