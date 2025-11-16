@@ -32,12 +32,12 @@ export function TermsSection({
 
       {/* Terms & Conditions */}
       <div>
-        <label className="flex items-start space-x-3 cursor-pointer">
+        <label className="flex items-center space-x-3 cursor-pointer">
           <input
             type="checkbox"
             {...register('accepted_terms')}
             className={`
-              mt-1 h-5 w-5 text-primary border-[var(--light-400)] rounded focus:ring-primary accent-primary
+              h-5 w-5 flex-shrink-0 text-primary border-[var(--light-400)] rounded focus:ring-primary accent-primary
               ${errors.accepted_terms ? 'border-red-500' : ''}
             `}
           />
