@@ -96,7 +96,7 @@ export function DualRangeSlider({
   const minPercentage = getPercentage(minValue);
   const maxPercentage = getPercentage(maxValue);
 
-  // Generate grid marks
+  // Generate grid marks (matching original: 5 grid lines plus edges = 6 total marks)
   const gridMarks = [];
   const numMarks = 6; // 0, 3, 6, 9, 12, 15
   for (let i = 0; i < numMarks; i++) {
@@ -105,188 +105,231 @@ export function DualRangeSlider({
   }
 
   return (
-    <div className="dual-range-slider-container">
-      {/* Track container */}
-      <div
-        ref={rangeRef}
-        className="dual-range-track"
-      >
-        {/* Background track */}
-        <div className="dual-range-track-bg" />
+    <div className="ion-range-slider-container">
+      <div className="irs--flat">
+        {/* Min/Max labels at top */}
+        <span className="irs-min">{formatDisplayValue(min)}</span>
+        <span className="irs-max">{formatDisplayValue(max)}</span>
 
-        {/* Active range */}
-        <div
-          className="dual-range-track-active"
-          style={{
-            left: `${minPercentage}%`,
-            width: `${maxPercentage - minPercentage}%`
-          }}
-        />
+        {/* Track container */}
+        <div ref={rangeRef} className="irs-line-container">
+          {/* Background track */}
+          <span className="irs-line" />
 
-        {/* Min handle */}
-        <div
-          className={`dual-range-handle ${isDragging === 'min' ? 'dragging' : ''}`}
-          style={{ left: `${minPercentage}%` }}
-          onMouseDown={handleMouseDown('min')}
-        >
-          <div className="dual-range-tooltip">
-            {formatDisplayValue(minValue)}
-          </div>
-        </div>
+          {/* Active range bar */}
+          <span
+            className="irs-bar"
+            style={{
+              left: `${minPercentage}%`,
+              width: `${maxPercentage - minPercentage}%`
+            }}
+          />
 
-        {/* Max handle */}
-        <div
-          className={`dual-range-handle ${isDragging === 'max' ? 'dragging' : ''}`}
-          style={{ left: `${maxPercentage}%` }}
-          onMouseDown={handleMouseDown('max')}
-        >
-          <div className="dual-range-tooltip">
-            {formatDisplayValue(maxValue)}
-          </div>
-        </div>
-      </div>
-
-      {/* Grid */}
-      <div className="dual-range-grid">
-        {gridMarks.map((value, index) => (
-          <div
-            key={index}
-            className="dual-range-grid-mark"
-            style={{ left: `${getPercentage(value)}%` }}
+          {/* Min handle */}
+          <span
+            className={`irs-handle ${isDragging === 'min' ? 'state_hover' : ''}`}
+            style={{ left: `${minPercentage}%` }}
+            onMouseDown={handleMouseDown('min')}
           >
-            <div className="dual-range-grid-line" />
-            <div className="dual-range-grid-label">
-              {formatDisplayValue(value)}
-            </div>
-          </div>
-        ))}
+            <span className="irs-from">{formatDisplayValue(minValue)}</span>
+          </span>
+
+          {/* Max handle */}
+          <span
+            className={`irs-handle ${isDragging === 'max' ? 'state_hover' : ''}`}
+            style={{ left: `${maxPercentage}%` }}
+            onMouseDown={handleMouseDown('max')}
+          >
+            <span className="irs-to">{formatDisplayValue(maxValue)}</span>
+          </span>
+        </div>
+
+        {/* Grid */}
+        <div className="irs-grid">
+          {gridMarks.map((value, index) => (
+            <span
+              key={index}
+              className="irs-grid-pol"
+              style={{ left: `${getPercentage(value)}%` }}
+            >
+              <span className="irs-grid-text">{formatDisplayValue(value)}</span>
+            </span>
+          ))}
+        </div>
       </div>
 
       <style jsx>{`
-        .dual-range-slider-container {
-          position: relative;
-          padding-top: 40px;
-          padding-bottom: 30px;
-          user-select: none;
+        /* EXACT replication of Ion.RangeSlider styles from original project */
+        .ion-range-slider-container {
+          padding-top: 10px;
+          margin-bottom: 20px;
         }
 
-        .dual-range-track {
+        .irs--flat {
           position: relative;
+          height: auto;
+          min-height: 50px;
+        }
+
+        .irs-line-container {
+          position: relative;
+          display: block;
           height: 8px;
-          width: 100%;
         }
 
-        .dual-range-track-bg {
+        .irs-line {
           position: absolute;
-          top: 0;
+          display: block;
           left: 0;
-          right: 0;
-          height: 100%;
+          width: 100%;
           background-color: var(--light-600);
           border: 1px solid var(--light-400);
+          height: 8px;
+          top: 25px;
           border-radius: 4px;
         }
 
-        .dual-range-track-active {
+        .irs-bar {
           position: absolute;
-          top: 0;
-          height: 100%;
+          display: block;
           background-color: var(--primary);
+          height: 8px;
+          top: 25px;
           border-radius: 4px;
-          transition: left 0.1s ease, width 0.1s ease;
         }
 
-        .dual-range-handle {
+        .irs-handle {
           position: absolute;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          width: 24px;
-          height: 24px;
+          display: block;
           background-color: var(--primary);
           border: 3px solid var(--light);
-          border-radius: 50%;
-          cursor: ${disabled ? 'not-allowed' : 'grab'};
+          width: 24px;
+          height: 24px;
+          top: 17px;
+          margin-left: -12px;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          z-index: 2;
+          border-radius: 50%;
+          cursor: ${disabled ? 'not-allowed' : 'pointer'};
+          transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
         }
 
-        .dual-range-handle:hover:not(.dragging) {
+        .irs-handle.state_hover,
+        .irs-handle:hover {
           background-color: var(--primary-dark);
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-          transform: translate(-50%, -50%) scale(1.1);
+          transform: scale(1.1);
         }
 
-        .dual-range-handle.dragging {
-          cursor: grabbing;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-          z-index: 3;
-        }
-
-        .dual-range-tooltip {
+        .irs-min,
+        .irs-max {
           position: absolute;
-          bottom: calc(100% + 12px);
+          display: block;
+          color: var(--dark-600);
+          font-size: 0.85em;
+          line-height: 1;
+          top: 0;
+          padding: 1px 3px;
+          background-color: transparent;
+          border-radius: 4px;
+        }
+
+        .irs-min {
+          left: 0;
+        }
+
+        .irs-max {
+          right: 0;
+        }
+
+        .irs-from,
+        .irs-to {
+          position: absolute;
+          display: block;
+          top: -5px;
           left: 50%;
           transform: translateX(-50%);
           background-color: var(--dark-800);
           color: var(--light);
-          padding: 3px 10px;
+          font-size: 0.9em;
+          line-height: 1.333;
+          text-align: center;
+          padding: 2px 8px;
           border-radius: 4px;
-          font-size: 0.875rem;
-          font-weight: 500;
           white-space: nowrap;
-          pointer-events: none;
+          cursor: default;
         }
 
-        .dual-range-tooltip::after {
-          content: '';
+        .irs-from::before,
+        .irs-to::before {
           position: absolute;
-          top: 100%;
+          display: block;
+          content: "";
+          bottom: -5px;
           left: 50%;
-          transform: translateX(-50%);
-          border: 5px solid transparent;
+          width: 0;
+          height: 0;
+          margin-left: -3px;
+          overflow: hidden;
+          border: 3px solid transparent;
           border-top-color: var(--dark-800);
         }
 
-        .dual-range-grid {
-          position: relative;
-          margin-top: 15px;
-          height: 20px;
-        }
-
-        .dual-range-grid-mark {
+        .irs-grid {
           position: absolute;
-          transform: translateX(-50%);
+          display: block;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 20px;
+          top: 40px;
         }
 
-        .dual-range-grid-line {
+        .irs-grid-pol {
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 1px;
           height: 8px;
           background-color: var(--light-400);
-          margin: 0 auto;
         }
 
-        .dual-range-grid-label {
+        .irs-grid-pol.small {
+          background-color: var(--light-600);
+        }
+
+        .irs-grid-text {
           position: absolute;
-          top: 10px;
+          bottom: 0;
           left: 50%;
           transform: translateX(-50%);
-          color: var(--dark-400);
-          font-size: 0.75rem;
           white-space: nowrap;
+          text-align: center;
+          font-size: 0.8em;
+          line-height: 1;
+          padding: 0 3px;
+          color: var(--dark-400);
         }
 
         /* Dark mode support */
-        :global(.dark) .dual-range-track-bg {
+        :global(.dark) .irs-line {
           background-color: var(--light-600);
           border-color: var(--light-400);
         }
 
-        :global(.dark) .dual-range-grid-line {
+        :global(.dark) .irs-min,
+        :global(.dark) .irs-max {
+          color: var(--dark-600);
+        }
+
+        :global(.dark) .irs-grid-pol {
           background-color: var(--light-400);
         }
 
-        :global(.dark) .dual-range-grid-label {
+        :global(.dark) .irs-grid-pol.small {
+          background-color: var(--light-600);
+        }
+
+        :global(.dark) .irs-grid-text {
           color: var(--dark-600);
         }
       `}</style>
