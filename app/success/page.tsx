@@ -34,7 +34,7 @@ export default function SuccessPage() {
                   1
                 </span>
                 <span>
-                  <strong>Profile Review:</strong> Our team will review your complete profile and match you with relevant opportunities.
+                  <strong>Check Your Inbox:</strong> You'll receive a confirmation email shortly.
                 </span>
               </li>
               <li className="flex items-start">
@@ -42,17 +42,18 @@ export default function SuccessPage() {
                   2
                 </span>
                 <span>
+                  <strong>Profile Review:</strong> Our team will review your complete profile and match you with relevant opportunities.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-blue-200 text-blue-900 font-semibold text-sm mr-3">
+                  3
+                </span>
+                <span>
                   <strong>We'll Contact You:</strong> When we find a match that fits your preferences, we'll reach out via email with more details.
                 </span>
               </li>
             </ul>
-          </div>
-
-          {/* Email Confirmation */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
-            <p className="text-sm text-yellow-800">
-              📧 <strong>Check your inbox!</strong> You'll receive a confirmation email shortly with your submission details.
-            </p>
           </div>
 
           {/* Additional Info */}
