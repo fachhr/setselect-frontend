@@ -23,9 +23,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Variant styles
     const variantStyles = {
-      // Primary: Bright yellow with dark text - maximum visibility
-      primary: 'bg-[var(--primary)] text-[var(--button-text-on-primary)] shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:shadow-none disabled:transform-none',
-      // Secondary: White with border and dark text - great contrast on colored backgrounds
+      // Primary: Professional dark button - high contrast and modern
+      primary: 'bg-[var(--dark-800)] text-white shadow-md hover:bg-[var(--dark)] hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:shadow-none disabled:transform-none',
+      // Secondary: White with border - clean and professional
       secondary: 'bg-white text-[var(--dark-800)] border-2 border-[var(--dark-800)] shadow-sm hover:bg-[var(--light-800)] hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:border-[var(--light-400)] disabled:shadow-none disabled:transform-none',
       // Solid: Light gray with dark text - subtle but visible
       solid: 'bg-[var(--light-800)] text-[var(--dark-800)] shadow hover:bg-[var(--light-600)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',

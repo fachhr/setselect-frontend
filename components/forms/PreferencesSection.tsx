@@ -153,9 +153,9 @@ export function PreferencesSection({
               type="number"
               id="salary_max"
               min="0"
-              step="1000"
+              step="10000"
               {...register('salary_max', { valueAsNumber: true })}
-              placeholder="e.g., 100000"
+              placeholder="e.g., 200000"
               className={`input-base ${errors.salary_max ? 'input-error' : ''}`}
             />
             {errors.salary_max && (

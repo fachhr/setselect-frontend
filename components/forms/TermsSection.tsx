@@ -71,7 +71,7 @@ export function TermsSection({
           w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-200
           ${isSubmitting
             ? 'bg-[var(--light-600)] text-[var(--dark-400)] cursor-not-allowed shadow-none'
-            : 'bg-[var(--primary)] text-[var(--button-text-on-primary)] shadow-lg hover:shadow-xl transform hover:scale-[1.03] active:scale-[0.97] hover:bg-[var(--primary-dark)] border-2 border-[var(--dark-800)]'
+            : 'bg-[var(--dark-800)] text-white shadow-lg hover:shadow-xl transform hover:scale-[1.03] active:scale-[0.97] hover:bg-[var(--dark)]'
           }
         `}
       >
