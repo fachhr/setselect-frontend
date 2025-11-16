@@ -26,36 +26,36 @@
 }
 
 /* --- Global CSS Variables --- */
-/* Premium Swiss Executive Energy Palette - Deep Burgundy Sanctuary */
+/* Premium Swiss Executive Energy Palette - Burgundy Sanctuary with White Cards */
 :root {
-  /* Page Backgrounds - Deep Burgundy Luxury */
+  /* Page Backgrounds - Deep Burgundy Luxury (from master) */
   --background: #2D0A1F;              /* Very dark burgundy base */
   --background-gradient: linear-gradient(180deg, #2D0A1F 0%, #1a0512 100%);
 
-  /* Surface Hierarchy - Burgundy Cards & Panels */
-  --surface-1: #550020;               /* Deep burgundy - primary cards */
-  --surface-2: #6B0026;               /* Lighter burgundy - hover/nested */
-  --surface-3: #7D1F3A;               /* Even lighter - modals/dropdowns */
+  /* Surface Hierarchy - WHITE/CREAM Cards & Panels */
+  --surface-1: #FDFDF8;               /* Warm white cream - primary cards */
+  --surface-2: #F5F5F0;               /* Slightly darker cream - hover/nested */
+  --surface-3: #EEEEE8;               /* Even darker - modals/dropdowns */
 
-  /* Legacy card colors (mapped to burgundy surfaces) */
-  --light: #550020;                   /* Cards, inputs (elevated surface 1) */
-  --light-800: #6B0026;               /* Hover states, secondary panels */
-  --light-600: #7D1F3A;               /* Modals, dropdowns */
-  --light-400: #8B4055;               /* Borders, dividers (muted rose-burgundy) */
+  /* Legacy card colors (mapped to white surfaces) */
+  --light: #FDFDF8;                   /* Cards, inputs (warm white cream) */
+  --light-800: #F5F5F0;               /* Hover states, secondary panels */
+  --light-600: #EEEEE8;               /* Modals, dropdowns */
+  --light-400: #D4C5C7;               /* Borders, dividers (warm gray) */
 
-  /* Text Colors - White & Warm Grays on Dark Burgundy */
-  --text-primary: #F5F5F5;            /* Soft white - primary text */
-  --text-secondary: #D4C5C7;          /* Warm light gray - secondary text */
-  --text-tertiary: #A89091;           /* Muted gray-burgundy - tertiary */
-  --text-disabled: #6B5558;           /* Very muted - disabled states */
+  /* Text Colors - DARK text on WHITE cards */
+  --text-primary: #1a0512;            /* Very dark burgundy - primary text on white */
+  --text-secondary: #3D1B2A;          /* Dark burgundy - secondary text */
+  --text-tertiary: #6B4055;           /* Medium burgundy - tertiary */
+  --text-disabled: #A89091;           /* Light gray - disabled states */
 
-  /* Legacy text colors (mapped to new text system) */
-  --dark: #F5F5F5;                    /* Primary text */
-  --dark-800: #D4C5C7;                /* Secondary text */
-  --dark-600: #A89091;                /* Tertiary text */
-  --dark-400: #6B5558;                /* Muted/disabled text */
-  --foreground: #F5F5F5;              /* Primary foreground text */
-  --gray: #A89091;
+  /* Legacy text colors (mapped to new dark text system) */
+  --dark: #1a0512;                    /* Primary text */
+  --dark-800: #3D1B2A;                /* Secondary text */
+  --dark-600: #6B4055;                /* Tertiary text */
+  --dark-400: #A89091;                /* Muted/disabled text */
+  --foreground: #F5F5F5;              /* Page-level text on burgundy background - LIGHT */
+  --gray: #6B4055;
 
   /* Primary Brand - Navy (Secondary accent for links/trust elements) */
   --primary: #1976d2;                 /* Bright navy for visibility on dark */
@@ -98,12 +98,12 @@
   --radius-xl: 20px;
   --radius-round: 50%;
 
-  /* Shadows - Deep, luxurious on dark burgundy */
-  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.7);
-  --shadow-highlight: 0 0 20px rgba(212, 175, 55, 0.3);
+  /* Shadows - Deep shadows for white cards floating on burgundy */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 35px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.6);
+  --shadow-highlight: 0 0 25px rgba(212, 175, 55, 0.4);
 
   /* Premium Glows - Gold emphasis on dark burgundy */
   --glow-gold: 0 0 20px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
@@ -146,7 +146,7 @@
   /* Button Text Colors */
   --button-text-on-primary: #ffffff;
   --button-text-on-gold: #1a0512;    /* Dark burgundy text on gold */
-  --button-text-on-burgundy: #F5F5F5;
+  --button-text-on-white: #1a0512;   /* Dark burgundy text on white */
 }
 
 /* --- No Dark Mode - Single Premium Burgundy Theme --- */
@@ -220,7 +220,7 @@ a:hover { color: var(--dark-800); }
 
   .input-base {
     @apply block w-full px-3 py-2 text-base transition-colors duration-200 border rounded-md shadow-sm appearance-none sm:text-sm;
-    background-color: var(--light-800);
+    background-color: var(--light-600);
     border-color: var(--light-400);
     color: var(--text-primary);
     @apply focus:outline-none focus:ring-2 focus:border-[var(--accent-gold)];
@@ -338,7 +338,7 @@ a:hover { color: var(--dark-800); }
 @layer components {
   .form-input {
     @apply block w-full px-4 py-3 rounded-lg shadow-inner focus:outline-none text-base border;
-    background-color: var(--light-800);
+    background-color: var(--light-600);
     border-color: var(--light-400);
     color: var(--text-primary);
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
