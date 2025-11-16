@@ -49,8 +49,8 @@
   --text-tertiary: #6B4055;           /* Medium burgundy - tertiary */
   --text-disabled: #A89091;           /* Light gray - disabled states */
 
-  /* Title Colors - Rich burgundy reds for maximum visibility */
-  --title-primary: #A0153E;           /* Rich burgundy red - H1/H2 on white cards (pops!) */
+  /* Title Colors - White for hero headings */
+  --title-primary: #FFFFFF;           /* White - H1/H2 headings */
   --title-secondary: #8B1538;         /* Deep wine burgundy - H3/subtitles on white */
   --title-on-burgundy: #FFFFFF;       /* Pure white - titles on burgundy background */
 
