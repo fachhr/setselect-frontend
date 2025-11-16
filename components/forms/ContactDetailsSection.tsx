@@ -27,7 +27,7 @@ export function ContactDetailsSection({
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
           <label htmlFor="contact_first_name" className="label-base">
-            First Name <span className="text-red-500">*</span>
+            First Name <span className="text-[var(--error-color)]">*</span>
           </label>
           <input
             type="text"
@@ -43,7 +43,7 @@ export function ContactDetailsSection({
 
         <div>
           <label htmlFor="contact_last_name" className="label-base">
-            Last Name <span className="text-red-500">*</span>
+            Last Name <span className="text-[var(--error-color)]">*</span>
           </label>
           <input
             type="text"
@@ -61,7 +61,7 @@ export function ContactDetailsSection({
       {/* Email */}
       <div>
         <label htmlFor="email" className="label-base">
-          Email Address <span className="text-red-500">*</span>
+          Email Address <span className="text-[var(--error-color)]">*</span>
         </label>
         <input
           type="email"
@@ -79,7 +79,7 @@ export function ContactDetailsSection({
       <div>
         <label htmlFor="linkedinUrl" className="label-base">
           LinkedIn Profile URL
-          <span className="text-sm text-gray-500 ml-2">(Optional)</span>
+          <span className="text-sm text-[var(--text-tertiary)] ml-2">(Optional)</span>
         </label>
         <input
           type="url"
@@ -96,7 +96,7 @@ export function ContactDetailsSection({
       {/* Phone Number */}
       <div>
         <label className="label-base">
-          Phone Number <span className="text-red-500">*</span>
+          Phone Number <span className="text-[var(--error-color)]">*</span>
         </label>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="sm:col-span-1">

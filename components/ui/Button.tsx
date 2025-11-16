@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'solid' | 'outline' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'gold' | 'solid' | 'outline' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,27 +21,35 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'px-8 py-4 text-base',
     };
 
-    // Variant styles - Premium Swiss Executive Energy Palette
+    // Variant styles - Premium Burgundy Sanctuary Palette
     const variantStyles = {
-      // Primary: Deep Navy - Trust, Exclusivity, Premium
-      primary: 'bg-[var(--primary)] text-white shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:shadow-none disabled:transform-none',
-      // Secondary: White with navy border - Clean and professional
-      secondary: 'bg-white text-[var(--primary)] border-2 border-[var(--primary)] shadow-sm hover:bg-[var(--primary-alpha)] hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:border-[var(--light-400)] disabled:shadow-none disabled:transform-none',
-      // Solid: Light background with navy text
-      solid: 'bg-[var(--light-800)] text-[var(--primary)] shadow hover:bg-[var(--light-600)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',
-      // Outline: Transparent with navy border - works on any background
-      outline: 'bg-transparent text-[var(--foreground)] border-2 border-[var(--primary)] hover:bg-[var(--primary)] hover:text-white disabled:bg-transparent disabled:text-[var(--dark-400)] disabled:border-[var(--dark-400)]',
+      // GOLD: Premium CTA - Champagne gold with dark burgundy text & glow
+      gold: 'bg-[var(--accent-gold)] text-[var(--button-text-on-gold)] shadow-lg hover:bg-[var(--accent-gold-hover)] transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-400)] disabled:text-[var(--text-disabled)] disabled:shadow-none disabled:transform-none',
+      // Primary: Navy - Trust elements, links, secondary CTAs
+      primary: 'bg-[var(--primary)] text-white shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--text-disabled)] disabled:shadow-none disabled:transform-none',
+      // Secondary: Burgundy with border - Alternative actions
+      secondary: 'bg-[var(--surface-1)] text-[var(--text-primary)] border-2 border-[var(--light-400)] shadow-sm hover:bg-[var(--surface-2)] hover:border-[var(--accent-gold)] hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--text-disabled)] disabled:border-[var(--light-400)] disabled:shadow-none disabled:transform-none',
+      // Solid: Lighter burgundy background
+      solid: 'bg-[var(--light-800)] text-[var(--text-primary)] shadow hover:bg-[var(--light-600)] disabled:bg-[var(--light-600)] disabled:text-[var(--text-disabled)]',
+      // Outline: Transparent with gold border - elegant on dark burgundy
+      outline: 'bg-transparent text-[var(--text-primary)] border-2 border-[var(--accent-gold)] hover:bg-[var(--accent-gold)] hover:text-[var(--button-text-on-gold)] disabled:bg-transparent disabled:text-[var(--text-disabled)] disabled:border-[var(--text-disabled)]',
       // Ghost: Subtle, no border - for tertiary actions
-      ghost: 'bg-transparent text-[var(--dark-600)] hover:bg-[var(--light-600)] hover:text-[var(--foreground)] disabled:bg-transparent disabled:text-[var(--dark-400)]',
+      ghost: 'bg-transparent text-[var(--text-secondary)] hover:bg-[var(--light-800)] hover:text-[var(--text-primary)] disabled:bg-transparent disabled:text-[var(--text-disabled)]',
     };
 
     // Combine all styles
     const combinedClassName = `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`;
 
+    // Add gold glow effect for gold variant
+    const style = variant === 'gold' && !disabled
+      ? { boxShadow: 'var(--glow-gold-subtle)' }
+      : {};
+
     return (
       <button
         ref={ref}
         className={combinedClassName}
+        style={style}
         disabled={disabled}
         {...props}
       >

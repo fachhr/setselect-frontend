@@ -38,22 +38,22 @@ export function TermsSection({
             type="checkbox"
             {...register('accepted_terms')}
             className={`
-              h-5 w-5 flex-shrink-0 text-primary border-[var(--light-400)] rounded focus:ring-primary accent-primary
-              ${errors.accepted_terms ? 'border-red-500' : ''}
+              h-5 w-5 flex-shrink-0 text-[var(--accent-gold)] border-[var(--light-400)] rounded focus:ring-[var(--accent-gold)] accent-[var(--accent-gold)]
+              ${errors.accepted_terms ? 'border-[var(--error-color)]' : ''}
             `}
           />
-          <span className="text-sm text-[var(--dark-800)]">
+          <span className="text-sm text-[var(--text-secondary)]">
             I accept the{' '}
             <Link
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:text-primary-dark underline font-medium"
+              className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline font-medium"
             >
               Terms and Conditions
             </Link>
             {' '}and confirm that the information provided is accurate.
-            <span className="text-red-500 ml-1">*</span>
+            <span className="text-[var(--error-color)] ml-1">*</span>
           </span>
         </label>
         {errors.accepted_terms && (
@@ -64,11 +64,11 @@ export function TermsSection({
       {/* Error Summary - appears right before submit when there are errors */}
       {hasErrors && <ErrorSummary errors={allErrors} />}
 
-      {/* Submit Button */}
+      {/* Submit Button - Premium Gold CTA */}
       <Button
         type="submit"
         disabled={isSubmitting}
-        variant="primary"
+        variant="gold"
         size="lg"
         className="w-full font-bold"
       >
@@ -86,7 +86,7 @@ export function TermsSection({
       </Button>
 
       {/* Helper Text */}
-      <p className="text-xs text-center text-[var(--dark-400)]">
+      <p className="text-xs text-center text-[var(--text-tertiary)]">
         By submitting this form, you'll be added to Silvia's List talent pool.
         We'll review your profile and contact you when we have matching opportunities.
       </p>

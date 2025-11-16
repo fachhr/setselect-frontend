@@ -96,7 +96,7 @@ export function CVUploadSection({
   return (
     <div className="space-y-3">
       <label className="label-base">
-        Upload Your CV <span className="text-red-500">*</span>
+        Upload Your CV <span className="text-[var(--error-color)]">*</span>
       </label>
 
       <div
@@ -116,8 +116,8 @@ export function CVUploadSection({
           <div className="space-y-3">
             <CheckCircleIcon className="mx-auto h-12 w-12 text-[var(--success-color)]" />
             <div>
-              <p className="font-medium text-[var(--foreground)]">{selectedFile.name}</p>
-              <p className="text-sm text-[var(--dark-400)]">
+              <p className="font-medium text-[var(--text-primary)]">{selectedFile.name}</p>
+              <p className="text-sm text-[var(--text-tertiary)]">
                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
@@ -127,7 +127,7 @@ export function CVUploadSection({
                 variant="ghost"
                 size="sm"
                 onClick={handleRemoveFile}
-                className="mt-2 text-red-600 hover:text-red-800 underline"
+                className="mt-2 text-[var(--error-color)] hover:brightness-125 underline"
               >
                 Remove file
               </Button>
@@ -148,12 +148,12 @@ export function CVUploadSection({
               htmlFor="cv-upload"
               className={`cursor-pointer ${disabled ? 'pointer-events-none' : ''}`}
             >
-              <UploadIcon className="mx-auto h-12 w-12 text-[var(--dark-400)]" />
-              <p className="mt-4 text-base font-medium text-[var(--dark-600)]">
+              <UploadIcon className="mx-auto h-12 w-12 text-[var(--text-tertiary)]" />
+              <p className="mt-4 text-base font-medium text-[var(--text-secondary)]">
                 {isDragging ? 'Drop your CV here' : 'Drag and drop your CV here'}
               </p>
-              <p className="mt-1 text-sm text-[var(--dark-400)]">or click to browse</p>
-              <p className="mt-3 text-xs text-[var(--dark-400)]">
+              <p className="mt-1 text-sm text-[var(--text-tertiary)]">or click to browse</p>
+              <p className="mt-3 text-xs text-[var(--text-tertiary)]">
                 PDF or DOCX • Maximum 5MB
               </p>
             </label>

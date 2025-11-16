@@ -26,40 +26,58 @@
 }
 
 /* --- Global CSS Variables --- */
-/* Premium Swiss Executive Energy Palette */
+/* Premium Swiss Executive Energy Palette - Deep Burgundy Sanctuary */
 :root {
-  /* Primary Brand Colors - Deep Navy (Trust, Exclusivity, Swiss Banking) */
-  --primary: #003D5B;
-  --primary-dark: #002845;
-  --primary-light: #005580;
-  --primary-alpha: rgba(0, 61, 91, 0.1);
+  /* Page Backgrounds - Deep Burgundy Luxury */
+  --background: #2D0A1F;              /* Very dark burgundy base */
+  --background-gradient: linear-gradient(180deg, #2D0A1F 0%, #1a0512 100%);
 
-  /* Energy Accent - Burgundy Red (Refined Energy, Sophistication) */
-  --accent-energy: #800020;
-  --accent-energy-hover: #9B0026;
-  --accent-energy-alpha: rgba(128, 0, 32, 0.1);
+  /* Surface Hierarchy - Burgundy Cards & Panels */
+  --surface-1: #550020;               /* Deep burgundy - primary cards */
+  --surface-2: #6B0026;               /* Lighter burgundy - hover/nested */
+  --surface-3: #7D1F3A;               /* Even lighter - modals/dropdowns */
 
-  /* Luxury Indicators - Champagne Gold (Premium Signals) */
-  --accent-gold: #D4AF37;
-  --accent-gold-muted: #C5B783;
-  --accent-gold-alpha: rgba(212, 175, 55, 0.1);
+  /* Legacy card colors (mapped to burgundy surfaces) */
+  --light: #550020;                   /* Cards, inputs (elevated surface 1) */
+  --light-800: #6B0026;               /* Hover states, secondary panels */
+  --light-600: #7D1F3A;               /* Modals, dropdowns */
+  --light-400: #8B4055;               /* Borders, dividers (muted rose-burgundy) */
 
-  /* Warm Alternative Accent - Deep Copper (Commodity Connection) */
+  /* Text Colors - White & Warm Grays on Dark Burgundy */
+  --text-primary: #F5F5F5;            /* Soft white - primary text */
+  --text-secondary: #D4C5C7;          /* Warm light gray - secondary text */
+  --text-tertiary: #A89091;           /* Muted gray-burgundy - tertiary */
+  --text-disabled: #6B5558;           /* Very muted - disabled states */
+
+  /* Legacy text colors (mapped to new text system) */
+  --dark: #F5F5F5;                    /* Primary text */
+  --dark-800: #D4C5C7;                /* Secondary text */
+  --dark-600: #A89091;                /* Tertiary text */
+  --dark-400: #6B5558;                /* Muted/disabled text */
+  --foreground: #F5F5F5;              /* Primary foreground text */
+  --gray: #A89091;
+
+  /* Primary Brand - Navy (Secondary accent for links/trust elements) */
+  --primary: #1976d2;                 /* Bright navy for visibility on dark */
+  --primary-dark: #1565c0;
+  --primary-light: #42a5f5;
+  --primary-alpha: rgba(25, 118, 210, 0.15);
+
+  /* Energy Accent - Burgundy (Structural, not accent) */
+  --accent-energy: #550020;           /* Deep burgundy base */
+  --accent-energy-hover: #6B0026;     /* Lighter burgundy hover */
+  --accent-energy-alpha: rgba(85, 0, 32, 0.15);
+
+  /* Luxury Accent - CHAMPAGNE GOLD (Primary Premium Accent) */
+  --accent-gold: #D4AF37;             /* Champagne gold - CTAs, highlights */
+  --accent-gold-hover: #E5C158;       /* Brighter gold - hover states */
+  --accent-gold-muted: #C5B783;       /* Subtle gold - decorative */
+  --accent-gold-alpha: rgba(212, 175, 55, 0.15);
+  --accent-gold-border: rgba(212, 175, 55, 0.3);  /* Gold borders/rims */
+
+  /* Warm Alternative Accent - Deep Copper */
   --accent-copper: #B87333;
-  --accent-copper-alpha: rgba(184, 115, 51, 0.1);
-
-  /* Neutral Scale - Dark Tones */
-  --dark: #1a1a1a;
-  --dark-800: #2c2c2c;
-  --dark-600: #4A4E69;
-  --dark-400: #6b7280;
-
-  /* Neutral Scale - Light Tones */
-  --light: #FFFFFF;
-  --light-800: #f8f9fa;
-  --light-600: #e9ecef;
-  --light-400: #dee2e6;
-  --gray: #8b8d98;
+  --accent-copper-alpha: rgba(184, 115, 51, 0.15);
 
   /* Typography */
   --font-body: 'Gilroy Light', Arial, sans-serif;
@@ -80,17 +98,18 @@
   --radius-xl: 20px;
   --radius-round: 50%;
 
-  /* Shadows (Light Mode) */
-  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
-  --shadow-highlight: 0 0 20px rgba(0, 61, 91, 0.15);
+  /* Shadows - Deep, luxurious on dark burgundy */
+  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.7);
+  --shadow-highlight: 0 0 20px rgba(212, 175, 55, 0.3);
 
-  /* Premium Glows */
-  --glow-navy: 0 0 20px rgba(0, 61, 91, 0.4);
-  --glow-gold: 0 0 15px rgba(212, 175, 55, 0.25);
-  --glow-burgundy: 0 0 15px rgba(128, 0, 32, 0.3);
+  /* Premium Glows - Gold emphasis on dark burgundy */
+  --glow-gold: 0 0 20px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
+  --glow-gold-subtle: 0 0 15px rgba(212, 175, 55, 0.25);
+  --glow-burgundy: 0 0 15px rgba(107, 0, 38, 0.4);
+  --glow-navy: 0 0 15px rgba(25, 118, 210, 0.4);
 
   /* Transitions */
   --transition-fast-duration: 0.2s;
@@ -114,89 +133,23 @@
   --z-normal: 1;
   --z-below: -1;
 
-  /* Background & Foreground */
-  --background: #fafbfc;
-  --foreground: #1a1a1a;
+  /* Semantic Colors - Adapted for dark burgundy background */
+  --error-color: #ff6b6b;
+  --error-bg: rgba(220, 38, 38, 0.15);
+  --success-color: #D4AF37;          /* Gold for premium success */
+  --success-bg: rgba(212, 175, 55, 0.15);
+  --warning-color: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.15);
+  --info-color: #60a5fa;
+  --info-bg: rgba(96, 165, 250, 0.15);
 
-  /* Semantic Colors */
-  --error-color: #DC2626;
-  --error-bg: #fee2e2;
-  --success-color: #10B981;
-  --success-bg: #dcfce7;
-  --warning-color: #ea580c;
-  --warning-bg: #fed7aa;
-  --info-color: #0284c7;
-  --info-bg: #dbeafe;
-
-  /* Button Text */
+  /* Button Text Colors */
   --button-text-on-primary: #ffffff;
+  --button-text-on-gold: #1a0512;    /* Dark burgundy text on gold */
+  --button-text-on-burgundy: #F5F5F5;
 }
 
-/* --- Dark Mode CSS Variables --- */
-/* Premium Dark Mode (Trading Platform Standard) */
-:root.dark {
-    /* Backgrounds - Dark Mode Hierarchy */
-    --light: #1e1e1e;          /* Cards, inputs (elevated surface 1) */
-    --light-800: #2a2a2a;      /* Hover states, secondary panels (elevated surface 2) */
-    --light-600: #363636;      /* Modals, dropdowns (elevated surface 3) */
-    --light-400: #4f4f4f;      /* Borders, dividers */
-
-    /* Text - Dark Mode */
-    --dark: #ededed;           /* Primary text, headings */
-    --dark-800: #c8c8c8;       /* Secondary text, labels */
-    --dark-600: #a0a0a0;       /* Tertiary text, placeholders */
-    --dark-400: #8a8a8a;       /* Muted text, disabled */
-    --gray: #718096;           /* Gray text */
-
-    /* Primary Brand - Brighter for Dark Mode */
-    --primary: #1976d2;        /* Brighter navy for visibility */
-    --primary-dark: #1565c0;   /* Darker hover state */
-    --primary-light: #42a5f5;  /* Lighter active state */
-    --primary-alpha: rgba(25, 118, 210, 0.15);
-
-    /* Energy Accent - Brighter Burgundy for Dark */
-    --accent-energy: #e07856;  /* Brighter for visibility */
-    --accent-energy-hover: #f5a57a;
-    --accent-energy-alpha: rgba(224, 120, 86, 0.15);
-
-    /* Luxury Indicators - Adjusted for Dark */
-    --accent-gold: #D4AF37;    /* Keep gold consistent */
-    --accent-gold-muted: #C5B783;
-    --accent-gold-alpha: rgba(212, 175, 55, 0.15);
-
-    /* Copper - Adjusted for Dark */
-    --accent-copper: #D9A066;
-    --accent-copper-alpha: rgba(217, 160, 102, 0.15);
-
-    /* Shadows - Dark Mode */
-    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
-    --shadow-highlight: 0 0 20px rgba(25, 118, 210, 0.25);
-
-    /* Premium Glows - Dark Mode */
-    --glow-navy: 0 0 20px rgba(25, 118, 210, 0.5);
-    --glow-gold: 0 0 15px rgba(212, 175, 55, 0.35);
-    --glow-burgundy: 0 0 15px rgba(224, 120, 86, 0.4);
-
-    /* Background & Foreground */
-    --background: #121212;     /* True black background */
-    --foreground: #ededed;     /* Light text */
-
-    /* Semantic Colors - Dark Mode */
-    --error-bg: rgba(127, 29, 29, 0.2);
-    --error-color: #f87171;
-    --success-bg: rgba(34, 197, 94, 0.15);
-    --success-color: #4ade80;
-    --warning-bg: rgba(234, 88, 12, 0.15);
-    --warning-color: #fb923c;
-    --info-bg: rgba(2, 132, 199, 0.15);
-    --info-color: #38bdf8;
-
-    /* Button Text */
-    --button-text-on-primary: #ffffff;
-}
+/* --- No Dark Mode - Single Premium Burgundy Theme --- */
 
 /* --- Mobile Typography Optimization --- */
 @media (max-width: 640px) {
@@ -262,71 +215,67 @@ a:hover { color: var(--dark-800); }
 @layer components {
   .label-base {
     @apply block mb-1 text-sm font-medium;
-    color: var(--dark-600);
+    color: var(--text-secondary);
   }
 
   .input-base {
     @apply block w-full px-3 py-2 text-base transition-colors duration-200 border rounded-md shadow-sm appearance-none sm:text-sm;
-    @apply bg-[var(--light-600)] border-[var(--light-400)] placeholder:text-gray-400;
-    @apply focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)];
+    background-color: var(--light-800);
+    border-color: var(--light-400);
+    color: var(--text-primary);
+    @apply focus:outline-none focus:ring-2 focus:border-[var(--accent-gold)];
     @apply disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
-  .dark .input-base {
-    background-color: var(--light-600);
-    border-color: var(--light-400);
-    color: white;
+  .input-base::placeholder {
+    color: var(--text-tertiary);
   }
 
-  .dark .input-base::placeholder {
-    color: rgb(107 114 128);
+  .input-base:focus {
+    box-shadow: 0 0 0 3px var(--accent-gold-alpha);
+    border-color: var(--accent-gold);
   }
 
   select.input-base {
     @apply bg-no-repeat;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23D4C5C7' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-size: 1.5em 1.5em;
     padding-right: 2.5rem;
   }
 
   .input-error {
-    @apply border-red-500 text-red-900 placeholder-red-400;
-    @apply focus:ring-red-500 focus:border-red-500;
+    border-color: var(--error-color);
+    color: var(--text-primary);
   }
 
-  .dark .input-error {
-    border-color: rgb(239 68 68);
-    color: rgb(252 165 165);
+  .input-error::placeholder {
+    color: var(--error-color);
   }
 
-  .dark .input-error::placeholder {
-    color: rgb(239 68 68);
+  .input-error:focus {
+    box-shadow: 0 0 0 3px var(--error-bg);
+    border-color: var(--error-color);
   }
 
   .error-message {
-    @apply mt-2 text-sm text-red-600;
+    @apply mt-2 text-sm;
+    color: var(--error-color);
     font-weight: 300;
     font-family: var(--font-body);
   }
 
-  .dark .error-message {
-    color: rgb(248 113 113);
-  }
-
   .prose {
     @apply max-w-none;
+    color: var(--text-secondary);
   }
   .prose a {
-    @apply text-sky-600 hover:text-sky-700;
+    color: var(--accent-gold);
+    text-decoration: underline;
   }
 
-  .dark .prose a {
-    color: rgb(56 189 248);
-  }
-
-  .dark .prose a:hover {
-    color: rgb(125 211 252);
+  .prose a:hover {
+    color: var(--accent-gold-hover);
   }
 }
 
@@ -347,7 +296,7 @@ a:hover { color: var(--dark-800); }
   padding: 0;
   cursor: pointer;
   background-color: transparent;
-  color: var(--dark-400);
+  color: var(--text-tertiary);
   border: 1px solid var(--light-400);
   border-radius: var(--radius-round);
   box-shadow: none;
@@ -372,9 +321,9 @@ a:hover { color: var(--dark-800); }
 .remove-item-btn:active:not(:disabled) {
   transform: scale(1);
   background-color: var(--error-color);
-  color: var(--light);
+  color: var(--text-primary);
   border-color: var(--error-color);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
 }
 .remove-item-btn:disabled {
   opacity: 0.5;
@@ -382,21 +331,26 @@ a:hover { color: var(--dark-800); }
   transform: none !important;
   box-shadow: none !important;
   background-color: transparent !important;
-  color: var(--dark-400) !important;
+  color: var(--text-disabled) !important;
   border-color: var(--light-400) !important;
-}
-.dark .remove-item-btn {
-    color: var(--dark-600);
-    border-color: var(--light-600);
-}
-.dark .remove-item-btn:active:not(:disabled) {
-  color: var(--dark);
 }
 
 @layer components {
   .form-input {
-    @apply block w-full px-4 py-3 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-base bg-[var(--light-800)] border border-transparent;
+    @apply block w-full px-4 py-3 rounded-lg shadow-inner focus:outline-none text-base border;
+    background-color: var(--light-800);
+    border-color: var(--light-400);
+    color: var(--text-primary);
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .form-input:focus {
+    box-shadow: 0 0 0 3px var(--accent-gold-alpha);
+    border-color: var(--accent-gold);
+  }
+
+  .form-input::placeholder {
+    color: var(--text-tertiary);
   }
 
   textarea.form-input {

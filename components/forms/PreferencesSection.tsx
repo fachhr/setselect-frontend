@@ -53,7 +53,7 @@ export function PreferencesSection({
       {/* Notice Period */}
       <div>
         <label htmlFor="notice_period_months" className="label-base">
-          Notice Period <span className="text-red-500">*</span>
+          Notice Period <span className="text-[var(--error-color)]">*</span>
         </label>
         <select
           id="notice_period_months"
@@ -74,9 +74,9 @@ export function PreferencesSection({
       {/* Desired Locations */}
       <div>
         <label className="label-base">
-          Desired Locations <span className="text-red-500">*</span>
+          Desired Locations <span className="text-[var(--error-color)]">*</span>
         </label>
-        <p className="text-xs text-gray-500 mb-3">Select up to 5 Swiss cantons</p>
+        <p className="text-xs text-[var(--text-tertiary)] mb-3">Select up to 5 Swiss cantons</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto border rounded-lg p-3">
           {LOCATION_OPTIONS.map((location) => (
             <label
@@ -94,7 +94,7 @@ export function PreferencesSection({
                 disabled={!selectedLocations.includes(location.value) && selectedLocations.length >= 5}
                 className="h-4 w-4 text-[var(--primary)] border-[var(--light-400)] rounded focus:ring-[var(--primary)] accent-[var(--primary)]"
               />
-              <span className="ml-2 text-sm text-[var(--dark-600)]">{location.label}</span>
+              <span className="ml-2 text-sm text-[var(--text-secondary)]">{location.label}</span>
             </label>
           ))}
         </div>
@@ -112,7 +112,7 @@ export function PreferencesSection({
           <p className="error-message">{errors.desired_locations.message}</p>
         )}
         {selectedLocations.length > 0 && (
-          <p className="text-xs text-[var(--dark-400)] mt-2">
+          <p className="text-xs text-[var(--text-tertiary)] mt-2">
             {selectedLocations.length} of 5 selected: {selectedLocations.join(', ')}
           </p>
         )}
@@ -121,13 +121,13 @@ export function PreferencesSection({
       {/* Salary Expectation */}
       <div>
         <label className="label-base">
-          Yearly Salary Expectation (including bonus) <span className="text-red-500">*</span>
+          Yearly Salary Expectation (including bonus) <span className="text-[var(--error-color)]">*</span>
         </label>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
           {/* Minimum Salary */}
           <div>
-            <label htmlFor="salary_min" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="salary_min" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Minimum (CHF)
             </label>
             <input
@@ -146,7 +146,7 @@ export function PreferencesSection({
 
           {/* Maximum Salary */}
           <div>
-            <label htmlFor="salary_max" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="salary_max" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Maximum (CHF)
             </label>
             <input
@@ -166,8 +166,8 @@ export function PreferencesSection({
 
         {/* Display Range */}
         {salaryMin > 0 && salaryMax > 0 && (
-          <p className="mt-3 text-sm text-gray-600">
-            Your desired salary range is <span className="font-semibold text-[var(--foreground)]">
+          <p className="mt-3 text-sm text-[var(--text-secondary)]">
+            Your desired salary range is <span className="font-semibold text-[var(--text-primary)]">
               {salaryMin.toLocaleString()} - {salaryMax.toLocaleString()} CHF
             </span>
           </p>
