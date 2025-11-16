@@ -3,9 +3,9 @@ import { z } from 'zod';
 /**
  * Validation schema for Silvia's List Talent Pool signup form
  *
- * This schema validates all user-provided fields (13 fields total):
+ * This schema validates all user-provided fields (11 fields total):
  * - Contact details (5 fields)
- * - Job preferences (7 fields)
+ * - Job preferences (5 fields)
  * - CV upload
  * - Terms acceptance
  */
@@ -51,11 +51,6 @@ export const talentPoolSchema = z.object({
   // JOB PREFERENCES (user-provided, required)
   // ============================================
 
-  // Working capacity (10-100%)
-  working_capacity_percent: z.number()
-    .min(10, 'Working capacity must be at least 10%')
-    .max(100, 'Working capacity cannot exceed 100%'),
-
   // Available from date
   available_from_date: z.string()
     .min(1, 'Please select your availability date')
@@ -67,10 +62,6 @@ export const talentPoolSchema = z.object({
       message: 'Invalid date format'
     }),
 
-  // Desired duration
-  desired_duration_months: z.string()
-    .min(1, 'Please select your desired contract duration'),
-
   // Locations (at least 1 required, max 5)
   desired_locations: z.array(z.string())
     .min(1, 'Please select at least one preferred location')
@@ -81,15 +72,18 @@ export const talentPoolSchema = z.object({
     .optional()
     .or(z.literal('')),
 
-  // Salary expectation (always has default values from sliders)
-  salary_min: z.number()
-    .min(0, 'Minimum salary cannot be negative'),
+  // Salary expectation (required number inputs)
+  salary_min: z.number({
+    required_error: 'Minimum salary is required',
+    invalid_type_error: 'Please enter a valid number'
+  })
+    .min(1, 'Minimum salary must be at least 1 CHF'),
 
-  salary_max: z.number()
-    .min(0, 'Maximum salary cannot be negative'),
-
-  salary_confidential: z.boolean()
-    .default(false),
+  salary_max: z.number({
+    required_error: 'Maximum salary is required',
+    invalid_type_error: 'Please enter a valid number'
+  })
+    .min(1, 'Maximum salary must be at least 1 CHF'),
 
   // ============================================
   // CV UPLOAD (required)
@@ -130,12 +124,8 @@ export const talentPoolSchema = z.object({
  */
 export const talentPoolSchemaRefined = talentPoolSchema.refine(
   (data) => {
-    // If salary is not confidential and both min/max are provided,
-    // ensure min is less than or equal to max
-    if (!data.salary_confidential && data.salary_min && data.salary_max) {
-      return data.salary_min <= data.salary_max;
-    }
-    return true;
+    // Ensure min is less than or equal to max
+    return data.salary_min <= data.salary_max;
   },
   {
     message: 'Minimum salary cannot be greater than maximum salary',
@@ -166,14 +156,11 @@ export const talentPoolContactSchema = talentPoolSchema.pick({
 });
 
 export const talentPoolPreferencesSchema = talentPoolSchema.pick({
-  working_capacity_percent: true,
   available_from_date: true,
-  desired_duration_months: true,
   desired_locations: true,
   desired_other_location: true,
   salary_min: true,
   salary_max: true,
-  salary_confidential: true,
 });
 
 export const talentPoolCVSchema = talentPoolSchema.pick({

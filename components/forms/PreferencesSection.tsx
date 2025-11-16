@@ -3,9 +3,7 @@
 import React, { useState } from 'react';
 import { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'react-hook-form';
 import { TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
-import { DualRangeSlider } from '../ui/DualRangeSlider';
 import {
-  DURATION_OPTIONS,
   LOCATION_OPTIONS
 } from '@/lib/formOptions';
 
@@ -24,10 +22,8 @@ export function PreferencesSection({
 }: PreferencesSectionProps) {
   const [showOtherLocation, setShowOtherLocation] = useState(false);
 
-  const workingCapacity = watch('working_capacity_percent') || 50;
   const salaryMin = watch('salary_min') || 0;
-  const salaryMax = watch('salary_max') || 50000;
-  const salaryConfidential = watch('salary_confidential') || false;
+  const salaryMax = watch('salary_max') || 0;
   const selectedLocations = watch('desired_locations') || [];
 
   const toggleLocation = (location: string) => {
@@ -53,32 +49,6 @@ export function PreferencesSection({
         </p>
       </div>
 
-      {/* Working Capacity */}
-      <div>
-        <label htmlFor="working_capacity_percent" className="label-base">
-          Working Capacity <span className="text-red-500">*</span>
-        </label>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>10%</span>
-            <span className="font-semibold text-lg text-primary">{workingCapacity}%</span>
-            <span>100%</span>
-          </div>
-          <input
-            type="range"
-            id="working_capacity_percent"
-            min="10"
-            max="100"
-            step="5"
-            {...register('working_capacity_percent', { valueAsNumber: true })}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
-          />
-        </div>
-        {errors.working_capacity_percent && (
-          <p className="error-message">{errors.working_capacity_percent.message}</p>
-        )}
-      </div>
-
       {/* Available From */}
       <div>
         <label htmlFor="available_from_date" className="label-base">
@@ -93,28 +63,6 @@ export function PreferencesSection({
         />
         {errors.available_from_date && (
           <p className="error-message">{errors.available_from_date.message}</p>
-        )}
-      </div>
-
-      {/* Desired Duration */}
-      <div>
-        <label htmlFor="desired_duration_months" className="label-base">
-          Desired Contract Duration <span className="text-red-500">*</span>
-        </label>
-        <select
-          id="desired_duration_months"
-          {...register('desired_duration_months')}
-          className={`input-base ${errors.desired_duration_months ? 'input-error' : ''}`}
-        >
-          <option value="">Select duration</option>
-          {DURATION_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        {errors.desired_duration_months && (
-          <p className="error-message">{errors.desired_duration_months.message}</p>
         )}
       </div>
 
@@ -168,48 +116,56 @@ export function PreferencesSection({
       {/* Salary Expectation */}
       <div>
         <label className="label-base">
-          Salary Expectation (CHF/month)
+          Yearly Salary Expectation (including bonus) <span className="text-red-500">*</span>
         </label>
 
-        <div className="space-y-4">
-          <label className="flex items-center space-x-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+          {/* Minimum Salary */}
+          <div>
+            <label htmlFor="salary_min" className="block text-sm font-medium text-gray-700 mb-2">
+              Minimum (CHF)
+            </label>
             <input
-              type="checkbox"
-              {...register('salary_confidential')}
-              className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary accent-primary"
+              type="number"
+              id="salary_min"
+              min="0"
+              step="1000"
+              {...register('salary_min', { valueAsNumber: true })}
+              placeholder="e.g., 60000"
+              className={`input-base ${errors.salary_min ? 'input-error' : ''}`}
             />
-            <span className="text-sm text-gray-700">Prefer not to disclose</span>
-          </label>
+            {errors.salary_min && (
+              <p className="error-message">{errors.salary_min.message}</p>
+            )}
+          </div>
 
-          {!salaryConfidential && (
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm text-gray-600">Desired monthly salary range (in thousands CHF)</span>
-                <span className="font-bold text-lg text-[var(--foreground)] bg-[var(--light-800)] px-3 py-1 rounded-md">
-                  {Math.round(salaryMin / 1000)}k - {Math.round(salaryMax / 1000)}k CHF
-                </span>
-              </div>
-
-              <DualRangeSlider
-                min={0}
-                max={50}
-                step={0.5}
-                valueMin={salaryMin / 1000}
-                valueMax={salaryMax / 1000}
-                onChange={(min, max) => {
-                  setValue('salary_min', min * 1000, { shouldValidate: true });
-                  setValue('salary_max', max * 1000, { shouldValidate: true });
-                }}
-              />
-            </div>
-          )}
+          {/* Maximum Salary */}
+          <div>
+            <label htmlFor="salary_max" className="block text-sm font-medium text-gray-700 mb-2">
+              Maximum (CHF)
+            </label>
+            <input
+              type="number"
+              id="salary_max"
+              min="0"
+              step="1000"
+              {...register('salary_max', { valueAsNumber: true })}
+              placeholder="e.g., 100000"
+              className={`input-base ${errors.salary_max ? 'input-error' : ''}`}
+            />
+            {errors.salary_max && (
+              <p className="error-message">{errors.salary_max.message}</p>
+            )}
+          </div>
         </div>
 
-        {errors.salary_min && (
-          <p className="error-message">{errors.salary_min.message}</p>
-        )}
-        {errors.salary_max && (
-          <p className="error-message">{errors.salary_max.message}</p>
+        {/* Display Range */}
+        {salaryMin > 0 && salaryMax > 0 && (
+          <p className="mt-3 text-sm text-gray-600">
+            Your desired salary range is <span className="font-semibold text-[var(--foreground)]">
+              {salaryMin.toLocaleString()} - {salaryMax.toLocaleString()} CHF
+            </span>
+          </p>
         )}
       </div>
     </div>

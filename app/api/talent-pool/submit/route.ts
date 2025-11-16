@@ -55,13 +55,11 @@ export async function POST(req: NextRequest) {
         phoneNumber: validatedData.phoneNumber,
 
         // Job Preferences (user-provided)
-        working_capacity_percent: validatedData.working_capacity_percent,
         available_from_date: validatedData.available_from_date,
-        desired_duration_months: validatedData.desired_duration_months,
         desired_locations: validatedData.desired_locations,
         desired_other_location: validatedData.desired_other_location || null,
-        salary_min: validatedData.salary_confidential ? null : validatedData.salary_min,
-        salary_max: validatedData.salary_confidential ? null : validatedData.salary_max,
+        salary_min: validatedData.salary_min,
+        salary_max: validatedData.salary_max,
 
         // CV Info
         cv_storage_path: cvStoragePath,

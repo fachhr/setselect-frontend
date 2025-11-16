@@ -11,9 +11,7 @@ export interface TalentPoolProfile {
   country_code: string;
   phoneNumber: string;
   years_of_experience?: string | null; // Extracted by CV parser
-  working_capacity_percent: number;
   available_from_date: string;
-  desired_duration_months: string;
   desired_job_types: string[];
   desired_locations: string[];
   desired_other_location?: string | null;

@@ -271,7 +271,6 @@ export const UserProfileSchema = z.object({
   professional_interests: z.array(z.string()).nullable(),
   extracurricular_activities: z.array(ActivityItemSchema).nullable(),
   base_projects: z.array(ProjectItemSchema).nullable(),
-  working_capacity_percent: z.number().min(0).max(100).nullable(),
   available_from_date: z.string()
     .nullable()
     .or(z.literal(''))
@@ -285,7 +284,6 @@ export const UserProfileSchema = z.object({
     }, {
       message: "Available date cannot be in the past."
     }),
-  desired_duration_months: z.string().nullable(),
   desired_job_types: z.array(z.string()).nullable(),
   desired_locations: z.array(z.string())
     .max(5, { message: "You can select a maximum of 5 locations" })
@@ -356,7 +354,6 @@ export const ProjectsFormSchema = z.object({
 });
 
 export const OrganizationalFormSchema = z.object({
-  working_capacity_percent: z.number().min(0).max(100).optional(),
   available_from_date: z.string()
     .min(1, { message: "Available date is required" })
     .refine(dateStr => {
@@ -367,7 +364,6 @@ export const OrganizationalFormSchema = z.object({
     }, {
       message: "Available date cannot be in the past."
     }),
-  desired_duration_months: z.string().min(1, { message: "Desired duration is required" }),
   desired_job_types: z.array(z.string()).min(1, { message: "At least one job type must be selected" }),
   desired_locations: z.array(z.string())
     .min(1, { message: "At least one location must be selected" })
