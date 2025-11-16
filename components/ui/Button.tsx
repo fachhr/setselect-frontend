@@ -23,11 +23,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Variant styles
     const variantStyles = {
-      primary: 'bg-[var(--primary)] text-black shadow hover:bg-[var(--primary-dark)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',
-      secondary: 'bg-[var(--light-800)] text-[var(--dark-800)] hover:bg-[var(--primary-alpha)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',
-      solid: 'bg-[var(--light-800)] text-[var(--dark-800)] shadow hover:bg-[var(--primary-alpha)] dark:bg-[var(--light-800)] dark:text-[var(--dark-800)] dark:hover:bg-[var(--primary-alpha)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',
-      outline: 'bg-transparent text-[var(--foreground)] border border-[var(--light-400)] hover:bg-[var(--light-400)] dark:border-[var(--dark-400)] dark:hover:bg-[var(--dark-600)] disabled:bg-transparent disabled:text-[var(--dark-400)]',
-      ghost: 'bg-transparent text-[var(--dark-600)] hover:bg-[var(--light-600)] hover:text-[var(--foreground)] dark:text-[var(--dark-400)] dark:hover:bg-[var(--light-600)] dark:hover:text-[var(--light)] disabled:bg-transparent disabled:text-[var(--dark-400)]',
+      // Primary: Bright yellow with dark text - maximum visibility
+      primary: 'bg-[var(--primary)] text-[var(--button-text-on-primary)] shadow-md hover:bg-[var(--primary-dark)] hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:shadow-none disabled:transform-none',
+      // Secondary: White with border and dark text - great contrast on colored backgrounds
+      secondary: 'bg-white text-[var(--dark-800)] border-2 border-[var(--dark-800)] shadow-sm hover:bg-[var(--light-800)] hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)] disabled:border-[var(--light-400)] disabled:shadow-none disabled:transform-none',
+      // Solid: Light gray with dark text - subtle but visible
+      solid: 'bg-[var(--light-800)] text-[var(--dark-800)] shadow hover:bg-[var(--light-600)] disabled:bg-[var(--light-600)] disabled:text-[var(--dark-400)]',
+      // Outline: Transparent with strong border - works on any background
+      outline: 'bg-transparent text-[var(--dark-800)] border-2 border-[var(--dark-800)] hover:bg-[var(--dark-800)] hover:text-white disabled:bg-transparent disabled:text-[var(--dark-400)] disabled:border-[var(--dark-400)]',
+      // Ghost: Subtle, no border - for tertiary actions
+      ghost: 'bg-transparent text-[var(--dark-600)] hover:bg-[var(--light-600)] hover:text-[var(--foreground)] disabled:bg-transparent disabled:text-[var(--dark-400)]',
     };
 
     // Combine all styles

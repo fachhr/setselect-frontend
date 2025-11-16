@@ -68,10 +68,10 @@ export function TermsSection({
         type="submit"
         disabled={isSubmitting}
         className={`
-          w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all
+          w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-200
           ${isSubmitting
-            ? 'bg-[var(--light-600)] text-[var(--dark-400)] cursor-not-allowed'
-            : 'bg-primary hover:bg-primary-dark text-[var(--button-text-on-primary)] shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]'
+            ? 'bg-[var(--light-600)] text-[var(--dark-400)] cursor-not-allowed shadow-none'
+            : 'bg-[var(--primary)] text-[var(--button-text-on-primary)] shadow-lg hover:shadow-xl transform hover:scale-[1.03] active:scale-[0.97] hover:bg-[var(--primary-dark)] border-2 border-[var(--dark-800)]'
           }
         `}
       >

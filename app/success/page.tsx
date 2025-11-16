@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Button from '@/components/ui/Button';
 import { CheckCircleIcon } from '@/components/ui/icons/CheckCircleIcon';
 
 export default function SuccessPage() {
@@ -71,17 +72,15 @@ export default function SuccessPage() {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-            >
-              ← Back to Home
+            <Link href="/">
+              <Button variant="outline" size="lg">
+                ← Back to Home
+              </Button>
             </Link>
-            <a
-              href="mailto:contact@silviaslist.com"
-              className="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg text-base font-medium text-[var(--button-text-on-primary)] bg-primary hover:bg-primary-dark transition-colors"
-            >
-              Contact Us
+            <a href="mailto:contact@silviaslist.com">
+              <Button variant="primary" size="lg">
+                Contact Us
+              </Button>
             </a>
           </div>
         </div>
