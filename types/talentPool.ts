@@ -10,7 +10,7 @@ export interface TalentPoolProfile {
   linkedinUrl?: string | null;
   country_code: string;
   phoneNumber: string;
-  years_of_experience: string;
+  years_of_experience?: string | null; // Extracted by CV parser
   working_capacity_percent: number;
   available_from_date: string;
   desired_duration_months: string;
