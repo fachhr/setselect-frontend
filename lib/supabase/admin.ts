@@ -21,8 +21,3 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
     persistSession: false
   }
 });
-
-console.log("Supabase Admin Client Initialized (SERVER SIDE)");
-console.log("- URL:", supabaseUrl);
-console.log("- Key (first 20 chars):", supabaseServiceRoleKey?.substring(0, 20) + "...");
-console.log("- Key role:", supabaseServiceRoleKey?.includes('service_role') ? 'service_role ✓' : 'NOT service_role ⚠️');
