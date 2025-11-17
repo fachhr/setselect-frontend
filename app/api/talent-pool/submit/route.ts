@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { talentPoolSchemaRefined } from '@/lib/validation/talentPoolSchema';
+import { sendUserConfirmation } from '@/lib/email/sendUserConfirmation';
+import { sendAdminNotification } from '@/lib/email/sendAdminNotification';
 
 /**
  * POST /api/talent-pool/submit
@@ -101,6 +103,37 @@ export async function POST(req: NextRequest) {
     }
 
     // ========================================
+    // SEND EMAIL NOTIFICATIONS (non-blocking)
+    // ========================================
+    // Send confirmation email to user
+    sendUserConfirmation({
+      firstName: validatedData.contact_first_name,
+      lastName: validatedData.contact_last_name,
+      email: validatedData.email,
+    }).catch(err => {
+      console.error('Failed to send user confirmation email:', err);
+      // Don't fail the request - email is not critical
+    });
+
+    // Send notification email to admin
+    sendAdminNotification({
+      firstName: validatedData.contact_first_name,
+      lastName: validatedData.contact_last_name,
+      email: validatedData.email,
+      phoneCountryCode: validatedData.country_code,
+      phoneNumber: validatedData.phoneNumber,
+      linkedinUrl: validatedData.linkedinUrl,
+      desiredLocations: validatedData.desired_locations,
+      salaryMin: validatedData.salary_min,
+      salaryMax: validatedData.salary_max,
+      noticePeriodMonths: validatedData.notice_period_months ? Number(validatedData.notice_period_months) : undefined,
+      cvStoragePath,
+    }).catch(err => {
+      console.error('Failed to send admin notification email:', err);
+      // Don't fail the request - email is not critical
+    });
+
+    // ========================================
     // TRIGGER ASYNC PARSING (non-blocking)
     // ========================================
     const parserUrl = process.env.NEXT_PUBLIC_RAILWAY_API_URL;
@@ -126,7 +159,7 @@ export async function POST(req: NextRequest) {
       console.warn('Parser service not configured - skipping automatic parsing');
     }
 
-    // Return success immediately (parser runs in background)
+    // Return success immediately (parser and emails run in background)
     return NextResponse.json({
       success: true,
       profileId: profile.id,
