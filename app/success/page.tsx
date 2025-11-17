@@ -9,14 +9,10 @@ export default function SuccessPage() {
       backgroundAttachment: 'fixed'
     }}>
       <div className="max-w-2xl w-full">
-        <div className="bg-[var(--light)] rounded-xl p-8 sm:p-12 text-center" style={{
-          boxShadow: 'var(--shadow-xl), var(--glow-gold-subtle)'
-        }}>
+        <div className="bg-[var(--light)] rounded-xl shadow-lg p-8 sm:p-12 text-center">
           {/* Success Icon - GOLD CELEBRATION */}
           <div className="mb-6 flex justify-center">
-            <div className="rounded-full bg-[var(--success-bg)] p-4" style={{
-              boxShadow: 'var(--glow-gold-subtle)'
-            }}>
+            <div className="rounded-full bg-[var(--success-bg)] p-4">
               <CheckCircleIcon className="h-16 w-16 text-[var(--success-color)]" />
             </div>
           </div>

@@ -11,7 +11,7 @@ export default function TermsPage() {
         <div className="bg-[var(--light)] rounded-xl shadow-lg p-8 sm:p-12">
           {/* Title Section */}
           <div className="mb-12 pb-8 border-b border-[var(--light-400)]">
-            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-[var(--accent-gold)])] mb-4 tracking-tight">
+            <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">
               Terms and Conditions
             </h1>
             <p className="text-[var(--text-secondary)] text-lg">
@@ -28,7 +28,7 @@ export default function TermsPage() {
                   <span className="text-[var(--accent-gold)] font-bold text-lg">1</span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-[var(--text-[var(--accent-gold)])] mb-4">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
                     Talent Pool Participation
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
@@ -176,7 +176,7 @@ export default function TermsPage() {
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
                     You have the right to access, rectify, erase, port, and object to processing of your data. Contact us at{' '}
-                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold)]-dark underline">
+                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline">
                       privacy@silviaslist.com
                     </a>
                     {' '}to exercise these rights.
@@ -231,13 +231,13 @@ export default function TermsPage() {
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
                     For questions about these terms:{' '}
-                    <a href="mailto:contact@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold)]-dark underline">
+                    <a href="mailto:contact@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline">
                       contact@silviaslist.com
                     </a>
                   </p>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
                     For privacy inquiries:{' '}
-                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold)]-dark underline">
+                    <a href="mailto:privacy@silviaslist.com" className="text-[var(--accent-gold)] hover:text-[var(--accent-gold-hover)] underline">
                       privacy@silviaslist.com
                     </a>
                   </p>
