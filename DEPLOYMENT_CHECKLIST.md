@@ -260,7 +260,14 @@ DROP POLICY IF EXISTS "Service role can delete CVs" ON storage.objects;
 ⏳ Run database migration 003 (storage security)
 
 ### Parser Service Changes:
-✅ No changes required - API contract unchanged
+⏳ **NEW: Years of Experience Calculation** (Required Implementation)
+   - Parser must calculate total years of experience from professional_experience array
+   - See detailed specification: `/docs/YEARS_OF_EXPERIENCE_CALCULATION.md`
+   - Algorithm: Merge overlapping periods, subtract gaps, round to whole years
+   - Store result in `years_of_experience` field as string (e.g., "5", "10")
+   - Required for seniority filtering and talent pool display
+
+✅ API contract unchanged (same endpoint, same authentication)
 
 ---
 
@@ -279,6 +286,15 @@ DROP POLICY IF EXISTS "Service role can delete CVs" ON storage.objects;
 **Priority 3 (Performance):**
 7. Run migration 002 (indexes)
 8. Verify query performance improvements
+
+**Priority 4 (Parser Enhancement - Parallel Track):**
+9. Implement years of experience calculation in parser service
+10. Deploy updated parser service
+11. Test with real CV samples
+12. Verify talent pool displays calculated years correctly
+13. Optional: Re-parse existing CVs to backfill years_of_experience
+
+See `/docs/YEARS_OF_EXPERIENCE_CALCULATION.md` for detailed algorithm specification.
 
 ---
 

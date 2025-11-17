@@ -102,11 +102,17 @@ silvias-list-frontend/
 See `.env.example` for required environment variables.
 
 **Required:**
+
+**Client-side (exposed to browser):**
 - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous/public key
-- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (server-side only)
-- `NEXT_PUBLIC_RAILWAY_API_URL` - Parser service URL
+
+**Server-side only (secure):**
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (CRITICAL: Server-side only!)
+- `RAILWAY_API_URL` - Parser service URL (CHANGED from NEXT_PUBLIC_RAILWAY_API_URL for security)
 - `PARSER_API_KEY` - API key for parser authentication
+
+⚠️ **Security Note:** Never use `NEXT_PUBLIC_` prefix for secrets or internal URLs. See [CHANGELOG.md](CHANGELOG.md) for details on the security fix.
 
 ## Deployment
 
@@ -151,6 +157,29 @@ This is a private project. If you have access and want to contribute:
 ## License
 
 Private - All Rights Reserved
+
+## Documentation
+
+This project follows enterprise-grade documentation standards. All changes, tests, and engineering decisions are systematically tracked.
+
+### Core Documentation
+
+- **[CHANGELOG.md](CHANGELOG.md)** - Complete history of all changes, bug fixes, and features
+- **[TESTING_LOG.md](TESTING_LOG.md)** - Test results, coverage reports, and QA activities
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Step-by-step deployment guide and verification
+- **[docs/ENGINEERING_PRACTICES.md](docs/ENGINEERING_PRACTICES.md)** - Engineering standards, conventions, and best practices
+
+### Technical Specifications
+
+- **[docs/YEARS_OF_EXPERIENCE_CALCULATION.md](docs/YEARS_OF_EXPERIENCE_CALCULATION.md)** - Algorithm spec for years of experience calculation
+- **[docs/FRONTEND_YEARS_VERIFICATION.md](docs/FRONTEND_YEARS_VERIFICATION.md)** - Frontend integration verification report
+
+### Quick Links
+
+- 🐛 Found a bug? Check [CHANGELOG.md](CHANGELOG.md) to see if it's already fixed
+- 🧪 Adding tests? Follow guidelines in [TESTING_LOG.md](TESTING_LOG.md)
+- 🚀 Deploying? Use [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)
+- 📚 Contributing? Read [docs/ENGINEERING_PRACTICES.md](docs/ENGINEERING_PRACTICES.md)
 
 ## Support
 
