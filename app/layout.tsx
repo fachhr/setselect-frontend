@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Silvia's List - Join Our Talent Pool",
-  description: "Connect with top opportunities in Switzerland. Upload your CV and join our exclusive talent pool.",
+  title: "Silvia's List - Discover Top Swiss Tech Talent",
+  description: "Browse exceptional tech talent in Switzerland. Discover pre-screened professionals ready for their next opportunity.",
 };
 
 export default function RootLayout({

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { SeniorityLevel } from '@/types/talentPool';
 import { LOCATION_OPTIONS } from '@/lib/formOptions';
+import { SALARY_MIN, SALARY_MAX, SALARY_STEP } from '@/lib/constants';
 
 export interface FilterState {
   seniority: SeniorityLevel | 'all';
@@ -22,10 +23,6 @@ const SENIORITY_OPTIONS: Array<{ value: SeniorityLevel | 'all'; label: string }>
   { value: 'mid', label: 'Mid-level (3-6 years)' },
   { value: 'senior', label: 'Senior (7+ years)' },
 ];
-
-const SALARY_MIN = 60000;
-const SALARY_MAX = 250000;
-const SALARY_STEP = 5000;
 
 export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
   const [showCantonDropdown, setShowCantonDropdown] = useState(false);

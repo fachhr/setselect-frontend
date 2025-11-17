@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { v4 as uuidv4 } from 'uuid';
+import { MAX_CV_FILE_SIZE, VALID_CV_MIME_TYPES, MIME_TO_EXTENSION } from '@/lib/constants';
 
 /**
  * POST /api/talent-pool/upload-cv
@@ -27,21 +28,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
+    // Validate file size
+    if (file.size > MAX_CV_FILE_SIZE) {
       return NextResponse.json(
-        { success: false, error: 'File size must be less than 5MB' },
+        { success: false, error: `File size must be less than ${MAX_CV_FILE_SIZE / (1024 * 1024)}MB` },
         { status: 400 }
       );
     }
 
-    // Validate file type
-    const validTypes = [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
-    if (!validTypes.includes(file.type)) {
+    // Validate file type (MIME type check)
+    if (!VALID_CV_MIME_TYPES.includes(file.type as any)) {
       return NextResponse.json(
         { success: false, error: 'File must be PDF or DOCX' },
         { status: 400 }
@@ -51,8 +47,9 @@ export async function POST(req: NextRequest) {
     // Generate unique profile ID
     const profileId = uuidv4();
 
-    // Get file extension
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'pdf';
+    // Sanitize and validate file extension
+    // Use MIME-derived extension for security (don't trust filename)
+    const fileExt = MIME_TO_EXTENSION[file.type] || 'pdf';
     const fileName = `${profileId}/cv.${fileExt}`;
 
     // Convert File to ArrayBuffer for upload

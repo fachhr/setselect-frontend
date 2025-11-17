@@ -48,16 +48,9 @@ export async function GET(req: NextRequest) {
       .from('user_profiles')
       .select('*', { count: 'exact' });
 
-    // Apply seniority filter (convert to years_of_experience range)
-    if (seniority && seniority !== 'all') {
-      const yearsRange = getSeniorityYearsRange(seniority);
-      if (yearsRange) {
-        query = query.gte('years_of_experience', yearsRange.min.toString());
-        if (yearsRange.max !== null) {
-          query = query.lte('years_of_experience', yearsRange.max.toString());
-        }
-      }
-    }
+    // Store seniority filter to apply post-fetch (since years_of_experience is stored as text)
+    // We can't do numeric comparison in SQL without CAST, so filter in-memory
+    const seniorityFilter = seniority && seniority !== 'all' ? seniority : null;
 
     // Apply cantons filter
     if (cantonsParam) {
@@ -97,7 +90,7 @@ export async function GET(req: NextRequest) {
     query = query.range(offset, offset + limit - 1);
 
     // Execute query
-    const { data, error, count } = await query;
+    const { data, error, count: rawCount } = await query;
 
     if (error) {
       console.error('Talent pool query error:', error);
@@ -107,8 +100,29 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Apply seniority filter post-fetch (since years_of_experience is TEXT in DB)
+    // This prevents the "10" < "2" string comparison bug
+    let filteredData = data || [];
+    if (seniorityFilter) {
+      const yearsRange = getSeniorityYearsRange(seniorityFilter);
+      if (yearsRange) {
+        filteredData = filteredData.filter(profile => {
+          const years = profile.years_of_experience ?
+            parseFloat(profile.years_of_experience) : null;
+
+          if (years === null || isNaN(years)) return false;
+
+          if (yearsRange.max !== null) {
+            return years >= yearsRange.min && years <= yearsRange.max;
+          } else {
+            return years >= yearsRange.min;
+          }
+        });
+      }
+    }
+
     // Transform data to anonymized profiles
-    const candidates: AnonymizedTalentProfile[] = (data || []).map((profile) => {
+    const candidates: AnonymizedTalentProfile[] = filteredData.map((profile) => {
       // Parse years_of_experience (could be string or number)
       const years = profile.years_of_experience ?
         (typeof profile.years_of_experience === 'string' ?
@@ -129,8 +143,8 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // Calculate pagination metadata
-    const total = count || 0;
+    // Calculate pagination metadata (use filtered count, not raw count)
+    const total = filteredData.length;
     const totalPages = Math.ceil(total / limit);
 
     // Build response

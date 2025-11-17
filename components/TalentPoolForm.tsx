@@ -103,6 +103,7 @@ export function TalentPoolForm() {
       const submitData = await submitResponse.json();
 
       // Success! Redirect to success page
+      // Note: We don't reset isSubmitting here since we're redirecting anyway
       router.push('/success');
 
     } catch (error) {
@@ -112,6 +113,8 @@ export function TalentPoolForm() {
           ? error.message
           : 'An unexpected error occurred. Please try again.'
       );
+    } finally {
+      // Always reset submitting state, even on success (handles back navigation edge case)
       setIsSubmitting(false);
     }
   };

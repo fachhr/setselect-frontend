@@ -23,10 +23,22 @@ export async function POST(req: NextRequest) {
     // Remove cvFile from validation (already uploaded)
     const { cvFile, cvStoragePath, originalFilename, ...formData } = body;
 
-    // Validate form data
+    // Validate CV storage path exists
+    if (!cvStoragePath || typeof cvStoragePath !== 'string') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'CV upload required - storage path missing'
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate form data (without cvFile since it's already uploaded and validated)
+    // We create a temporary File object just for validation since the schema requires it
     const validationResult = talentPoolSchemaRefined.safeParse({
       ...formData,
-      cvFile: new File([], 'dummy.pdf', { type: 'application/pdf' }) // Dummy for validation
+      cvFile: new File([], 'validated.pdf', { type: 'application/pdf' })
     });
 
     if (!validationResult.success) {
@@ -103,7 +115,9 @@ export async function POST(req: NextRequest) {
     // ========================================
     // TRIGGER ASYNC PARSING (non-blocking)
     // ========================================
-    const parserUrl = process.env.NEXT_PUBLIC_RAILWAY_API_URL;
+    // IMPORTANT: Use server-side only env vars (no NEXT_PUBLIC_ prefix)
+    // NEXT_PUBLIC_ vars are exposed to client bundle which leaks internal API URLs
+    const parserUrl = process.env.RAILWAY_API_URL;
     const parserApiKey = process.env.PARSER_API_KEY;
 
     if (parserUrl && parserApiKey && jobData) {
