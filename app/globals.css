@@ -45,6 +45,10 @@
     --button-text-on-gold: #ffffff;
   }
 
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
     @apply bg-white text-slate-900 antialiased;
     font-family: var(--font-sans);
