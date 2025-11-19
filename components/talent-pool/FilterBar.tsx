@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SeniorityLevel } from '@/types/talentPool';
 import { LOCATION_OPTIONS } from '@/lib/formOptions';
 import { SALARY_MIN, SALARY_MAX, SALARY_STEP } from '@/lib/constants';
@@ -49,20 +49,40 @@ export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
 
   // Handle salary range change
   const handleSalaryMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
+    const valStr = e.target.value;
+    if (valStr === '') {
+      onFilterChange({
+        ...filters,
+        salaryMin: NaN,
+      });
+      return;
+    }
+
+    const value = parseInt(valStr, 10);
     onFilterChange({
       ...filters,
       salaryMin: value,
-      salaryMax: Math.max(value, filters.salaryMax), // Ensure max >= min
+      // Only enforce max >= min if max is set (not NaN)
+      salaryMax: !isNaN(filters.salaryMax) ? Math.max(value, filters.salaryMax) : filters.salaryMax,
     });
   };
 
   const handleSalaryMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
+    const valStr = e.target.value;
+    if (valStr === '') {
+      onFilterChange({
+        ...filters,
+        salaryMax: NaN,
+      });
+      return;
+    }
+
+    const value = parseInt(valStr, 10);
     onFilterChange({
       ...filters,
       salaryMax: value,
-      salaryMin: Math.min(value, filters.salaryMin), // Ensure min <= max
+      // Only enforce min <= max if min is set (not NaN)
+      salaryMin: !isNaN(filters.salaryMin) ? Math.min(value, filters.salaryMin) : filters.salaryMin,
     });
   };
 
@@ -78,9 +98,9 @@ export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
 
   // Check if any filters are active
   const hasActiveFilters = filters.seniority !== 'all' ||
-                          filters.cantons.length > 0 ||
-                          filters.salaryMin !== SALARY_MIN ||
-                          filters.salaryMax !== SALARY_MAX;
+    filters.cantons.length > 0 ||
+    (filters.salaryMin !== SALARY_MIN && !isNaN(filters.salaryMin)) ||
+    (filters.salaryMax !== SALARY_MAX && !isNaN(filters.salaryMax));
 
   // Filter out "Other" from canton options
   const cantonOptions = LOCATION_OPTIONS.filter(opt => opt.value !== 'Other');
@@ -184,39 +204,37 @@ export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="flex-1">
-                <label htmlFor="salary-min" className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                  Min
-                </label>
                 <input
                   type="number"
                   id="salary-min"
                   className="input-base w-full text-sm"
-                  value={filters.salaryMin}
+                  value={isNaN(filters.salaryMin) ? '' : filters.salaryMin}
                   onChange={handleSalaryMinChange}
                   min={SALARY_MIN}
                   max={SALARY_MAX}
                   step={SALARY_STEP}
+                  placeholder="Min"
+                  aria-label="Minimum Salary"
                 />
               </div>
-              <span className="pt-5" style={{ color: 'var(--text-tertiary)' }}>-</span>
+              <span style={{ color: 'var(--text-tertiary)' }}>-</span>
               <div className="flex-1">
-                <label htmlFor="salary-max" className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                  Max
-                </label>
                 <input
                   type="number"
                   id="salary-max"
                   className="input-base w-full text-sm"
-                  value={filters.salaryMax}
+                  value={isNaN(filters.salaryMax) ? '' : filters.salaryMax}
                   onChange={handleSalaryMaxChange}
                   min={SALARY_MIN}
                   max={SALARY_MAX}
                   step={SALARY_STEP}
+                  placeholder="Max"
+                  aria-label="Maximum Salary"
                 />
               </div>
             </div>
             <div className="text-xs text-center" style={{ color: 'var(--text-secondary)' }}>
-              {(filters.salaryMin / 1000).toFixed(0)}K - {(filters.salaryMax / 1000).toFixed(0)}K CHF
+              {((filters.salaryMin || 0) / 1000).toFixed(0)}K - {((filters.salaryMax || 0) / 1000).toFixed(0)}K CHF
             </div>
           </div>
         </div>

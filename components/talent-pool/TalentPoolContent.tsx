@@ -197,18 +197,23 @@ export default function TalentPoolContent() {
           <FilterBar filters={filters} onFilterChange={handleFilterChange} />
 
           {/* Results Count */}
-          {!loading && !error && (
-            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              {pagination.total === 0 ? (
-                'No candidates found'
-              ) : (
-                <>
-                  Showing <span style={{ color: 'var(--accent-gold)' }}>{pagination.total}</span>{' '}
-                  {pagination.total === 1 ? 'candidate' : 'candidates'}
-                </>
-              )}
-            </div>
-          )}
+          {/* Results Count */}
+          <div className="h-5 text-sm flex items-center" style={{ color: 'var(--text-secondary)' }}>
+            {loading ? (
+              <div className="h-4 w-32 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+            ) : !error && (
+              <span>
+                {pagination.total === 0 ? (
+                  'No candidates found'
+                ) : (
+                  <>
+                    Showing <span style={{ color: 'var(--accent-gold)' }}>{pagination.total}</span>{' '}
+                    {pagination.total === 1 ? 'candidate' : 'candidates'}
+                  </>
+                )}
+              </span>
+            )}
+          </div>
 
           {/* Error State */}
           {error && (

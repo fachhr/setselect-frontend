@@ -50,23 +50,9 @@ export default function TalentTable({
     alert(`Interested in ${candidate.talent_id}?\n\nEmail silvia@silviaslist.com with the Talent ID to request an introduction.`);
   };
 
-  if (loading) {
-    return (
-      <div className="rounded-lg p-6 shadow-lg" style={{
-        backgroundColor: 'var(--surface-1)',
-        borderColor: 'var(--light-400)',
-        borderWidth: '1px'
-      }}>
-        <div className="animate-pulse space-y-4">
-          {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="h-16 rounded" style={{ backgroundColor: 'var(--surface-2)' }} />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  // Loading state is now handled inside the table structure
 
-  if (candidates.length === 0) {
+  if (!loading && candidates.length === 0) {
     return (
       <div className="rounded-lg p-12 shadow-lg text-center" style={{
         backgroundColor: 'var(--surface-1)',
@@ -99,7 +85,7 @@ export default function TalentTable({
         <table className="w-full">
           <thead>
             <tr style={{ backgroundColor: 'var(--surface-2)', borderBottom: '2px solid var(--accent-gold)' }}>
-              <th className="px-6 py-4 text-left">
+              <th className="px-6 py-4 text-left w-[15%]">
                 <button
                   onClick={() => onSort('talent_id')}
                   className="flex items-center gap-2 font-semibold text-sm transition-colors"
@@ -109,7 +95,7 @@ export default function TalentTable({
                   {getSortIcon('talent_id')}
                 </button>
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-6 py-4 text-left w-[15%]">
                 <button
                   onClick={() => onSort('created_at')}
                   className="flex items-center gap-2 font-semibold text-sm transition-colors"
@@ -119,7 +105,7 @@ export default function TalentTable({
                   {getSortIcon('created_at')}
                 </button>
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-6 py-4 text-left w-[20%]">
                 <button
                   onClick={() => onSort('years_of_experience')}
                   className="flex items-center gap-2 font-semibold text-sm transition-colors"
@@ -129,12 +115,12 @@ export default function TalentTable({
                   {getSortIcon('years_of_experience')}
                 </button>
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-6 py-4 text-left w-[30%]">
                 <span className="font-semibold text-sm" style={{ color: 'var(--text-secondary)' }}>
                   Preferred Cantons
                 </span>
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-6 py-4 text-left w-[20%]">
                 <button
                   onClick={() => onSort('salary_max')}
                   className="flex items-center gap-2 font-semibold text-sm transition-colors"
@@ -147,63 +133,94 @@ export default function TalentTable({
             </tr>
           </thead>
           <tbody>
-            {candidates.map((candidate, index) => (
-              <tr
-                key={candidate.talent_id}
-                onClick={() => handleRowClick(candidate)}
-                className="cursor-pointer transition-all"
-                style={{
-                  borderBottom: index < candidates.length - 1 ? '1px solid var(--light-400)' : 'none'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--surface-2)';
-                  e.currentTarget.style.transform = 'scale(1.005)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.transform = 'scale(1)';
-                }}
-              >
-                <td className="px-6 py-4">
-                  <span className="font-bold text-sm" style={{ color: 'var(--accent-gold)' }}>
-                    {candidate.talent_id}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
-                    {formatEntryDate(candidate.entry_date)}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex flex-col gap-1">
+            {loading ? (
+              // Skeleton Rows
+              Array.from({ length: 5 }).map((_, index) => (
+                <tr
+                  key={`skeleton-${index}`}
+                  style={{
+                    borderBottom: index < 4 ? '1px solid var(--light-400)' : 'none'
+                  }}
+                >
+                  <td className="px-6 py-4">
+                    <div className="h-5 w-16 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="h-5 w-24 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1">
+                      <div className="h-5 w-20 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+                      <div className="h-5 w-16 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="h-5 w-32 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="h-5 w-28 rounded animate-pulse" style={{ backgroundColor: 'var(--surface-2)' }} />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              candidates.map((candidate, index) => (
+                <tr
+                  key={candidate.talent_id}
+                  onClick={() => handleRowClick(candidate)}
+                  className="cursor-pointer transition-all"
+                  style={{
+                    borderBottom: index < candidates.length - 1 ? '1px solid var(--light-400)' : 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--surface-2)';
+                    e.currentTarget.style.transform = 'scale(1.005)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
+                >
+                  <td className="px-6 py-4">
+                    <span className="font-bold text-sm" style={{ color: 'var(--accent-gold)' }}>
+                      {candidate.talent_id}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
                     <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
-                      {formatYearsExperience(candidate.years_of_experience)}
+                      {formatEntryDate(candidate.entry_date)}
                     </span>
-                    <span
-                      className="inline-block px-2 py-0.5 rounded text-xs font-medium w-fit"
-                      style={{
-                        backgroundColor: 'var(--accent-gold-alpha)',
-                        color: 'var(--accent-gold)',
-                        borderColor: 'var(--accent-gold-border)',
-                        borderWidth: '1px'
-                      }}
-                    >
-                      {getSeniorityLabel(candidate.seniority_level)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                        {formatYearsExperience(candidate.years_of_experience)}
+                      </span>
+                      <span
+                        className="inline-block px-2 py-0.5 rounded text-xs font-medium w-fit"
+                        style={{
+                          backgroundColor: 'var(--accent-gold-alpha)',
+                          color: 'var(--accent-gold)',
+                          borderColor: 'var(--accent-gold-border)',
+                          borderWidth: '1px'
+                        }}
+                      >
+                        {getSeniorityLabel(candidate.seniority_level)}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      {formatCantons(candidate.preferred_cantons, 3)}
                     </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    {formatCantons(candidate.preferred_cantons, 3)}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                    {formatSalary(candidate.salary_range.min, candidate.salary_range.max)}
-                  </span>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                      {formatSalary(candidate.salary_range.min, candidate.salary_range.max)}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
