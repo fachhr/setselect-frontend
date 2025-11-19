@@ -172,8 +172,7 @@ export default function TalentPoolContent() {
             <span className="text-slate-900 underline decoration-slate-300 decoration-4 underline-offset-4">tech talent</span>.
           </h1>
           <p className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto font-light leading-relaxed">
-            Browse pre-screened professionals in Zurich, Geneva, and beyond.
-            Skip the recruiters and connect directly with candidates ready for their next opportunity.
+            A curated list of pre-screened professionals in Zürich, Geneva, and beyond. Connect with exclusive candidates ready for their next opportunity.
           </p>
         </div>
       </div>
