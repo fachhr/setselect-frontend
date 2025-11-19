@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from 'next/font/google'; // Use Google Fonts instead of local files
+import { Inter } from 'next/font/google';
 import "./globals.css";
 
-// Initialize Inter font
-const inter = Inter({ subsets: ['latin'] });
+// Only keep Inter (for the regular text)
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: "Silvia's List - Top Swiss Tech Talent",
@@ -17,9 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* Apply Inter font globally and slate-50 background for a clean base */}
-      <body className={`${inter.className} bg-slate-50 text-slate-900`}>
-        {/* We removed <Header /> because the new page has its own nav */}
+      {/* Removed playfair.variable */}
+      <body className={`
+        ${inter.variable} font-sans 
+        bg-white text-slate-900 antialiased
+        selection:bg-slate-200 selection:text-slate-900
+      `}>
         {children}
       </body>
     </html>

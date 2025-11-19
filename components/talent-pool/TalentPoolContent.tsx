@@ -9,14 +9,51 @@ import {
 import { Badge, Button } from '@/components/ui/DesignSystem';
 import { AnonymizedTalentProfile, TalentPoolListResponse } from '@/types/talentPool';
 import {
-  formatSalary,
   formatEntryDate,
   formatYearsExperience,
 } from '@/lib/utils/talentPoolHelpers';
-import { LOCATION_OPTIONS } from '@/lib/formOptions';
 
-// Constants
-const SENIORITY_LEVELS = [
+// --- TYPES ---
+interface ExtendedProfile extends AnonymizedTalentProfile {
+  skills?: string[];
+  availability?: string;
+}
+
+// --- MAPPINGS (For Display) ---
+const SENIORITY_MAP: Record<string, string> = {
+  junior: 'Junior',
+  mid: 'Mid-level',
+  senior: 'Senior',
+  executive: 'Executive'
+};
+
+const CANTON_NAMES: Record<string, string> = {
+  'ZH': 'Zürich',
+  'GE': 'Geneva',
+  'BS': 'Basel',
+  'BL': 'Basel', // Grouping BS/BL as Basel for cleaner UI usually, or keep distinct
+  'VD': 'Vaud',
+  'BE': 'Bern',
+  'ZG': 'Zug',
+  'LU': 'Lucerne',
+  'AG': 'Aargau',
+  'SG': 'St. Gallen',
+  'TI': 'Ticino',
+  'VS': 'Valais'
+};
+
+// Filter Options for Sidebar (Codes + Display Names)
+const CANTON_FILTERS = [
+  { code: 'ZH', name: 'Zürich' },
+  { code: 'GE', name: 'Geneva' },
+  { code: 'BS', name: 'Basel' },
+  { code: 'VD', name: 'Vaud' },
+  { code: 'ZG', name: 'Zug' },
+  { code: 'BE', name: 'Bern' },
+  { code: 'LU', name: 'Lucerne' },
+];
+
+const SENIORITY_FILTERS = [
   { label: 'Junior (0-2 years)', value: 'junior' },
   { label: 'Mid-level (3-6 years)', value: 'mid' },
   { label: 'Senior (7+ years)', value: 'senior' },
@@ -24,7 +61,7 @@ const SENIORITY_LEVELS = [
 
 export default function TalentPoolContent() {
   // --- STATE ---
-  const [candidates, setCandidates] = useState<AnonymizedTalentProfile[]>([]);
+  const [candidates, setCandidates] = useState<ExtendedProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState<string | null>(null);
@@ -34,6 +71,7 @@ export default function TalentPoolContent() {
   const [selectedCantons, setSelectedCantons] = useState<string[]>([]);
   const [selectedSeniority, setSelectedSeniority] = useState<string[]>([]);
   const [salaryMax, setSalaryMax] = useState<number>(250000);
+  const [sortBy, setSortBy] = useState<string>('created_at');
 
   // --- DATA FETCHING ---
   useEffect(() => {
@@ -42,26 +80,23 @@ export default function TalentPoolContent() {
       try {
         const params = new URLSearchParams();
 
-        // Map filters to API params
+        // Map filters
         if (selectedSeniority.length > 0) {
-          // API expects single seniority or handled differently, 
-          // for now we take the highest level or just pass 'all' if mixed
-          // Assuming your API can handle basic filtering, or we filter client side
-          params.set('seniority', selectedSeniority[0]);
+          params.set('seniority', selectedSeniority[selectedSeniority.length - 1]);
         }
         if (selectedCantons.length > 0) {
           params.set('cantons', selectedCantons.join(','));
         }
 
-        // We request all and filter text search client side for smoother UI
-        params.set('limit', '100');
         params.set('salary_max', salaryMax.toString());
+        params.set('sort_by', sortBy);
+        params.set('limit', '100');
 
         const res = await fetch(`/api/talent-pool/list?${params.toString()}`);
         const data: TalentPoolListResponse = await res.json();
 
         if (data.success) {
-          setCandidates(data.data.candidates);
+          setCandidates(data.data.candidates as ExtendedProfile[]);
         }
       } catch (error) {
         console.error('Error fetching candidates:', error);
@@ -70,24 +105,23 @@ export default function TalentPoolContent() {
       }
     };
 
-    // Debounce the fetch slightly
     const timer = setTimeout(fetchCandidates, 300);
     return () => clearTimeout(timer);
-  }, [selectedCantons, selectedSeniority, salaryMax]);
+  }, [selectedCantons, selectedSeniority, salaryMax, sortBy]);
 
-  // --- CLIENT SIDE FILTERING (For Text Search) ---
+  // --- SEARCH FILTERING ---
   const filteredCandidates = useMemo(() => {
+    if (!searchTerm) return candidates;
+    const lowerTerm = searchTerm.toLowerCase();
+
     return candidates.filter(c => {
-      // Text Search (ID, Experience, or raw text if available)
-      const searchContent = `${c.talent_id} ${c.seniority_level}`.toLowerCase();
-      if (searchTerm && !searchContent.includes(searchTerm.toLowerCase())) {
-        return false;
-      }
-      return true;
+      const idMatch = c.talent_id.toLowerCase().includes(lowerTerm);
+      const skillMatch = c.skills?.some(s => s.toLowerCase().includes(lowerTerm));
+      return idMatch || skillMatch;
     });
   }, [candidates, searchTerm]);
 
-  // --- HANDLERS ---
+  // --- HELPERS ---
   const toggleCanton = (code: string) => {
     setSelectedCantons(prev =>
       prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
@@ -101,8 +135,24 @@ export default function TalentPoolContent() {
   };
 
   const formatCurrency = (val: number | null) => {
-    if (!val) return 'N/A';
+    if (!val) return 'Neg.';
     return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumSignificantDigits: 3 }).format(val);
+  };
+
+  // Format Canton List for Card (Code -> Full Name)
+  const formatCantonList = (codes: string[]) => {
+    if (!codes || codes.length === 0) return 'Switzerland';
+    return codes
+      .slice(0, 3) // Limit to 3
+      .map(code => CANTON_NAMES[code] || code) // Map to name or keep code if missing
+      .join(', ');
+  };
+
+  const getCandidateTitle = (c: ExtendedProfile) => {
+    // Use mapped seniority (e.g. "Senior")
+    const level = SENIORITY_MAP[c.seniority_level] || 'Mid-level';
+    const skill = c.skills && c.skills[0] ? c.skills[0] : 'Software';
+    return `${level} ${skill} Engineer`;
   };
 
   return (
@@ -119,8 +169,8 @@ export default function TalentPoolContent() {
               <span className="text-lg font-bold tracking-tight text-slate-900">Silvia's<span className="font-light text-slate-500">List</span></span>
             </div>
 
-            {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-8">
+              <a href="#" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">For Companies</a>
               <Link href="/join" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">For Talent</Link>
               <div className="h-4 w-px bg-slate-200"></div>
               <Link href="/join">
@@ -128,7 +178,6 @@ export default function TalentPoolContent() {
               </Link>
             </div>
 
-            {/* Mobile Menu Button */}
             <button className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -137,17 +186,18 @@ export default function TalentPoolContent() {
 
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white border-b border-slate-200 p-4 space-y-4 shadow-lg">
+            <a href="#" className="block text-sm font-medium text-slate-600 hover:text-slate-900">For Companies</a>
             <Link href="/join" className="block text-sm font-medium text-slate-600 hover:text-slate-900">For Talent</Link>
             <Link href="/join" className="block w-full"><Button className="w-full">Join the List</Button></Link>
           </div>
         )}
       </nav>
 
-      {/* HERO SECTION */}
+      {/* HERO */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <Badge style="outline" className="mb-6">Switzerland's #1 Tech Talent Pool</Badge>
-          <h1 className="text-4xl sm:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
+          <Badge style="outline">Switzerland's #1 Tech Talent Pool</Badge>
+          <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
             Discover exceptional <br className="hidden sm:block" />
             <span className="text-slate-900 underline decoration-slate-300 decoration-4 underline-offset-4">tech talent</span>.
           </h1>
@@ -158,37 +208,34 @@ export default function TalentPoolContent() {
         </div>
       </div>
 
-      {/* MAIN CONTENT AREA */}
+      {/* MAIN CONTENT */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col lg:flex-row gap-10">
 
-          {/* SIDEBAR FILTERS */}
+          {/* SIDEBAR */}
           <aside className="w-full lg:w-72 flex-shrink-0 space-y-8">
-
-            {/* Search */}
             <div className="relative group">
               <input
                 type="text"
-                placeholder="Search by ID..."
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all group-hover:border-slate-300"
+                placeholder="Search by skill, role, or ID..."
+                className="w-full pl-10 pr-4 py-2.5 !bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all group-hover:border-slate-300"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
             </div>
 
-            {/* Seniority Filter */}
             <div>
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <Briefcase className="w-3.5 h-3.5 text-slate-400" /> Seniority
               </h3>
               <div className="space-y-2.5">
-                {SENIORITY_LEVELS.map((level) => (
+                {SENIORITY_FILTERS.map((level) => (
                   <label key={level.value} className="flex items-center gap-3 group cursor-pointer select-none">
                     <div className="relative flex items-center">
                       <input
                         type="checkbox"
-                        className="peer h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500 cursor-pointer transition-colors"
+                        className="checkbox-slate"
                         checked={selectedSeniority.includes(level.value)}
                         onChange={() => toggleSeniority(level.value)}
                       />
@@ -199,31 +246,30 @@ export default function TalentPoolContent() {
               </div>
             </div>
 
-            {/* Canton Filter */}
             <div>
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-slate-400" /> Preferred Location
               </h3>
               <div className="flex flex-wrap gap-2">
-                {LOCATION_OPTIONS.slice(0, 10).map((canton) => (
+                {/* Using CANTON_FILTERS to show names like "Zürich" instead of "ZH" */}
+                {CANTON_FILTERS.map((canton) => (
                   <button
-                    key={canton.value}
-                    onClick={() => toggleCanton(canton.value)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 ${selectedCantons.includes(canton.value)
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-md'
-                        : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900'
+                    key={canton.code}
+                    onClick={() => toggleCanton(canton.code)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 ${selectedCantons.includes(canton.code)
+                      ? 'bg-slate-900 border-slate-900 text-white shadow-md'
+                      : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900'
                       }`}
                   >
-                    {canton.value}
+                    {canton.name}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Salary Filter */}
             <div>
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <DollarSign className="w-3.5 h-3.5 text-slate-400" /> Max Budget (CHF)
+                <DollarSign className="w-3.5 h-3.5 text-slate-400" /> Salary (CHF)
               </h3>
               <div className="px-1">
                 <input
@@ -242,15 +288,9 @@ export default function TalentPoolContent() {
               </div>
             </div>
 
-            {/* Clear Filters */}
             {(selectedCantons.length > 0 || selectedSeniority.length > 0 || searchTerm) && (
               <button
-                onClick={() => {
-                  setSelectedCantons([]);
-                  setSelectedSeniority([]);
-                  setSearchTerm('');
-                  setSalaryMax(250000);
-                }}
+                onClick={() => { setSelectedCantons([]); setSelectedSeniority([]); setSearchTerm(''); setSalaryMax(250000); }}
                 className="text-xs text-slate-500 hover:text-slate-900 font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-slate-900 pb-0.5 w-max"
               >
                 <X className="w-3 h-3" /> Clear all filters
@@ -258,12 +298,27 @@ export default function TalentPoolContent() {
             )}
           </aside>
 
-          {/* RESULTS GRID */}
+          {/* RESULTS */}
           <main className="flex-1">
             <div className="flex justify-between items-end mb-6 pb-4 border-b border-slate-100">
               <h2 className="text-xl font-bold text-slate-900">
                 Candidates <span className="text-slate-400 font-light ml-2 text-lg">{filteredCandidates.length} results</span>
               </h2>
+
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span>Sort by:</span>
+                <div className="relative group">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="appearance-none bg-transparent pr-6 pl-0 font-medium text-slate-900 focus:outline-none cursor-pointer hover:text-slate-700"
+                  >
+                    <option value="created_at">Newest</option>
+                    <option value="experience">Most Experienced</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-500 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+              </div>
             </div>
 
             {loading ? (
@@ -287,40 +342,64 @@ export default function TalentPoolContent() {
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
                       <div className="flex-1 min-w-0">
+                        {/* Header Badges */}
                         <div className="flex flex-wrap items-center gap-3 mb-3">
                           <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
                             {candidate.talent_id}
                           </span>
+                          {/* Mapped Seniority (e.g. "Senior" instead of "senior") */}
                           <Badge style={candidate.seniority_level === 'senior' ? 'dark' : 'default'}>
-                            {candidate.seniority_level || 'Candidate'}
+                            {SENIORITY_MAP[candidate.seniority_level] || candidate.seniority_level}
                           </Badge>
                           <span className="text-xs text-slate-400 flex items-center gap-1 ml-auto sm:ml-0">
                             <Clock className="w-3 h-3" /> Added {formatEntryDate(candidate.entry_date)}
                           </span>
                         </div>
 
-                        {/* Role - Using ID/Experience as Title since anonymized */}
                         <h3 className="text-xl font-bold text-slate-900 mb-1 group-hover:underline decoration-slate-300 underline-offset-4 decoration-2 transition-all">
-                          {formatYearsExperience(candidate.years_of_experience)} Experience
+                          {getCandidateTitle(candidate)}
                         </h3>
 
+                        {/* Meta Info */}
                         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-600 mt-4 mb-5">
                           <div className="flex items-center gap-2">
+                            <Briefcase className="w-4 h-4 text-slate-400" />
+                            {formatYearsExperience(candidate.years_of_experience)} Exp.
+                          </div>
+                          <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-slate-400" />
-                            {candidate.preferred_cantons && candidate.preferred_cantons.length > 0
-                              ? candidate.preferred_cantons.slice(0, 3).join(', ')
-                              : 'Switzerland'}
+                            {/* Mapped Canton Names */}
+                            {formatCantonList(candidate.preferred_cantons)}
                           </div>
                           <div className="flex items-center gap-2">
                             <DollarSign className="w-4 h-4 text-slate-400" />
                             <span className="font-mono text-slate-700">
-                              {candidate.salary_range.min ? formatCurrency(candidate.salary_range.min) : 'Neg.'} – {candidate.salary_range.max ? formatCurrency(candidate.salary_range.max) : 'Neg.'}
+                              {formatCurrency(candidate.salary_range.min)} – {formatCurrency(candidate.salary_range.max)}
                             </span>
                           </div>
                         </div>
+
+                        {/* Skills Tags */}
+                        <div className="flex flex-wrap gap-2">
+                          {candidate.skills && candidate.skills.length > 0 ? (
+                            candidate.skills.map(skill => (
+                              <span key={skill} className="px-2.5 py-1 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-slate-400 hover:text-slate-900 transition-colors cursor-default">
+                                {skill}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs text-slate-400 italic">Generalist</span>
+                          )}
+                        </div>
                       </div>
 
+                      {/* Availability & Action */}
                       <div className="flex flex-col sm:items-end gap-4 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 min-w-[140px]">
+                        <div className="text-right hidden sm:block">
+                          <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1 font-semibold">Availability</p>
+                          <p className="text-sm font-medium text-slate-900">{candidate.availability || 'Negotiable'}</p>
+                        </div>
+
                         <Button
                           variant="secondary"
                           className="w-full sm:w-auto text-xs sm:text-sm"
@@ -338,7 +417,7 @@ export default function TalentPoolContent() {
         </div>
       </div>
 
-      {/* FOOTER */}
+      {/* FOOTER & MODAL (Unchanged) */}
       <footer className="bg-white border-t border-slate-200 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
@@ -362,7 +441,6 @@ export default function TalentPoolContent() {
         </div>
       </footer>
 
-      {/* CONTACT MODAL */}
       {showContactModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-xl shadow-2xl shadow-slate-200 max-w-md w-full p-8 relative">

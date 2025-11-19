@@ -2,7 +2,6 @@ import React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-// Utility for merging tailwind classes safely
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
@@ -36,7 +35,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = ({ children, variant = 'primary', className, icon: Icon, ...props }: ButtonProps) => {
     const variants = {
         primary: "bg-slate-900 hover:bg-slate-800 text-white shadow-sm focus:ring-slate-500",
-        secondary: "bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 shadow-sm focus:ring-slate-500",
+        // CHANGED: Removed 'shadow-sm' and changed border to 'slate-200' for a flatter, cleaner look
+        secondary: "bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 focus:ring-slate-500",
         outline: "bg-transparent hover:bg-slate-100 text-slate-600 border border-slate-200",
         ghost: "bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900",
     };
