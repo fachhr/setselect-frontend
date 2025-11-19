@@ -149,8 +149,8 @@
   --container-width: 1200px;
 
   /* Z-Index Scale */
-  --z-overlay: 2000;
-  --z-modal: 1500;
+  --z-overlay: 10000;
+  --z-modal: 10001;
   --z-nav: 1000;
   --z-fixed: 900;
   --z-dropdown: 800;

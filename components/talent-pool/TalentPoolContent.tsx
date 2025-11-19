@@ -155,40 +155,27 @@ export default function TalentPoolContent() {
 
   return (
     <div
-      className="min-h-screen py-8 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen pt-28 sm:pt-32 py-8 px-4 sm:px-6 lg:px-8"
       style={{
         background: 'var(--background-gradient)',
       }}
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <header className="mb-12">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            <div>
-              <h1
-                className="text-4xl sm:text-5xl font-bold mb-4"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                Silvia's List
-              </h1>
-              <p
-                className="text-lg sm:text-xl max-w-3xl"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                Discover exceptional tech talent in Switzerland. Browse pre-screened professionals
-                ready for their next opportunity.
-              </p>
-            </div>
-
-            {/* Join Button */}
-            <div className="flex-shrink-0">
-              <Link href="/join">
-                <Button variant="gold" size="lg">
-                  Join Silvia's List
-                </Button>
-              </Link>
-            </div>
-          </div>
+        <header className="mb-12 text-center">
+          <h1
+            className="text-4xl sm:text-5xl font-bold mb-4"
+            style={{ color: 'var(--accent-gold)' }}
+          >
+            Silvia's List
+          </h1>
+          <p
+            className="text-lg sm:text-xl max-w-3xl mx-auto"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            Discover exceptional tech talent in Switzerland. Browse pre-screened professionals
+            ready for their next opportunity.
+          </p>
         </header>
 
         {/* Main Content */}

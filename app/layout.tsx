@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from 'next/font/local';
 import "./globals.css";
+import Header from "@/components/layout/Header";
 
 const gilroy = localFont({
   src: [
@@ -30,7 +31,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${gilroy.variable} font-sans`}>
+      <body className={gilroy.variable} style={{ fontFamily: 'var(--font-gilroy), Arial, sans-serif' }}>
+        <Header />
         {children}
       </body>
     </html>

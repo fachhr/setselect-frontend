@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SeniorityLevel } from '@/types/talentPool';
 import { LOCATION_OPTIONS } from '@/lib/formOptions';
 import { SALARY_MIN, SALARY_MAX, SALARY_STEP } from '@/lib/constants';
@@ -26,6 +26,24 @@ const SENIORITY_OPTIONS: Array<{ value: SeniorityLevel | 'all'; label: string }>
 
 export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
   const [showCantonDropdown, setShowCantonDropdown] = useState(false);
+  const cantonDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cantonDropdownRef.current && !cantonDropdownRef.current.contains(event.target as Node)) {
+        setShowCantonDropdown(false);
+      }
+    };
+
+    if (showCantonDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCantonDropdown]);
 
   // Handle seniority change
   const handleSeniorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -132,7 +150,7 @@ export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
         </div>
 
         {/* Canton Filter */}
-        <div className="relative">
+        <div className="relative" ref={cantonDropdownRef}>
           <label className="label-base">
             Preferred Cantons
             {filters.cantons.length > 0 && (
@@ -159,7 +177,7 @@ export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
           {/* Canton Dropdown */}
           {showCantonDropdown && (
             <div
-              className="absolute z-10 mt-2 w-full rounded-lg shadow-xl overflow-hidden"
+              className="absolute z-dropdown mt-2 w-full rounded-lg shadow-xl overflow-hidden"
               style={{
                 backgroundColor: 'var(--surface-3)',
                 borderColor: 'var(--accent-gold-border)',

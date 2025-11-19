@@ -41,6 +41,7 @@ module.exports = {
       },
 
       fontFamily: {
+        sans: ['var(--font-gilroy)', 'Arial', 'sans-serif'],
         body: ['var(--font-body)', 'sans-serif'],
         heading: ['var(--font-heading)', 'sans-serif'],
       },
@@ -67,16 +68,16 @@ module.exports = {
         highlight: 'var(--shadow-highlight)',
       },
       transitionDuration: {
-          'fast': 'var(--transition-fast-duration)',
-          'medium': 'var(--transition-medium-duration)',
-          'slow': 'var(--transition-slow-duration)',
+        'fast': 'var(--transition-fast-duration)',
+        'medium': 'var(--transition-medium-duration)',
+        'slow': 'var(--transition-slow-duration)',
       },
       transitionTimingFunction: {
-          'custom-ease': 'var(--transition-timing-function)',
+        'custom-ease': 'var(--transition-timing-function)',
       },
       maxWidth: {
-         'container': 'var(--container-width)',
-         'form-max': '780px',
+        'container': 'var(--container-width)',
+        'form-max': '780px',
       },
       zIndex: {
         'overlay': 'var(--z-overlay)',
@@ -89,19 +90,19 @@ module.exports = {
         'below': 'var(--z-below)',
       },
       keyframes: {
-          fadeInUp: {
-            '0%': { opacity: '0', transform: 'translateY(30px)' },
-            '100%': { opacity: '1', transform: 'translateY(0px)' },
-          },
-          pulseDark: {
-            '0%, 100%': { opacity: '0.3' },
-            '50%': { opacity: '0.5' },
-          },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '100%': { opacity: '1', transform: 'translateY(0px)' },
         },
+        pulseDark: {
+          '0%, 100%': { opacity: '0.3' },
+          '50%': { opacity: '0.5' },
+        },
+      },
       animation: {
-          fadeInUp: 'fadeInUp var(--transition-slow-duration) var(--transition-timing-function) forwards',
-          reveal: 'fadeInUp var(--transition-slow-duration) var(--transition-timing-function) var(--delay, 0s) forwards',
-          'pulse-dark': 'pulseDark 2s infinite ease-in-out',
+        fadeInUp: 'fadeInUp var(--transition-slow-duration) var(--transition-timing-function) forwards',
+        reveal: 'fadeInUp var(--transition-slow-duration) var(--transition-timing-function) var(--delay, 0s) forwards',
+        'pulse-dark': 'pulseDark 2s infinite ease-in-out',
       },
     },
   },
