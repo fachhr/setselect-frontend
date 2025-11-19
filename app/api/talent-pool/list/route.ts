@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import {
-  AnonymizedTalentProfile,
-  TalentPoolListResponse,
-  SeniorityLevel
-} from '@/types/talentPool';
+import { SeniorityLevel } from '@/types/talentPool';
 import {
   getSeniorityLevel,
   getSeniorityYearsRange,
@@ -80,7 +76,7 @@ export async function GET(req: NextRequest) {
       if (Array.isArray(profile.technical_skills)) {
         topSkills = profile.technical_skills
           .slice(0, 5)
-          .map((s: any) => s.name || s)
+          .map((s: { name?: string } | string) => (typeof s === 'string' ? s : s.name || ''))
           .filter(Boolean);
       }
 

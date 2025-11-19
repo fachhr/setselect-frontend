@@ -20,7 +20,7 @@ export default function JoinPage() {
             Join the List
           </h1>
           <p className="text-lg text-slate-600">
-            Create your profile. We'll anonymize your data and showcase your skills to top Swiss companies.
+            Create your profile. We&apos;ll anonymize your data and showcase your skills to top Swiss companies.
           </p>
         </header>
 
@@ -31,7 +31,7 @@ export default function JoinPage() {
 
         {/* Footer */}
         <footer className="mt-16 text-center text-sm text-slate-400 border-t border-slate-100 pt-8">
-          <p>&copy; {new Date().getFullYear()} Silvia's List. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Silvia&apos;s List. All rights reserved.</p>
           <p className="mt-2 space-x-4">
             <Link href="/terms" className="hover:text-slate-900 underline decoration-slate-200">Terms & Conditions</Link>
             <a href="mailto:contact@silviaslist.com" className="hover:text-slate-900 underline decoration-slate-200">Contact</a>

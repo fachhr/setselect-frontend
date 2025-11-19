@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate file type (MIME type check)
-    if (!VALID_CV_MIME_TYPES.includes(file.type as any)) {
+    if (!VALID_CV_MIME_TYPES.includes(file.type as typeof VALID_CV_MIME_TYPES[number])) {
       return NextResponse.json(
         { success: false, error: 'File must be PDF or DOCX' },
         { status: 400 }

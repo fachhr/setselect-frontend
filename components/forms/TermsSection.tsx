@@ -87,8 +87,8 @@ export function TermsSection({
 
       {/* Helper Text */}
       <p className="text-xs text-center text-[var(--text-tertiary)]">
-        By submitting this form, you'll be added to Silvia's List talent pool.
-        We'll review your profile and contact you when we have matching opportunities.
+        By submitting this form, you&apos;ll be added to Silvia&apos;s List talent pool.
+        We&apos;ll review your profile and contact you when we have matching opportunities.
       </p>
     </div>
   );

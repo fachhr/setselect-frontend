@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Remove cvFile from validation (already uploaded)
-    const { cvFile, cvStoragePath, originalFilename, ...formData } = body;
+    const { cvStoragePath, originalFilename, ...formData } = body;
 
     // Validate CV storage path exists
     if (!cvStoragePath || typeof cvStoragePath !== 'string') {

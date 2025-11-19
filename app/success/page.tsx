@@ -18,7 +18,7 @@ export default function SuccessPage() {
 
           {/* Main Heading */}
           <h1 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
-            Thank You for Joining Silvia's List!
+            Thank You for Joining Silvia&apos;s List!
           </h1>
 
           {/* Success Message */}
@@ -37,7 +37,7 @@ export default function SuccessPage() {
                   1
                 </span>
                 <span>
-                  <strong className="text-[var(--text-primary)]">Check Your Inbox:</strong> You'll receive a confirmation email shortly.
+                  <strong className="text-[var(--text-primary)]">Check Your Inbox:</strong> You&apos;ll receive a confirmation email shortly.
                 </span>
               </li>
               <li className="flex items-start">
@@ -53,7 +53,7 @@ export default function SuccessPage() {
                   3
                 </span>
                 <span>
-                  <strong className="text-[var(--text-primary)]">We'll Contact You:</strong> When we find a match that fits your preferences, we'll reach out via email with more details.
+                  <strong className="text-[var(--text-primary)]">We&apos;ll Contact You:</strong> When we find a match that fits your preferences, we&apos;ll reach out via email with more details.
                 </span>
               </li>
             </ul>
@@ -68,7 +68,7 @@ export default function SuccessPage() {
               </a>
             </p>
             <p>
-              We're committed to finding you the perfect opportunity that matches your skills and preferences.
+              We&apos;re committed to finding you the perfect opportunity that matches your skills and preferences.
             </p>
           </div>
 

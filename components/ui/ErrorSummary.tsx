@@ -9,6 +9,7 @@ const ErrorIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 interface ErrorSummaryProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: FieldErrors<any>;
 }
 

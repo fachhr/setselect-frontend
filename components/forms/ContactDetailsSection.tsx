@@ -19,7 +19,7 @@ export function ContactDetailsSection({
       <div className="mb-6">
         <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Personal Details</h2>
         <p className="text-[var(--dark-600)]">
-          Tell us about yourself. We'll use this information to match you with the best opportunities.
+          Tell us about yourself. We&apos;ll use this information to match you with the best opportunities.
         </p>
       </div>
 

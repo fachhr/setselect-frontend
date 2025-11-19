@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 // --- STYLES ---
 const navLinkBaseStyles = "uppercase font-[family-name:var(--font-heading)] font-normal tracking-[1px] relative transition-colors duration-300";
@@ -111,7 +110,6 @@ export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [hasScrolled, setHasScrolled] = useState(false);
     const pathname = usePathname();
-    const isMobile = useIsMobile();
     const isHomepage = pathname === '/';
 
     useEffect(() => {

@@ -31,7 +31,7 @@ export default function TermsPage() {
                     Talent Pool Participation
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
-                    By joining Silvia's List talent pool, you agree to allow us to:
+                    By joining Silvia&apos;s List talent pool, you agree to allow us to:
                   </p>
                   <ul className="space-y-3 text-[var(--text-secondary)] list-none">
                     <li className="flex items-start gap-3">
@@ -212,7 +212,7 @@ export default function TermsPage() {
                     AI and Automated Processing
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
-                    We use OpenAI's GPT-4 to extract information from your CV. This processing saves time, improves accuracy, and can be reviewed/corrected upon request.
+                    We use OpenAI&apos;s GPT-4 to extract information from your CV. This processing saves time, improves accuracy, and can be reviewed/corrected upon request.
                   </p>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function TermsPage() {
             {/* Acceptance */}
             <div className="mt-12 pt-8 border-t-2 border-[var(--light-400)]">
               <p className="text-[var(--text-secondary)] leading-relaxed text-center">
-                By submitting your profile to Silvia's List, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.
+                By submitting your profile to Silvia&apos;s List, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.
               </p>
             </div>
           </div>

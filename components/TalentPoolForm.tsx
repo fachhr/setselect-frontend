@@ -20,7 +20,7 @@ export function TalentPoolForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
     setValue,
     setError
@@ -100,8 +100,6 @@ export function TalentPoolForm() {
         throw new Error(errorData.error || 'Failed to submit profile');
       }
 
-      const submitData = await submitResponse.json();
-
       // Success! Redirect to success page
       // Note: We don't reset isSubmitting here since we're redirecting anyway
       router.push('/success');
@@ -144,7 +142,7 @@ export function TalentPoolForm() {
           <div className="mb-6">
             <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">Upload Your CV</h2>
             <p className="text-[var(--dark-600)]">
-              Start by uploading your CV. We'll use it to understand your professional background.
+              Start by uploading your CV. We&apos;ll use it to understand your professional background.
             </p>
           </div>
           <CVUploadSection
