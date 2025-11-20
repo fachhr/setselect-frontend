@@ -3,8 +3,8 @@ import { z } from 'zod';
 /**
  * Validation schema for Silvia's List Talent Pool signup form
  *
- * This schema validates all user-provided fields (11 fields total):
- * - Contact details (5 fields)
+ * This schema validates all user-provided fields (12 fields total):
+ * - Contact details (6 fields)
  * - Job preferences (5 fields)
  * - CV upload
  * - Terms acceptance
@@ -46,6 +46,14 @@ export const talentPoolSchema = z.object({
     .max(20, 'Phone number is too long')
     .regex(/^[0-9\s\-\(\)]+$/, 'Phone number can only contain numbers, spaces, and hyphens')
     .trim(),
+
+  years_of_experience: z.number({
+    required_error: 'Years of experience is required',
+    invalid_type_error: 'Please enter a valid number'
+  })
+    .min(0, 'Years of experience cannot be negative')
+    .max(50, 'Please enter a value between 0 and 50')
+    .int('Please enter a whole number'),
 
   // ============================================
   // JOB PREFERENCES (user-provided, required)
@@ -146,6 +154,7 @@ export const talentPoolContactSchema = talentPoolSchema.pick({
   linkedinUrl: true,
   country_code: true,
   phoneNumber: true,
+  years_of_experience: true,
 });
 
 export const talentPoolPreferencesSchema = talentPoolSchema.pick({

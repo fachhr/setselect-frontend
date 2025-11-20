@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
         linkedinUrl: validatedData.linkedinUrl || null,
         country_code: validatedData.country_code,
         phoneNumber: validatedData.phoneNumber,
+        years_of_experience: validatedData.years_of_experience,
 
         // Job Preferences (user-provided)
         notice_period_months: validatedData.notice_period_months,

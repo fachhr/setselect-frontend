@@ -131,6 +131,27 @@ export function ContactDetailsSection({
           </div>
         </div>
       </div>
+
+      {/* Years of Experience */}
+      <div>
+        <label htmlFor="years_of_experience" className="label-base">
+          Years of Relevant Experience <span className="text-[var(--error-color)]">*</span>
+        </label>
+        <input
+          type="number"
+          id="years_of_experience"
+          {...register('years_of_experience', { valueAsNumber: true })}
+          className={`input-base ${errors.years_of_experience ? 'input-error' : ''}`}
+          placeholder="e.g., 3"
+          min="0"
+          max="50"
+          step="1"
+        />
+        {errors.years_of_experience && (
+          <p className="error-message">{errors.years_of_experience.message}</p>
+        )}
+        <p className="text-xs text-[var(--text-secondary)] mt-1">Enter the number of years (0-50)</p>
+      </div>
     </div>
   );
 }
