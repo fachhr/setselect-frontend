@@ -10,7 +10,8 @@
     /* Maps font-sans to Inter */
     --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-    /* REMOVED CUSTOM SERIF VARIABLE - Uses Browser Default now (Times/Georgia) */
+    /* Maps font-serif to Playfair Display */
+    --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
     /* --- COMPATIBILITY VARS --- */
     --background-gradient: #ffffff;
@@ -54,7 +55,9 @@
     font-family: var(--font-sans);
   }
 
-  /* REMOVED THE .font-serif CLASS OVERRIDE */
+  .font-serif {
+    font-family: var(--font-serif);
+  }
 }
 
 /* --- CUSTOM UI ELEMENTS --- */
