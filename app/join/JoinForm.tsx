@@ -7,12 +7,10 @@ import {
     FileText,
     CheckCircle,
     ArrowLeft,
-    Linkedin,
-    Smartphone,
     AlertCircle
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
-import { CANTONS, NOTICE_PERIOD_OPTIONS } from '@/lib/constants';
+import { CANTONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES } from '@/lib/constants';
 
 const JoinForm: React.FC = () => {
     const router = useRouter();
@@ -292,7 +290,7 @@ const JoinForm: React.FC = () => {
                                 <div className="relative">
                                     <input
                                         type="url"
-                                        className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
+                                        className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 focus:ring-slate-900 transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                             }`}
                                         placeholder="linkedin.com/in/..."
                                         value={formData.linkedinUrl}
@@ -324,23 +322,21 @@ const JoinForm: React.FC = () => {
                                             required
                                             value={formData.country_code}
                                             onChange={e => setFormData({ ...formData, country_code: e.target.value })}
-                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
+                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900"
                                         >
                                             <option value="">Code</option>
-                                            <option value="+41">🇨🇭 +41</option>
-                                            <option value="+49">🇩🇪 +49</option>
-                                            <option value="+33">🇫🇷 +33</option>
-                                            <option value="+39">🇮🇹 +39</option>
-                                            <option value="+43">🇦🇹 +43</option>
-                                            <option value="+44">🇬🇧 +44</option>
-                                            <option value="+1">🇺🇸 +1</option>
+                                            {COUNTRY_CODES.map(country => (
+                                                <option key={country.code} value={country.dialCode}>
+                                                    {country.flag} {country.dialCode}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="col-span-2 relative">
                                         <input
                                             type="tel"
                                             required
-                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
+                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900"
                                             placeholder="79 000 00 00"
                                             value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
                                         />
@@ -389,7 +385,7 @@ const JoinForm: React.FC = () => {
                                     required
                                     value={formData.notice_period_months}
                                     onChange={e => setFormData({ ...formData, notice_period_months: e.target.value })}
-                                    className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
+                                    className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900"
                                 >
                                     <option value="">Select...</option>
                                     {NOTICE_PERIOD_OPTIONS.map(opt => (
@@ -410,7 +406,7 @@ const JoinForm: React.FC = () => {
                                             placeholder="Min (e.g. 120000)"
                                             min="0" step="1000"
                                             required
-                                            className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
+                                            className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                                 }`}
                                             value={formData.salary_min}
                                             onChange={(e) => setFormData({ ...formData, salary_min: e.target.value })}
@@ -422,7 +418,7 @@ const JoinForm: React.FC = () => {
                                             placeholder="Max (e.g. 150000)"
                                             min="0" step="1000"
                                             required
-                                            className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
+                                            className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                                 }`}
                                             value={formData.salary_max}
                                             onChange={(e) => setFormData({ ...formData, salary_max: e.target.value })}
