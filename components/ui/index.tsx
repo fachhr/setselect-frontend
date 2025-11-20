@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface BadgeProps {
     children: React.ReactNode;
@@ -19,13 +20,27 @@ export const Badge: React.FC<BadgeProps> = ({ children, style = 'default' }) => 
     );
 };
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps {
     children: React.ReactNode;
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
     icon?: React.ElementType;
+    href?: string;
+    className?: string;
+    onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
+    type?: 'button' | 'submit' | 'reset';
+    disabled?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', className = '', onClick, icon: Icon, type = 'button', disabled = false }) => {
+export const Button: React.FC<ButtonProps> = ({
+    children,
+    variant = 'primary',
+    className = '',
+    onClick,
+    icon: Icon,
+    type = 'button',
+    disabled = false,
+    href
+}) => {
     const baseStyle = "inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
@@ -35,10 +50,25 @@ export const Button: React.FC<ButtonProps> = ({ children, variant = 'primary', c
         ghost: "bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900",
     };
 
-    return (
-        <button type={type} disabled={disabled} onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
+    const combinedClassName = `${baseStyle} ${variants[variant]} ${className}`;
+    const content = (
+        <>
             {Icon && <Icon className="w-4 h-4 mr-2" />}
             {children}
+        </>
+    );
+
+    if (href) {
+        return (
+            <Link href={href} className={combinedClassName} onClick={onClick}>
+                {content}
+            </Link>
+        );
+    }
+
+    return (
+        <button type={type} disabled={disabled} onClick={onClick} className={combinedClassName}>
+            {content}
         </button>
     );
 };

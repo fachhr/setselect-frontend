@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from 'next/font/google';
+import { Inter, Playfair_Display } from 'next/font/google';
+import { Navigation } from '@/components/Navigation';
+import { Footer } from '@/components/Footer';
 import "./globals.css";
 
-// Only keep Inter (for the regular text)
+// Inter for body text
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -10,6 +12,15 @@ const inter = Inter({
   preload: true,   // Preload for faster initial render
   fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
   adjustFontFallback: true, // Match fallback font metrics to Inter
+});
+
+// Playfair Display for serif accents
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -24,13 +35,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* Removed playfair.variable */}
       <body className={`
-        ${inter.variable} font-sans 
+        ${inter.variable} ${playfair.variable} font-sans
         bg-white text-slate-900 antialiased
         selection:bg-slate-200 selection:text-slate-900
       `}>
-        {children}
+        <Navigation />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

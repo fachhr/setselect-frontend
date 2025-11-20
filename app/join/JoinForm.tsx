@@ -8,8 +8,8 @@ import {
     Smartphone,
     AlertCircle
 } from 'lucide-react';
-import { Button, Input, Badge } from './UI.tsx';
-import { CANTONS, NOTICE_PERIOD_OPTIONS } from '../constants.ts';
+import { Button, Input, Badge } from '@/components/ui';
+import { CANTONS, NOTICE_PERIOD_OPTIONS } from '@/lib/constants';
 
 interface JoinFormProps {
     onBack: () => void;
@@ -20,34 +20,36 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
     const [step, setStep] = useState(1); // 1: CV, 2: Details, 3: Success
     const [file, setFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Form State
+    // Form State (matching backend schema)
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
+        contact_first_name: '',
+        contact_last_name: '',
         email: '',
-        linkedin: '',
-        countryCode: '',
-        phone: '',
-        role: '',
-        experienceYears: '',
-        noticePeriod: '',
-        salaryMin: '',
-        salaryMax: '',
-        location: [] as string[]
+        linkedinUrl: '',
+        country_code: '',
+        phoneNumber: '',
+        years_of_experience: '',
+        notice_period_months: '',
+        desired_locations: [] as string[],
+        desired_other_location: '',
+        salary_min: '',
+        salary_max: '',
+        accepted_terms: false
     });
 
     // Validation Logic
-    const salaryMinNum = Number(formData.salaryMin);
-    const salaryMaxNum = Number(formData.salaryMax);
-    const hasSalaryError = formData.salaryMin !== '' && formData.salaryMax !== '' && salaryMaxNum < salaryMinNum;
+    const salaryMinNum = Number(formData.salary_min);
+    const salaryMaxNum = Number(formData.salary_max);
+    const hasSalaryError = formData.salary_min !== '' && formData.salary_max !== '' && salaryMaxNum < salaryMinNum;
 
     // LinkedIn Validation: Must contain 'linkedin.com' if not empty
-    const hasLinkedinError = formData.linkedin.length > 0 && !formData.linkedin.includes('linkedin.com');
+    const hasLinkedinError = formData.linkedinUrl.length > 0 && !formData.linkedinUrl.includes('linkedin.com');
 
     // Location Validation: Must have at least 1 selected
-    const hasLocationError = formData.location.length === 0;
+    const hasLocationError = formData.desired_locations.length === 0;
 
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
@@ -63,11 +65,78 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validation checks
         if (hasSalaryError || hasLinkedinError || hasLocationError) return;
-        // Mock API call
-        setTimeout(() => setStep(3), 1000);
+        if (!file) {
+            alert('Please upload your CV');
+            return;
+        }
+        if (!formData.accepted_terms) {
+            alert('Please accept the terms and conditions');
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            // STEP 1: Upload CV
+            const uploadFormData = new FormData();
+            uploadFormData.append('file', file);
+
+            const uploadResponse = await fetch('/api/talent-pool/upload-cv', {
+                method: 'POST',
+                body: uploadFormData,
+            });
+
+            if (!uploadResponse.ok) {
+                const errorData = await uploadResponse.json();
+                throw new Error(errorData.error || 'Failed to upload CV');
+            }
+
+            const { cvStoragePath, originalFilename } = await uploadResponse.json();
+
+            // STEP 2: Submit Profile
+            const profileData = {
+                contact_first_name: formData.contact_first_name,
+                contact_last_name: formData.contact_last_name,
+                email: formData.email,
+                linkedinUrl: formData.linkedinUrl || undefined,
+                country_code: formData.country_code,
+                phoneNumber: formData.phoneNumber,
+                years_of_experience: parseInt(formData.years_of_experience),
+                notice_period_months: formData.notice_period_months,
+                desired_locations: formData.desired_locations,
+                desired_other_location: formData.desired_other_location || undefined,
+                salary_min: parseInt(formData.salary_min),
+                salary_max: parseInt(formData.salary_max),
+                cvStoragePath,
+                originalFilename,
+                accepted_terms: formData.accepted_terms,
+            };
+
+            const submitResponse = await fetch('/api/talent-pool/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(profileData),
+            });
+
+            if (!submitResponse.ok) {
+                const errorData = await submitResponse.json();
+                throw new Error(errorData.error || 'Failed to submit profile');
+            }
+
+            // STEP 3: Show success
+            setStep(3);
+
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert(error instanceof Error ? error.message : 'An error occurred. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     // Helper to format currency for display
@@ -85,7 +154,7 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                     </div>
                     <h2 className="text-3xl font-bold text-slate-900 mb-4">Application Received</h2>
                     <p className="text-slate-600 mb-8 max-w-md mx-auto text-lg">
-                        We've received your profile. Our team will review your anonymized data and match you with top Swiss companies within 48 hours.
+                        We&apos;ve received your profile. Our team will review your anonymized data and match you with top Swiss companies within 48 hours.
                     </p>
                     <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 max-w-md mx-auto mb-8">
                         <h3 className="font-medium text-slate-900 mb-2">What happens next?</h3>
@@ -117,7 +186,7 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                         </button>
                     </div>
                     <div className="text-center">
-                        <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">Join Silvia's List</h1>
+                        <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">Join Silvia&apos;s List</h1>
                         <p className="mt-4 text-lg text-slate-500">Create your profile and connect with top opportunities in Switzerland.</p>
                     </div>
                 </div>
@@ -196,12 +265,12 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Input
-                                label="First Name" id="firstName" required
-                                value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+                                label="First Name" id="contact_first_name" required
+                                value={formData.contact_first_name} onChange={e => setFormData({ ...formData, contact_first_name: e.target.value })}
                             />
                             <Input
-                                label="Last Name" id="lastName" required
-                                value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                                label="Last Name" id="contact_last_name" required
+                                value={formData.contact_last_name} onChange={e => setFormData({ ...formData, contact_last_name: e.target.value })}
                             />
                             <div className="md:col-span-2">
                                 <Input
@@ -221,7 +290,7 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                         className={`block w-full rounded-lg border bg-slate-50 p-2.5 pl-10 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                             }`}
                                         placeholder="linkedin.com/in/..."
-                                        value={formData.linkedin} onChange={e => setFormData({ ...formData, linkedin: e.target.value })}
+                                        value={formData.linkedinUrl} onChange={e => setFormData({ ...formData, linkedinUrl: e.target.value })}
                                     />
                                 </div>
                                 {hasLinkedinError && (
@@ -242,8 +311,8 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                         <select
                                             id="country_code"
                                             required
-                                            value={formData.countryCode}
-                                            onChange={e => setFormData({ ...formData, countryCode: e.target.value })}
+                                            value={formData.country_code}
+                                            onChange={e => setFormData({ ...formData, country_code: e.target.value })}
                                             className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
                                         >
                                             <option value="">Code</option>
@@ -263,7 +332,7 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                             required
                                             className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 pl-10 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
                                             placeholder="79 000 00 00"
-                                            value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                            value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -274,22 +343,17 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
 
                     <div className="h-px bg-slate-100"></div>
 
-                    {/* SECTION 3: JOB PROFILE */}
+                    {/* SECTION 3: EXPERIENCE */}
                     <section>
                         <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-6">
                             <div className="w-6 h-6 rounded bg-slate-900 text-white text-xs flex items-center justify-center">3</div>
-                            Job Profile
+                            Experience
                         </h2>
 
                         <div className="space-y-6">
                             <Input
-                                label="Current Role / Title" id="role" placeholder="e.g. Senior Frontend Engineer" required
-                                value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}
-                            />
-
-                            <Input
-                                label="Years of Relevant Experience" id="experience" type="number" placeholder="e.g. 5" required min="0"
-                                value={formData.experienceYears} onChange={e => setFormData({ ...formData, experienceYears: e.target.value })}
+                                label="Years of Relevant Experience" id="years_of_experience" type="number" placeholder="e.g. 5" required min="0" max="50"
+                                value={formData.years_of_experience} onChange={e => setFormData({ ...formData, years_of_experience: e.target.value })}
                             />
                         </div>
                     </section>
@@ -307,14 +371,14 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
 
                             {/* Notice Period */}
                             <div>
-                                <label htmlFor="noticePeriod" className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label htmlFor="notice_period_months" className="block text-sm font-medium text-slate-700 mb-1.5">
                                     Notice Period <span className="text-red-500">*</span>
                                 </label>
                                 <select
-                                    id="noticePeriod"
+                                    id="notice_period_months"
                                     required
-                                    value={formData.noticePeriod}
-                                    onChange={e => setFormData({ ...formData, noticePeriod: e.target.value })}
+                                    value={formData.notice_period_months}
+                                    onChange={e => setFormData({ ...formData, notice_period_months: e.target.value })}
                                     className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 shadow-sm focus:border-slate-900 focus:ring-slate-900"
                                 >
                                     <option value="">Select...</option>
@@ -338,8 +402,8 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                             required
                                             className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                                 }`}
-                                            value={formData.salaryMin}
-                                            onChange={(e) => setFormData({ ...formData, salaryMin: e.target.value })}
+                                            value={formData.salary_min}
+                                            onChange={(e) => setFormData({ ...formData, salary_min: e.target.value })}
                                         />
                                     </div>
                                     <div className="relative">
@@ -350,8 +414,8 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                             required
                                             className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                                 }`}
-                                            value={formData.salaryMax}
-                                            onChange={(e) => setFormData({ ...formData, salaryMax: e.target.value })}
+                                            value={formData.salary_max}
+                                            onChange={(e) => setFormData({ ...formData, salary_max: e.target.value })}
                                         />
                                     </div>
                                 </div>
@@ -363,9 +427,9 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                     </div>
                                 )}
                                 {/* Range Helper Text (Only show if no error) */}
-                                {!hasSalaryError && formData.salaryMin && formData.salaryMax && (
+                                {!hasSalaryError && formData.salary_min && formData.salary_max && (
                                     <p className="mt-2 text-xs text-slate-500">
-                                        Range: <span className="font-mono font-semibold text-slate-900">{formatCurrency(formData.salaryMin)} – {formatCurrency(formData.salaryMax)}</span>
+                                        Range: <span className="font-mono font-semibold text-slate-900">{formatCurrency(formData.salary_min)} – {formatCurrency(formData.salary_max)}</span>
                                     </p>
                                 )}
                             </div>
@@ -378,23 +442,23 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                             key={canton.code}
                                             className={`
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
-                        ${formData.location.includes(canton.code)
+                        ${formData.desired_locations.includes(canton.code)
                                                     ? 'bg-slate-900 border-slate-900 text-white shadow-md'
                                                     : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400'}
-                        ${!formData.location.includes(canton.code) && formData.location.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
+                        ${!formData.desired_locations.includes(canton.code) && formData.desired_locations.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
                                         >
                                             <input
                                                 type="checkbox"
                                                 className="hidden"
-                                                checked={formData.location.includes(canton.code)}
-                                                disabled={!formData.location.includes(canton.code) && formData.location.length >= 5}
+                                                checked={formData.desired_locations.includes(canton.code)}
+                                                disabled={!formData.desired_locations.includes(canton.code) && formData.desired_locations.length >= 5}
                                                 onChange={() => {
                                                     setFormData(prev => ({
                                                         ...prev,
-                                                        location: prev.location.includes(canton.code)
-                                                            ? prev.location.filter(l => l !== canton.code)
-                                                            : prev.location.length < 5 ? [...prev.location, canton.code] : prev.location
+                                                        desired_locations: prev.desired_locations.includes(canton.code)
+                                                            ? prev.desired_locations.filter(l => l !== canton.code)
+                                                            : prev.desired_locations.length < 5 ? [...prev.desired_locations, canton.code] : prev.desired_locations
                                                     }))
                                                 }}
                                             />
@@ -402,9 +466,9 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                         </label>
                                     ))}
                                 </div>
-                                {formData.location.length > 0 ? (
+                                {formData.desired_locations.length > 0 ? (
                                     <p className="text-xs text-slate-400 mt-2">
-                                        {formData.location.length}/5 selected
+                                        {formData.desired_locations.length}/5 selected
                                     </p>
                                 ) : (
                                     <div className="flex items-center gap-2 mt-2 text-amber-600 text-xs animate-in slide-in-from-top-2">
@@ -413,19 +477,35 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Other Location (Optional) */}
+                            <Input
+                                label="Other Preferred Location (Optional)"
+                                id="desired_other_location"
+                                placeholder="e.g., Remote, Berlin, Paris"
+                                value={formData.desired_other_location}
+                                onChange={e => setFormData({ ...formData, desired_other_location: e.target.value })}
+                            />
                         </div>
                     </section>
 
                     {/* SUBMIT */}
                     <div className="pt-4">
                         <div className="flex items-start gap-3 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
-                            <input type="checkbox" id="terms" required className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900 bg-white focus:ring-slate-900" />
-                            <label htmlFor="terms" className="text-xs text-slate-500 leading-relaxed">
+                            <input
+                                type="checkbox"
+                                id="accepted_terms"
+                                required
+                                checked={formData.accepted_terms}
+                                onChange={(e) => setFormData({ ...formData, accepted_terms: e.target.checked })}
+                                className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900 bg-white focus:ring-slate-900"
+                            />
+                            <label htmlFor="accepted_terms" className="text-xs text-slate-500 leading-relaxed">
                                 I agree to the <button type="button" onClick={onTermsClick} className="underline text-slate-900 hover:text-slate-700">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
-                        <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLinkedinError || hasLocationError}>
-                            Submit Application
+                        <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLinkedinError || hasLocationError || isSubmitting}>
+                            {isSubmitting ? 'Submitting...' : 'Submit Application'}
                         </Button>
                     </div>
 

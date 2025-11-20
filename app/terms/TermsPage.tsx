@@ -35,13 +35,13 @@ const TermsPage: React.FC<TermsPageProps> = ({ onBack }) => {
                 <div className="bg-white rounded-2xl border border-slate-200 p-8 md:p-12">
                     <div className="space-y-8 text-slate-600 leading-relaxed">
                         <p className="text-lg font-medium text-slate-900">
-                            Welcome to Silvia's List. Please read these terms carefully before using our platform to find talent or opportunities.
+                            Welcome to Silvia&apos;s List. Please read these terms carefully before using our platform to find talent or opportunities.
                         </p>
 
                         <section>
                             <h2 className="text-xl font-bold text-slate-900 mb-3">1. The Platform</h2>
                             <p>
-                                Silvia's List connects top tech talent ("Candidates") with companies ("Employers") in Switzerland. We facilitate introductions but are not a party to any employment contracts formed between Users. By using our service, you acknowledge that we act solely as a matching platform.
+                                Silvia&apos;s List connects top tech talent (&ldquo;Candidates&rdquo;) with companies (&ldquo;Employers&rdquo;) in Switzerland. We facilitate introductions but are not a party to any employment contracts formed between Users. By using our service, you acknowledge that we act solely as a matching platform.
                             </p>
                         </section>
 
@@ -73,7 +73,7 @@ const TermsPage: React.FC<TermsPageProps> = ({ onBack }) => {
                         <section>
                             <h2 className="text-xl font-bold text-slate-900 mb-3">5. Limitation of Liability</h2>
                             <p>
-                                Silvia's List is provided "as is". We verify candidates to the best of our ability but do not guarantee the accuracy of candidate profiles or the suitability of any candidate for a specific role.
+                                Silvia&apos;s List is provided &ldquo;as is&rdquo;. We verify candidates to the best of our ability but do not guarantee the accuracy of candidate profiles or the suitability of any candidate for a specific role.
                             </p>
                         </section>
 

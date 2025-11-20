@@ -71,6 +71,15 @@ export async function GET(req: NextRequest) {
     const candidates = filteredData.map((profile) => {
       const years = parseFloat(profile.years_of_experience || '0');
 
+      // Extract Role (most recent job title)
+      let roleStr = 'Professional'; // Default fallback
+      if (Array.isArray(profile.professional_experience) && profile.professional_experience.length > 0) {
+        const mostRecentJob = profile.professional_experience[0];
+        if (mostRecentJob && mostRecentJob.positionName) {
+          roleStr = mostRecentJob.positionName;
+        }
+      }
+
       // Extract Skills
       let topSkills: string[] = [];
       if (Array.isArray(profile.technical_skills)) {
@@ -91,6 +100,7 @@ export async function GET(req: NextRequest) {
 
       return {
         talent_id: formatTalentId(profile.talent_id || profile.id),
+        role: roleStr,
         entry_date: profile.created_at,
         years_of_experience: years,
         preferred_cantons: profile.desired_locations || [],

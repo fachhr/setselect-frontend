@@ -1,13 +1,13 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Zap, Shield, Users } from 'lucide-react';
-import { Button } from './UI.tsx';
+import { Button } from '@/components/ui';
 
-interface CompaniesPageProps {
-    onBack: () => void;
-    onContactClick: () => void;
-}
+const CompaniesPage: React.FC = () => {
+    const router = useRouter();
 
-const CompaniesPage: React.FC<CompaniesPageProps> = ({ onBack, onContactClick }) => {
     return (
         <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
             {/* Page Header - Centered Hero Style */}
@@ -16,7 +16,7 @@ const CompaniesPage: React.FC<CompaniesPageProps> = ({ onBack, onContactClick })
                     {/* Back Button */}
                     <div className="mb-8">
                         <button
-                            onClick={onBack}
+                            onClick={() => router.back()}
                             className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -34,7 +34,7 @@ const CompaniesPage: React.FC<CompaniesPageProps> = ({ onBack, onContactClick })
                             Stop sifting through hundreds of irrelevant CVs. Get direct access to a curated list of pre-vetted engineers, developers, and product managers looking for their next role in Switzerland.
                         </p>
                         <div className="mt-10 flex justify-center gap-4">
-                            <Button variant="primary" icon={ArrowRight} onClick={onContactClick}>Start Hiring</Button>
+                            <Button variant="primary" icon={ArrowRight} onClick={() => router.push('/contact')}>Start Hiring</Button>
                             <Button variant="outline" onClick={() => window.open('mailto:sales@silviaslist.com')}>Contact Sales</Button>
                         </div>
                     </div>

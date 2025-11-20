@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Send, Mail, MessageSquare } from 'lucide-react';
-import { Button, Input, TextArea } from './UI.tsx';
+import { Button, Input, TextArea } from '@/components/ui';
 
 interface ContactPageProps {
     onBack: () => void;
@@ -70,7 +70,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                             <div>
                                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Office</h3>
                                 <p className="text-slate-600 leading-relaxed text-sm">
-                                    Silvia's List AG<br />
+                                    Silvia&apos;s List AG<br />
                                     Bahnhofstrasse 10<br />
                                     8001 Zürich<br />
                                     Switzerland
@@ -107,8 +107,8 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                                         onChange={e => setFormData({ ...formData, subject: e.target.value })}
                                     >
                                         <option>General Inquiry</option>
-                                        <option>I'm a Company Hiring</option>
-                                        <option>I'm a Candidate</option>
+                                        <option>I&apos;m a Company Hiring</option>
+                                        <option>I&apos;m a Candidate</option>
                                         <option>Partnership</option>
                                     </select>
                                 </div>
