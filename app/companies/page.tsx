@@ -1,15 +1,11 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { Metadata } from 'next';
 import CompaniesPage from './CompaniesPage';
 
-export default function CompaniesRoute() {
-  const router = useRouter();
+export const metadata: Metadata = {
+  title: 'Hire Top Tech Talent | Silvia\'s List',
+  description: 'Access a curated list of pre-vetted engineers and developers in Switzerland.',
+};
 
-  return (
-    <CompaniesPage
-      onBack={() => router.back()}
-      onContactClick={() => router.push('/contact')}
-    />
-  );
+export default function CompaniesRoute() {
+  return <CompaniesPage />;
 }

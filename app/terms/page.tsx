@@ -1,10 +1,11 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { Metadata } from 'next';
 import TermsPage from './TermsPage';
 
-export default function TermsRoute() {
-  const router = useRouter();
+export const metadata: Metadata = {
+  title: 'Terms of Service | Silvia\'s List',
+  description: 'Legal agreements and terms of service for Silvia\'s List.',
+};
 
-  return <TermsPage onBack={() => router.back()} />;
+export default function TermsRoute() {
+  return <TermsPage />;
 }

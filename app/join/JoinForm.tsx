@@ -1,4 +1,7 @@
+'use client';
+
 import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Upload,
     FileText,
@@ -11,12 +14,8 @@ import {
 import { Button, Input, Badge } from '@/components/ui';
 import { CANTONS, NOTICE_PERIOD_OPTIONS } from '@/lib/constants';
 
-interface JoinFormProps {
-    onBack: () => void;
-    onTermsClick: () => void;
-}
-
-const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
+const JoinForm: React.FC = () => {
+    const router = useRouter();
     const [step, setStep] = useState(1); // 1: CV, 2: Details, 3: Success
     const [file, setFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -164,7 +163,7 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                             <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5"></div>Companies request to meet you</li>
                         </ul>
                     </div>
-                    <Button onClick={onBack} icon={ArrowLeft}>Back to Candidates</Button>
+                    <Button onClick={() => router.push('/')} icon={ArrowLeft}>Back to Candidates</Button>
                 </div>
             </div>
         );
@@ -178,7 +177,7 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                     {/* Back Button */}
                     <div className="mb-8">
                         <button
-                            onClick={onBack}
+                            onClick={() => router.back()}
                             className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -501,7 +500,7 @@ const JoinForm: React.FC<JoinFormProps> = ({ onBack, onTermsClick }) => {
                                 className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900 bg-white focus:ring-slate-900"
                             />
                             <label htmlFor="accepted_terms" className="text-xs text-slate-500 leading-relaxed">
-                                I agree to the <button type="button" onClick={onTermsClick} className="underline text-slate-900 hover:text-slate-700">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
+                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-slate-900 hover:text-slate-700">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
                         <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLinkedinError || hasLocationError || isSubmitting}>

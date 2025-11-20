@@ -1,11 +1,12 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
-interface TermsPageProps {
-    onBack: () => void;
-}
+const TermsPage: React.FC = () => {
+    const router = useRouter();
 
-const TermsPage: React.FC<TermsPageProps> = ({ onBack }) => {
     return (
         <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
             {/* Page Header */}
@@ -14,7 +15,7 @@ const TermsPage: React.FC<TermsPageProps> = ({ onBack }) => {
                     {/* Back Button - Top Left */}
                     <div className="mb-8">
                         <button
-                            onClick={onBack}
+                            onClick={() => router.back()}
                             className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />

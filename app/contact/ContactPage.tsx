@@ -1,12 +1,12 @@
+'use client';
+
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Send, Mail, MessageSquare } from 'lucide-react';
 import { Button, Input, TextArea } from '@/components/ui';
 
-interface ContactPageProps {
-    onBack: () => void;
-}
-
-const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
+const ContactPage: React.FC = () => {
+    const router = useRouter();
     const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
 
@@ -26,7 +26,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                     <p className="text-slate-600 mb-8 text-lg">
                         Thank you for reaching out. Our team typically responds within 24 hours.
                     </p>
-                    <Button onClick={onBack} icon={ArrowLeft}>Back to Home</Button>
+                    <Button onClick={() => router.push('/')} icon={ArrowLeft}>Back to Home</Button>
                 </div>
             </div>
         );
@@ -40,7 +40,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                     {/* Back Button */}
                     <div className="mb-8">
                         <button
-                            onClick={onBack}
+                            onClick={() => router.back()}
                             className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />

@@ -1,15 +1,11 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { Metadata } from 'next';
 import JoinForm from './JoinForm';
 
-export default function JoinPage() {
-  const router = useRouter();
+export const metadata: Metadata = {
+  title: 'Join the Talent Pool | Silvia\'s List',
+  description: 'Create your profile and connect with top opportunities in Switzerland.',
+};
 
-  return (
-    <JoinForm
-      onBack={() => router.push('/')}
-      onTermsClick={() => window.open('/terms', '_blank')}
-    />
-  );
+export default function JoinRoute() {
+  return <JoinForm />;
 }

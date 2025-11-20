@@ -1,10 +1,11 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { Metadata } from 'next';
 import ContactPage from './ContactPage';
 
-export default function ContactRoute() {
-  const router = useRouter();
+export const metadata: Metadata = {
+  title: 'Contact Us | Silvia\'s List',
+  description: 'Get in touch with our team for hiring, joining, or partnerships.',
+};
 
-  return <ContactPage onBack={() => router.back()} />;
+export default function ContactRoute() {
+  return <ContactPage />;
 }
