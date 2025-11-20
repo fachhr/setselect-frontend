@@ -20,6 +20,7 @@ const JoinForm: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [locationsTouched, setLocationsTouched] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Form State (matching backend schema)
@@ -44,7 +45,7 @@ const JoinForm: React.FC = () => {
     const salaryMaxNum = Number(formData.salary_max);
     const hasSalaryError = formData.salary_min !== '' && formData.salary_max !== '' && salaryMaxNum < salaryMinNum;
 
-    // LinkedIn Validation: Must contain 'linkedin.com' if not empty
+    // LinkedIn Validation: Optional, but if provided must contain 'linkedin.com'
     const hasLinkedinError = formData.linkedinUrl.length > 0 && !formData.linkedinUrl.includes('linkedin.com');
 
     // Location Validation: Must have at least 1 selected
@@ -67,8 +68,11 @@ const JoinForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Mark locations as touched to show validation errors
+        setLocationsTouched(true);
+
         // Validation checks
-        if (hasSalaryError || hasLinkedinError || hasLocationError) return;
+        if (hasSalaryError || hasLocationError) return;
         if (!file) {
             alert('Please upload your CV');
             return;
@@ -283,12 +287,11 @@ const JoinForm: React.FC = () => {
                             </div>
                             <div className="relative">
                                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                    LinkedIn URL <span className="text-red-500">*</span>
+                                    LinkedIn URL <span className="text-slate-400 text-xs font-normal">(Optional)</span>
                                 </label>
                                 <div className="relative">
                                     <input
                                         type="url"
-                                        required
                                         className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 shadow-sm focus:ring-slate-900 transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
                                             }`}
                                         placeholder="linkedin.com/in/..."
@@ -461,6 +464,7 @@ const JoinForm: React.FC = () => {
                                                 checked={formData.desired_locations.includes(canton.code)}
                                                 disabled={!formData.desired_locations.includes(canton.code) && formData.desired_locations.length >= 5}
                                                 onChange={() => {
+                                                    setLocationsTouched(true);
                                                     setFormData(prev => ({
                                                         ...prev,
                                                         desired_locations: prev.desired_locations.includes(canton.code)
@@ -477,12 +481,12 @@ const JoinForm: React.FC = () => {
                                     <p className="text-xs text-slate-400 mt-2">
                                         {formData.desired_locations.length}/5 selected
                                     </p>
-                                ) : (
+                                ) : locationsTouched ? (
                                     <div className="flex items-center gap-2 mt-2 text-amber-600 text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">At least one location must be selected.</span>
                                     </div>
-                                )}
+                                ) : null}
                             </div>
 
                             {/* Other Location (Optional) */}
@@ -511,7 +515,7 @@ const JoinForm: React.FC = () => {
                                 I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-slate-900 hover:text-slate-700">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
-                        <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLinkedinError || hasLocationError || isSubmitting}>
+                        <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLocationError || isSubmitting}>
                             {isSubmitting ? 'Submitting...' : 'Submit Application'}
                         </Button>
                     </div>
