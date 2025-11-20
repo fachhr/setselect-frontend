@@ -41,10 +41,10 @@ module.exports = {
       },
 
       fontFamily: {
-        sans: ['var(--font-gilroy)', 'Arial', 'sans-serif'],
-        body: ['var(--font-body)', 'sans-serif'],
-        heading: ['var(--font-heading)', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Arial', 'sans-serif'],
+        serif: ['var(--font-serif)', 'Georgia', 'serif'],
       },
+
       spacing: {
         'space-xs': 'var(--space-xs)',
         'space-sm': 'var(--space-sm)',
