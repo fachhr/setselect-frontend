@@ -221,7 +221,7 @@ export default function HomeContent() {
                                             key={level.value}
                                             className="flex items-center gap-3 group cursor-pointer select-none"
                                         >
-                                            <div className="relative flex items-center">
+                                            <div className="relative flex items-center flex-shrink-0">
                                                 <input
                                                     type="checkbox"
                                                     className="checkbox-slate"
