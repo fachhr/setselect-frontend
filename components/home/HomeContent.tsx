@@ -224,7 +224,7 @@ export default function HomeContent() {
                                             <div className="relative flex items-center flex-shrink-0">
                                                 <input
                                                     type="checkbox"
-                                                    className="checkbox-slate"
+                                                    className="checkbox-slate peer"
                                                     checked={selectedSeniority.includes(level.value)}
                                                     onChange={() => toggleSeniority(level.value)}
                                                 />
