@@ -43,13 +43,13 @@ export const Button: React.FC<ButtonProps> = ({
     disabled = false,
     href
 }) => {
-    const baseStyle = "inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+    const baseStyle = "inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
-        primary: "btn-gold shadow-lg shadow-[rgba(212,175,55,0.1)] focus:ring-[var(--gold)]",
-        secondary: "bg-[var(--bg-surface-2)] hover:bg-[var(--bg-surface-3)] text-[var(--text-primary)] border border-[var(--border-strong)] focus:ring-[var(--blue)]",
-        outline: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)] focus:ring-[var(--blue)]",
-        ghost: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:ring-[var(--blue)]",
+        primary: "btn-gold shadow-lg shadow-[rgba(212,175,55,0.1)] focus:ring-[rgba(212,175,55,0.5)]",
+        secondary: "bg-[var(--bg-surface-2)] hover:bg-[var(--bg-surface-3)] text-[var(--text-primary)] border border-[var(--border-strong)] focus:ring-[rgba(59,130,246,0.5)]",
+        outline: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)] focus:ring-[rgba(59,130,246,0.5)]",
+        ghost: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:ring-[rgba(59,130,246,0.5)]",
     };
 
     const combinedClassName = `${baseStyle} ${variants[variant]} ${className}`;
@@ -81,7 +81,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Input: React.FC<InputProps> = ({ label, id, type = "text", placeholder, required, value, onChange, min, step }) => (
     <div className="space-y-1.5">
-        <label htmlFor={id} className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+        <label htmlFor={id} className="block text-sm font-medium text-[var(--text-secondary)]">
             {label} {required && <span className="text-[var(--error)]">*</span>}
         </label>
         <div className="relative">
@@ -106,7 +106,7 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export const TextArea: React.FC<TextAreaProps> = ({ label, id, placeholder, required, value, onChange, rows = 4 }) => (
     <div className="space-y-1.5">
-        <label htmlFor={id} className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+        <label htmlFor={id} className="block text-sm font-medium text-[var(--text-secondary)]">
             {label} {required && <span className="text-[var(--error)]">*</span>}
         </label>
         <textarea

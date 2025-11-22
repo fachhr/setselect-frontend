@@ -41,7 +41,7 @@ const ContactPage: React.FC = () => {
                     <div className="mb-8">
                         <button
                             onClick={() => router.back()}
-                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--gold)] transition-colors group"
+                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--gold)] transition-colors group focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded-md px-1"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                             Back
@@ -99,7 +99,7 @@ const ContactPage: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label htmlFor="subject" className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Subject</label>
+                                    <label htmlFor="subject" className="block text-sm font-medium text-[var(--text-secondary)]">Subject</label>
                                     <select
                                         id="subject"
                                         className="input-base block w-full rounded-lg p-3 text-sm"

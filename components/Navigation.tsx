@@ -14,7 +14,7 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 bg-[var(--gold)] rounded flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
+            <div className="w-8 h-8 bg-[var(--gold)] rounded-md flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
               <span className="text-[#0A1628] font-bold text-lg font-serif">S</span>
             </div>
             <span className="text-lg font-bold tracking-tight text-[var(--text-primary)]">
@@ -44,8 +44,10 @@ export function Navigation() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] rounded-md"
+            className="md:hidden p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)]"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>

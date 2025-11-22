@@ -183,7 +183,7 @@ export default function HomeContent() {
                         <div className="lg:hidden mb-4">
                             <button
                                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                                className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)]"
+                                className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)]"
                             >
                                 <span className="flex items-center gap-2">
                                     <Filter className="w-4 h-4" /> Filters
@@ -247,7 +247,7 @@ export default function HomeContent() {
                                         <button
                                             key={canton.code}
                                             onClick={() => toggleCanton(canton.code)}
-                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 ${selectedCantons.includes(canton.code)
+                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedCantons.includes(canton.code)
                                                 ? 'bg-[var(--blue)] border-[var(--blue)] text-white shadow-md'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--blue)]'
                                                 }`}
@@ -261,7 +261,7 @@ export default function HomeContent() {
                                 {CANTONS.length > MAIN_CANTON_CODES.length && (
                                     <button
                                         onClick={() => setShowAllCantons(!showAllCantons)}
-                                        className="mt-3 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors"
+                                        className="mt-3 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded px-1"
                                     >
                                         {showAllCantons ? (
                                             <>
@@ -308,7 +308,7 @@ export default function HomeContent() {
                                         setSearchTerm('');
                                         setSalaryRange([0, 300000]);
                                     }}
-                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)] pb-0.5 w-max"
+                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)] pb-0.5 w-max focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded px-1"
                                 >
                                     <X className="w-3 h-3" /> Clear all filters
                                 </button>
@@ -356,7 +356,7 @@ export default function HomeContent() {
                                 {filteredCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
-                                        className="group glass-panel rounded-xl p-6 hover:border-[var(--gold)] hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] transition-all duration-300 relative"
+                                        className="group glass-panel rounded-xl p-6 hover:border-[var(--gold)] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative"
                                     >
                                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
                                             <div className="flex-1 min-w-0">
@@ -435,7 +435,8 @@ export default function HomeContent() {
                     <div className="bg-[var(--bg-surface-1)] rounded-2xl shadow-2xl border border-[var(--border-strong)] max-w-md w-full p-8 relative">
                         <button
                             onClick={() => setShowContactModal(null)}
-                            className="absolute top-4 right-4 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+                            className="absolute top-4 right-4 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-surface-1)] rounded-md p-1"
+                            aria-label="Close modal"
                         >
                             <X className="w-5 h-5" />
                         </button>

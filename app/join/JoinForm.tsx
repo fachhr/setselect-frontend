@@ -182,7 +182,7 @@ const JoinForm: React.FC = () => {
                     <div className="mb-8">
                         <button
                             onClick={() => router.back()}
-                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--gold)] transition-colors group"
+                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--gold)] transition-colors group focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded-md px-1"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                             Back
@@ -211,14 +211,19 @@ const JoinForm: React.FC = () => {
 
                         <div
                             className={`
-                relative border-2 border-dashed rounded-xl p-10 text-center transition-all duration-200 ease-in-out
+                relative border-2 border-dashed rounded-xl p-10 text-center transition-all duration-200 ease-in-out cursor-pointer
                 ${isDragging ? 'border-[var(--blue)] bg-[var(--bg-surface-2)]' : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-surface-2)]'}
                 ${file ? 'bg-[var(--bg-surface-2)] border-[var(--border-strong)]' : ''}
+                focus-within:ring-2 focus-within:ring-[rgba(59,130,246,0.5)] focus-within:ring-offset-2 focus-within:ring-offset-[var(--bg-root)]
               `}
                             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                             onDragLeave={() => setIsDragging(false)}
                             onDrop={handleDrop}
                             onClick={() => fileInputRef.current?.click()}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInputRef.current?.click(); }}}
+                            aria-label="Upload CV file"
                         >
                             <input
                                 type="file"
@@ -448,6 +453,7 @@ const JoinForm: React.FC = () => {
                                             key={canton.code}
                                             className={`
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
+                        has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
                         ${formData.desired_locations.includes(canton.code)
                                                     ? 'bg-[var(--gold)] border-[var(--blue)] text-[#0A1628] shadow-md'
                                                     : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
@@ -456,7 +462,7 @@ const JoinForm: React.FC = () => {
                                         >
                                             <input
                                                 type="checkbox"
-                                                className="hidden"
+                                                className="sr-only"
                                                 checked={formData.desired_locations.includes(canton.code)}
                                                 disabled={!formData.desired_locations.includes(canton.code) && formData.desired_locations.length >= 5}
                                                 onChange={() => {
@@ -505,10 +511,10 @@ const JoinForm: React.FC = () => {
                                 required
                                 checked={formData.accepted_terms}
                                 onChange={(e) => setFormData({ ...formData, accepted_terms: e.target.checked })}
-                                className="mt-1 h-4 w-4 rounded border-[var(--border-strong)] text-[var(--text-primary)] bg-[var(--bg-surface-1)] focus:ring-[var(--blue)]"
+                                className="checkbox-slate mt-1"
                             />
                             <label htmlFor="accepted_terms" className="text-xs text-[var(--text-tertiary)] leading-relaxed">
-                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)]">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
+                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-1 focus:ring-offset-[var(--bg-surface-2)] rounded">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
                         <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLocationError || isSubmitting}>

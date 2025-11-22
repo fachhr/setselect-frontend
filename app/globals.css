@@ -90,7 +90,7 @@
 .glass-panel {
   background: var(--bg-surface-1);
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .input-base {
@@ -102,7 +102,7 @@
 
 .input-base:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 1px var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   outline: none;
 }
 
@@ -134,8 +134,7 @@
 }
 
 .checkbox-slate:focus {
-  @apply ring-2 ring-offset-1;
-  ring-color: var(--blue);
+  box-shadow: 0 0 0 2px var(--bg-root), 0 0 0 4px rgba(59, 130, 246, 0.3);
   background: var(--bg-surface-2);
 }
 
@@ -152,7 +151,7 @@ input:not([type="range"]):not([type="checkbox"]):focus,
 select:focus,
 textarea:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 1px var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   outline: none;
 }
 
