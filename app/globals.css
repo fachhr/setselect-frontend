@@ -2,9 +2,35 @@
 
 @layer base {
   :root {
-    /* --- NEW SWISS PALETTE --- */
-    --background: #ffffff;
-    --foreground: #0f172a;
+    /* --- PREMIUM SWISS NAVY PALETTE --- */
+
+    /* Backgrounds */
+    --bg-root: #0A1628;
+    --bg-surface-1: #0D1B2E; /* Cards */
+    --bg-surface-2: #162943; /* Inputs/Hovers */
+    --bg-surface-3: #1F3A5F; /* Dropdowns */
+
+    /* Borders & Dividers */
+    --border-subtle: #1F3A5F;
+    --border-strong: #2C4A6E;
+
+    /* Typography */
+    --text-primary: #F8FAFC;   /* White */
+    --text-secondary: #94A3B8; /* Slate 400 */
+    --text-tertiary: #64748B;  /* Slate 500 */
+    --text-accent: #3B82F6;    /* Brand Blue */
+
+    /* Accents */
+    --gold: #D4AF37;
+    --gold-dim: rgba(212, 175, 55, 0.15);
+    --gold-border: rgba(212, 175, 55, 0.3);
+
+    --blue: #3B82F6;
+    --blue-dim: rgba(59, 130, 246, 0.15);
+
+    /* Status */
+    --error: #EF4444;
+    --success: #10b981;
 
     /* --- FONTS --- */
     /* Maps font-sans to Inter */
@@ -13,37 +39,17 @@
     /* Maps font-serif to Playfair Display */
     --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
-    /* --- COMPATIBILITY VARS --- */
-    --background-gradient: #ffffff;
-    --light: #ffffff;
-    --light-800: #f8fafc;
-    --light-600: #f1f5f9;
-    --light-400: #e2e8f0;
-
-    --surface-1: #ffffff;
-    --surface-2: #f8fafc;
-    --surface-3: #ffffff;
-
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-tertiary: #94a3b8;
-    --text-disabled: #cbd5e1;
-
-    --primary: #0f172a;
-    --primary-dark: #1e293b;
-    --primary-alpha: #f1f5f9;
-
-    --accent-gold: #0f172a;
-    --accent-gold-hover: #334155;
-    --accent-gold-alpha: #f8fafc;
-    --accent-gold-border: #e2e8f0;
-
-    --error-color: #ef4444;
-    --error-bg: #fef2f2;
-    --success-color: #10b981;
-    --success-bg: #ecfdf5;
-
-    --button-text-on-gold: #ffffff;
+    /* --- LEGACY COMPATIBILITY VARS --- */
+    --background: var(--bg-root);
+    --foreground: var(--text-primary);
+    --background-gradient: var(--bg-root);
+    --surface-1: var(--bg-surface-1);
+    --surface-2: var(--bg-surface-2);
+    --surface-3: var(--bg-surface-3);
+    --primary: var(--gold);
+    --accent-gold: var(--gold);
+    --error-color: var(--error);
+    --success-color: var(--success);
   }
 
   html {
@@ -51,37 +57,112 @@
   }
 
   body {
-    @apply bg-white text-slate-900 antialiased;
+    background-color: var(--bg-root);
+    background-image: radial-gradient(circle at 50% 0%, #162943 0%, #0A1628 40%);
+    color: var(--text-primary);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
 
   .font-serif {
     font-family: var(--font-serif);
   }
+
+  /* Scrollbar Polish */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-root);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
 }
 
 /* --- CUSTOM UI ELEMENTS --- */
 
+/* Utility Classes */
+.glass-panel {
+  background: var(--bg-surface-1);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.input-base {
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.input-base:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue);
+  outline: none;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: #0A1628;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-gold:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
 .checkbox-slate {
-  @apply appearance-none h-4 w-4 rounded border border-slate-300 bg-white checked:bg-slate-900 checked:border-slate-900 focus:ring-2 focus:ring-slate-500 focus:ring-offset-1 transition-colors cursor-pointer relative;
+  @apply appearance-none h-4 w-4 rounded border transition-colors cursor-pointer relative;
+  background: var(--bg-surface-2);
+  border-color: var(--border-strong);
 }
 
 .checkbox-slate:checked {
+  background: var(--blue);
+  border-color: var(--blue);
   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
 }
 
+.checkbox-slate:focus {
+  @apply ring-2 ring-offset-1;
+  ring-color: var(--blue);
+  background: var(--bg-surface-2);
+}
+
 input:not([type="range"]):not([type="checkbox"]),
 select,
 textarea {
-  @apply text-slate-900 border-slate-200 focus:border-slate-400 focus:ring-2 focus:ring-slate-900/5 transition-all;
-  background-color: var(--background);
+  background-color: var(--bg-surface-2);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  transition: all 0.2s;
+}
+
+input:not([type="range"]):not([type="checkbox"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1px var(--blue);
+  outline: none;
 }
 
 ::placeholder {
-  color: #94a3b8 !important;
+  color: var(--text-tertiary) !important;
+}
+
+::selection {
+  background: var(--gold-dim);
+  color: var(--gold);
 }
 
 @layer utilities {

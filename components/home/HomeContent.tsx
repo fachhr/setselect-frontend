@@ -147,23 +147,29 @@ export default function HomeContent() {
 
     return (
         <div
-            className="min-h-screen bg-white font-sans text-slate-900 selection:bg-slate-200 selection:text-slate-900"
+            className="min-h-screen font-sans"
             style={{ scrollbarGutter: 'stable' }}
         >
             {/* HERO SECTION */}
-            <div className="bg-white border-b border-slate-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-                    <Badge style="outline">Switzerland&apos;s #1 Tech Talent Pool</Badge>
-                    <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
+            <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] relative overflow-hidden">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--gold)] opacity-5 blur-[100px] rounded-full"></div>
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--blue)] opacity-5 blur-[120px] rounded-full"></div>
+                </div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative z-10">
+                    <div className="inline-block mb-6">
+                        <Badge style="gold">Switzerland&apos;s #1 Tech Talent Pool</Badge>
+                    </div>
+                    <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                         Discover exceptional <br className="hidden sm:block" />
-                        <span className="text-slate-900 underline decoration-slate-300 decoration-4 underline-offset-4">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-primary)] to-[var(--text-secondary)]">
                             tech talent
                         </span>
                         .
                     </h1>
-                    <p className="mt-6 text-lg text-slate-500 max-w-2xl mx-auto font-light leading-relaxed">
-                        Browse pre-screened professionals in Zurich, Geneva, and beyond. Skip the recruiters
-                        and connect directly with candidates ready for their next opportunity.
+                    <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
+                        Browse pre-screened professionals in Zurich, Geneva, and beyond. <br className="hidden sm:block" />
+                        Skip the recruiters and connect directly with candidates ready for their next opportunity.
                     </p>
                 </div>
             </div>
@@ -177,7 +183,7 @@ export default function HomeContent() {
                         <div className="lg:hidden mb-4">
                             <button
                                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                                className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-900"
+                                className="w-full flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm font-medium text-[var(--text-primary)]"
                             >
                                 <span className="flex items-center gap-2">
                                     <Filter className="w-4 h-4" /> Filters
@@ -196,18 +202,18 @@ export default function HomeContent() {
                             <div className="relative group">
                                 <input
                                     type="text"
-                                    placeholder="Search by skill, role, or ID..."
-                                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all group-hover:border-slate-300"
+                                    placeholder="Search skills, roles..."
+                                    className="input-base w-full pl-10 pr-4 py-2.5 rounded-lg text-sm"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
-                                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                                <Search className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-3" />
                             </div>
 
                             {/* Seniority Filter */}
                             <div>
-                                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <Briefcase className="w-3.5 h-3.5 text-slate-400" /> Seniority
+                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <Briefcase className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Seniority
                                 </h3>
                                 <div className="space-y-2.5">
                                     {SENIORITY_LEVELS.map((level) => (
@@ -218,12 +224,12 @@ export default function HomeContent() {
                                             <div className="relative flex items-center">
                                                 <input
                                                     type="checkbox"
-                                                    className="peer h-4 w-4 rounded border-slate-300 text-slate-900 bg-white focus:ring-slate-500 cursor-pointer transition-colors"
+                                                    className="checkbox-slate"
                                                     checked={selectedSeniority.includes(level.value)}
                                                     onChange={() => toggleSeniority(level.value)}
                                                 />
                                             </div>
-                                            <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">
+                                            <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                                                 {level.label}
                                             </span>
                                         </label>
@@ -233,8 +239,8 @@ export default function HomeContent() {
 
                             {/* Canton Filter */}
                             <div>
-                                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <MapPin className="w-3.5 h-3.5 text-slate-400" /> Preferred Location
+                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <MapPin className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Preferred Location
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
                                     {displayedCantons.map((canton) => (
@@ -242,8 +248,8 @@ export default function HomeContent() {
                                             key={canton.code}
                                             onClick={() => toggleCanton(canton.code)}
                                             className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 ${selectedCantons.includes(canton.code)
-                                                ? 'bg-slate-900 border-slate-900 text-white shadow-md'
-                                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900'
+                                                ? 'bg-[var(--blue)] border-[var(--blue)] text-white shadow-md'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--blue)]'
                                                 }`}
                                         >
                                             {canton.name}
@@ -255,7 +261,7 @@ export default function HomeContent() {
                                 {CANTONS.length > MAIN_CANTON_CODES.length && (
                                     <button
                                         onClick={() => setShowAllCantons(!showAllCantons)}
-                                        className="mt-3 text-xs text-slate-500 hover:text-slate-900 font-medium flex items-center gap-1.5 transition-colors"
+                                        className="mt-3 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors"
                                     >
                                         {showAllCantons ? (
                                             <>
@@ -274,8 +280,8 @@ export default function HomeContent() {
 
                             {/* Salary Filter */}
                             <div>
-                                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <DollarSign className="w-3.5 h-3.5 text-slate-400" /> Salary (CHF)
+                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Salary (CHF)
                                 </h3>
                                 <div className="px-1">
                                     <input
@@ -283,10 +289,10 @@ export default function HomeContent() {
                                         min="50000"
                                         max="300000"
                                         step="10000"
-                                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900"
+                                        className="w-full h-1 bg-[var(--bg-surface-3)] rounded-lg appearance-none cursor-pointer accent-[var(--blue)]"
                                         onChange={(e) => setSalaryRange([50000, parseInt(e.target.value)])}
                                     />
-                                    <div className="flex justify-between mt-3 text-xs text-slate-500 font-medium font-mono">
+                                    <div className="flex justify-between mt-3 text-xs text-[var(--text-tertiary)] font-medium font-mono">
                                         <span>50K</span>
                                         <span>{salaryRange[1] / 1000}K+</span>
                                     </div>
@@ -302,7 +308,7 @@ export default function HomeContent() {
                                         setSearchTerm('');
                                         setSalaryRange([0, 300000]);
                                     }}
-                                    className="text-xs text-slate-500 hover:text-slate-900 font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-slate-900 pb-0.5 w-max"
+                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)] pb-0.5 w-max"
                                 >
                                     <X className="w-3 h-3" /> Clear all filters
                                 </button>
@@ -312,36 +318,36 @@ export default function HomeContent() {
 
                     {/* RESULTS GRID */}
                     <main className="flex-1">
-                        <div className="flex justify-between items-end mb-6 pb-4 border-b border-slate-100">
-                            <h2 className="text-xl font-bold text-slate-900">
+                        <div className="flex justify-between items-end mb-6 pb-4 border-b border-[var(--border-subtle)]">
+                            <h2 className="text-xl font-bold text-[var(--text-primary)]">
                                 Candidates{' '}
-                                <span className="text-slate-400 font-light ml-2 text-lg">
+                                <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
                                     {filteredCandidates.length} results
                                 </span>
                             </h2>
-                            <div className="flex items-center gap-2 text-sm text-slate-500 group cursor-pointer hover:text-slate-900 transition-colors">
-                                Sort by: <span className="font-medium text-slate-900">Newest</span>
+                            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)] group cursor-pointer hover:text-[var(--text-primary)] transition-colors">
+                                Sort by: <span className="font-medium text-[var(--text-primary)]">Newest</span>
                                 <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
                             </div>
                         </div>
 
                         {isLoading ? (
-                            <div className="bg-slate-50 rounded-xl border border-slate-200 p-16 text-center">
-                                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100 animate-pulse">
-                                    <Search className="w-5 h-5 text-slate-400" />
+                            <div className="glass-panel rounded-xl p-16 text-center">
+                                <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
+                                    <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
                                 </div>
-                                <h3 className="text-lg font-medium text-slate-900">Loading candidates...</h3>
-                                <p className="text-slate-500 mt-1 text-sm">
+                                <h3 className="text-lg font-medium text-[var(--text-primary)]">Loading candidates...</h3>
+                                <p className="text-[var(--text-secondary)] mt-1 text-sm">
                                     Fetching latest talent pool data.
                                 </p>
                             </div>
                         ) : filteredCandidates.length === 0 ? (
-                            <div className="bg-slate-50 rounded-xl border border-slate-200 border-dashed p-16 text-center">
-                                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
-                                    <Search className="w-5 h-5 text-slate-400" />
+                            <div className="glass-panel rounded-xl border-dashed p-16 text-center">
+                                <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)]">
+                                    <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
                                 </div>
-                                <h3 className="text-lg font-medium text-slate-900">No candidates found</h3>
-                                <p className="text-slate-500 mt-1 text-sm">
+                                <h3 className="text-lg font-medium text-[var(--text-primary)]">No candidates found</h3>
+                                <p className="text-[var(--text-secondary)] mt-1 text-sm">
                                     Adjust your filters to broaden your search.
                                 </p>
                             </div>
@@ -350,38 +356,38 @@ export default function HomeContent() {
                                 {filteredCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
-                                        className="group bg-white rounded-lg border border-slate-200 p-6 hover:border-slate-400 hover:shadow-md transition-all duration-300 relative"
+                                        className="group glass-panel rounded-xl p-6 hover:border-[var(--gold)] hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] transition-all duration-300 relative"
                                     >
                                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex flex-wrap items-center gap-3 mb-3">
-                                                    <span className="font-mono text-[10px] uppercase tracking-wider text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
+                                                    <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] border border-[var(--border-strong)] px-1.5 py-0.5 rounded">
                                                         {candidate.id}
                                                     </span>
-                                                    <Badge style={candidate.seniority === 'Executive' ? 'dark' : 'default'}>
+                                                    <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
                                                         {candidate.seniority}
                                                     </Badge>
-                                                    <span className="text-xs text-slate-400 flex items-center gap-1 ml-auto sm:ml-0">
+                                                    <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 ml-auto sm:ml-0">
                                                         <Clock className="w-3 h-3" /> Added {candidate.entryDate}
                                                     </span>
                                                 </div>
 
-                                                <h3 className="text-xl font-bold text-slate-900 mb-1 group-hover:underline decoration-slate-300 underline-offset-4 decoration-2 transition-all">
+                                                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1 group-hover:text-[var(--gold)] transition-colors">
                                                     {candidate.role}
                                                 </h3>
 
-                                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-600 mt-4 mb-5">
+                                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)] mt-4 mb-5">
                                                     <div className="flex items-center gap-2">
-                                                        <Briefcase className="w-4 h-4 text-slate-400" />
+                                                        <Briefcase className="w-4 h-4 text-[var(--text-tertiary)]" />
                                                         {candidate.experience}
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <MapPin className="w-4 h-4 text-slate-400" />
+                                                        <MapPin className="w-4 h-4 text-[var(--text-tertiary)]" />
                                                         {candidate.cantons.join(', ')}
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <DollarSign className="w-4 h-4 text-slate-400" />
-                                                        <span className="font-mono text-slate-700">
+                                                        <DollarSign className="w-4 h-4 text-[var(--text-tertiary)]" />
+                                                        <span className="font-mono">
                                                             {formatCurrency(candidate.salaryMin)} – {formatCurrency(candidate.salaryMax)}
                                                         </span>
                                                     </div>
@@ -391,7 +397,7 @@ export default function HomeContent() {
                                                     {candidate.skills.map((skill) => (
                                                         <span
                                                             key={skill}
-                                                            className="px-2.5 py-1 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded hover:border-slate-400 hover:text-slate-900 transition-colors cursor-default"
+                                                            className="px-2.5 py-1 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-secondary)] text-xs font-medium rounded transition-colors cursor-default"
                                                         >
                                                             {skill}
                                                         </span>
@@ -399,15 +405,15 @@ export default function HomeContent() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col sm:items-end gap-4 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 min-w-[140px]">
+                                            <div className="flex flex-col sm:items-end gap-4 pt-4 sm:pt-0 border-t sm:border-t-0 border-[var(--border-subtle)] min-w-[140px]">
                                                 <div className="text-right hidden sm:block">
-                                                    <p className="text-[10px] uppercase tracking-wider text-slate-400 mb-1 font-semibold">
+                                                    <p className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] mb-1 font-semibold">
                                                         Availability
                                                     </p>
-                                                    <p className="text-sm font-medium text-slate-900">{candidate.availability}</p>
+                                                    <p className="text-sm font-medium text-[var(--text-primary)]">{candidate.availability}</p>
                                                 </div>
                                                 <Button
-                                                    variant="secondary"
+                                                    variant="primary"
                                                     className="w-full sm:w-auto text-xs sm:text-sm"
                                                     onClick={() => setShowContactModal(candidate.id)}
                                                 >
@@ -425,23 +431,23 @@ export default function HomeContent() {
 
             {/* CONTACT MODAL (For Specific Candidate Intro) */}
             {showContactModal && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-xl shadow-2xl shadow-slate-200 max-w-md w-full p-8 relative">
+                <div className="fixed inset-0 bg-[#0A1628]/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+                    <div className="bg-[var(--bg-surface-1)] rounded-2xl shadow-2xl border border-[var(--border-strong)] max-w-md w-full p-8 relative">
                         <button
                             onClick={() => setShowContactModal(null)}
-                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 transition-colors"
+                            className="absolute top-4 right-4 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
                         >
                             <X className="w-5 h-5" />
                         </button>
 
                         <div className="text-center mb-8">
-                            <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
-                                <Mail className="w-5 h-5 text-slate-900" />
+                            <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--border-strong)] text-[var(--gold)]">
+                                <Mail className="w-5 h-5" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900">Request Introduction</h3>
-                            <p className="text-sm text-slate-500 mt-2">
+                            <h3 className="text-xl font-bold text-[var(--text-primary)]">Request Introduction</h3>
+                            <p className="text-sm text-[var(--text-secondary)] mt-2">
                                 Interested in candidate{' '}
-                                <span className="font-mono bg-slate-100 px-1 rounded text-slate-900">
+                                <span className="font-mono text-[var(--gold)]">
                                     {showContactModal}
                                 </span>
                                 ?
@@ -449,11 +455,11 @@ export default function HomeContent() {
                         </div>
 
                         <div className="space-y-4">
-                            <div className="bg-slate-50 p-4 rounded border border-slate-200 text-sm text-slate-600 text-center leading-relaxed">
+                            <div className="bg-[var(--bg-surface-2)] p-4 rounded-lg border border-[var(--border-subtle)] text-sm text-[var(--text-secondary)] text-center leading-relaxed">
                                 Please email us at{' '}
-                                <span className="font-semibold text-slate-900 border-b border-slate-300 pb-0.5">
+                                <strong className="text-[var(--text-primary)] border-b border-[var(--gold)]">
                                     silvia@silviaslist.com
-                                </span>
+                                </strong>
                                 <br /> quoting the Talent ID above.
                             </div>
 
@@ -468,12 +474,13 @@ export default function HomeContent() {
                                 Copy Email Address
                             </Button>
 
-                            <button
+                            <Button
                                 onClick={() => setShowContactModal(null)}
-                                className="w-full text-xs text-slate-400 hover:text-slate-600 py-2"
+                                className="w-full"
+                                variant="ghost"
                             >
                                 Cancel
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

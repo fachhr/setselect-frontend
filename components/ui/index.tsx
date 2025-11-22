@@ -3,15 +3,17 @@ import Link from 'next/link';
 
 interface BadgeProps {
     children: React.ReactNode;
-    style?: 'default' | 'dark' | 'outline' | 'success';
+    style?: 'default' | 'dark' | 'outline' | 'success' | 'gold' | 'blue';
 }
 
 export const Badge: React.FC<BadgeProps> = ({ children, style = 'default' }) => {
     const styles = {
-        default: 'bg-slate-100 text-slate-700 border-slate-200',
-        dark: 'bg-slate-800 text-white border-slate-800',
-        outline: 'bg-transparent text-slate-600 border-slate-300',
-        success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        default: 'bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border-[var(--border-subtle)]',
+        dark: 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] border-[var(--border-strong)]',
+        outline: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-subtle)]',
+        success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+        gold: 'bg-[var(--gold-dim)] text-[var(--gold)] border-[var(--gold-border)]',
+        blue: 'bg-[var(--blue-dim)] text-[var(--blue)] border-[rgba(59,130,246,0.3)]',
     };
     return (
         <span className={`px-2.5 py-0.5 rounded-md text-xs font-medium border ${styles[style] || styles.default}`}>
@@ -44,10 +46,10 @@ export const Button: React.FC<ButtonProps> = ({
     const baseStyle = "inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
-        primary: "bg-slate-900 hover:bg-slate-800 text-white shadow-sm focus:ring-slate-500",
-        secondary: "bg-white hover:bg-slate-50 text-slate-900 border border-slate-300 shadow-sm focus:ring-slate-500",
-        outline: "bg-transparent hover:bg-slate-100 text-slate-600 border border-slate-200",
-        ghost: "bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900",
+        primary: "btn-gold shadow-lg shadow-[rgba(212,175,55,0.1)] focus:ring-[var(--gold)]",
+        secondary: "bg-[var(--bg-surface-2)] hover:bg-[var(--bg-surface-3)] text-[var(--text-primary)] border border-[var(--border-strong)] focus:ring-[var(--blue)]",
+        outline: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)] focus:ring-[var(--blue)]",
+        ghost: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:ring-[var(--blue)]",
     };
 
     const combinedClassName = `${baseStyle} ${variants[variant]} ${className}`;
@@ -79,8 +81,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Input: React.FC<InputProps> = ({ label, id, type = "text", placeholder, required, value, onChange, min, step }) => (
     <div className="space-y-1.5">
-        <label htmlFor={id} className="block text-sm font-medium text-slate-700">
-            {label} {required && <span className="text-red-500">*</span>}
+        <label htmlFor={id} className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+            {label} {required && <span className="text-[var(--error)]">*</span>}
         </label>
         <div className="relative">
             <input
@@ -91,7 +93,7 @@ export const Input: React.FC<InputProps> = ({ label, id, type = "text", placehol
                 required={required}
                 min={min}
                 step={step}
-                className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900 transition-colors"
+                className="input-base block w-full rounded-lg p-3 text-sm placeholder-[var(--text-tertiary)]"
                 placeholder={placeholder}
             />
         </div>
@@ -104,8 +106,8 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export const TextArea: React.FC<TextAreaProps> = ({ label, id, placeholder, required, value, onChange, rows = 4 }) => (
     <div className="space-y-1.5">
-        <label htmlFor={id} className="block text-sm font-medium text-slate-700">
-            {label} {required && <span className="text-red-500">*</span>}
+        <label htmlFor={id} className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+            {label} {required && <span className="text-[var(--error)]">*</span>}
         </label>
         <textarea
             id={id}
@@ -113,7 +115,7 @@ export const TextArea: React.FC<TextAreaProps> = ({ label, id, placeholder, requ
             onChange={onChange}
             rows={rows}
             required={required}
-            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900 transition-colors resize-none"
+            className="input-base block w-full rounded-lg p-3 text-sm placeholder-[var(--text-tertiary)] resize-none"
             placeholder={placeholder}
         />
     </div>

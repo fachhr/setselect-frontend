@@ -151,20 +151,20 @@ const JoinForm: React.FC = () => {
     if (step === 3) {
         return (
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
-                <div className="max-w-2xl mx-auto pt-12 pb-24 px-4 text-center">
-                    <div className="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <CheckCircle className="w-8 h-8 text-white" />
+                <div className="glass-panel max-w-2xl mx-auto pt-12 pb-24 px-4 text-center rounded-2xl">
+                    <div className="w-16 h-16 bg-[var(--gold)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <CheckCircle className="w-8 h-8 text-[#0A1628]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-900 mb-4">Application Received</h2>
-                    <p className="text-slate-600 mb-8 max-w-md mx-auto text-lg">
+                    <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">Application Received</h2>
+                    <p className="text-[var(--text-secondary)] mb-8 max-w-md mx-auto text-lg">
                         We&apos;ve received your profile. Our team will review your anonymized data and match you with top Swiss companies within 48 hours.
                     </p>
-                    <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 max-w-md mx-auto mb-8">
-                        <h3 className="font-medium text-slate-900 mb-2">What happens next?</h3>
-                        <ul className="text-sm text-slate-600 space-y-2 text-left">
-                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5"></div>We verify your skills and experience</li>
-                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5"></div>Your anonymized profile goes live</li>
-                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5"></div>Companies request to meet you</li>
+                    <div className="bg-[var(--bg-surface-2)] rounded-xl p-6 border border-[var(--border-subtle)] max-w-md mx-auto mb-8">
+                        <h3 className="font-medium text-[var(--text-primary)] mb-2">What happens next?</h3>
+                        <ul className="text-sm text-[var(--text-secondary)] space-y-2 text-left">
+                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We verify your skills and experience</li>
+                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>Your anonymized profile goes live</li>
+                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>Companies request to meet you</li>
                         </ul>
                     </div>
                     <Button onClick={() => router.push('/')} icon={ArrowLeft}>Back to Candidates</Button>
@@ -176,34 +176,34 @@ const JoinForm: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
             {/* Page Header */}
-            <div className="bg-white border-b border-slate-100 px-4 sm:px-6 lg:px-8 pt-8 pb-12">
+            <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] px-4 sm:px-6 lg:px-8 pt-8 pb-12">
                 <div className="max-w-3xl mx-auto">
                     {/* Back Button */}
                     <div className="mb-8">
                         <button
                             onClick={() => router.back()}
-                            className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group"
+                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--gold)] transition-colors group"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                             Back
                         </button>
                     </div>
                     <div className="text-center">
-                        <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">Join Silvia&apos;s List</h1>
-                        <p className="mt-4 text-lg text-slate-500">Create your profile and connect with top opportunities in Switzerland.</p>
+                        <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Join Silvia&apos;s List</h1>
+                        <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top opportunities in Switzerland.</p>
                     </div>
                 </div>
             </div>
 
             {/* Main Form Content - No Shadow Card */}
             <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 overflow-hidden p-8 space-y-10 md:p-12">
+                <form onSubmit={handleSubmit} className="glass-panel rounded-2xl overflow-hidden p-8 space-y-10 md:p-12">
 
                     {/* SECTION 1: CV UPLOAD */}
                     <section>
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                                <div className="w-6 h-6 rounded bg-slate-900 text-white text-xs flex items-center justify-center">1</div>
+                            <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
+                                <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center font-bold">1</div>
                                 Upload CV
                             </h2>
                             {file && <Badge style="success">File Selected</Badge>}
@@ -212,8 +212,8 @@ const JoinForm: React.FC = () => {
                         <div
                             className={`
                 relative border-2 border-dashed rounded-xl p-10 text-center transition-all duration-200 ease-in-out
-                ${isDragging ? 'border-slate-900 bg-slate-50' : 'border-slate-200 hover:border-slate-400 hover:bg-slate-50'}
-                ${file ? 'bg-slate-50 border-slate-300' : ''}
+                ${isDragging ? 'border-[var(--blue)] bg-[var(--bg-surface-2)]' : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-surface-2)]'}
+                ${file ? 'bg-[var(--bg-surface-2)] border-[var(--border-strong)]' : ''}
               `}
                             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                             onDragLeave={() => setIsDragging(false)}
@@ -230,11 +230,11 @@ const JoinForm: React.FC = () => {
 
                             {file ? (
                                 <div className="flex flex-col items-center animate-in fade-in zoom-in duration-300">
-                                    <div className="w-12 h-12 bg-white rounded-lg shadow-sm border border-slate-200 flex items-center justify-center mb-3">
-                                        <FileText className="w-6 h-6 text-slate-900" />
+                                    <div className="w-12 h-12 bg-[var(--bg-surface-1)] rounded-lg shadow-sm border border-[var(--border-subtle)] flex items-center justify-center mb-3">
+                                        <FileText className="w-6 h-6 text-[var(--text-primary)]" />
                                     </div>
-                                    <p className="text-sm font-medium text-slate-900">{file.name}</p>
-                                    <p className="text-xs text-slate-500 mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <p className="text-sm font-medium text-[var(--text-primary)]">{file.name}</p>
+                                    <p className="text-xs text-[var(--text-tertiary)] mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                                     <button
                                         type="button"
                                         onClick={(e) => { e.stopPropagation(); setFile(null); }}
@@ -245,24 +245,24 @@ const JoinForm: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="cursor-pointer">
-                                    <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                                    <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 text-[var(--text-tertiary)]">
                                         <Upload className="w-6 h-6" />
                                     </div>
-                                    <p className="text-sm font-medium text-slate-900">
+                                    <p className="text-sm font-medium text-[var(--text-primary)]">
                                         {isDragging ? 'Drop your CV here' : 'Click to upload or drag and drop'}
                                     </p>
-                                    <p className="text-xs text-slate-500 mt-2">PDF or DOCX (Max 5MB)</p>
+                                    <p className="text-xs text-[var(--text-tertiary)] mt-2">PDF or DOCX (Max 5MB)</p>
                                 </div>
                             )}
                         </div>
                     </section>
 
-                    <div className="h-px bg-slate-100"></div>
+                    <div className="h-px bg-[var(--bg-surface-2)]"></div>
 
                     {/* SECTION 2: PERSONAL DETAILS */}
                     <section>
-                        <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-6">
-                            <div className="w-6 h-6 rounded bg-slate-900 text-white text-xs flex items-center justify-center">2</div>
+                        <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-6">
+                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center">2</div>
                             Personal Details
                         </h2>
 
@@ -284,13 +284,13 @@ const JoinForm: React.FC = () => {
                                 />
                             </div>
                             <div className="relative">
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                    LinkedIn URL <span className="text-slate-400 text-xs font-normal">(Optional)</span>
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                                    LinkedIn URL <span className="text-[var(--text-tertiary)] text-xs font-normal">(Optional)</span>
                                 </label>
                                 <div className="relative">
                                     <input
                                         type="url"
-                                        className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 focus:ring-slate-900 transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
+                                        className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                             }`}
                                         placeholder="linkedin.com/in/..."
                                         value={formData.linkedinUrl}
@@ -312,7 +312,7 @@ const JoinForm: React.FC = () => {
 
                             {/* PHONE SECTION */}
                             <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                                     Phone Number <span className="text-red-500">*</span>
                                 </label>
                                 <div className="grid grid-cols-3 gap-3">
@@ -322,7 +322,7 @@ const JoinForm: React.FC = () => {
                                             required
                                             value={formData.country_code}
                                             onChange={e => setFormData({ ...formData, country_code: e.target.value })}
-                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900"
+                                            className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                         >
                                             <option value="">Code</option>
                                             {COUNTRY_CODES.map(country => (
@@ -336,7 +336,7 @@ const JoinForm: React.FC = () => {
                                         <input
                                             type="tel"
                                             required
-                                            className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900"
+                                            className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                             placeholder="79 000 00 00"
                                             value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
                                         />
@@ -347,12 +347,12 @@ const JoinForm: React.FC = () => {
                         </div>
                     </section>
 
-                    <div className="h-px bg-slate-100"></div>
+                    <div className="h-px bg-[var(--bg-surface-2)]"></div>
 
                     {/* SECTION 3: EXPERIENCE */}
                     <section>
-                        <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-6">
-                            <div className="w-6 h-6 rounded bg-slate-900 text-white text-xs flex items-center justify-center">3</div>
+                        <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-6">
+                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center">3</div>
                             Experience
                         </h2>
 
@@ -364,12 +364,12 @@ const JoinForm: React.FC = () => {
                         </div>
                     </section>
 
-                    <div className="h-px bg-slate-100"></div>
+                    <div className="h-px bg-[var(--bg-surface-2)]"></div>
 
                     {/* SECTION 4: JOB PREFERENCES */}
                     <section>
-                        <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-6">
-                            <div className="w-6 h-6 rounded bg-slate-900 text-white text-xs flex items-center justify-center">4</div>
+                        <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-6">
+                            <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center">4</div>
                             Job Preferences
                         </h2>
 
@@ -377,7 +377,7 @@ const JoinForm: React.FC = () => {
 
                             {/* Notice Period */}
                             <div>
-                                <label htmlFor="notice_period_months" className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label htmlFor="notice_period_months" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                                     Notice Period <span className="text-red-500">*</span>
                                 </label>
                                 <select
@@ -385,7 +385,7 @@ const JoinForm: React.FC = () => {
                                     required
                                     value={formData.notice_period_months}
                                     onChange={e => setFormData({ ...formData, notice_period_months: e.target.value })}
-                                    className="block w-full rounded-lg border-slate-300 bg-slate-50 border p-2.5 text-sm text-slate-900 focus:border-slate-900 focus:ring-slate-900"
+                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                 >
                                     <option value="">Select...</option>
                                     {NOTICE_PERIOD_OPTIONS.map(opt => (
@@ -396,7 +396,7 @@ const JoinForm: React.FC = () => {
 
                             {/* Salary Expectation */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                                     Yearly Salary Expectation (CHF) <span className="text-red-500">*</span>
                                 </label>
                                 <div className="grid grid-cols-2 gap-4">
@@ -406,7 +406,7 @@ const JoinForm: React.FC = () => {
                                             placeholder="Min (e.g. 120000)"
                                             min="0" step="1000"
                                             required
-                                            className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
+                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
                                             value={formData.salary_min}
                                             onChange={(e) => setFormData({ ...formData, salary_min: e.target.value })}
@@ -418,7 +418,7 @@ const JoinForm: React.FC = () => {
                                             placeholder="Max (e.g. 150000)"
                                             min="0" step="1000"
                                             required
-                                            className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm text-slate-900 focus:ring-slate-900 transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-slate-900'
+                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
                                             value={formData.salary_max}
                                             onChange={(e) => setFormData({ ...formData, salary_max: e.target.value })}
@@ -434,14 +434,14 @@ const JoinForm: React.FC = () => {
                                 )}
                                 {/* Range Helper Text (Only show if no error) */}
                                 {!hasSalaryError && formData.salary_min && formData.salary_max && (
-                                    <p className="mt-2 text-xs text-slate-500">
-                                        Range: <span className="font-mono font-semibold text-slate-900">{formatCurrency(formData.salary_min)} – {formatCurrency(formData.salary_max)}</span>
+                                    <p className="mt-2 text-xs text-[var(--text-tertiary)]">
+                                        Range: <span className="font-mono font-semibold text-[var(--text-primary)]">{formatCurrency(formData.salary_min)} – {formatCurrency(formData.salary_max)}</span>
                                     </p>
                                 )}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-3">Preferred Locations (Max 5)</label>
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Preferred Locations (Max 5)</label>
                                 <div className="flex flex-wrap gap-2">
                                     {CANTONS.map(canton => (
                                         <label
@@ -449,8 +449,8 @@ const JoinForm: React.FC = () => {
                                             className={`
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
                         ${formData.desired_locations.includes(canton.code)
-                                                    ? 'bg-slate-900 border-slate-900 text-white shadow-md'
-                                                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400'}
+                                                    ? 'bg-[var(--gold)] border-[var(--blue)] text-[#0A1628] shadow-md'
+                                                    : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
                         ${!formData.desired_locations.includes(canton.code) && formData.desired_locations.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
                                         >
@@ -474,7 +474,7 @@ const JoinForm: React.FC = () => {
                                     ))}
                                 </div>
                                 {formData.desired_locations.length > 0 ? (
-                                    <p className="text-xs text-slate-400 mt-2">
+                                    <p className="text-xs text-[var(--text-tertiary)] mt-2">
                                         {formData.desired_locations.length}/5 selected
                                     </p>
                                 ) : locationsTouched ? (
@@ -498,17 +498,17 @@ const JoinForm: React.FC = () => {
 
                     {/* SUBMIT */}
                     <div className="pt-4">
-                        <div className="flex items-start gap-3 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <div className="flex items-start gap-3 mb-6 bg-[var(--bg-surface-2)] p-4 rounded-lg border border-[var(--border-subtle)]">
                             <input
                                 type="checkbox"
                                 id="accepted_terms"
                                 required
                                 checked={formData.accepted_terms}
                                 onChange={(e) => setFormData({ ...formData, accepted_terms: e.target.checked })}
-                                className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900 bg-white focus:ring-slate-900"
+                                className="mt-1 h-4 w-4 rounded border-[var(--border-strong)] text-[var(--text-primary)] bg-[var(--bg-surface-1)] focus:ring-[var(--blue)]"
                             />
-                            <label htmlFor="accepted_terms" className="text-xs text-slate-500 leading-relaxed">
-                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-slate-900 hover:text-slate-700">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
+                            <label htmlFor="accepted_terms" className="text-xs text-[var(--text-tertiary)] leading-relaxed">
+                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)]">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
                         <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLocationError || isSubmitting}>

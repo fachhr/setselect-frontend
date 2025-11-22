@@ -37,8 +37,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`
         ${inter.variable} ${playfair.variable} font-sans
-        bg-white text-slate-900 antialiased
-        selection:bg-slate-200 selection:text-slate-900
       `}>
         <Navigation />
         <main>{children}</main>
