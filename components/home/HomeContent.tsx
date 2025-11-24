@@ -38,6 +38,8 @@ export default function HomeContent() {
     const [showContactModal, setShowContactModal] = useState<string | null>(null);
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
     const [showAllCantons, setShowAllCantons] = useState(false);
+    const [sortBy, setSortBy] = useState<'newest' | 'availability'>('newest');
+    const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
     // Fetch candidates from API on mount
     useEffect(() => {
@@ -100,8 +102,31 @@ export default function HomeContent() {
                     : candidate.salaryMin >= salaryRange[0] && candidate.salaryMax <= salaryRange[1];
 
             return matchesSearch && matchesCanton && matchesSeniority && matchesSalary;
+        }).sort((a, b) => {
+            if (sortBy === 'newest') {
+                // Sort by entry date (newest first)
+                return new Date(b.entryDate).getTime() - new Date(a.entryDate).getTime();
+            } else {
+                // Sort by availability
+                const getAvailabilityScore = (availability: string) => {
+                    const lower = availability.toLowerCase();
+                    if (lower.includes('immediate')) return 0;
+                    if (lower.includes('negotiable')) return 99;
+
+                    // Extract number for months
+                    const match = lower.match(/(\d+)/);
+                    if (match) return parseInt(match[1]);
+
+                    return 100; // Fallback for unknown formats
+                };
+
+                const scoreA = getAvailabilityScore(a.availability);
+                const scoreB = getAvailabilityScore(b.availability);
+
+                return scoreA - scoreB;
+            }
         });
-    }, [candidates, searchTerm, selectedCantons, selectedSeniority, salaryRange]);
+    }, [candidates, searchTerm, selectedCantons, selectedSeniority, salaryRange, sortBy]);
 
     const toggleCanton = (code: string) => {
         setSelectedCantons((prev) =>
@@ -327,9 +352,47 @@ export default function HomeContent() {
                                     {filteredCandidates.length} results
                                 </span>
                             </h2>
-                            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)] group cursor-pointer hover:text-[var(--text-primary)] transition-colors">
-                                Sort by: <span className="font-medium text-[var(--text-primary)]">Newest</span>
-                                <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                                    className="flex items-center gap-2 text-sm text-[var(--text-secondary)] group cursor-pointer hover:text-[var(--text-primary)] transition-colors focus:outline-none"
+                                >
+                                    Sort by: <span className="font-medium text-[var(--text-primary)]">
+                                        {sortBy === 'newest' ? 'Newest' : 'Availability'}
+                                    </span>
+                                    <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {isSortDropdownOpen && (
+                                    <>
+                                        <div
+                                            className="fixed inset-0 z-10"
+                                            onClick={() => setIsSortDropdownOpen(false)}
+                                        ></div>
+                                        <div className="absolute right-0 mt-2 w-40 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-100">
+                                            <button
+                                                onClick={() => {
+                                                    setSortBy('newest');
+                                                    setIsSortDropdownOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'newest' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'
+                                                    }`}
+                                            >
+                                                Newest
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setSortBy('availability');
+                                                    setIsSortDropdownOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'availability' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'
+                                                    }`}
+                                            >
+                                                Availability
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
 
