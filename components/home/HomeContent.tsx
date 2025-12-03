@@ -10,7 +10,11 @@ import {
     Clock,
     Filter,
     Mail,
-    X
+    X,
+    LayoutGrid,
+    Table as TableIcon,
+    ArrowUp,
+    ArrowDown
 } from 'lucide-react';
 import { CANTONS, MAIN_CANTON_CODES, SENIORITY_LEVELS } from '@/lib/constants';
 import { Badge, Button } from '@/components/ui';
@@ -40,6 +44,11 @@ export default function HomeContent() {
     const [showAllCantons, setShowAllCantons] = useState(false);
     const [sortBy, setSortBy] = useState<'newest' | 'availability'>('newest');
     const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+    const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+    const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: 'asc' | 'desc' }>({
+        key: null,
+        direction: 'asc'
+    });
 
     // Fetch candidates from API on mount
     useEffect(() => {
@@ -172,6 +181,76 @@ export default function HomeContent() {
         }).format(val);
     };
 
+    // Table column sort handler
+    const requestSort = (key: string) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    // Sort icon component for table headers
+    const SortIcon = ({ columnKey }: { columnKey: string }) => {
+        if (sortConfig.key !== columnKey) return <div className="w-3 h-3" />;
+        return sortConfig.direction === 'asc'
+            ? <ArrowUp className="w-3 h-3" />
+            : <ArrowDown className="w-3 h-3" />;
+    };
+
+    // Apply table column sorting when in table view
+    const sortedCandidates = useMemo(() => {
+        if (viewMode !== 'table' || sortConfig.key === null) {
+            return filteredCandidates;
+        }
+
+        return [...filteredCandidates].sort((a, b) => {
+            let aValue: string | number = '';
+            let bValue: string | number = '';
+
+            switch (sortConfig.key) {
+                case 'id':
+                    aValue = a.id;
+                    bValue = b.id;
+                    break;
+                case 'role':
+                    aValue = a.role;
+                    bValue = b.role;
+                    break;
+                case 'experience':
+                    aValue = parseInt(a.experience) || 0;
+                    bValue = parseInt(b.experience) || 0;
+                    break;
+                case 'seniority':
+                    const seniorityOrder = { 'Junior': 1, 'Mid-level': 2, 'Senior': 3, 'Executive': 4 };
+                    aValue = seniorityOrder[a.seniority as keyof typeof seniorityOrder] || 0;
+                    bValue = seniorityOrder[b.seniority as keyof typeof seniorityOrder] || 0;
+                    break;
+                case 'salary':
+                    aValue = a.salaryMin;
+                    bValue = b.salaryMin;
+                    break;
+                case 'cantons':
+                    aValue = a.cantons[0] || '';
+                    bValue = b.cantons[0] || '';
+                    break;
+                case 'availability':
+                    aValue = a.availability;
+                    bValue = b.availability;
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [filteredCandidates, viewMode, sortConfig]);
+
+    // Choose which candidates to display based on view mode
+    const displayCandidates = viewMode === 'table' ? sortedCandidates : filteredCandidates;
+
     return (
         <div
             className="min-h-screen font-sans"
@@ -185,18 +264,19 @@ export default function HomeContent() {
                 </div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative z-10">
                     <div className="inline-block mb-6">
-                        <Badge style="gold">Switzerland&apos;s Leading Oil & Gas Talent Pool</Badge>
+                        <Badge style="gold">Pre-screened &amp; Personally Interviewed</Badge>
                     </div>
                     <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
-                        Discover exceptional <br className="hidden sm:block" />
+                        Switzerland&apos;s Leading<br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">
-                            oil & gas talent
+                            Commodities &amp; Energy Talent Pool
                         </span>
-                        .
                     </h1>
                     <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
-                        Browse pre-screened oil & gas professionals across Switzerland. <br className="hidden sm:block" />
-                        Connect directly with candidates ready for their next opportunity.
+                        Discover exceptional talent across commodities, energy, hedge funds, financial services and tech growth.
+                    </p>
+                    <p className="mt-4 text-base text-[var(--text-tertiary)] max-w-2xl mx-auto font-light leading-relaxed">
+                        Browse pre‑screened and personally interviewed professionals. Connect directly with candidates ready for their next opportunity.
                     </p>
                 </div>
             </div>
@@ -344,14 +424,44 @@ export default function HomeContent() {
 
                     {/* RESULTS GRID */}
                     <main className="flex-1">
-                        <div className="flex justify-between items-end mb-6 pb-4 border-b border-[var(--border-subtle)]">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-6 pb-4 border-b border-[var(--border-subtle)] gap-4">
                             <h2 className="text-xl font-bold text-[var(--text-primary)]">
                                 Candidates{' '}
                                 <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
-                                    {filteredCandidates.length} results
+                                    {displayCandidates.length} results
                                 </span>
                             </h2>
-                            <div className="relative">
+
+                            <div className="flex items-center gap-3">
+                                {/* View Toggle */}
+                                <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
+                                    <button
+                                        onClick={() => setViewMode('grid')}
+                                        className={`p-1.5 rounded-md transition-all ${
+                                            viewMode === 'grid'
+                                                ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
+                                                : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                                        }`}
+                                        title="Grid View"
+                                    >
+                                        <LayoutGrid className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode('table')}
+                                        className={`p-1.5 rounded-md transition-all ${
+                                            viewMode === 'table'
+                                                ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
+                                                : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                                        }`}
+                                        title="Table View"
+                                    >
+                                        <TableIcon className="w-4 h-4" />
+                                    </button>
+                                </div>
+
+                                {/* Sort Dropdown - Only show in grid view */}
+                                {viewMode === 'grid' && (
+                                <div className="relative">
                                 <button
                                     onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
                                     className="flex items-center gap-2 text-sm text-[var(--text-secondary)] group cursor-pointer hover:text-[var(--text-primary)] transition-colors focus:outline-none"
@@ -393,6 +503,8 @@ export default function HomeContent() {
                                     </>
                                 )}
                             </div>
+                                )}
+                            </div>
                         </div>
 
                         {isLoading ? (
@@ -405,7 +517,7 @@ export default function HomeContent() {
                                     Fetching latest talent pool data.
                                 </p>
                             </div>
-                        ) : filteredCandidates.length === 0 ? (
+                        ) : displayCandidates.length === 0 ? (
                             <div className="glass-panel rounded-xl border-dashed p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)]">
                                     <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
@@ -415,9 +527,9 @@ export default function HomeContent() {
                                     Adjust your filters to broaden your search.
                                 </p>
                             </div>
-                        ) : (
+                        ) : viewMode === 'grid' ? (
                             <div className="grid grid-cols-1 gap-6">
-                                {filteredCandidates.map((candidate) => (
+                                {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
                                         className="group glass-panel rounded-xl p-6 hover:border-[#D4AF37] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative"
@@ -447,7 +559,7 @@ export default function HomeContent() {
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <MapPin className="w-4 h-4 text-[var(--text-tertiary)]" />
-                                                        {candidate.cantons.join(', ')}
+                                                        {candidate.cantons.map(code => CANTONS.find(c => c.code === code)?.name ?? code).join(', ')}
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <DollarSign className="w-4 h-4 text-[var(--text-tertiary)]" />
@@ -487,6 +599,88 @@ export default function HomeContent() {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                        ) : (
+                            /* TABLE VIEW */
+                            <div className="glass-panel rounded-xl overflow-hidden">
+                                <div className="table-scroll">
+                                    <table className="min-w-[1000px] w-full divide-y divide-[var(--border-subtle)]">
+                                        <thead className="bg-[var(--bg-surface-2)]">
+                                            <tr>
+                                                {[
+                                                    { label: 'ID', key: 'id' },
+                                                    { label: 'Role', key: 'role' },
+                                                    { label: 'Experience', key: 'experience' },
+                                                    { label: 'Seniority', key: 'seniority' },
+                                                    { label: 'Salary (Min)', key: 'salary' },
+                                                    { label: 'Location', key: 'cantons' },
+                                                    { label: 'Availability', key: 'availability' }
+                                                ].map((col) => (
+                                                    <th
+                                                        key={col.key}
+                                                        onClick={() => requestSort(col.key)}
+                                                        className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors select-none group"
+                                                    >
+                                                        <div className="flex items-center gap-1">
+                                                            {col.label}
+                                                            <span className={`text-[var(--text-tertiary)] ${
+                                                                sortConfig.key === col.key ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
+                                                            }`}>
+                                                                <SortIcon columnKey={col.key} />
+                                                            </span>
+                                                        </div>
+                                                    </th>
+                                                ))}
+                                                <th className="relative px-6 py-3">
+                                                    <span className="sr-only">Actions</span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-[var(--border-subtle)]">
+                                            {displayCandidates.map((candidate) => (
+                                                <tr key={candidate.id} className="hover:bg-[var(--bg-surface-2)] transition-colors">
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className="font-mono text-xs text-[var(--text-tertiary)] bg-[var(--bg-surface-2)] px-1.5 py-0.5 rounded border border-[var(--border-subtle)]">
+                                                            {candidate.id}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-sm font-bold text-[var(--text-primary)]">{candidate.role}</div>
+                                                        <div className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                                                            {candidate.skills.slice(0, 2).join(', ')}
+                                                            {candidate.skills.length > 2 && ` +${candidate.skills.length - 2}`}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                        {candidate.experience}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
+                                                            {candidate.seniority}
+                                                        </Badge>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-[var(--text-secondary)]">
+                                                        {formatCurrency(candidate.salaryMin)}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                        {candidate.cantons.map(code => CANTONS.find(c => c.code === code)?.name ?? code).join(', ')}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
+                                                        {candidate.availability}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                        <button
+                                                            onClick={() => setShowContactModal(candidate.id)}
+                                                            className="text-[var(--gold)] hover:text-[var(--text-primary)] font-bold text-xs border border-[var(--gold-border)] hover:border-[var(--gold)] px-3 py-1.5 rounded transition-all"
+                                                        >
+                                                            Intro
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         )}
                     </main>
