@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
 import { CANTONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES } from '@/lib/constants';
+import { LANGUAGE_PROFICIENCY_OPTIONS } from '@/lib/formOptions';
 
 const JoinForm: React.FC = () => {
     const router = useRouter();
@@ -35,6 +36,16 @@ const JoinForm: React.FC = () => {
         desired_other_location: '',
         salary_min: '',
         salary_max: '',
+        // Language proficiency
+        base_languages: [
+            { language: 'English', proficiency: '' },
+            { language: 'German', proficiency: '' },
+            { language: 'French', proficiency: '' },
+            { language: 'Italian', proficiency: '' },
+        ] as { language: string; proficiency: string }[],
+        showOtherLanguage: false,
+        otherLanguageName: '',
+        otherLanguageProficiency: '',
         accepted_terms: false
     });
 
@@ -99,6 +110,21 @@ const JoinForm: React.FC = () => {
 
             const { cvStoragePath, originalFilename } = await uploadResponse.json();
 
+            // Process languages: filter out empty proficiencies, add "Other" if filled
+            const processedLanguages = [
+                ...formData.base_languages.filter(lang =>
+                    lang.proficiency && lang.proficiency !== '' && lang.proficiency !== 'None'
+                ),
+                ...(formData.showOtherLanguage &&
+                    formData.otherLanguageName.trim() &&
+                    formData.otherLanguageProficiency &&
+                    formData.otherLanguageProficiency !== '' &&
+                    formData.otherLanguageProficiency !== 'None'
+                    ? [{ language: formData.otherLanguageName.trim(), proficiency: formData.otherLanguageProficiency }]
+                    : []
+                )
+            ];
+
             // STEP 2: Submit Profile
             const profileData = {
                 contact_first_name: formData.contact_first_name,
@@ -115,6 +141,7 @@ const JoinForm: React.FC = () => {
                 desired_other_location: formData.desired_other_location || undefined,
                 salary_min: parseInt(formData.salary_min),
                 salary_max: parseInt(formData.salary_max),
+                base_languages: processedLanguages.length > 0 ? processedLanguages : null,
                 cvStoragePath,
                 originalFilename,
                 accepted_terms: formData.accepted_terms,
@@ -366,6 +393,89 @@ const JoinForm: React.FC = () => {
                                 label="Years of Relevant Experience" id="years_of_experience" type="number" placeholder="e.g. 5" required min="0" max="50"
                                 value={formData.years_of_experience} onChange={e => setFormData({ ...formData, years_of_experience: e.target.value })}
                             />
+
+                            {/* Languages subsection */}
+                            <div className="pt-4">
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
+                                    Languages
+                                </label>
+                                <p className="text-xs text-[var(--text-tertiary)] mb-4">
+                                    Select your proficiency level for each language you speak.
+                                </p>
+
+                                <div className="space-y-3">
+                                    {/* Standard Languages */}
+                                    {formData.base_languages.map((lang, index) => (
+                                        <div key={lang.language} className="grid grid-cols-2 gap-4 items-center">
+                                            <span className="text-sm text-[var(--text-secondary)]">
+                                                {lang.language}
+                                            </span>
+                                            <select
+                                                value={lang.proficiency}
+                                                onChange={(e) => {
+                                                    const updated = [...formData.base_languages];
+                                                    updated[index] = { ...updated[index], proficiency: e.target.value };
+                                                    setFormData({ ...formData, base_languages: updated });
+                                                }}
+                                                className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
+                                            >
+                                                {LANGUAGE_PROFICIENCY_OPTIONS.map(opt => (
+                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    ))}
+
+                                    {/* Other Language Toggle */}
+                                    {!formData.showOtherLanguage ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData({ ...formData, showOtherLanguage: true })}
+                                            className="text-sm text-[var(--gold)] hover:text-[var(--text-primary)] transition-colors font-medium mt-2"
+                                        >
+                                            + Add another language
+                                        </button>
+                                    ) : (
+                                        <div className="space-y-3 pt-3 border-t border-[var(--border-subtle)] mt-3">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-[var(--text-secondary)]">
+                                                    Other
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData({
+                                                        ...formData,
+                                                        showOtherLanguage: false,
+                                                        otherLanguageName: '',
+                                                        otherLanguageProficiency: ''
+                                                    })}
+                                                    className="text-xs text-[var(--text-tertiary)] hover:text-red-400 transition-colors"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g., Spanish"
+                                                    value={formData.otherLanguageName}
+                                                    onChange={(e) => setFormData({ ...formData, otherLanguageName: e.target.value })}
+                                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
+                                                />
+                                                <select
+                                                    value={formData.otherLanguageProficiency}
+                                                    onChange={(e) => setFormData({ ...formData, otherLanguageProficiency: e.target.value })}
+                                                    className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
+                                                >
+                                                    {LANGUAGE_PROFICIENCY_OPTIONS.map(opt => (
+                                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </section>
 

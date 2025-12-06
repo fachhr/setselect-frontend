@@ -73,6 +73,14 @@ export const talentPoolSchema = z.object({
     .optional()
     .or(z.literal('')),
 
+  // Language proficiency (optional array)
+  base_languages: z.array(
+    z.object({
+      language: z.string().min(1),
+      proficiency: z.string().min(1),
+    })
+  ).nullable().optional(),
+
   // Salary expectation (required number inputs)
   salary_min: z.number({
     required_error: 'Minimum salary is required',

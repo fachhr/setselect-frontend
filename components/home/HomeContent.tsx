@@ -45,6 +45,7 @@ export default function HomeContent() {
     const [sortBy, setSortBy] = useState<'newest' | 'availability'>('newest');
     const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: 'asc' | 'desc' }>({
         key: null,
         direction: 'asc'
@@ -285,7 +286,9 @@ export default function HomeContent() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* SIDEBAR FILTERS */}
-                    <aside className="w-full lg:w-72 flex-shrink-0 space-y-4 lg:space-y-0">
+                    <aside className={`w-full lg:w-72 flex-shrink-0 space-y-4 lg:space-y-0 ${
+                            !isSidebarOpen ? 'lg:hidden' : 'lg:block'
+                        } lg:animate-in lg:slide-in-from-left-4 lg:fade-in lg:duration-300`}>
                         {/* Mobile Filter Toggle */}
                         <div className="lg:hidden mb-4">
                             <button
@@ -423,7 +426,7 @@ export default function HomeContent() {
                     </aside>
 
                     {/* RESULTS GRID */}
-                    <main className="flex-1 overflow-hidden">
+                    <main className="flex-1 overflow-hidden transition-all duration-300">
                         <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-6 pb-4 border-b border-[var(--border-subtle)] gap-4">
                             <h2 className="text-xl font-bold text-[var(--text-primary)]">
                                 Candidates{' '}
@@ -433,6 +436,22 @@ export default function HomeContent() {
                             </h2>
 
                             <div className="flex items-center gap-3">
+                                {/* Sidebar Toggle */}
+                                <button
+                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                    className={`hidden lg:flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
+                                        isSidebarOpen
+                                            ? 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                            : 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                    }`}
+                                    title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
+                                >
+                                    <Filter className="w-4 h-4" />
+                                    <span>Filters</span>
+                                </button>
+
+                                <div className="hidden lg:block h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
+
                                 {/* View Toggle */}
                                 <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
                                     <button
@@ -528,7 +547,7 @@ export default function HomeContent() {
                                 </p>
                             </div>
                         ) : viewMode === 'grid' ? (
-                            <div className="grid grid-cols-1 gap-6">
+                            <div className={`grid grid-cols-1 ${!isSidebarOpen ? 'lg:grid-cols-2 xl:grid-cols-3' : ''} gap-6`}>
                                 {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}

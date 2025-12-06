@@ -21,7 +21,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Remove cvFile from validation (already uploaded)
-    const { cvStoragePath, originalFilename, ...formData } = body;
+    // Extract base_languages separately as it's not in the original schema validation
+    const { cvStoragePath, originalFilename, base_languages, ...formData } = body;
 
     // Validate CV storage path exists
     if (!cvStoragePath || typeof cvStoragePath !== 'string') {
@@ -73,6 +74,9 @@ export async function POST(req: NextRequest) {
         desired_other_location: validatedData.desired_other_location || null,
         salary_min: validatedData.salary_min,
         salary_max: validatedData.salary_max,
+
+        // Language proficiency (user-provided)
+        base_languages: base_languages || null,
 
         // CV Info
         cv_storage_path: cvStoragePath,
