@@ -132,8 +132,8 @@ const JoinForm: React.FC = () => {
                 notice_period_months: formData.notice_period_months,
                 desired_locations: formData.desired_locations,
                 desired_other_location: formData.desired_other_location || undefined,
-                salary_min: parseInt(formData.salary_min),
-                salary_max: parseInt(formData.salary_max),
+                salary_min: formData.salary_min ? parseInt(formData.salary_min) : null,
+                salary_max: formData.salary_max ? parseInt(formData.salary_max) : null,
                 languages: processedLanguages.length > 0 ? processedLanguages : null,
                 highlight: formData.highlight || undefined,
                 cvStoragePath,
@@ -547,7 +547,7 @@ const JoinForm: React.FC = () => {
                             {/* Salary Expectation */}
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                                    Yearly Salary Expectation (CHF) <span className="text-red-500">*</span>
+                                    Yearly Salary Expectation (CHF)
                                 </label>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="relative">
@@ -555,7 +555,6 @@ const JoinForm: React.FC = () => {
                                             type="number"
                                             placeholder="Min (e.g. 120000)"
                                             min="0" step="1000"
-                                            required
                                             className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
                                             value={formData.salary_min}
@@ -567,7 +566,6 @@ const JoinForm: React.FC = () => {
                                             type="number"
                                             placeholder="Max (e.g. 150000)"
                                             min="0" step="1000"
-                                            required
                                             className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
                                             value={formData.salary_max}

@@ -64,15 +64,15 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-[#0A1628]/60 backdrop-blur-sm"
-                onClick={onClose}
-            />
-
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A1628]/60 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={onClose}
+        >
             {/* Modal */}
-            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-panel rounded-2xl flex flex-col animate-in zoom-in-95 duration-200">
+            <div
+                className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-panel rounded-2xl flex flex-col animate-in zoom-in-95 duration-200"
+                onClick={(e) => e.stopPropagation()}
+            >
                 {/* Header */}
                 <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-surface-1)]">
                     <div className="flex items-center gap-3">
@@ -167,7 +167,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                                     Education
                                 </h3>
                                 <div className="flex items-center gap-2 text-[var(--text-primary)] text-sm font-medium">
-                                    <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)]" />
+                                    <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
                                     {candidate.education || 'Not specified'}
                                 </div>
                             </div>

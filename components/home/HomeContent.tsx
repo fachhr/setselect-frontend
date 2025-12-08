@@ -677,7 +677,7 @@ export default function HomeContent() {
                                         {/* Card Body */}
                                         <div className="p-6 flex-1">
                                             {/* Header: ID, Seniority, Work Permit, Entry Date */}
-                                            <div className="flex flex-wrap items-center gap-2 mb-3">
+                                            <div className="flex flex-wrap items-center gap-2 mb-3 pr-10">
                                                 <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] px-1.5 py-0.5 rounded">
                                                     {candidate.id}
                                                 </span>
@@ -689,7 +689,7 @@ export default function HomeContent() {
                                                         {WORK_ELIGIBILITY_OPTIONS.find(o => o.value === candidate.workPermit)?.label || candidate.workPermit}
                                                     </Badge>
                                                 )}
-                                                <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1 ml-auto sm:ml-0">
+                                                <span className="text-xs text-[var(--text-tertiary)] flex items-center gap-1">
                                                     <Clock className="w-3 h-3" /> Added {candidate.entryDate}
                                                 </span>
                                             </div>
@@ -716,7 +716,7 @@ export default function HomeContent() {
                                                 </div>
                                                 <div className="flex items-center gap-2" title="Salary Range">
                                                     <DollarSign className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
-                                                    <span className="font-mono text-[var(--text-primary)]">{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
+                                                    <span>{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2" title="Preferred Location">
                                                     <MapPin className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
@@ -877,7 +877,7 @@ export default function HomeContent() {
                                                         </Badge>
                                                     </td>
                                                     {/* Salary */}
-                                                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-[var(--text-secondary)]">
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                                                         {formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}
                                                     </td>
                                                     {/* Education */}

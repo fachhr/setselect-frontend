@@ -98,18 +98,20 @@ export const talentPoolSchema = z.object({
     .optional()
     .or(z.literal('')),
 
-  // Salary expectation (required number inputs)
+  // Salary expectation (optional number inputs)
   salary_min: z.number({
-    required_error: 'Minimum salary is required',
     invalid_type_error: 'Please enter a valid number'
   })
-    .min(1, 'Minimum salary must be at least 1 CHF'),
+    .min(1, 'Minimum salary must be at least 1 CHF')
+    .nullable()
+    .optional(),
 
   salary_max: z.number({
-    required_error: 'Maximum salary is required',
     invalid_type_error: 'Please enter a valid number'
   })
-    .min(1, 'Maximum salary must be at least 1 CHF'),
+    .min(1, 'Maximum salary must be at least 1 CHF')
+    .nullable()
+    .optional(),
 
   // ============================================
   // CV UPLOAD (required)
@@ -150,8 +152,11 @@ export const talentPoolSchema = z.object({
  */
 export const talentPoolSchemaRefined = talentPoolSchema.refine(
   (data) => {
-    // Ensure min is less than or equal to max
-    return data.salary_min <= data.salary_max;
+    // Only validate if both salary values are provided
+    if (data.salary_min != null && data.salary_max != null) {
+      return data.salary_min <= data.salary_max;
+    }
+    return true;
   },
   {
     message: 'Minimum salary cannot be greater than maximum salary',
