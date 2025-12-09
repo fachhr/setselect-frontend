@@ -37,7 +37,9 @@ interface MultiSelectFilterProps {
 
 const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({ options, selected, onChange, placeholder = 'All' }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -65,7 +67,17 @@ const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({ options, selected
     return (
         <div className="relative" ref={containerRef}>
             <button
-                onClick={() => setIsOpen(!isOpen)}
+                ref={buttonRef}
+                onClick={() => {
+                    if (!isOpen && buttonRef.current) {
+                        const rect = buttonRef.current.getBoundingClientRect();
+                        setDropdownPosition({
+                            top: rect.bottom + 4,
+                            left: rect.left
+                        });
+                    }
+                    setIsOpen(!isOpen);
+                }}
                 className={`w-full text-left text-xs border rounded py-1 pl-2 pr-6 relative focus:outline-none focus:ring-1 focus:ring-[var(--blue)] font-normal truncate h-7 flex items-center transition-colors
                     ${selected.length > 0
                         ? 'bg-[var(--blue-dim)] border-[var(--blue)] text-[var(--text-primary)]'
@@ -77,7 +89,10 @@ const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({ options, selected
             </button>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-[var(--bg-surface-1)] border border-[var(--border-strong)] rounded-lg shadow-xl z-50 animate-in fade-in zoom-in-95 duration-100">
+                <div
+                    className="fixed w-48 bg-[var(--bg-surface-1)] border border-[var(--border-strong)] rounded-lg shadow-xl z-50 animate-in fade-in zoom-in-95 duration-100"
+                    style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
+                >
                     <div className="p-1 max-h-60 overflow-y-auto">
                         {options.map((option) => {
                             const isSelected = selected.includes(option.value);
