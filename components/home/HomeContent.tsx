@@ -78,7 +78,7 @@ const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({ options, selected
                     }
                     setIsOpen(!isOpen);
                 }}
-                className={`w-full text-left text-xs border rounded py-1 pl-2 pr-6 relative focus:outline-none focus:ring-1 focus:ring-[var(--blue)] font-normal truncate h-7 flex items-center transition-colors
+                className={`w-full text-left text-xs border rounded py-1 pl-2 pr-6 relative focus:outline-none focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal truncate h-7 flex items-center transition-colors
                     ${selected.length > 0
                         ? 'bg-[var(--blue-dim)] border-[var(--blue)] text-[var(--text-primary)]'
                         : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-tertiary)]'
@@ -506,6 +506,123 @@ export default function HomeContent() {
 
             {/* DASHBOARD CONTENT AREA */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {/* Header - positioned outside flex for consistent placement in both views */}
+                <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-6 pb-4 border-b border-[var(--border-subtle)] gap-4">
+                    <h2 className="text-xl font-bold text-[var(--text-primary)]">
+                        Candidates{' '}
+                        <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
+                            {displayCandidates.length} results
+                        </span>
+                    </h2>
+
+                    <div className="flex items-center gap-3">
+                        {/* Shortlist Toggle */}
+                        {favorites.length > 0 && (
+                            <button
+                                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                                className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors text-sm font-medium ${
+                                    showFavoritesOnly
+                                        ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                }`}
+                            >
+                                <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                                <span>Shortlist ({favorites.length})</span>
+                            </button>
+                        )}
+
+                        {/* Sort Dropdown - Only show in grid view (moved before Filters) */}
+                        {viewMode === 'grid' && (
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                                    className="flex items-center gap-2 text-sm text-[var(--text-secondary)] group cursor-pointer hover:text-[var(--text-primary)] transition-colors focus:outline-none"
+                                >
+                                    Sort by: <span className="font-medium text-[var(--text-primary)]">
+                                        {sortBy === 'newest' ? 'Newest' : 'Availability'}
+                                    </span>
+                                    <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {isSortDropdownOpen && (
+                                    <>
+                                        <div
+                                            className="fixed inset-0 z-10"
+                                            onClick={() => setIsSortDropdownOpen(false)}
+                                        ></div>
+                                        <div className="absolute right-0 mt-2 w-40 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-100">
+                                            <button
+                                                onClick={() => {
+                                                    setSortBy('newest');
+                                                    setIsSortDropdownOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'newest' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'}`}
+                                            >
+                                                Newest
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setSortBy('availability');
+                                                    setIsSortDropdownOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'availability' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'}`}
+                                            >
+                                                Availability
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Sidebar Toggle - Only show in grid view */}
+                        {viewMode === 'grid' && (
+                            <>
+                                <button
+                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                    className={`hidden lg:flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
+                                        isSidebarOpen
+                                            ? 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                            : 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                    }`}
+                                    title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
+                                >
+                                    <Filter className="w-4 h-4" />
+                                    <span>Filters</span>
+                                </button>
+
+                                <div className="hidden lg:block h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
+                            </>
+                        )}
+
+                        {/* View Toggle - Always rightmost for consistent positioning */}
+                        <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className={`p-1.5 rounded-md transition-all ${
+                                    viewMode === 'grid'
+                                        ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
+                                        : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                                }`}
+                                title="Grid View"
+                            >
+                                <LayoutGrid className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('table')}
+                                className={`p-1.5 rounded-md transition-all ${
+                                    viewMode === 'table'
+                                        ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
+                                        : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                                }`}
+                                title="Table View"
+                            >
+                                <TableIcon className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* SIDEBAR FILTERS - Only show in grid view */}
                     {viewMode === 'grid' && (
@@ -686,126 +803,8 @@ export default function HomeContent() {
                     </aside>
                     )}
 
-                    {/* RESULTS GRID */}
+                    {/* RESULTS */}
                     <main className="flex-1 overflow-hidden transition-all duration-300">
-                        <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-6 pb-4 border-b border-[var(--border-subtle)] gap-4">
-                            <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                                Candidates{' '}
-                                <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
-                                    {displayCandidates.length} results
-                                </span>
-                            </h2>
-
-                            <div className="flex items-center gap-3">
-                                {/* Shortlist Toggle */}
-                                {favorites.length > 0 && (
-                                    <button
-                                        onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors text-sm font-medium ${
-                                            showFavoritesOnly
-                                                ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                        }`}
-                                    >
-                                        <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-                                        <span>Shortlist ({favorites.length})</span>
-                                    </button>
-                                )}
-
-                                {/* Sidebar Toggle - Only show in grid view */}
-                                {viewMode === 'grid' && (
-                                    <>
-                                        <button
-                                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                            className={`hidden lg:flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
-                                                isSidebarOpen
-                                                    ? 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                                    : 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
-                                            }`}
-                                            title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
-                                        >
-                                            <Filter className="w-4 h-4" />
-                                            <span>Filters</span>
-                                        </button>
-
-                                        <div className="hidden lg:block h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
-                                    </>
-                                )}
-
-                                {/* View Toggle */}
-                                <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
-                                    <button
-                                        onClick={() => setViewMode('grid')}
-                                        className={`p-1.5 rounded-md transition-all ${
-                                            viewMode === 'grid'
-                                                ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
-                                                : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                                        }`}
-                                        title="Grid View"
-                                    >
-                                        <LayoutGrid className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        onClick={() => setViewMode('table')}
-                                        className={`p-1.5 rounded-md transition-all ${
-                                            viewMode === 'table'
-                                                ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
-                                                : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                                        }`}
-                                        title="Table View"
-                                    >
-                                        <TableIcon className="w-4 h-4" />
-                                    </button>
-                                </div>
-
-                                {/* Sort Dropdown - Only show in grid view */}
-                                {viewMode === 'grid' && (
-                                <div className="relative">
-                                <button
-                                    onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                                    className="flex items-center gap-2 text-sm text-[var(--text-secondary)] group cursor-pointer hover:text-[var(--text-primary)] transition-colors focus:outline-none"
-                                >
-                                    Sort by: <span className="font-medium text-[var(--text-primary)]">
-                                        {sortBy === 'newest' ? 'Newest' : 'Availability'}
-                                    </span>
-                                    <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
-                                </button>
-
-                                {isSortDropdownOpen && (
-                                    <>
-                                        <div
-                                            className="fixed inset-0 z-10"
-                                            onClick={() => setIsSortDropdownOpen(false)}
-                                        ></div>
-                                        <div className="absolute right-0 mt-2 w-40 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg shadow-lg z-20 py-1 animate-in fade-in zoom-in-95 duration-100">
-                                            <button
-                                                onClick={() => {
-                                                    setSortBy('newest');
-                                                    setIsSortDropdownOpen(false);
-                                                }}
-                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'newest' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'
-                                                    }`}
-                                            >
-                                                Newest
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setSortBy('availability');
-                                                    setIsSortDropdownOpen(false);
-                                                }}
-                                                className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-surface-2)] transition-colors ${sortBy === 'availability' ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'
-                                                    }`}
-                                            >
-                                                Availability
-                                            </button>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                                )}
-                            </div>
-                        </div>
-
                         {isLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
