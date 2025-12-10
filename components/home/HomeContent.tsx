@@ -624,19 +624,17 @@ export default function HomeContent() {
                         </div>
 
                         {/* Zen Mode / Full Screen Toggle */}
-                        <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
-                            <button
-                                onClick={toggleZenMode}
-                                className={`p-1.5 rounded-md transition-all ${
-                                    isZenMode
-                                        ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
-                                        : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                                }`}
-                                title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
-                            >
-                                {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                            </button>
-                        </div>
+                        <button
+                            onClick={toggleZenMode}
+                            className={`p-2.5 rounded-lg border transition-colors ${
+                                isZenMode
+                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                    : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            }`}
+                            title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
+                        >
+                            {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                        </button>
                     </div>
                 </div>
 
