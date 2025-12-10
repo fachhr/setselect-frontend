@@ -549,23 +549,18 @@ export default function HomeContent() {
 
                         {/* Filters - Only show in grid view, hidden in Zen Mode */}
                         {viewMode === 'grid' && !isZenMode && (
-                            <>
-                                {favorites.length > 0 && (
-                                    <div className="h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
-                                )}
-                                <button
-                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                    className={`flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
-                                        isSidebarOpen
-                                            ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
-                                            : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                    }`}
-                                    title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
-                                >
-                                    <Filter className="w-4 h-4" />
-                                    <span className="hidden sm:inline">Filters</span>
-                                </button>
-                            </>
+                            <button
+                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                className={`flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
+                                    isSidebarOpen
+                                        ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                }`}
+                                title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
+                            >
+                                <Filter className="w-4 h-4" />
+                                <span className="hidden sm:inline">Filters</span>
+                            </button>
                         )}
 
                         {/* Sort Dropdown - Only show in grid view */}
@@ -602,11 +597,6 @@ export default function HomeContent() {
                             </>
                         )}
 
-                        {/* Separator before View Toggle - Only show in grid view */}
-                        {viewMode === 'grid' && (
-                            <div className="h-6 w-px bg-[var(--border-subtle)] mx-1 ml-auto sm:ml-1"></div>
-                        )}
-
                         {/* View Toggle */}
                         <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
                             <button
@@ -634,7 +624,6 @@ export default function HomeContent() {
                         </div>
 
                         {/* Zen Mode / Full Screen Toggle */}
-                        <div className="h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
                         <button
                             onClick={toggleZenMode}
                             className={`p-2 rounded-lg border transition-colors ${
