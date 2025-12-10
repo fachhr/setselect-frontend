@@ -4,9 +4,16 @@ import Link from 'next/link';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
+import { useZenMode } from '@/contexts/ZenModeContext';
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isZenMode } = useZenMode();
+
+  // Hide navigation in Zen Mode
+  if (isZenMode) {
+    return null;
+  }
 
   return (
     <nav className="sticky top-0 z-40 bg-[var(--bg-root)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">

@@ -20,12 +20,15 @@ import {
     FileCheck,
     GraduationCap,
     Layers,
-    Check
+    Check,
+    Maximize2,
+    Minimize2
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
 import { Badge, Button, Toast } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
+import { useZenMode } from '@/contexts/ZenModeContext';
 
 // Multi-Select Filter Component for Table View
 interface MultiSelectFilterProps {
@@ -152,6 +155,7 @@ interface ApiCandidate {
 }
 
 export default function HomeContent() {
+    const { isZenMode, toggleZenMode } = useZenMode();
     const [candidates, setCandidates] = useState<Candidate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -482,30 +486,36 @@ export default function HomeContent() {
             className="min-h-screen font-sans"
             style={{ scrollbarGutter: 'stable' }}
         >
-            {/* HERO SECTION */}
-            <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] relative overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl pointer-events-none">
-                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--gold)] opacity-5 blur-[100px] rounded-full"></div>
-                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--blue)] opacity-5 blur-[120px] rounded-full"></div>
-                </div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative z-10">
-                    <div className="inline-block mb-6">
-                        <Badge style="gold">Pre-screened &amp; Personally Interviewed</Badge>
+            {/* HERO SECTION - Hidden in Zen Mode */}
+            {!isZenMode && (
+                <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] relative overflow-hidden">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl pointer-events-none">
+                        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--gold)] opacity-5 blur-[100px] rounded-full"></div>
+                        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--blue)] opacity-5 blur-[120px] rounded-full"></div>
                     </div>
-                    <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
-                        Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">
-                            Commodities &amp; Energy Talent Pool
-                        </span>
-                    </h1>
-                    <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
-                        Browse pre‑screened and personally interviewed professionals. Connect directly with candidates ready for their next opportunity.
-                    </p>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative z-10">
+                        <div className="inline-block mb-6">
+                            <Badge style="gold">Pre-screened &amp; Personally Interviewed</Badge>
+                        </div>
+                        <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
+                            Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">
+                                Commodities &amp; Energy Talent Pool
+                            </span>
+                        </h1>
+                        <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
+                            Browse pre‑screened and personally interviewed professionals. Connect directly with candidates ready for their next opportunity.
+                        </p>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* DASHBOARD CONTENT AREA */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className={`w-full transition-all duration-300 ${
+                isZenMode
+                    ? 'p-8'
+                    : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'
+            }`}>
                 {/* Header - positioned outside flex for consistent placement in both views */}
                 <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-6 pb-4 border-b border-[var(--border-subtle)] gap-4">
                     <h2 className="text-xl font-bold text-[var(--text-primary)]">
@@ -575,8 +585,8 @@ export default function HomeContent() {
                             </div>
                         )}
 
-                        {/* Sidebar Toggle - Only show in grid view */}
-                        {viewMode === 'grid' && (
+                        {/* Sidebar Toggle - Only show in grid view, hidden in Zen Mode */}
+                        {viewMode === 'grid' && !isZenMode && (
                             <>
                                 <button
                                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -595,7 +605,7 @@ export default function HomeContent() {
                             </>
                         )}
 
-                        {/* View Toggle - Always rightmost for consistent positioning */}
+                        {/* View Toggle */}
                         <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
                             <button
                                 onClick={() => setViewMode('grid')}
@@ -620,12 +630,26 @@ export default function HomeContent() {
                                 <TableIcon className="w-4 h-4" />
                             </button>
                         </div>
+
+                        {/* Zen Mode / Full Screen Toggle */}
+                        <div className="h-6 w-px bg-[var(--border-subtle)] mx-1"></div>
+                        <button
+                            onClick={toggleZenMode}
+                            className={`p-2 rounded-lg border transition-colors ${
+                                isZenMode
+                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                    : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                            }`}
+                            title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
+                        >
+                            {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                        </button>
                     </div>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-10">
-                    {/* SIDEBAR FILTERS - Only show in grid view */}
-                    {viewMode === 'grid' && (
+                    {/* SIDEBAR FILTERS - Only show in grid view, hidden in Zen Mode */}
+                    {viewMode === 'grid' && !isZenMode && (
                     <aside className={`w-full lg:w-72 flex-shrink-0 space-y-4 lg:space-y-0 ${
                             !isSidebarOpen ? 'lg:hidden' : 'lg:block'
                         } lg:animate-in lg:slide-in-from-left-4 lg:fade-in lg:duration-300`}>
@@ -826,7 +850,13 @@ export default function HomeContent() {
                                 </p>
                             </div>
                         ) : viewMode === 'grid' ? (
-                            <div className={`grid grid-cols-1 ${!isSidebarOpen ? 'lg:grid-cols-2 xl:grid-cols-3' : ''} gap-6`}>
+                            <div className={`grid grid-cols-1 ${
+                                isZenMode
+                                    ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                                    : !isSidebarOpen
+                                        ? 'lg:grid-cols-2 xl:grid-cols-3'
+                                        : ''
+                            } gap-6`}>
                                 {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
@@ -972,7 +1002,7 @@ export default function HomeContent() {
                                                     { label: 'Exp.', key: 'experience', sortable: true, width: 'w-24' },
                                                     { label: 'Seniority', key: 'seniority', sortable: true, width: 'w-32' },
                                                     { label: 'Salary', key: 'salary', sortable: true, width: 'w-40' },
-                                                    { label: 'Education', key: 'education', sortable: false, width: 'w-96' },
+                                                    { label: 'Education', key: 'education', sortable: false, width: 'w-64' },
                                                     { label: 'Pref. Location', key: 'cantons', sortable: true, width: 'w-36' },
                                                     { label: 'Work Eligibility', key: 'workPermit', sortable: false, width: 'w-48' },
                                                     { label: 'Availability', key: 'availability', sortable: true, width: 'w-36' },

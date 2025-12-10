@@ -1,6 +1,16 @@
+'use client';
+
 import Link from 'next/link';
+import { useZenMode } from '@/contexts/ZenModeContext';
 
 export function Footer() {
+  const { isZenMode } = useZenMode();
+
+  // Hide footer in Zen Mode
+  if (isZenMode) {
+    return null;
+  }
+
   return (
     <footer className="bg-[var(--bg-root)] border-t border-[var(--border-subtle)] mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
