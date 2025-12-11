@@ -522,17 +522,112 @@ export default function HomeContent() {
                     ? 'px-4 sm:px-6 lg:px-8 py-8'
                     : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'
             }`}>
-                {/* Header - positioned outside flex for consistent placement in both views */}
-                <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-6 pb-4 border-b border-[var(--border-subtle)] gap-4">
-                    <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                        Candidates{' '}
-                        <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
-                            {displayCandidates.length} results
-                        </span>
-                    </h2>
+                {/* Header */}
+                <div className="mb-6 pb-4 border-b border-[var(--border-subtle)]">
+                    {/* Row 1: Title + View Toggle + Zen Mode (+ Desktop controls) */}
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-[var(--text-primary)]">
+                            Candidates{' '}
+                            <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
+                                {displayCandidates.length} results
+                            </span>
+                        </h2>
 
-                    <div className="flex items-center gap-3 self-end sm:self-auto">
-                        {/* Shortlist Toggle - Only show when there are favorites */}
+                        <div className="flex items-center gap-3">
+                            {/* Desktop only: Shortlist, Filters, Sort */}
+                            <div className="hidden sm:flex items-center gap-3">
+                                {/* Shortlist Toggle */}
+                                {favorites.length > 0 && (
+                                    <button
+                                        onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                                        className={`flex items-center gap-2 p-2 rounded-lg border transition-colors text-sm font-medium ${
+                                            showFavoritesOnly
+                                                ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                        }`}
+                                    >
+                                        <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+                                        <span>Shortlist ({favorites.length})</span>
+                                    </button>
+                                )}
+
+                                {/* Filters - Only in grid view, hidden in Zen Mode */}
+                                {viewMode === 'grid' && !isZenMode && (
+                                    <button
+                                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                        className={`flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
+                                            isSidebarOpen
+                                                ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                        }`}
+                                        title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
+                                    >
+                                        <Filter className="w-4 h-4" />
+                                        <span>Filters</span>
+                                    </button>
+                                )}
+
+                                {/* Sort Dropdown - Only in grid view */}
+                                {viewMode === 'grid' && (
+                                    <div className="relative group">
+                                        <select
+                                            onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
+                                            value={sortBy}
+                                            className="appearance-none pl-8 pr-8 py-2 rounded-lg border border-[var(--border-subtle)] text-sm font-medium text-[var(--text-secondary)] bg-[var(--bg-surface-2)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)] transition-all cursor-pointer"
+                                        >
+                                            <option value="newest">Newest</option>
+                                            <option value="availability">Availability</option>
+                                        </select>
+                                        <ArrowUpDown className="w-4 h-4 text-[var(--text-tertiary)] absolute left-2.5 top-2.5 pointer-events-none" />
+                                        <ChevronDown className="w-4 h-4 text-[var(--text-tertiary)] absolute right-2.5 top-2.5 pointer-events-none" />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* View Toggle - Always visible */}
+                            <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-1.5 rounded-md transition-all ${
+                                        viewMode === 'grid'
+                                            ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
+                                            : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                                    }`}
+                                    title="Grid View"
+                                >
+                                    <LayoutGrid className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('table')}
+                                    className={`p-1.5 rounded-md transition-all ${
+                                        viewMode === 'table'
+                                            ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
+                                            : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                                    }`}
+                                    title="Table View"
+                                >
+                                    <TableIcon className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            {/* Zen Mode / Full Screen Toggle - Always visible */}
+                            <button
+                                onClick={toggleZenMode}
+                                className={`p-2.5 rounded-lg border transition-colors ${
+                                    isZenMode
+                                        ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
+                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                                }`}
+                                title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
+                            >
+                                {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Row 2: Mobile only - Shortlist, Filters, Sort */}
+                    <div className="flex sm:hidden items-center gap-3 mt-4">
+                        {/* Shortlist Toggle */}
                         {favorites.length > 0 && (
                             <button
                                 onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
@@ -543,11 +638,10 @@ export default function HomeContent() {
                                 }`}
                             >
                                 <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-                                <span className="hidden sm:inline">Shortlist ({favorites.length})</span>
                             </button>
                         )}
 
-                        {/* Filters - Only show in grid view, hidden in Zen Mode */}
+                        {/* Filters - Only in grid view, hidden in Zen Mode */}
                         {viewMode === 'grid' && !isZenMode && (
                             <button
                                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -559,82 +653,25 @@ export default function HomeContent() {
                                 title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
                             >
                                 <Filter className="w-4 h-4" />
-                                <span className="hidden sm:inline">Filters</span>
                             </button>
                         )}
 
-                        {/* Sort Dropdown - Only show in grid view */}
+                        {/* Sort - Only in grid view */}
                         {viewMode === 'grid' && (
-                            <>
-                                {/* Sort Dropdown - Desktop */}
-                                <div className="relative group hidden sm:block">
-                                    <select
-                                        onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
-                                        value={sortBy}
-                                        className="appearance-none pl-8 pr-8 py-2 rounded-lg border border-[var(--border-subtle)] text-sm font-medium text-[var(--text-secondary)] bg-[var(--bg-surface-2)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)] transition-all cursor-pointer"
-                                    >
-                                        <option value="newest">Newest</option>
-                                        <option value="availability">Availability</option>
-                                    </select>
-                                    <ArrowUpDown className="w-4 h-4 text-[var(--text-tertiary)] absolute left-2.5 top-2.5 pointer-events-none" />
-                                    <ChevronDown className="w-4 h-4 text-[var(--text-tertiary)] absolute right-2.5 top-2.5 pointer-events-none" />
-                                </div>
-
-                                {/* Sort Dropdown - Mobile (Icon Only) */}
-                                <div className="relative sm:hidden">
-                                    <select
-                                        onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
-                                        value={sortBy}
-                                        className="appearance-none w-full h-full opacity-0 absolute inset-0 z-10 cursor-pointer"
-                                    >
-                                        <option value="newest">Newest</option>
-                                        <option value="availability">Availability</option>
-                                    </select>
-                                    <button className="p-2 rounded-lg border transition-colors flex items-center justify-center bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]">
-                                        <ArrowUpDown className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </>
+                            <div className="relative">
+                                <select
+                                    onChange={(e) => setSortBy(e.target.value as 'newest' | 'availability')}
+                                    value={sortBy}
+                                    className="appearance-none w-full h-full opacity-0 absolute inset-0 z-10 cursor-pointer"
+                                >
+                                    <option value="newest">Newest</option>
+                                    <option value="availability">Availability</option>
+                                </select>
+                                <button className="p-2 rounded-lg border transition-colors flex items-center justify-center bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]">
+                                    <ArrowUpDown className="w-4 h-4" />
+                                </button>
+                            </div>
                         )}
-
-                        {/* View Toggle */}
-                        <div className="flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className={`p-1.5 rounded-md transition-all ${
-                                    viewMode === 'grid'
-                                        ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
-                                        : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                                }`}
-                                title="Grid View"
-                            >
-                                <LayoutGrid className="w-4 h-4" />
-                            </button>
-                            <button
-                                onClick={() => setViewMode('table')}
-                                className={`p-1.5 rounded-md transition-all ${
-                                    viewMode === 'table'
-                                        ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
-                                        : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                                }`}
-                                title="Table View"
-                            >
-                                <TableIcon className="w-4 h-4" />
-                            </button>
-                        </div>
-
-                        {/* Zen Mode / Full Screen Toggle */}
-                        <button
-                            onClick={toggleZenMode}
-                            className={`p-2.5 rounded-lg border transition-colors ${
-                                isZenMode
-                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
-                                    : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                            }`}
-                            title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
-                        >
-                            {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                        </button>
                     </div>
                 </div>
 
