@@ -50,11 +50,11 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
             }).format(n);
         };
 
-        if (!min && !max) return 'Non-disclosed';
+        if (!min && !max) return '-';
         if (min && max) return `${formatNum(min)} – ${formatNum(max)}`;
         if (min) return `From ${formatNum(min)}`;
         if (max) return `Up to ${formatNum(max)}`;
-        return 'Non-disclosed';
+        return '-';
     };
 
     // Format canton codes to names

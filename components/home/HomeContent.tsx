@@ -124,7 +124,7 @@ const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({ options, selected
                         <div className="border-t border-[var(--border-subtle)] p-1">
                             <button
                                 onClick={() => { onChange([]); setIsOpen(false); }}
-                                className="w-full text-center text-[10px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-2)] py-1.5 rounded transition-colors"
+                                className="w-full text-center text-[10px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] py-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)]"
                             >
                                 Clear Filters
                             </button>
@@ -215,6 +215,23 @@ export default function HomeContent() {
         setTableFilters(prev => ({ ...prev, [key]: value }));
     };
 
+    // Format helpers (defined early for use in filter logic)
+    const formatCurrency = (val: number) => {
+        return new Intl.NumberFormat('de-CH', {
+            style: 'currency',
+            currency: 'CHF',
+            maximumSignificantDigits: 3,
+        }).format(val);
+    };
+
+    const formatSalaryRange = (min: number, max: number): string => {
+        if (!min && !max) return '-';
+        if (min && max) return `${formatCurrency(min)} – ${formatCurrency(max)}`;
+        if (min) return `From ${formatCurrency(min)}`;
+        if (max) return `Up to ${formatCurrency(max)}`;
+        return '-';
+    };
+
     // Fetch candidates from API on mount
     useEffect(() => {
         async function fetchCandidates() {
@@ -267,10 +284,25 @@ export default function HomeContent() {
             // Favorites filter
             const matchesFavorites = !showFavoritesOnly || favorites.includes(candidate.id);
 
-            const matchesSearch =
-                candidate.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                candidate.skills.some((s) => s.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                candidate.id.toLowerCase().includes(searchTerm.toLowerCase());
+            const lowerTerm = searchTerm.toLowerCase();
+            const matchesSearch = !searchTerm || (
+                candidate.role.toLowerCase().includes(lowerTerm) ||
+                candidate.id.toLowerCase().includes(lowerTerm) ||
+                candidate.skills.some((s) => s.toLowerCase().includes(lowerTerm)) ||
+                (candidate.highlight?.toLowerCase().includes(lowerTerm) ?? false) ||
+                (candidate.functionalExpertise?.some((f) => f.toLowerCase().includes(lowerTerm)) ?? false) ||
+                (candidate.education?.toLowerCase().includes(lowerTerm) ?? false) ||
+                candidate.experience.toLowerCase().includes(lowerTerm) ||
+                (candidate.seniority?.toLowerCase().includes(lowerTerm) ?? false) ||
+                (candidate.workPermit?.toLowerCase().includes(lowerTerm) ?? false) ||
+                (candidate.languages?.some((l) => l.toLowerCase().includes(lowerTerm)) ?? false) ||
+                (candidate.cantons?.some((c) =>
+                    c.toLowerCase().includes(lowerTerm) ||
+                    WORK_LOCATIONS.find((k) => k.code === c)?.name.toLowerCase().includes(lowerTerm)
+                ) ?? false) ||
+                candidate.availability.toLowerCase().includes(lowerTerm) ||
+                formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(lowerTerm)
+            );
 
             const matchesLocation =
                 selectedLocations.length === 0 ||
@@ -399,22 +431,6 @@ export default function HomeContent() {
     const openDetailModal = (candidate: Candidate) => {
         setSelectedCandidate(candidate);
         setShowDetailModal(true);
-    };
-
-    const formatCurrency = (val: number) => {
-        return new Intl.NumberFormat('de-CH', {
-            style: 'currency',
-            currency: 'CHF',
-            maximumSignificantDigits: 3,
-        }).format(val);
-    };
-
-    const formatSalaryRange = (min: number, max: number): string => {
-        if (!min && !max) return 'Non-disclosed';
-        if (min && max) return `${formatCurrency(min)} – ${formatCurrency(max)}`;
-        if (min) return `From ${formatCurrency(min)}`;
-        if (max) return `Up to ${formatCurrency(max)}`;
-        return 'Non-disclosed';
     };
 
     // Table column sort handler
@@ -683,7 +699,7 @@ export default function HomeContent() {
                             <div className="relative group">
                                 <input
                                     type="text"
-                                    placeholder="Search skills, roles..."
+                                    placeholder="Search candidates..."
                                     className="input-base w-full pl-10 pr-4 py-2.5 rounded-lg text-sm"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -825,7 +841,7 @@ export default function HomeContent() {
                                         setSearchTerm('');
                                         setSalaryRange([0, 300000]);
                                     }}
-                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)] pb-0.5 w-max focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded px-1"
+                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)] pb-0.5 w-max"
                                 >
                                     <X className="w-3 h-3" /> Clear all filters
                                 </button>

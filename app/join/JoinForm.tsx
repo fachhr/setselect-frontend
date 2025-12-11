@@ -225,7 +225,7 @@ const JoinForm: React.FC = () => {
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
                                 <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center font-bold">1</div>
-                                Upload CV
+                                Upload CV <span className="text-red-500">*</span>
                             </h2>
                             {file && <Badge style="success">File Selected</Badge>}
                         </div>
@@ -589,7 +589,7 @@ const JoinForm: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Preferred Locations (Max 5)</label>
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Preferred Locations (Max 5) <span className="text-red-500">*</span></label>
                                 <div className="flex flex-wrap gap-2">
                                     {WORK_LOCATIONS.map(location => (
                                         <label
