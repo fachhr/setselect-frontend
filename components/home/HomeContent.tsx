@@ -205,10 +205,11 @@ export default function HomeContent() {
         workPermit: string[];
         availability: string;
         languages: string[];
+        entryDate: string;
     }>({
         id: '', role: '', highlight: '', expertise: '', experience: '',
         seniority: [], salary: '', education: '', cantons: [],
-        workPermit: [], availability: '', languages: []
+        workPermit: [], availability: '', languages: [], entryDate: ''
     });
 
     const updateTableFilter = (key: keyof typeof tableFilters, value: string | string[]) => {
@@ -358,10 +359,11 @@ export default function HomeContent() {
                 if (key === 'experience') return candidate.experience.toLowerCase().includes(searchVal);
                 if (key === 'education') return (candidate.education || '').toLowerCase().includes(searchVal);
                 if (key === 'availability') return candidate.availability.toLowerCase().includes(searchVal);
+                if (key === 'entryDate') return candidate.entryDate.toLowerCase().includes(searchVal);
                 if (key === 'salary') {
                     const numVal = parseFloat(searchVal);
                     if (!isNaN(numVal)) {
-                        return candidate.salaryMin >= numVal;
+                        return candidate.salaryMax >= numVal;
                     }
                     return formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(searchVal);
                 }
@@ -489,6 +491,10 @@ export default function HomeContent() {
                 case 'availability':
                     aValue = a.availability;
                     bValue = b.availability;
+                    break;
+                case 'entryDate':
+                    aValue = new Date(a.entryDate).getTime();
+                    bValue = new Date(b.entryDate).getTime();
                     break;
                 default:
                     return 0;
@@ -1029,6 +1035,7 @@ export default function HomeContent() {
                                                     { label: 'Work Eligibility', key: 'workPermit', sortable: false, width: 'w-36' },
                                                     { label: 'Availability', key: 'availability', sortable: true, width: 'w-28' },
                                                     { label: 'Languages', key: 'languages', sortable: false, width: 'w-28' },
+                                                    { label: 'Added', key: 'entryDate', sortable: true, width: 'w-24' },
                                                 ].map((col) => (
                                                     <th
                                                         key={col.key}
@@ -1174,6 +1181,16 @@ export default function HomeContent() {
                                                         placeholder="All"
                                                     />
                                                 </th>
+                                                {/* Added Date */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Date"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.entryDate}
+                                                        onChange={(e) => updateTableFilter('entryDate', e.target.value)}
+                                                    />
+                                                </th>
                                                 {/* Actions column - empty */}
                                                 <th className="px-4 py-2"></th>
                                             </tr>
@@ -1262,6 +1279,10 @@ export default function HomeContent() {
                                                         <span className="break-words">
                                                             {candidate.languages?.join('; ') || '-'}
                                                         </span>
+                                                    </td>
+                                                    {/* Added Date */}
+                                                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text-secondary)]">
+                                                        {candidate.entryDate}
                                                     </td>
                                                     {/* Actions */}
                                                     <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">

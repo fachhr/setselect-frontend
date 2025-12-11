@@ -408,7 +408,7 @@ const JoinForm: React.FC = () => {
                             />
 
                             {/* Languages subsection - simplified checkboxes */}
-                            <div className="pt-4">
+                            <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                                     Languages spoken with professional proficiency
                                 </label>
@@ -473,7 +473,7 @@ const JoinForm: React.FC = () => {
                             </div>
 
                             {/* Key Achievement */}
-                            <div className="pt-4">
+                            <div>
                                 <label htmlFor="highlight" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                                     Key Achievement
                                 </label>
