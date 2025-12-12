@@ -571,7 +571,7 @@ export default function HomeContent() {
                                         }`}
                                     >
                                         <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-                                        <span>Shortlist ({favorites.length})</span>
+                                        <span>Shortlist</span>
                                     </button>
                                 )}
 
