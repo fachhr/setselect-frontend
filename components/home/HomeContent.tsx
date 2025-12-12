@@ -933,17 +933,8 @@ export default function HomeContent() {
                                                 {candidate.role}
                                             </h3>
 
-                                            {/* Profile Bio - AI Generated Summary */}
-                                            {candidate.profileBio && (
-                                                <div className="mb-4 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
-                                                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                                                        {candidate.profileBio}
-                                                    </p>
-                                                </div>
-                                            )}
-
                                             {/* Highlight Box - Key Achievement Quote */}
-                                            {candidate.highlight && !candidate.profileBio && (
+                                            {candidate.highlight && (
                                                 <div className="mb-5 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--blue-border)]">
                                                     <span className="text-sm text-[var(--text-secondary)] leading-relaxed">
                                                         &ldquo;{candidate.highlight}&rdquo;
