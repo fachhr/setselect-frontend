@@ -19,6 +19,7 @@ export interface Candidate {
   education?: string;           // e.g., 'MSc Computer Science, ETH Zurich' (from CV parser)
   workPermit?: string;          // e.g., 'Swiss G Permit' (from form)
   languages?: string[];         // e.g., ['English', 'German'] (from form)
+  profileBio?: string;          // AI-generated professional summary (from parser)
 }
 
 export interface Canton {
@@ -60,6 +61,7 @@ export interface TalentPoolProfile {
   highlight?: string | null;
   languages?: string[] | null;
   functional_expertise?: string[] | null;
+  profile_bio?: string | null;  // AI-generated professional summary
 }
 
 export interface CVUploadResponse {
@@ -104,6 +106,7 @@ export interface AnonymizedTalentProfile {
   work_eligibility?: string | null;
   languages?: string[] | null;
   desired_roles?: string | null;
+  profile_bio?: string | null;  // AI-generated professional summary
 }
 
 // Talent pool list response

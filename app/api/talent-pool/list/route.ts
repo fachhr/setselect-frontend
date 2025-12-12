@@ -149,7 +149,8 @@ export async function GET(req: NextRequest) {
         work_eligibility: profile.work_eligibility || null,
         languages: profile.languages || [],
         functional_expertise: profile.functional_expertise || [],
-        desired_roles: profile.desired_roles || null
+        desired_roles: profile.desired_roles || null,
+        profile_bio: profile.profile_bio || null
       };
     });
 

@@ -126,14 +126,20 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                         </div>
                     )}
 
-                    {/* Professional Profile (Empty Placeholder) */}
+                    {/* Professional Profile */}
                     <div>
                         <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3">
                             Professional Profile
                         </h3>
-                        <p className="text-[var(--text-tertiary)] leading-relaxed text-sm italic">
-                            Professional profile will be available once CV parsing is complete.
-                        </p>
+                        {candidate.profileBio ? (
+                            <p className="text-[var(--text-secondary)] leading-relaxed">
+                                {candidate.profileBio}
+                            </p>
+                        ) : (
+                            <p className="text-[var(--text-tertiary)] leading-relaxed text-sm italic">
+                                Professional profile will be available once CV parsing is complete.
+                            </p>
+                        )}
                     </div>
 
                     {/* Two Column Layout: Skills + Details */}

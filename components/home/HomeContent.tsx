@@ -153,6 +153,7 @@ interface ApiCandidate {
     languages?: string[];
     functional_expertise?: string[];
     desired_roles?: string | null;
+    profile_bio?: string | null;
 }
 
 export default function HomeContent() {
@@ -265,7 +266,8 @@ export default function HomeContent() {
                         education: c.education || undefined,
                         workPermit: c.work_eligibility || undefined,
                         languages: c.languages || [],
-                        functionalExpertise: c.functional_expertise || []
+                        functionalExpertise: c.functional_expertise || [],
+                        profileBio: c.profile_bio || undefined
                     }));
                     setCandidates(transformedCandidates);
                 }
@@ -931,8 +933,17 @@ export default function HomeContent() {
                                                 {candidate.role}
                                             </h3>
 
-                                            {/* Highlight Box */}
-                                            {candidate.highlight && (
+                                            {/* Profile Bio - AI Generated Summary */}
+                                            {candidate.profileBio && (
+                                                <div className="mb-4 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
+                                                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                                                        {candidate.profileBio}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {/* Highlight Box - Key Achievement Quote */}
+                                            {candidate.highlight && !candidate.profileBio && (
                                                 <div className="mb-5 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--blue-border)]">
                                                     <span className="text-sm text-[var(--text-secondary)] leading-relaxed">
                                                         &ldquo;{candidate.highlight}&rdquo;
