@@ -9,7 +9,6 @@ import {
     DollarSign,
     Clock,
     Filter,
-    Mail,
     X,
     LayoutGrid,
     Table as TableIcon,
@@ -166,7 +165,6 @@ export default function HomeContent() {
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
     const [selectedWorkEligibility, setSelectedWorkEligibility] = useState<string[]>([]);
     const [salaryRange, setSalaryRange] = useState([0, 300000]);
-    const [showContactModal, setShowContactModal] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<'newest' | 'availability'>('newest');
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -430,6 +428,14 @@ export default function HomeContent() {
                 ? prev.filter((f) => f !== id)
                 : [...prev, id]
         );
+    };
+
+    const handleRequestIntro = (candidateId: string) => {
+        const candidate = candidates.find(c => c.id === candidateId);
+        const subject = `Introduction Request: ${candidateId}`;
+        const body = `Hi Silvia,\n\nI would like to request an introduction to the following candidate:\n\nID: ${candidateId}\nRole: ${candidate?.role || ''}\n\nBest regards,`;
+
+        window.location.href = `mailto:silvia@silviaslist.ch?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     };
 
     const openDetailModal = (candidate: Candidate) => {
@@ -999,7 +1005,7 @@ export default function HomeContent() {
                                                 className="w-full sm:w-auto text-xs sm:text-sm"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setShowContactModal(candidate.id);
+                                                    handleRequestIntro(candidate.id);
                                                 }}
                                             >
                                                 Request Intro
@@ -1285,7 +1291,7 @@ export default function HomeContent() {
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                setShowContactModal(candidate.id);
+                                                                handleRequestIntro(candidate.id);
                                                             }}
                                                             className="text-[var(--gold)] hover:text-[var(--text-primary)] font-bold text-xs border border-[var(--gold-border)] hover:border-[var(--gold)] px-3 py-1.5 rounded transition-all"
                                                         >
@@ -1315,64 +1321,6 @@ export default function HomeContent() {
                 </div>
             </div>
 
-            {/* CONTACT MODAL (For Specific Candidate Intro) */}
-            {showContactModal && (
-                <div className="fixed inset-0 bg-[#0A1628]/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-                    <div className="bg-[var(--bg-surface-1)] rounded-2xl shadow-2xl border border-[var(--border-strong)] max-w-md w-full p-8 relative">
-                        <button
-                            onClick={() => setShowContactModal(null)}
-                            className="absolute top-4 right-4 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-surface-1)] rounded-md p-1"
-                            aria-label="Close modal"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-
-                        <div className="text-center mb-8">
-                            <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--border-strong)] text-[var(--gold)]">
-                                <Mail className="w-5 h-5" />
-                            </div>
-                            <h3 className="text-xl font-bold text-[var(--text-primary)]">Request Introduction</h3>
-                            <p className="text-sm text-[var(--text-secondary)] mt-2">
-                                Interested in candidate{' '}
-                                <span className="font-mono text-[var(--gold)]">
-                                    {showContactModal}
-                                </span>
-                                ?
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="bg-[var(--bg-surface-2)] p-4 rounded-lg border border-[var(--border-subtle)] text-sm text-[var(--text-secondary)] text-center leading-relaxed">
-                                Please email us at{' '}
-                                <strong className="text-[var(--text-primary)] border-b border-[var(--gold)]">
-                                    silvia@silviaslist.com
-                                </strong>
-                                <br /> quoting the Talent ID above.
-                            </div>
-
-                            <Button
-                                className="w-full"
-                                variant="primary"
-                                onClick={() => {
-                                    console.log(`Email copied! Reference ID: ${showContactModal}`);
-                                    setShowContactModal(null);
-                                }}
-                            >
-                                Copy Email Address
-                            </Button>
-
-                            <Button
-                                onClick={() => setShowContactModal(null)}
-                                className="w-full"
-                                variant="ghost"
-                            >
-                                Cancel
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {/* Candidate Detail Modal */}
             <CandidateDetailModal
                 candidate={selectedCandidate}
@@ -1383,7 +1331,7 @@ export default function HomeContent() {
                 }}
                 onRequestIntroduction={(id) => {
                     setShowDetailModal(false);
-                    setShowContactModal(id);
+                    handleRequestIntro(id);
                 }}
             />
 
