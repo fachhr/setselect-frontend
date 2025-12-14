@@ -393,7 +393,7 @@ const JoinForm: React.FC = () => {
                                             <option value="">Code</option>
                                             {COUNTRY_CODES.map(country => (
                                                 <option key={country.label} value={country.code}>
-                                                    {country.flag} {country.code}
+                                                    {country.flag} {country.label} ({country.code})
                                                 </option>
                                             ))}
                                         </select>
