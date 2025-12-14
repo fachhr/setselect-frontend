@@ -24,7 +24,7 @@ import {
     Minimize2,
     ArrowUpDown
 } from 'lucide-react';
-import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
+import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/formOptions';
 import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';

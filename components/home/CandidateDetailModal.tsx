@@ -3,7 +3,7 @@
 import React from 'react';
 import { Candidate } from '@/types/talentPool';
 import { Badge, Button } from '@/components/ui';
-import { WORK_ELIGIBILITY_OPTIONS, WORK_LOCATIONS } from '@/lib/constants';
+import { WORK_ELIGIBILITY_OPTIONS, WORK_LOCATIONS } from '@/lib/formOptions';
 import {
     X,
     MapPin,

@@ -1,7 +1,95 @@
 // lib/formOptions.ts
 // This file is the single source of truth for all dropdown and checkbox options in the profile form.
 
-// --- Education Related ---
+import { SelectOption } from '@/types/talentPool';
+
+// ====================
+// TYPES & INTERFACES
+// ====================
+export interface WorkLocation {
+  code: string;
+  name: string;
+}
+
+export interface CountryCode {
+  code: string;  // Dial code (e.g., "+41")
+  flag: string;  // Flag emoji
+  label: string; // Country name
+}
+
+// ====================
+// FILE UPLOAD CONSTANTS
+// ====================
+export const MAX_CV_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+
+export const VALID_CV_MIME_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+] as const;
+
+export const MIME_TO_EXTENSION: Record<string, string> = {
+  'application/pdf': 'pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx'
+};
+
+// ====================
+// WORK LOCATIONS (Swiss Cantons + Global)
+// ====================
+export const WORK_LOCATIONS: WorkLocation[] = [
+  { code: 'ZG', name: 'Zug' },
+  { code: 'ZH', name: 'Zurich' },
+  { code: 'GE', name: 'Geneva' },
+  { code: 'BE', name: 'Bern' },
+  { code: 'TI', name: 'Ticino' },
+  { code: 'CH', name: 'Switzerland' },
+  { code: 'Global', name: 'Global' },
+  { code: 'Others', name: 'Others' },
+];
+
+// ====================
+// WORK ELIGIBILITY OPTIONS
+// ====================
+export const WORK_ELIGIBILITY_OPTIONS: SelectOption[] = [
+  { value: 'swiss_citizen', label: 'Swiss Citizen' },
+  { value: 'c_permit', label: 'Swiss C Permit (Permanent)' },
+  { value: 'eu_efta', label: 'EU/EFTA Citizen' },
+  { value: 'b_permit', label: 'Swiss B Permit (Non-EU)' },
+  { value: 'g_permit', label: 'Swiss G Permit (Cross-border)' },
+  { value: 'requires_sponsorship', label: 'Non-EU / Requires Sponsorship' },
+];
+
+// ====================
+// LANGUAGE OPTIONS (Simple list for talent pool)
+// ====================
+export const LANGUAGE_OPTIONS = ['English', 'German', 'French', 'Italian'] as const;
+
+// ====================
+// SENIORITY LEVELS
+// ====================
+export const SENIORITY_LEVELS: SelectOption[] = [
+  { label: 'Junior (0-2 years)', value: 'Junior' },
+  { label: 'Mid-level (3-6 years)', value: 'Mid-level' },
+  { label: 'Senior (7+ years)', value: 'Senior' },
+  { label: 'Executive / Lead', value: 'Executive' },
+];
+
+// ====================
+// NOTICE PERIOD OPTIONS (Talent Pool)
+// ====================
+export const NOTICE_PERIOD_OPTIONS: SelectOption[] = [
+  { label: 'Immediate', value: '0' },
+  { label: '1 Month', value: '1' },
+  { label: '2 Months', value: '2' },
+  { label: '3 Months', value: '3' },
+  { label: '4 Months', value: '4' },
+  { label: '5 Months', value: '5' },
+  { label: '6 Months', value: '6' },
+  { label: 'Negotiable', value: '-1' },
+];
+
+// ====================
+// EDUCATION RELATED
+// ====================
 export const COUNTRY_OPTIONS = [
     { value: "", label: "Please Select" },
     { value: "Switzerland", label: "Switzerland" },
@@ -405,21 +493,12 @@ export const DURATION_OPTIONS = [
     { value: "12+ months", label: "12+ months" },
 ];
 
-export const NOTICE_PERIOD_OPTIONS = [
-    { value: "", label: "Please Select" },
-    { value: "1", label: "1 month" },
-    { value: "2", label: "2 months" },
-    { value: "3", label: "3 months" },
-    { value: "4", label: "4 months" },
-    { value: "5", label: "5 months" },
-    { value: "6", label: "6 months" },
-    { value: "7+", label: "7+ months" },
-];
-
-// --- Phone Country Codes ---
+// ====================
+// COUNTRY CODES (Phone)
+// ====================
 // Complete list of international calling codes organized for optimal UX
 // Popular countries first (Swiss/European context), then alphabetically
-export const PHONE_COUNTRY_CODE_OPTIONS = [
+export const COUNTRY_CODES: CountryCode[] = [
   // === Popular / Common (for Swiss context) ===
   { code: "+41", flag: "🇨🇭", label: "Switzerland" },
   { code: "+49", flag: "🇩🇪", label: "Germany" },
@@ -667,16 +746,6 @@ export const PHONE_COUNTRY_CODE_OPTIONS = [
 ];
 
 export const JOB_TYPE_OPTIONS = ['Internship', 'Part-time', 'Career Starter (full-time)'];
-
-// Oil & Gas hub locations in Switzerland
-export const LOCATION_OPTIONS = [
-    { value: "ZG",   label: "Zug" },
-    { value: "ZH",   label: "Zurich" },
-    { value: "GE",   label: "Geneva" },
-    { value: "BE",   label: "Bern" },
-    { value: "TI",   label: "Ticino" },
-    { value: "GLOBAL", label: "Global" },
-];
 
 export const INDUSTRY_PREFERENCE_OPTIONS = [
     { value: "Finance",          label: "Finance" },

@@ -1,13 +1,5 @@
 import { z } from 'zod';
-
-// ============================================
-// CONSTANTS
-// ============================================
-export const MAX_CV_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-export const VALID_CV_MIME_TYPES = [
-  'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-] as const;
+import { MAX_CV_FILE_SIZE, VALID_CV_MIME_TYPES } from '@/lib/formOptions';
 
 /**
  * Base schema for Silvia's List Talent Pool - shared fields between client and server

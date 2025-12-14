@@ -12,7 +12,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
-import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
+import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/formOptions';
 import { talentPoolSchemaRefined, type TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 
 // Helper for parsing non-JSON error responses
@@ -369,8 +369,8 @@ const JoinForm: React.FC = () => {
                                         >
                                             <option value="">Code</option>
                                             {COUNTRY_CODES.map(country => (
-                                                <option key={country.code} value={country.dialCode}>
-                                                    {country.flag} {country.dialCode}
+                                                <option key={country.label} value={country.code}>
+                                                    {country.flag} {country.code}
                                                 </option>
                                             ))}
                                         </select>

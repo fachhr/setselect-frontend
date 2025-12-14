@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { v4 as uuidv4 } from 'uuid';
-import { MAX_CV_FILE_SIZE, VALID_CV_MIME_TYPES, MIME_TO_EXTENSION } from '@/lib/constants';
+import { MAX_CV_FILE_SIZE, VALID_CV_MIME_TYPES, MIME_TO_EXTENSION } from '@/lib/formOptions';
 
 /**
  * POST /api/talent-pool/upload-cv
