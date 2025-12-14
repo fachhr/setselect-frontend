@@ -295,6 +295,12 @@ const JoinForm: React.FC = () => {
                                         {isDragging ? 'Drop your CV here' : 'Click to upload or drag and drop'}
                                     </p>
                                     <p className="text-xs text-[var(--text-tertiary)] mt-2">PDF or DOCX (Max 5MB)</p>
+                                    {errors.cvFile && (
+                                        <div className="flex items-center justify-center gap-2 mt-3 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                            <AlertCircle className="w-3.5 h-3.5" />
+                                            <span className="font-medium">{errors.cvFile.message}</span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -720,9 +726,16 @@ const JoinForm: React.FC = () => {
                                         label="Other Preferred Location"
                                         id="desired_other_location"
                                         placeholder="e.g., Remote, Berlin, Paris"
+                                        required
                                         value={watch('desired_other_location') || ''}
                                         onChange={e => setValue('desired_other_location', e.target.value)}
                                     />
+                                    {errors.desired_other_location && (
+                                        <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                            <AlertCircle className="w-3.5 h-3.5" />
+                                            <span className="font-medium">{errors.desired_other_location.message}</span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

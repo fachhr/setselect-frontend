@@ -187,21 +187,31 @@ const salaryRefinementConfig = {
   path: ['salary_min']
 };
 
-/**
- * Client-side refined schema with salary validation
- */
-export const talentPoolSchemaRefined = talentPoolSchema.refine(
-  salaryRefinement,
-  salaryRefinementConfig
-);
+const otherLocationRefinement = (data: { desired_locations: readonly string[]; desired_other_location?: string }) => {
+  if (data.desired_locations.includes('Others')) {
+    return data.desired_other_location && data.desired_other_location.trim().length > 0;
+  }
+  return true;
+};
+
+const otherLocationRefinementConfig = {
+  message: 'Please specify your preferred location',
+  path: ['desired_other_location']
+};
 
 /**
- * Server-side refined schema with salary validation
+ * Client-side refined schema with salary and location validation
  */
-export const talentPoolServerSchemaRefined = talentPoolServerSchema.refine(
-  salaryRefinement,
-  salaryRefinementConfig
-);
+export const talentPoolSchemaRefined = talentPoolSchema
+  .refine(salaryRefinement, salaryRefinementConfig)
+  .refine(otherLocationRefinement, otherLocationRefinementConfig);
+
+/**
+ * Server-side refined schema with salary and location validation
+ */
+export const talentPoolServerSchemaRefined = talentPoolServerSchema
+  .refine(salaryRefinement, salaryRefinementConfig)
+  .refine(otherLocationRefinement, otherLocationRefinementConfig);
 
 // ============================================
 // TYPESCRIPT TYPES
