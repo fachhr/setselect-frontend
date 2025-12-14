@@ -50,7 +50,7 @@ export const talentPoolBaseSchema = z.object({
   phoneNumber: z.string()
     .min(5, 'Please enter a valid phone number')
     .max(20, 'Phone number is too long')
-    .regex(/^[0-9\s\-\(\)]+$/, 'Phone number can only contain numbers, spaces, and hyphens')
+    .regex(/^[0-9]+$/, 'Phone number can only contain numbers')
     .trim(),
 
   years_of_experience: z.number({

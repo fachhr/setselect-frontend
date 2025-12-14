@@ -1,57 +1,86 @@
 'use client';
 
-import { useRef, useState, useEffect, ReactNode, CSSProperties } from 'react';
+import { useRef, useState, useEffect, useCallback, ReactNode, CSSProperties } from 'react';
 
 interface CustomScrollbarProps {
   children: ReactNode;
   className?: string;
+  enableDragToPan?: boolean;
+  enableShiftScroll?: boolean;
+  showScrollShadows?: boolean;
 }
 
 /**
- * Custom horizontal scrollbar that is ALWAYS visible.
- * Renders a native-like scrollbar below the content that works on all platforms.
+ * Custom horizontal scrollbar with enhanced interaction:
+ * - Drag-to-pan: Click and drag anywhere on content to scroll horizontally
+ * - Shift+scroll: Hold Shift + mousewheel for horizontal scrolling
+ * - Scroll shadows: Visual indicators showing more content exists
  */
-export function CustomScrollbar({ children, className = '' }: CustomScrollbarProps) {
+export function CustomScrollbar({
+  children,
+  className = '',
+  enableDragToPan = true,
+  enableShiftScroll = true,
+  showScrollShadows = true,
+}: CustomScrollbarProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
+  // Scrollbar thumb state
   const [thumbLeft, setThumbLeft] = useState(0);
   const [thumbWidth, setThumbWidth] = useState(20);
   const [canScroll, setCanScroll] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingThumb, setIsDraggingThumb] = useState(false);
 
-  const dragData = useRef({ startX: 0, startScrollLeft: 0 });
+  // Drag-to-pan state
+  const [isDraggingContent, setIsDraggingContent] = useState(false);
 
-  // Measure and update thumb
-  useEffect(() => {
+  // Scroll shadow state
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Refs for drag tracking
+  const thumbDragData = useRef({ startX: 0, startScrollLeft: 0 });
+  const contentDragData = useRef({ startX: 0, startScrollLeft: 0 });
+
+  // Measure and update thumb + scroll shadows
+  const measure = useCallback(() => {
     const scrollEl = scrollRef.current;
     const trackEl = trackRef.current;
     if (!scrollEl || !trackEl) return;
 
-    const measure = () => {
-      const { scrollWidth, clientWidth, scrollLeft } = scrollEl;
-      const trackWidth = trackEl.offsetWidth;
+    const { scrollWidth, clientWidth, scrollLeft } = scrollEl;
+    const trackWidth = trackEl.offsetWidth;
 
-      const hasOverflow = scrollWidth > clientWidth;
-      setCanScroll(hasOverflow);
+    const hasOverflow = scrollWidth > clientWidth;
+    setCanScroll(hasOverflow);
 
-      if (!hasOverflow) {
-        setThumbWidth(trackWidth);
-        setThumbLeft(0);
-        return;
-      }
+    // Update scroll shadow indicators
+    setCanScrollLeft(scrollLeft > 1);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
 
-      // Calculate thumb width (proportional to visible area)
-      const ratio = clientWidth / scrollWidth;
-      const newThumbWidth = Math.max(ratio * trackWidth, 40);
-      setThumbWidth(newThumbWidth);
+    if (!hasOverflow) {
+      setThumbWidth(trackWidth);
+      setThumbLeft(0);
+      return;
+    }
 
-      // Calculate thumb position
-      const maxScrollLeft = scrollWidth - clientWidth;
-      const maxThumbLeft = trackWidth - newThumbWidth;
-      const scrollRatio = maxScrollLeft > 0 ? scrollLeft / maxScrollLeft : 0;
-      setThumbLeft(scrollRatio * maxThumbLeft);
-    };
+    // Calculate thumb width (proportional to visible area)
+    const ratio = clientWidth / scrollWidth;
+    const newThumbWidth = Math.max(ratio * trackWidth, 40);
+    setThumbWidth(newThumbWidth);
+
+    // Calculate thumb position
+    const maxScrollLeft = scrollWidth - clientWidth;
+    const maxThumbLeft = trackWidth - newThumbWidth;
+    const scrollRatio = maxScrollLeft > 0 ? scrollLeft / maxScrollLeft : 0;
+    setThumbLeft(scrollRatio * maxThumbLeft);
+  }, []);
+
+  // Initial measurement and resize observer
+  useEffect(() => {
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) return;
 
     // Initial measure
     measure();
@@ -83,14 +112,14 @@ export function CustomScrollbar({ children, className = '' }: CustomScrollbarPro
       clearTimeout(t2);
       clearTimeout(t3);
     };
-  }, []);
+  }, [measure]);
 
-  // Handle thumb drag
+  // ============ THUMB DRAG HANDLERS ============
   const onThumbMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(true);
-    dragData.current = {
+    setIsDraggingThumb(true);
+    thumbDragData.current = {
       startX: e.clientX,
       startScrollLeft: scrollRef.current?.scrollLeft || 0,
     };
@@ -99,14 +128,14 @@ export function CustomScrollbar({ children, className = '' }: CustomScrollbarPro
   };
 
   useEffect(() => {
-    if (!isDragging) return;
+    if (!isDraggingThumb) return;
 
     const onMouseMove = (e: MouseEvent) => {
       const scrollEl = scrollRef.current;
       const trackEl = trackRef.current;
       if (!scrollEl || !trackEl) return;
 
-      const deltaX = e.clientX - dragData.current.startX;
+      const deltaX = e.clientX - thumbDragData.current.startX;
       const trackWidth = trackEl.offsetWidth;
       const { scrollWidth, clientWidth } = scrollEl;
 
@@ -115,12 +144,12 @@ export function CustomScrollbar({ children, className = '' }: CustomScrollbarPro
 
       if (maxThumbLeft > 0) {
         const scrollDelta = (deltaX / maxThumbLeft) * maxScrollLeft;
-        scrollEl.scrollLeft = dragData.current.startScrollLeft + scrollDelta;
+        scrollEl.scrollLeft = thumbDragData.current.startScrollLeft + scrollDelta;
       }
     };
 
     const onMouseUp = () => {
-      setIsDragging(false);
+      setIsDraggingThumb(false);
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
     };
@@ -132,7 +161,68 @@ export function CustomScrollbar({ children, className = '' }: CustomScrollbarPro
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
     };
-  }, [isDragging, thumbWidth]);
+  }, [isDraggingThumb, thumbWidth]);
+
+  // ============ CONTENT DRAG-TO-PAN HANDLERS ============
+  const onContentMouseDown = (e: React.MouseEvent) => {
+    if (!enableDragToPan || !canScroll) return;
+
+    // Ignore if clicking on interactive elements
+    const target = e.target as HTMLElement;
+    if (target.closest('button, a, input, select, textarea, [role="button"], th[class*="cursor-pointer"]')) return;
+
+    setIsDraggingContent(true);
+    contentDragData.current = {
+      startX: e.clientX,
+      startScrollLeft: scrollRef.current?.scrollLeft || 0,
+    };
+    document.body.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    if (!isDraggingContent) return;
+
+    const onMouseMove = (e: MouseEvent) => {
+      const scrollEl = scrollRef.current;
+      if (!scrollEl) return;
+
+      const dx = e.clientX - contentDragData.current.startX;
+      scrollEl.scrollLeft = contentDragData.current.startScrollLeft - dx;
+    };
+
+    const onMouseUp = () => {
+      setIsDraggingContent(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [isDraggingContent]);
+
+  // ============ SHIFT+SCROLL HORIZONTAL SCROLLING ============
+  useEffect(() => {
+    if (!enableShiftScroll) return;
+
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.shiftKey && canScroll) {
+        e.preventDefault();
+        scrollEl.scrollLeft += e.deltaY;
+      }
+    };
+
+    scrollEl.addEventListener('wheel', handleWheel, { passive: false });
+    return () => scrollEl.removeEventListener('wheel', handleWheel);
+  }, [enableShiftScroll, canScroll]);
 
   // Handle track click
   const onTrackClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -154,48 +244,68 @@ export function CustomScrollbar({ children, className = '' }: CustomScrollbarPro
     });
   };
 
-  // Styles - matching sample code appearance (adapted to dark theme)
+  // ============ STYLES ============
   const scrollContainerStyle: CSSProperties = {
     overflowX: 'auto',
     scrollbarWidth: 'none', // Firefox
     msOverflowStyle: 'none', // IE/Edge
+    cursor: enableDragToPan && canScroll && !isDraggingContent ? 'grab' : undefined,
   };
 
-  // Track: light background with border-top (like sample's #f8fafc with #e2e8f0 border)
-  // Dark theme equivalent: lighter surface with subtle border
   const trackStyle: CSSProperties = {
     height: '14px',
-    backgroundColor: 'var(--bg-surface-2)', // #162943
-    borderTop: '1px solid var(--border-strong)', // #2C4A6E
+    backgroundColor: 'var(--bg-surface-2)',
+    borderTop: '1px solid var(--border-strong)',
     position: 'relative',
     cursor: 'pointer',
     flexShrink: 0,
   };
 
-  // Thumb: "floating" effect using border + background-clip trick
-  // Sample uses: border: 3px solid track-color, background-clip: content-box, border-radius: 7px
   const thumbStyle: CSSProperties = {
     position: 'absolute',
     top: '0',
     bottom: '0',
     left: `${thumbLeft}px`,
     width: `${thumbWidth}px`,
-    // The "floating" effect: border matches track, background-clip makes bg only fill inside
-    backgroundColor: isDragging
+    backgroundColor: isDraggingThumb
       ? 'var(--gold)'
       : canScroll
-        ? '#94a3b8' // slate-400 - more visible thumb color
+        ? '#94a3b8'
         : 'var(--border-strong)',
     borderRadius: '7px',
-    border: '3px solid var(--bg-surface-2)', // Same as track background
+    border: '3px solid var(--bg-surface-2)',
     backgroundClip: 'content-box',
-    cursor: isDragging ? 'grabbing' : 'grab',
-    transition: isDragging ? 'none' : 'background-color 0.15s ease',
+    cursor: isDraggingThumb ? 'grabbing' : 'grab',
+    transition: isDraggingThumb ? 'none' : 'background-color 0.15s ease',
     boxSizing: 'border-box',
   };
 
+  const shadowBaseStyle: CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    bottom: '14px', // Above the scrollbar track
+    width: '60px',
+    pointerEvents: 'none',
+    zIndex: 10,
+    transition: 'opacity 0.2s ease',
+  };
+
+  const leftShadowStyle: CSSProperties = {
+    ...shadowBaseStyle,
+    left: 0,
+    background: 'linear-gradient(to right, var(--bg-surface-1), transparent)',
+    opacity: showScrollShadows && canScrollLeft ? 1 : 0,
+  };
+
+  const rightShadowStyle: CSSProperties = {
+    ...shadowBaseStyle,
+    right: 0,
+    background: 'linear-gradient(to left, var(--bg-surface-1), transparent)',
+    opacity: showScrollShadows && canScrollRight ? 1 : 0,
+  };
+
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div className={`flex flex-col relative ${className}`}>
       {/* Hide webkit scrollbar with inline style tag */}
       <style>{`
         .custom-scroll-hide::-webkit-scrollbar {
@@ -205,11 +315,16 @@ export function CustomScrollbar({ children, className = '' }: CustomScrollbarPro
         }
       `}</style>
 
-      {/* Scrollable content area */}
+      {/* Scroll shadow indicators */}
+      <div style={leftShadowStyle} aria-hidden="true" />
+      <div style={rightShadowStyle} aria-hidden="true" />
+
+      {/* Scrollable content area with drag-to-pan */}
       <div
         ref={scrollRef}
         className="custom-scroll-hide"
         style={scrollContainerStyle}
+        onMouseDown={onContentMouseDown}
       >
         {children}
       </div>

@@ -427,7 +427,7 @@ const JoinForm: React.FC = () => {
                                             type="tel"
                                             required
                                             className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
-                                            placeholder="79 000 00 00"
+                                            placeholder="790000000"
                                             value={watch('phoneNumber')} onChange={e => setValue('phoneNumber', e.target.value)}
                                         />
                                     </div>
