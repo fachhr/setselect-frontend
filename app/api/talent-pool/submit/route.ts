@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { talentPoolSchemaRefined } from '@/lib/validation/talentPoolSchema';
+import { talentPoolServerSchemaRefined } from '@/lib/validation/talentPoolSchema';
 
 /**
  * POST /api/talent-pool/submit
@@ -24,22 +24,12 @@ export async function POST(req: NextRequest) {
     // Extract languages separately as it's not validated in the same way
     const { cvStoragePath, originalFilename, languages, ...formData } = body;
 
-    // Validate CV storage path exists
-    if (!cvStoragePath || typeof cvStoragePath !== 'string') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'CV upload required - storage path missing'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate form data (without cvFile since it's already uploaded and validated)
-    // We create a temporary File object just for validation since the schema requires it
-    const validationResult = talentPoolSchemaRefined.safeParse({
+    // Validate form data using server schema (expects cvStoragePath, not File)
+    const validationResult = talentPoolServerSchemaRefined.safeParse({
       ...formData,
-      cvFile: new File([], 'validated.pdf', { type: 'application/pdf' })
+      cvStoragePath,
+      originalFilename,
+      languages,
     });
 
     if (!validationResult.success) {

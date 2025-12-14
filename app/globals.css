@@ -88,39 +88,6 @@
 @layer components {
   /* --- CUSTOM UI ELEMENTS --- */
 
-  /* Table horizontal scroll with ALWAYS visible scrollbar */
-  .table-scroll {
-    overflow-x: scroll; /* Always reserve scrollbar space */
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: var(--text-tertiary) var(--bg-surface-2); /* Firefox - more visible thumb */
-  }
-
-  .table-scroll::-webkit-scrollbar {
-    height: 12px;
-    -webkit-appearance: none; /* Override OS overlay scrollbar behavior */
-  }
-
-  .table-scroll::-webkit-scrollbar-track {
-    background: var(--bg-surface-2);
-    border-radius: 6px;
-    border: 1px solid var(--border-subtle);
-  }
-
-  .table-scroll::-webkit-scrollbar-thumb {
-    background: var(--text-tertiary); /* More visible than border-strong */
-    border-radius: 6px;
-    border: 2px solid var(--bg-surface-2); /* Creates inset effect */
-    min-width: 40px; /* Ensures thumb is grabbable */
-  }
-
-  .table-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
-  }
-
-  .table-scroll::-webkit-scrollbar-thumb:active {
-    background: var(--gold); /* Gold accent when dragging */
-  }
-
   /* Utility Classes */
   .glass-panel {
     background: var(--bg-surface-1);
@@ -192,15 +159,6 @@
 }
 
 @layer utilities {
-  /* Hide native scrollbar (for custom scrollbar implementation) */
-  .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;     /* Firefox */
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;             /* Chrome, Safari, Opera */
-  }
-
   .animate-in {
     animation-duration: 0.5s;
     animation-fill-mode: both;

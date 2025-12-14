@@ -82,7 +82,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
 }
 
-export const Input: React.FC<InputProps> = ({ label, id, type = "text", placeholder, required, value, onChange, min, step }) => (
+export const Input: React.FC<InputProps> = ({ label, id, type = "text", placeholder, required, value, onChange, min, max, step }) => (
     <div className="space-y-1.5">
         <label htmlFor={id} className="block text-sm font-medium text-[var(--text-secondary)]">
             {label} {required && <span className="text-[var(--error)]">*</span>}
@@ -95,6 +95,7 @@ export const Input: React.FC<InputProps> = ({ label, id, type = "text", placehol
                 onChange={onChange}
                 required={required}
                 min={min}
+                max={max}
                 step={step}
                 className="input-base block w-full rounded-lg p-3 text-sm placeholder-[var(--text-tertiary)]"
                 placeholder={placeholder}
@@ -192,4 +193,4 @@ export const Toast: React.FC<ToastProps> = ({
 };
 
 export * from './PageHeader';
-export * from './HorizontalScrollbar';
+export * from './CustomScrollbar';

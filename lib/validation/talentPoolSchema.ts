@@ -1,15 +1,23 @@
 import { z } from 'zod';
 
+// ============================================
+// CONSTANTS
+// ============================================
+export const MAX_CV_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+export const VALID_CV_MIME_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+] as const;
+
 /**
- * Validation schema for Silvia's List Talent Pool signup form
+ * Base schema for Silvia's List Talent Pool - shared fields between client and server
  *
- * This schema validates all user-provided fields (12 fields total):
- * - Contact details (6 fields)
- * - Job preferences (5 fields)
- * - CV upload
+ * This schema validates all user-provided fields:
+ * - Contact details (8 fields)
+ * - Job preferences (8 fields)
  * - Terms acceptance
  */
-export const talentPoolSchema = z.object({
+export const talentPoolBaseSchema = z.object({
   // ============================================
   // CONTACT DETAILS (user-provided, required)
   // ============================================
@@ -114,29 +122,6 @@ export const talentPoolSchema = z.object({
     .optional(),
 
   // ============================================
-  // CV UPLOAD (required)
-  // ============================================
-
-  cvFile: z.custom<File>((file) => {
-    if (!(file instanceof File)) return false;
-    return true;
-  }, {
-    message: 'Please upload your CV'
-  })
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: 'CV file must be less than 5MB'
-    })
-    .refine((file) => {
-      const validTypes = [
-        'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ];
-      return validTypes.includes(file.type);
-    }, {
-      message: 'CV must be a PDF or DOCX file'
-    }),
-
-  // ============================================
   // TERMS & CONDITIONS (required)
   // ============================================
 
@@ -147,32 +132,100 @@ export const talentPoolSchema = z.object({
   }),
 });
 
+// ============================================
+// CLIENT-SIDE SCHEMA (with File validation)
+// ============================================
+
 /**
- * Refine schema to validate salary range logic
+ * Client-side schema with cvFile as File object
+ * Used by react-hook-form for client-side validation
+ */
+export const talentPoolSchema = talentPoolBaseSchema.extend({
+  cvFile: z.custom<File>((file) => {
+    if (!(file instanceof File)) return false;
+    return true;
+  }, {
+    message: 'Please upload your CV'
+  })
+    .refine((file) => file.size <= MAX_CV_FILE_SIZE, {
+      message: 'CV file must be less than 5MB'
+    })
+    .refine((file) => {
+      return VALID_CV_MIME_TYPES.includes(file.type as typeof VALID_CV_MIME_TYPES[number]);
+    }, {
+      message: 'CV must be a PDF or DOCX file'
+    }),
+});
+
+// ============================================
+// SERVER-SIDE SCHEMA (with storage path)
+// ============================================
+
+/**
+ * Server-side schema with cvStoragePath instead of File
+ * Used by API routes after file upload is complete
+ */
+export const talentPoolServerSchema = talentPoolBaseSchema.extend({
+  cvStoragePath: z.string().min(1, 'CV storage path is required'),
+  originalFilename: z.string().min(1, 'Original filename is required'),
+  languages: z.array(z.string()).nullable().optional(), // Server receives processed languages
+});
+
+// ============================================
+// REFINED SCHEMAS (with salary validation)
+// ============================================
+
+const salaryRefinement = (data: { salary_min?: number | null; salary_max?: number | null }) => {
+  if (data.salary_min != null && data.salary_max != null) {
+    return data.salary_min <= data.salary_max;
+  }
+  return true;
+};
+
+const salaryRefinementConfig = {
+  message: 'Minimum salary cannot be greater than maximum salary',
+  path: ['salary_min']
+};
+
+/**
+ * Client-side refined schema with salary validation
  */
 export const talentPoolSchemaRefined = talentPoolSchema.refine(
-  (data) => {
-    // Only validate if both salary values are provided
-    if (data.salary_min != null && data.salary_max != null) {
-      return data.salary_min <= data.salary_max;
-    }
-    return true;
-  },
-  {
-    message: 'Minimum salary cannot be greater than maximum salary',
-    path: ['salary_min']
-  }
+  salaryRefinement,
+  salaryRefinementConfig
 );
 
 /**
- * TypeScript type inferred from the schema
+ * Server-side refined schema with salary validation
+ */
+export const talentPoolServerSchemaRefined = talentPoolServerSchema.refine(
+  salaryRefinement,
+  salaryRefinementConfig
+);
+
+// ============================================
+// TYPESCRIPT TYPES
+// ============================================
+
+/**
+ * Client-side form data type (with File)
  */
 export type TalentPoolFormData = z.infer<typeof talentPoolSchema>;
 
 /**
- * Type for the refined schema
+ * Client-side refined form data type
  */
 export type TalentPoolFormDataRefined = z.infer<typeof talentPoolSchemaRefined>;
+
+/**
+ * Server-side submission data type (with storage path)
+ */
+export type TalentPoolServerData = z.infer<typeof talentPoolServerSchema>;
+
+/**
+ * Server-side refined data type
+ */
+export type TalentPoolServerDataRefined = z.infer<typeof talentPoolServerSchemaRefined>;
 
 /**
  * Partial schema for step-by-step validation

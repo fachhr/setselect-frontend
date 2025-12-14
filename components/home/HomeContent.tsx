@@ -25,7 +25,7 @@ import {
     ArrowUpDown
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
-import { Badge, Button, Toast, HorizontalScrollbar } from '@/components/ui';
+import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
 import { useZenMode } from '@/contexts/ZenModeContext';
@@ -1017,7 +1017,7 @@ export default function HomeContent() {
                         ) : (
                             /* TABLE VIEW */
                             <div className="glass-panel rounded-xl overflow-hidden">
-                                <HorizontalScrollbar>
+                                <CustomScrollbar>
                                     <table className="min-w-[1800px] w-full divide-y divide-[var(--border-subtle)] table-fixed">
                                         <thead className="bg-[var(--bg-surface-2)]">
                                             <tr>
@@ -1302,7 +1302,7 @@ export default function HomeContent() {
                                             ))}
                                         </tbody>
                                     </table>
-                                </HorizontalScrollbar>
+                                </CustomScrollbar>
                                 {/* Empty state - outside scroll container for proper centering */}
                                 {displayCandidates.length === 0 && (
                                     <div className="p-16 text-center border-t border-[var(--border-subtle)]">

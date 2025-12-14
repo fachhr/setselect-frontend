@@ -238,20 +238,14 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                     <p className="text-xs text-[var(--text-tertiary)] text-center sm:text-left">
                         Reference ID: {candidate.id} • Added {candidate.entryDate}
                     </p>
-                    <div className="flex gap-3 w-full sm:w-auto">
-                        <Button variant="outline" className="flex-1 sm:flex-none" onClick={onClose}>
-                            Close
+                    {onRequestIntroduction && (
+                        <Button
+                            variant="primary"
+                            onClick={() => onRequestIntroduction(candidate.id)}
+                        >
+                            Request Introduction
                         </Button>
-                        {onRequestIntroduction && (
-                            <Button
-                                variant="primary"
-                                className="flex-1 sm:flex-none"
-                                onClick={() => onRequestIntroduction(candidate.id)}
-                            >
-                                Request Introduction
-                            </Button>
-                        )}
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -2,6 +2,8 @@
 
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
     Upload,
     FileText,
@@ -11,89 +13,98 @@ import {
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
 import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/constants';
+import { talentPoolSchemaRefined, type TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
+
+// Helper for parsing non-JSON error responses
+const safeJsonParse = async (response: Response) => {
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch {
+        throw new Error(text || `Server error (${response.status})`);
+    }
+};
 
 const JoinForm: React.FC = () => {
     const router = useRouter();
     const [step, setStep] = useState(1); // 1: CV, 2: Details, 3: Success
-    const [file, setFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [locationsTouched, setLocationsTouched] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Form State (matching backend schema)
-    const [formData, setFormData] = useState({
-        contact_first_name: '',
-        contact_last_name: '',
-        email: '',
-        linkedinUrl: '',
-        country_code: '',
-        phoneNumber: '',
-        years_of_experience: '',
-        work_eligibility: '',
-        desired_roles: '',
-        notice_period_months: '',
-        desired_locations: [] as string[],
-        desired_other_location: '',
-        salary_min: '',
-        salary_max: '',
-        // Languages with professional proficiency (simplified checkboxes)
-        languages: [] as string[],
-        showOtherLanguage: false,
-        otherLanguageName: '',
-        // Key achievement / highlight
-        highlight: '',
-        accepted_terms: false
+    // Additional UI state not covered by Zod schema
+    const [showOtherLanguage, setShowOtherLanguage] = useState(false);
+    const [otherLanguageName, setOtherLanguageName] = useState('');
+
+    // React Hook Form with Zod validation
+    const {
+        handleSubmit,
+        watch,
+        setValue,
+        trigger,
+        formState: { errors, isSubmitting }
+    } = useForm<TalentPoolFormData>({
+        resolver: zodResolver(talentPoolSchemaRefined),
+        mode: 'onBlur', // Validate on blur for better UX
+        defaultValues: {
+            contact_first_name: '',
+            contact_last_name: '',
+            email: '',
+            linkedinUrl: '',
+            country_code: '',
+            phoneNumber: '',
+            years_of_experience: 0,
+            work_eligibility: '',
+            desired_roles: '',
+            notice_period_months: '',
+            desired_locations: [],
+            desired_other_location: '',
+            salary_min: null,
+            salary_max: null,
+            languages: [],
+            highlight: '',
+            accepted_terms: false as unknown as true, // Will be validated on submit
+        }
     });
 
-    // Validation Logic
-    const salaryMinNum = Number(formData.salary_min);
-    const salaryMaxNum = Number(formData.salary_max);
-    const hasSalaryError = formData.salary_min !== '' && formData.salary_max !== '' && salaryMaxNum < salaryMinNum;
+    // Watch values for conditional rendering
+    const cvFile = watch('cvFile');
+    const desiredLocations = watch('desired_locations');
+    const linkedinUrl = watch('linkedinUrl');
+    const salaryMin = watch('salary_min');
+    const salaryMax = watch('salary_max');
+    const languages = watch('languages');
+    const acceptedTerms = watch('accepted_terms');
 
-    // LinkedIn Validation: Optional, but if provided must contain 'linkedin.com'
-    const hasLinkedinError = formData.linkedinUrl.length > 0 && !formData.linkedinUrl.includes('linkedin.com');
-
-    // Location Validation: Must have at least 1 selected
-    const hasLocationError = formData.desired_locations.length === 0;
-
+    // File handlers with Zod validation
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
         setIsDragging(false);
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            setFile(e.dataTransfer.files[0]);
+        const droppedFile = e.dataTransfer.files?.[0];
+        if (droppedFile) {
+            setValue('cvFile', droppedFile, { shouldValidate: true });
         }
     };
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0]);
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            setValue('cvFile', selectedFile, { shouldValidate: true });
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Mark locations as touched to show validation errors
-        setLocationsTouched(true);
-
-        // Validation checks
-        if (hasSalaryError || hasLocationError) return;
-        if (!file) {
-            alert('Please upload your CV');
-            return;
+    const handleRemoveFile = () => {
+        setValue('cvFile', undefined as unknown as File, { shouldValidate: false });
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
         }
-        if (!formData.accepted_terms) {
-            alert('Please accept the terms and conditions');
-            return;
-        }
+    };
 
-        setIsSubmitting(true);
-
+    // Form submission handler (called by react-hook-form after validation passes)
+    const onSubmit = async (data: TalentPoolFormData) => {
         try {
             // STEP 1: Upload CV
             const uploadFormData = new FormData();
-            uploadFormData.append('file', file);
+            uploadFormData.append('file', data.cvFile);
 
             const uploadResponse = await fetch('/api/talent-pool/upload-cv', {
                 method: 'POST',
@@ -101,7 +112,7 @@ const JoinForm: React.FC = () => {
             });
 
             if (!uploadResponse.ok) {
-                const errorData = await uploadResponse.json();
+                const errorData = await safeJsonParse(uploadResponse);
                 throw new Error(errorData.error || 'Failed to upload CV');
             }
 
@@ -109,36 +120,36 @@ const JoinForm: React.FC = () => {
 
             // Process languages: include base selections + "Other" if filled
             const processedLanguages = [
-                ...formData.languages,
-                ...(formData.showOtherLanguage && formData.otherLanguageName.trim()
-                    ? [formData.otherLanguageName.trim()]
+                ...(data.languages || []),
+                ...(showOtherLanguage && otherLanguageName.trim()
+                    ? [otherLanguageName.trim()]
                     : []
                 )
             ];
 
             // STEP 2: Submit Profile
             const profileData = {
-                contact_first_name: formData.contact_first_name,
-                contact_last_name: formData.contact_last_name,
-                email: formData.email,
-                linkedinUrl: (formData.linkedinUrl && !formData.linkedinUrl.match(/^https?:\/\//))
-                    ? `https://${formData.linkedinUrl}`
-                    : (formData.linkedinUrl || undefined),
-                country_code: formData.country_code,
-                phoneNumber: formData.phoneNumber,
-                years_of_experience: parseInt(formData.years_of_experience),
-                work_eligibility: formData.work_eligibility,
-                desired_roles: formData.desired_roles,
-                notice_period_months: formData.notice_period_months,
-                desired_locations: formData.desired_locations,
-                desired_other_location: formData.desired_other_location || undefined,
-                salary_min: formData.salary_min ? parseInt(formData.salary_min) : null,
-                salary_max: formData.salary_max ? parseInt(formData.salary_max) : null,
+                contact_first_name: data.contact_first_name,
+                contact_last_name: data.contact_last_name,
+                email: data.email,
+                linkedinUrl: (data.linkedinUrl && !data.linkedinUrl.match(/^https?:\/\//))
+                    ? `https://${data.linkedinUrl}`
+                    : (data.linkedinUrl || undefined),
+                country_code: data.country_code,
+                phoneNumber: data.phoneNumber,
+                years_of_experience: data.years_of_experience,
+                work_eligibility: data.work_eligibility,
+                desired_roles: data.desired_roles,
+                notice_period_months: data.notice_period_months,
+                desired_locations: data.desired_locations,
+                desired_other_location: data.desired_other_location || undefined,
+                salary_min: data.salary_min,
+                salary_max: data.salary_max,
                 languages: processedLanguages.length > 0 ? processedLanguages : null,
-                highlight: formData.highlight || undefined,
+                highlight: data.highlight || undefined,
                 cvStoragePath,
                 originalFilename,
-                accepted_terms: formData.accepted_terms,
+                accepted_terms: data.accepted_terms,
             };
 
             const submitResponse = await fetch('/api/talent-pool/submit', {
@@ -148,7 +159,7 @@ const JoinForm: React.FC = () => {
             });
 
             if (!submitResponse.ok) {
-                const errorData = await submitResponse.json();
+                const errorData = await safeJsonParse(submitResponse);
                 throw new Error(errorData.error || 'Failed to submit profile');
             }
 
@@ -158,8 +169,6 @@ const JoinForm: React.FC = () => {
         } catch (error) {
             console.error('Submission error:', error);
             alert(error instanceof Error ? error.message : 'An error occurred. Please try again.');
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -218,7 +227,7 @@ const JoinForm: React.FC = () => {
 
             {/* Main Form Content - No Shadow Card */}
             <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <form onSubmit={handleSubmit} className="glass-panel rounded-2xl overflow-hidden p-8 space-y-10 md:p-12">
+                <form onSubmit={handleSubmit(onSubmit)} className="glass-panel rounded-2xl overflow-hidden p-8 space-y-10 md:p-12">
 
                     {/* SECTION 1: CV UPLOAD */}
                     <section>
@@ -227,14 +236,15 @@ const JoinForm: React.FC = () => {
                                 <div className="w-6 h-6 rounded bg-[var(--gold)] text-[#0A1628] text-xs flex items-center justify-center font-bold">1</div>
                                 Upload CV <span className="text-red-500">*</span>
                             </h2>
-                            {file && <Badge style="success">File Selected</Badge>}
+                            {cvFile && <Badge style="success">File Selected</Badge>}
                         </div>
 
                         <div
                             className={`
                 relative border-2 border-dashed rounded-xl p-10 text-center transition-all duration-200 ease-in-out cursor-pointer
                 ${isDragging ? 'border-[var(--blue)] bg-[var(--bg-surface-2)]' : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-surface-2)]'}
-                ${file ? 'bg-[var(--bg-surface-2)] border-[var(--border-strong)]' : ''}
+                ${cvFile ? 'bg-[var(--bg-surface-2)] border-[var(--border-strong)]' : ''}
+                ${errors.cvFile ? 'border-red-500' : ''}
                 focus-within:ring-2 focus-within:ring-[rgba(59,130,246,0.5)] focus-within:ring-offset-2 focus-within:ring-offset-[var(--bg-root)]
               `}
                             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
@@ -254,16 +264,22 @@ const JoinForm: React.FC = () => {
                                 onChange={handleFileSelect}
                             />
 
-                            {file ? (
+                            {cvFile ? (
                                 <div className="flex flex-col items-center animate-in fade-in zoom-in duration-300">
                                     <div className="w-12 h-12 bg-[var(--bg-surface-1)] rounded-lg shadow-sm border border-[var(--border-subtle)] flex items-center justify-center mb-3">
                                         <FileText className="w-6 h-6 text-[var(--text-primary)]" />
                                     </div>
-                                    <p className="text-sm font-medium text-[var(--text-primary)]">{file.name}</p>
-                                    <p className="text-xs text-[var(--text-tertiary)] mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <p className="text-sm font-medium text-[var(--text-primary)]">{cvFile.name}</p>
+                                    <p className="text-xs text-[var(--text-tertiary)] mt-1">{(cvFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    {errors.cvFile && (
+                                        <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                            <AlertCircle className="w-3.5 h-3.5" />
+                                            <span className="font-medium">{errors.cvFile.message}</span>
+                                        </div>
+                                    )}
                                     <button
                                         type="button"
-                                        onClick={(e) => { e.stopPropagation(); setFile(null); }}
+                                        onClick={(e) => { e.stopPropagation(); handleRemoveFile(); }}
                                         className="mt-4 text-xs text-red-500 hover:text-red-700 font-medium underline"
                                     >
                                         Remove file
@@ -296,17 +312,17 @@ const JoinForm: React.FC = () => {
                             <Input
                                 label="First Name" id="contact_first_name" required
                                 placeholder="Sarah"
-                                value={formData.contact_first_name} onChange={e => setFormData({ ...formData, contact_first_name: e.target.value })}
+                                value={watch('contact_first_name')} onChange={e => setValue('contact_first_name', e.target.value)}
                             />
                             <Input
                                 label="Last Name" id="contact_last_name" required
                                 placeholder="Miller"
-                                value={formData.contact_last_name} onChange={e => setFormData({ ...formData, contact_last_name: e.target.value })}
+                                value={watch('contact_last_name')} onChange={e => setValue('contact_last_name', e.target.value)}
                             />
                             <div className="md:col-span-2">
                                 <Input
                                     label="Email Address" id="email" type="email" placeholder="you@company.com" required
-                                    value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                    value={watch('email')} onChange={e => setValue('email', e.target.value)}
                                 />
                             </div>
                             <div className="relative">
@@ -316,22 +332,23 @@ const JoinForm: React.FC = () => {
                                 <div className="relative">
                                     <input
                                         type="url"
-                                        className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasLinkedinError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
+                                        className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.linkedinUrl ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                             }`}
                                         placeholder="linkedin.com/in/..."
-                                        value={formData.linkedinUrl}
-                                        onChange={e => setFormData({ ...formData, linkedinUrl: e.target.value })}
+                                        value={linkedinUrl || ''}
+                                        onChange={e => setValue('linkedinUrl', e.target.value)}
                                         onBlur={() => {
-                                            if (formData.linkedinUrl && !formData.linkedinUrl.match(/^https?:\/\//)) {
-                                                setFormData({ ...formData, linkedinUrl: `https://${formData.linkedinUrl}` });
+                                            if (linkedinUrl && !linkedinUrl.match(/^https?:\/\//)) {
+                                                setValue('linkedinUrl', `https://${linkedinUrl}`);
                                             }
+                                            trigger('linkedinUrl');
                                         }}
                                     />
                                 </div>
-                                {hasLinkedinError && (
+                                {errors.linkedinUrl && (
                                     <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
-                                        <span className="font-medium">Please enter a valid LinkedIn profile URL.</span>
+                                        <span className="font-medium">{errors.linkedinUrl.message}</span>
                                     </div>
                                 )}
                             </div>
@@ -346,8 +363,8 @@ const JoinForm: React.FC = () => {
                                         <select
                                             id="country_code"
                                             required
-                                            value={formData.country_code}
-                                            onChange={e => setFormData({ ...formData, country_code: e.target.value })}
+                                            value={watch('country_code')}
+                                            onChange={e => setValue('country_code', e.target.value)}
                                             className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                         >
                                             <option value="">Code</option>
@@ -364,7 +381,7 @@ const JoinForm: React.FC = () => {
                                             required
                                             className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                             placeholder="79 000 00 00"
-                                            value={formData.phoneNumber} onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
+                                            value={watch('phoneNumber')} onChange={e => setValue('phoneNumber', e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -378,8 +395,8 @@ const JoinForm: React.FC = () => {
                                 <select
                                     id="work_eligibility"
                                     required
-                                    value={formData.work_eligibility}
-                                    onChange={e => setFormData({ ...formData, work_eligibility: e.target.value })}
+                                    value={watch('work_eligibility')}
+                                    onChange={e => setValue('work_eligibility', e.target.value)}
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                 >
                                     <option value="">Select your work eligibility...</option>
@@ -404,7 +421,7 @@ const JoinForm: React.FC = () => {
                         <div className="space-y-6">
                             <Input
                                 label="Years of Relevant Experience" id="years_of_experience" type="number" placeholder="e.g. 5" required min="0" max="50"
-                                value={formData.years_of_experience} onChange={e => setFormData({ ...formData, years_of_experience: e.target.value })}
+                                value={watch('years_of_experience')?.toString() || ''} onChange={e => setValue('years_of_experience', parseInt(e.target.value) || 0)}
                             />
 
                             {/* Languages subsection - simplified checkboxes */}
@@ -421,14 +438,13 @@ const JoinForm: React.FC = () => {
                                                 <input
                                                     type="checkbox"
                                                     className="w-4 h-4 rounded border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--gold)] focus:ring-[var(--gold)] focus:ring-offset-[var(--bg-root)] cursor-pointer accent-[var(--gold)]"
-                                                    checked={formData.languages.includes(lang)}
+                                                    checked={(languages || []).includes(lang)}
                                                     onChange={() => {
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            languages: prev.languages.includes(lang)
-                                                                ? prev.languages.filter(l => l !== lang)
-                                                                : [...prev.languages, lang]
-                                                        }));
+                                                        const current = languages || [];
+                                                        const updated = current.includes(lang)
+                                                            ? current.filter(l => l !== lang)
+                                                            : [...current, lang];
+                                                        setValue('languages', updated);
                                                     }}
                                                 />
                                                 <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
@@ -442,13 +458,10 @@ const JoinForm: React.FC = () => {
                                             <input
                                                 type="checkbox"
                                                 className="w-4 h-4 rounded border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--gold)] focus:ring-[var(--gold)] focus:ring-offset-[var(--bg-root)] cursor-pointer accent-[var(--gold)]"
-                                                checked={formData.showOtherLanguage}
+                                                checked={showOtherLanguage}
                                                 onChange={(e) => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        showOtherLanguage: e.target.checked,
-                                                        otherLanguageName: e.target.checked ? prev.otherLanguageName : ''
-                                                    }));
+                                                    setShowOtherLanguage(e.target.checked);
+                                                    if (!e.target.checked) setOtherLanguageName('');
                                                 }}
                                             />
                                             <span className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
@@ -458,14 +471,14 @@ const JoinForm: React.FC = () => {
                                     </div>
 
                                     {/* Conditional text input for Other language */}
-                                    {formData.showOtherLanguage && (
+                                    {showOtherLanguage && (
                                         <div className="animate-in fade-in slide-in-from-top-1 duration-200 pt-2">
                                             <input
                                                 type="text"
                                                 placeholder="Please specify language..."
                                                 className="block w-full max-w-xs rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
-                                                value={formData.otherLanguageName}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, otherLanguageName: e.target.value }))}
+                                                value={otherLanguageName}
+                                                onChange={(e) => setOtherLanguageName(e.target.value)}
                                             />
                                         </div>
                                     )}
@@ -482,13 +495,13 @@ const JoinForm: React.FC = () => {
                                     rows={3}
                                     maxLength={300}
                                     placeholder="Describe a significant accomplishment that showcases your expertise..."
-                                    value={formData.highlight}
-                                    onChange={e => setFormData({ ...formData, highlight: e.target.value })}
+                                    value={watch('highlight') || ''}
+                                    onChange={e => setValue('highlight', e.target.value)}
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)] resize-none"
                                 />
-                                {formData.highlight.length > 300 && (
+                                {(watch('highlight')?.length || 0) > 300 && (
                                     <p className="text-xs text-red-500 mt-1.5">
-                                        {formData.highlight.length}/300 characters - exceeds limit
+                                        {watch('highlight')?.length || 0}/300 characters - exceeds limit
                                     </p>
                                 )}
                             </div>
@@ -516,8 +529,8 @@ const JoinForm: React.FC = () => {
                                     id="desired_roles"
                                     required
                                     placeholder="e.g., Senior Trader; Commodities Analyst; Risk Manager"
-                                    value={formData.desired_roles}
-                                    onChange={e => setFormData({ ...formData, desired_roles: e.target.value })}
+                                    value={watch('desired_roles')}
+                                    onChange={e => setValue('desired_roles', e.target.value)}
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)]"
                                 />
                                 <p className="text-xs text-[var(--text-tertiary)] mt-1.5">
@@ -533,8 +546,8 @@ const JoinForm: React.FC = () => {
                                 <select
                                     id="notice_period_months"
                                     required
-                                    value={formData.notice_period_months}
-                                    onChange={e => setFormData({ ...formData, notice_period_months: e.target.value })}
+                                    value={watch('notice_period_months')}
+                                    onChange={e => setValue('notice_period_months', e.target.value)}
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                 >
                                     <option value="">Select...</option>
@@ -555,10 +568,10 @@ const JoinForm: React.FC = () => {
                                             type="number"
                                             placeholder="Min (e.g. 120000)"
                                             min="0" step="1000"
-                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
+                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.salary_min ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
-                                            value={formData.salary_min}
-                                            onChange={(e) => setFormData({ ...formData, salary_min: e.target.value })}
+                                            value={salaryMin ?? ''}
+                                            onChange={(e) => setValue('salary_min', e.target.value ? parseInt(e.target.value) : null)}
                                         />
                                     </div>
                                     <div className="relative">
@@ -566,24 +579,24 @@ const JoinForm: React.FC = () => {
                                             type="number"
                                             placeholder="Max (e.g. 150000)"
                                             min="0" step="1000"
-                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${hasSalaryError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
+                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.salary_max ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
-                                            value={formData.salary_max}
-                                            onChange={(e) => setFormData({ ...formData, salary_max: e.target.value })}
+                                            value={salaryMax ?? ''}
+                                            onChange={(e) => setValue('salary_max', e.target.value ? parseInt(e.target.value) : null)}
                                         />
                                     </div>
                                 </div>
                                 {/* Validation Error */}
-                                {hasSalaryError && (
+                                {errors.salary_min && (
                                     <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
-                                        <span className="font-medium">Maximum salary cannot be lower than minimum salary.</span>
+                                        <span className="font-medium">{errors.salary_min.message}</span>
                                     </div>
                                 )}
                                 {/* Range Helper Text (Only show if no error) */}
-                                {!hasSalaryError && formData.salary_min && formData.salary_max && (
+                                {!errors.salary_min && salaryMin && salaryMax && (
                                     <p className="mt-2 text-xs text-[var(--text-tertiary)]">
-                                        Range: <span className="font-mono font-semibold text-[var(--text-primary)]">{formatCurrency(formData.salary_min)} – {formatCurrency(formData.salary_max)}</span>
+                                        Range: <span className="font-mono font-semibold text-[var(--text-primary)]">{formatCurrency(salaryMin)} – {formatCurrency(salaryMax)}</span>
                                     </p>
                                 )}
                             </div>
@@ -597,52 +610,50 @@ const JoinForm: React.FC = () => {
                                             className={`
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
                         has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
-                        ${formData.desired_locations.includes(location.code)
+                        ${(desiredLocations || []).includes(location.code)
                                                     ? 'bg-[var(--gold)] border-[var(--gold)] text-[#0A1628] shadow-md'
                                                     : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
-                        ${!formData.desired_locations.includes(location.code) && formData.desired_locations.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
+                        ${!(desiredLocations || []).includes(location.code) && (desiredLocations || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
                                         >
                                             <input
                                                 type="checkbox"
                                                 className="sr-only"
-                                                checked={formData.desired_locations.includes(location.code)}
-                                                disabled={!formData.desired_locations.includes(location.code) && formData.desired_locations.length >= 5}
+                                                checked={(desiredLocations || []).includes(location.code)}
+                                                disabled={!(desiredLocations || []).includes(location.code) && (desiredLocations || []).length >= 5}
                                                 onChange={() => {
-                                                    setLocationsTouched(true);
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        desired_locations: prev.desired_locations.includes(location.code)
-                                                            ? prev.desired_locations.filter(l => l !== location.code)
-                                                            : prev.desired_locations.length < 5 ? [...prev.desired_locations, location.code] : prev.desired_locations
-                                                    }))
+                                                    const current = desiredLocations || [];
+                                                    const updated = current.includes(location.code)
+                                                        ? current.filter(l => l !== location.code)
+                                                        : current.length < 5 ? [...current, location.code] : current;
+                                                    setValue('desired_locations', updated, { shouldValidate: true });
                                                 }}
                                             />
                                             {location.name}
                                         </label>
                                     ))}
                                 </div>
-                                {formData.desired_locations.length > 0 ? (
+                                {(desiredLocations || []).length > 0 ? (
                                     <p className="text-xs text-[var(--text-tertiary)] mt-2">
-                                        {formData.desired_locations.length}/5 selected
+                                        {(desiredLocations || []).length}/5 selected
                                     </p>
-                                ) : locationsTouched ? (
+                                ) : errors.desired_locations ? (
                                     <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
-                                        <span className="font-medium">At least one location must be selected.</span>
+                                        <span className="font-medium">{errors.desired_locations.message}</span>
                                     </div>
                                 ) : null}
                             </div>
 
                             {/* Other Location - only show when "Others" is selected */}
-                            {formData.desired_locations.includes('Others') && (
+                            {(desiredLocations || []).includes('Others') && (
                                 <div className="animate-in fade-in slide-in-from-top-1 duration-200">
                                     <Input
                                         label="Other Preferred Location"
                                         id="desired_other_location"
                                         placeholder="e.g., Remote, Berlin, Paris"
-                                        value={formData.desired_other_location}
-                                        onChange={e => setFormData({ ...formData, desired_other_location: e.target.value })}
+                                        value={watch('desired_other_location') || ''}
+                                        onChange={e => setValue('desired_other_location', e.target.value)}
                                     />
                                 </div>
                             )}
@@ -656,15 +667,21 @@ const JoinForm: React.FC = () => {
                                 type="checkbox"
                                 id="accepted_terms"
                                 required
-                                checked={formData.accepted_terms}
-                                onChange={(e) => setFormData({ ...formData, accepted_terms: e.target.checked })}
+                                checked={acceptedTerms === true}
+                                onChange={(e) => setValue('accepted_terms', e.target.checked as unknown as true, { shouldValidate: true })}
                                 className="checkbox-slate mt-1"
                             />
                             <label htmlFor="accepted_terms" className="text-xs text-[var(--text-tertiary)] leading-relaxed">
                                 I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-1 focus:ring-offset-[var(--bg-surface-2)] rounded">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
-                        <Button type="submit" className="w-full py-3 text-base" disabled={!file || hasSalaryError || hasLocationError || isSubmitting}>
+                        {errors.accepted_terms && (
+                            <div className="flex items-center gap-2 mb-4 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                <AlertCircle className="w-3.5 h-3.5" />
+                                <span className="font-medium">{errors.accepted_terms.message}</span>
+                            </div>
+                        )}
+                        <Button type="submit" className="w-full py-3 text-base" disabled={isSubmitting}>
                             {isSubmitting ? 'Submitting...' : 'Submit Application'}
                         </Button>
                     </div>
