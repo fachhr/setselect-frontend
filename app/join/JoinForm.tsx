@@ -12,7 +12,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
-import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS } from '@/lib/formOptions';
+import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, type FunctionalExpertise } from '@/lib/formOptions';
 import { talentPoolSchemaRefined, type TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 
 // Helper for parsing non-JSON error responses
@@ -610,7 +610,7 @@ const JoinForm: React.FC = () => {
                                 </label>
 
                                 <div className="flex flex-wrap gap-2">
-                                    {FUNCTIONAL_EXPERTISE_OPTIONS.map(expertise => (
+                                    {FUNCTIONAL_EXPERTISE_OPTIONS.map((expertise: FunctionalExpertise) => (
                                         <label
                                             key={expertise}
                                             className={`

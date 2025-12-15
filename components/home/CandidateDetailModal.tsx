@@ -247,6 +247,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                     {onRequestIntroduction && (
                         <Button
                             variant="primary"
+                            className="w-full sm:w-auto"
                             onClick={() => onRequestIntroduction(candidate.id)}
                         >
                             Request Introduction
