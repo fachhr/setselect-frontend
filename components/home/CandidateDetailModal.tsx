@@ -132,7 +132,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                             Professional Profile
                         </h3>
                         {candidate.profileBio ? (
-                            <p className="text-[var(--text-secondary)] leading-relaxed">
+                            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                                 {candidate.profileBio}
                             </p>
                         ) : (
