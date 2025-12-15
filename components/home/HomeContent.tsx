@@ -986,9 +986,12 @@ export default function HomeContent() {
                                             {candidate.functionalExpertise && candidate.functionalExpertise.length > 0 && (
                                                 <div className="flex flex-wrap gap-2 mb-4">
                                                     {candidate.functionalExpertise.map((exp) => (
-                                                        <Badge key={exp} style="purple" icon={Layers}>
+                                                        <span
+                                                            key={exp}
+                                                            className="inline-flex items-center px-2.5 py-1 bg-[var(--expertise-dim)] border border-[var(--expertise-border)] text-[var(--expertise)] text-xs font-medium rounded-md"
+                                                        >
                                                             {exp}
-                                                        </Badge>
+                                                        </span>
                                                     ))}
                                                 </div>
                                             )}

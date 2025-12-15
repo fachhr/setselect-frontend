@@ -29,6 +29,11 @@
     --blue-dim: rgba(59, 130, 246, 0.15);
     --blue-border: rgba(59, 130, 246, 0.3);
 
+    /* Expertise accent - saturation-matched to navy palette */
+    --expertise: #6A9BC4;
+    --expertise-dim: rgba(106, 155, 196, 0.18);
+    --expertise-border: rgba(106, 155, 196, 0.35);
+
     /* Status */
     --error: #EF4444;
     --success: #10b981;

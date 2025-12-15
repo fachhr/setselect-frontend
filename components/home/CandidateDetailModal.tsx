@@ -142,26 +142,48 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                         )}
                     </div>
 
-                    {/* Two Column Layout: Skills + Details */}
+                    {/* Two Column Layout: Expertise & Skills + Details */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Core Competencies (Skills) */}
-                        <div>
-                            <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3">
-                                Core Competencies
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {candidate.skills && candidate.skills.length > 0 ? (
-                                    candidate.skills.map((skill, idx) => (
-                                        <span
-                                            key={idx}
-                                            className="px-3 py-1.5 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-secondary)] text-sm font-medium rounded-md"
-                                        >
-                                            {skill}
-                                        </span>
-                                    ))
-                                ) : (
-                                    <span className="text-[var(--text-tertiary)] text-sm">Not specified</span>
-                                )}
+                        {/* Left Column: Expertise & Skills */}
+                        <div className="space-y-6">
+                            {/* Functional Expertise */}
+                            {candidate.functionalExpertise && candidate.functionalExpertise.length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3">
+                                        Functional Expertise
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {candidate.functionalExpertise.map((exp, idx) => (
+                                            <span
+                                                key={idx}
+                                                className="inline-flex items-center px-3 py-1.5 bg-[var(--expertise-dim)] border border-[var(--expertise-border)] text-[var(--expertise)] text-sm font-medium rounded-md"
+                                            >
+                                                {exp}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Core Competencies (Skills) */}
+                            <div>
+                                <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3">
+                                    Core Competencies
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {candidate.skills && candidate.skills.length > 0 ? (
+                                        candidate.skills.map((skill, idx) => (
+                                            <span
+                                                key={idx}
+                                                className="px-3 py-1.5 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-secondary)] text-sm font-medium rounded-md"
+                                            >
+                                                {skill}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-[var(--text-tertiary)] text-sm">Not specified</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -215,22 +237,6 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                             </div>
                         </div>
                     </div>
-
-                    {/* Functional Expertise */}
-                    {candidate.functionalExpertise && candidate.functionalExpertise.length > 0 && (
-                        <div>
-                            <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3 flex items-center gap-2">
-                                <Layers className="w-4 h-4" /> Functional Expertise
-                            </h3>
-                            <div className="flex flex-wrap gap-2">
-                                {candidate.functionalExpertise.map((exp, idx) => (
-                                    <Badge key={idx} style="purple" icon={Layers}>
-                                        {exp}
-                                    </Badge>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* Footer */}
