@@ -219,16 +219,13 @@ export default function HomeContent() {
 
     // Format helpers (defined early for use in filter logic)
     const formatCurrency = (val: number) => {
-        return new Intl.NumberFormat('de-CH', {
-            style: 'currency',
-            currency: 'CHF',
-            maximumSignificantDigits: 3,
-        }).format(val);
+        const k = Math.round(val / 1000);
+        return `CHF ${k}K`;
     };
 
     const formatSalaryRange = (min: number, max: number): string => {
         if (!min && !max) return '-';
-        if (min && max) return `${formatCurrency(min)} – ${formatCurrency(max)}`;
+        if (min && max) return `CHF ${Math.round(min / 1000)}K - ${Math.round(max / 1000)}K`;
         if (min) return `From ${formatCurrency(min)}`;
         if (max) return `Up to ${formatCurrency(max)}`;
         return '-';
