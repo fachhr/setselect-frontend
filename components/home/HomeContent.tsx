@@ -105,11 +105,10 @@ const MultiSelectFilter: React.FC<MultiSelectFilterProps> = ({ options, selected
                                     onClick={() => toggleOption(option.value)}
                                     className="flex items-center gap-2 px-2 py-1.5 hover:bg-[var(--bg-surface-2)] rounded cursor-pointer select-none"
                                 >
-                                    <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-colors ${
-                                        isSelected
+                                    <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-colors ${isSelected
                                             ? 'bg-[var(--blue)] border-[var(--blue)]'
                                             : 'border-[var(--border-strong)] bg-[var(--bg-surface-1)]'
-                                    }`}>
+                                        }`}>
                                         {isSelected && <Check className="w-2.5 h-2.5 text-white" />}
                                     </div>
                                     <span className={`text-xs text-left flex-1 ${isSelected ? 'text-[var(--text-primary)] font-medium' : 'text-[var(--text-secondary)]'}`}>
@@ -165,7 +164,10 @@ export default function HomeContent() {
     const [selectedSeniority, setSelectedSeniority] = useState<string[]>([]);
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
     const [selectedWorkEligibility, setSelectedWorkEligibility] = useState<string[]>([]);
-    const [salaryRange, setSalaryRange] = useState([0, 300000]);
+    const [salaryFilter, setSalaryFilter] = useState<{ min: number | null; max: number | null }>({
+        min: null,
+        max: null
+    });
     const [sortBy, setSortBy] = useState<'newest' | 'availability'>('newest');
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -322,10 +324,24 @@ export default function HomeContent() {
                 selectedWorkEligibility.length === 0 ||
                 selectedWorkEligibility.includes(candidate.workPermit || '');
 
-            const matchesSalary =
-                salaryRange[1] === 300000
-                    ? candidate.salaryMin >= salaryRange[0]
-                    : candidate.salaryMin >= salaryRange[0] && candidate.salaryMax <= salaryRange[1];
+            const matchesSalary = (() => {
+                const { min: filterMin, max: filterMax } = salaryFilter;
+
+                // No filter = show all
+                if (filterMin === null && filterMax === null) return true;
+
+                // Candidate has no salary data = include (maximize recall)
+                if (candidate.salaryMin == null && candidate.salaryMax == null) return true;
+
+                // Normalize ranges (handle partial data)
+                const candMin = candidate.salaryMin ?? 0;
+                const candMax = candidate.salaryMax ?? Infinity;
+                const fMin = filterMin ?? 0;
+                const fMax = filterMax ?? Infinity;
+
+                // Range overlap: candMin <= fMax && candMax >= fMin
+                return candMin <= fMax && candMax >= fMin;
+            })();
 
             // Table column filters (only apply in table view)
             const matchesTableFilters = viewMode !== 'table' || Object.entries(tableFilters).every(([key, filterValue]) => {
@@ -362,11 +378,27 @@ export default function HomeContent() {
                 if (key === 'availability') return candidate.availability.toLowerCase().includes(searchVal);
                 if (key === 'entryDate') return candidate.entryDate.toLowerCase().includes(searchVal);
                 if (key === 'salary') {
-                    const numVal = parseFloat(searchVal);
-                    if (!isNaN(numVal)) {
-                        return candidate.salaryMax >= numVal;
+                    const val = searchVal.trim();
+                    if (!val) return true;
+
+                    // Parse "min-max", "-max", "min-", or just "min"
+                    const match = val.match(/^(\d+)?\s*-\s*(\d+)?$/);
+                    const tableFilterMin = match ? (match[1] ? parseInt(match[1]) : null) : parseInt(val) || null;
+                    const tableFilterMax = match ? (match[2] ? parseInt(match[2]) : null) : null;
+
+                    if (tableFilterMin === null && tableFilterMax === null) {
+                        // Text search fallback
+                        return formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(val);
                     }
-                    return formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(searchVal);
+
+                    if (candidate.salaryMin == null && candidate.salaryMax == null) return true;
+
+                    const candMin = candidate.salaryMin ?? 0;
+                    const candMax = candidate.salaryMax ?? Infinity;
+                    const fMin = tableFilterMin ?? 0;
+                    const fMax = tableFilterMax ?? Infinity;
+
+                    return candMin <= fMax && candMax >= fMin;
                 }
 
                 return true;
@@ -397,7 +429,7 @@ export default function HomeContent() {
                 return scoreA - scoreB;
             }
         });
-    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, salaryRange, sortBy, showFavoritesOnly, favorites, tableFilters, viewMode]);
+    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, salaryFilter, sortBy, showFavoritesOnly, favorites, tableFilters, viewMode]);
 
     const toggleLocation = (code: string) => {
         setSelectedLocations((prev) =>
@@ -532,7 +564,7 @@ export default function HomeContent() {
                     </div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative z-10">
                         <div className="inline-block mb-6">
-                            <Badge style="gold">Pre-screened &amp; Personally Interviewed</Badge>
+                            <Badge style="gold">Pre-screened &amp; Selected Talent</Badge>
                         </div>
                         <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                             Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
@@ -541,18 +573,17 @@ export default function HomeContent() {
                             </span>
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
-                            Browse pre‑screened and personally interviewed professionals. Connect directly with candidates ready for their next opportunity.
+                            Browse pre‑screened and selected talent. Within just a few clicks, get contact information of the candidates you like.
                         </p>
                     </div>
                 </div>
             )}
 
             {/* DASHBOARD CONTENT AREA */}
-            <div className={`w-full transition-all duration-300 ${
-                isZenMode
+            <div className={`w-full transition-all duration-300 ${isZenMode
                     ? 'px-4 sm:px-6 lg:px-8 py-8'
                     : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'
-            }`}>
+                }`}>
                 {/* Header */}
                 <div className="mb-6 pb-4 border-b border-[var(--border-subtle)]">
                     {/* Row 1: Title + View Toggle + Zen Mode (+ Desktop controls) */}
@@ -570,11 +601,10 @@ export default function HomeContent() {
                                 {favorites.length > 0 && (
                                     <button
                                         onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                                        className={`p-2 rounded-lg border transition-colors ${
-                                            showFavoritesOnly
+                                        className={`p-2 rounded-lg border transition-colors ${showFavoritesOnly
                                                 ? 'bg-red-500/10 border-red-500/30 text-red-400'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]'
-                                        }`}
+                                            }`}
                                     >
                                         <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
                                     </button>
@@ -582,11 +612,10 @@ export default function HomeContent() {
                                 {viewMode === 'grid' && !isZenMode && (
                                     <button
                                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                        className={`p-2 rounded-lg border transition-colors ${
-                                            isSidebarOpen
+                                        className={`p-2 rounded-lg border transition-colors ${isSidebarOpen
                                                 ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]'
-                                        }`}
+                                            }`}
                                     >
                                         <Filter className="w-4 h-4" />
                                     </button>
@@ -614,11 +643,10 @@ export default function HomeContent() {
                                 {favorites.length > 0 && (
                                     <button
                                         onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                                        className={`flex items-center gap-2 p-2 rounded-lg border transition-colors text-sm font-medium ${
-                                            showFavoritesOnly
+                                        className={`flex items-center gap-2 p-2 rounded-lg border transition-colors text-sm font-medium ${showFavoritesOnly
                                                 ? 'bg-red-500/10 border-red-500/30 text-red-400'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                        }`}
+                                            }`}
                                     >
                                         <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
                                         <span>Shortlist</span>
@@ -629,11 +657,10 @@ export default function HomeContent() {
                                 {viewMode === 'grid' && !isZenMode && (
                                     <button
                                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                        className={`flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${
-                                            isSidebarOpen
+                                        className={`flex p-2 rounded-lg border transition-colors items-center gap-2 text-sm font-medium ${isSidebarOpen
                                                 ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                        }`}
+                                            }`}
                                         title={isSidebarOpen ? "Hide Filters" : "Show Filters"}
                                     >
                                         <Filter className="w-4 h-4" />
@@ -662,22 +689,20 @@ export default function HomeContent() {
                             <div className="hidden md:flex bg-[var(--bg-surface-2)] rounded-lg p-1 border border-[var(--border-subtle)]">
                                 <button
                                     onClick={() => setViewMode('grid')}
-                                    className={`p-1.5 rounded-md transition-all ${
-                                        viewMode === 'grid'
+                                    className={`p-1.5 rounded-md transition-all ${viewMode === 'grid'
                                             ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
                                             : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                                    }`}
+                                        }`}
                                     title="Grid View"
                                 >
                                     <LayoutGrid className="w-4 h-4" />
                                 </button>
                                 <button
                                     onClick={() => setViewMode('table')}
-                                    className={`p-1.5 rounded-md transition-all ${
-                                        viewMode === 'table'
+                                    className={`p-1.5 rounded-md transition-all ${viewMode === 'table'
                                             ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
                                             : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                                    }`}
+                                        }`}
                                     title="Table View"
                                 >
                                     <TableIcon className="w-4 h-4" />
@@ -687,11 +712,10 @@ export default function HomeContent() {
                             {/* Zen Mode / Full Screen Toggle - Desktop only */}
                             <button
                                 onClick={toggleZenMode}
-                                className={`hidden md:block p-2.5 rounded-lg border transition-colors ${
-                                    isZenMode
+                                className={`hidden md:block p-2.5 rounded-lg border transition-colors ${isZenMode
                                         ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-sm'
                                         : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                                }`}
+                                    }`}
                                 title={isZenMode ? 'Exit Full Screen' : 'Enter Full Screen'}
                             >
                                 {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -703,7 +727,7 @@ export default function HomeContent() {
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* SIDEBAR FILTERS - Only show in grid view when open, hidden in Zen Mode */}
                     {viewMode === 'grid' && !isZenMode && isSidebarOpen && (
-                    <aside className="w-full lg:w-72 flex-shrink-0 space-y-8 animate-in slide-in-from-left-4 fade-in duration-300">
+                        <aside className="w-full lg:w-72 flex-shrink-0 space-y-8 animate-in slide-in-from-left-4 fade-in duration-300">
                             {/* Search */}
                             <div className="relative group">
                                 <input
@@ -821,26 +845,35 @@ export default function HomeContent() {
                             {/* Salary Filter */}
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Max Salary (CHF)
+                                    <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Salary (CHF)
                                 </h3>
-                                <div className="px-1">
+                                <div className="flex items-center gap-2">
                                     <input
-                                        type="range"
-                                        min="50000"
-                                        max="300000"
-                                        step="10000"
-                                        value={salaryRange[1]}
-                                        className="w-full h-1 bg-[var(--bg-surface-3)] rounded-lg appearance-none cursor-pointer accent-[var(--blue)]"
-                                        onChange={(e) => setSalaryRange([50000, parseInt(e.target.value)])}
+                                        type="number"
+                                        placeholder="Min"
+                                        className="w-full text-xs border border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1.5 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] h-8"
+                                        value={salaryFilter.min ?? ''}
+                                        onChange={(e) => setSalaryFilter(prev => ({
+                                            ...prev,
+                                            min: e.target.value ? parseInt(e.target.value) : null
+                                        }))}
                                     />
-                                    <div className="flex justify-center mt-3 text-xs text-[var(--text-tertiary)] font-medium font-mono">
-                                        <span>{salaryRange[1] / 1000}K{salaryRange[1] === 300000 ? '+' : ''}</span>
-                                    </div>
+                                    <span className="text-[var(--text-tertiary)] text-xs">–</span>
+                                    <input
+                                        type="number"
+                                        placeholder="Max"
+                                        className="w-full text-xs border border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1.5 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] h-8"
+                                        value={salaryFilter.max ?? ''}
+                                        onChange={(e) => setSalaryFilter(prev => ({
+                                            ...prev,
+                                            max: e.target.value ? parseInt(e.target.value) : null
+                                        }))}
+                                    />
                                 </div>
                             </div>
 
                             {/* Clear Filters */}
-                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedWorkEligibility.length > 0 || searchTerm) && (
+                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedWorkEligibility.length > 0 || searchTerm || salaryFilter.min !== null || salaryFilter.max !== null) && (
                                 <button
                                     onClick={() => {
                                         setSelectedLocations([]);
@@ -848,14 +881,14 @@ export default function HomeContent() {
                                         setSelectedLanguages([]);
                                         setSelectedWorkEligibility([]);
                                         setSearchTerm('');
-                                        setSalaryRange([0, 300000]);
+                                        setSalaryFilter({ min: null, max: null });
                                     }}
                                     className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)] pb-0.5 w-max"
                                 >
                                     <X className="w-3 h-3" /> Clear all filters
                                 </button>
                             )}
-                    </aside>
+                        </aside>
                     )}
 
                     {/* RESULTS */}
@@ -881,13 +914,12 @@ export default function HomeContent() {
                                 </p>
                             </div>
                         ) : viewMode === 'grid' ? (
-                            <div className={`grid grid-cols-1 ${
-                                isZenMode
+                            <div className={`grid grid-cols-1 ${isZenMode
                                     ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                                     : !isSidebarOpen
                                         ? 'lg:grid-cols-2 xl:grid-cols-3'
                                         : ''
-                            } gap-6`}>
+                                } gap-6`}>
                                 {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
@@ -900,11 +932,10 @@ export default function HomeContent() {
                                                 e.stopPropagation();
                                                 toggleFavorite(candidate.id);
                                             }}
-                                            className={`absolute top-4 right-4 p-2 rounded-lg transition-all z-10 ${
-                                                favorites.includes(candidate.id)
+                                            className={`absolute top-4 right-4 p-2 rounded-lg transition-all z-10 ${favorites.includes(candidate.id)
                                                     ? 'text-red-400'
                                                     : 'text-[var(--text-tertiary)] hover:text-red-400'
-                                            }`}
+                                                }`}
                                         >
                                             <Heart className={`w-5 h-5 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
                                         </button>
@@ -1047,16 +1078,14 @@ export default function HomeContent() {
                                                     <th
                                                         key={col.key}
                                                         onClick={() => col.sortable && requestSort(col.key)}
-                                                        className={`px-4 py-3 ${col.width} text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider select-none group whitespace-nowrap ${
-                                                            col.sortable ? 'cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors' : ''
-                                                        }`}
+                                                        className={`px-4 py-3 ${col.width} text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider select-none group whitespace-nowrap ${col.sortable ? 'cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors' : ''
+                                                            }`}
                                                     >
                                                         <div className="flex items-center gap-1">
                                                             {col.label}
                                                             {col.sortable && (
-                                                                <span className={`text-[var(--text-tertiary)] ${
-                                                                    sortConfig.key === col.key ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
-                                                                }`}>
+                                                                <span className={`text-[var(--text-tertiary)] ${sortConfig.key === col.key ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
+                                                                    }`}>
                                                                     <SortIcon columnKey={col.key} />
                                                                 </span>
                                                             )}
@@ -1214,9 +1243,8 @@ export default function HomeContent() {
                                                     <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                                                         <button
                                                             onClick={() => toggleFavorite(candidate.id)}
-                                                            className={`text-[var(--text-tertiary)] hover:text-red-400 transition-colors ${
-                                                                favorites.includes(candidate.id) ? 'text-red-400' : ''
-                                                            }`}
+                                                            className={`text-[var(--text-tertiary)] hover:text-red-400 transition-colors ${favorites.includes(candidate.id) ? 'text-red-400' : ''
+                                                                }`}
                                                         >
                                                             <Heart className={`w-4 h-4 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
                                                         </button>

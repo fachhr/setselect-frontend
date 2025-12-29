@@ -28,14 +28,13 @@ const CompaniesPage: React.FC = () => {
                     <div className="text-center">
                         <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                             The modern way to hire <br className="hidden sm:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">Swiss oil & gas talent</span>.
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">Swiss commodities & energy talent</span>.
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
-                            Stop sifting through hundreds of irrelevant CVs. Get direct access to a curated list of pre-vetted oil & gas professionals ready for their next role in Switzerland.
+                            Stop sifting through hundreds of irrelevant CVs. Get direct access to a curated list of pre-vetted commodities & energy professionals ready for their next role in Switzerland.
                         </p>
-                        <div className="mt-10 flex justify-center gap-4">
-                            <Button variant="primary" icon={ArrowRight} onClick={() => router.push('/contact')}>Start Hiring</Button>
-                            <Button variant="outline" onClick={() => window.open('mailto:sales@silviaslist.com')}>Contact Sales</Button>
+                        <div className="mt-10 flex justify-center">
+                            <Button variant="primary" icon={ArrowRight} onClick={() => router.push('/')}>Hire candidates</Button>
                         </div>
                     </div>
                 </div>

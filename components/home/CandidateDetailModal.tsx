@@ -165,10 +165,10 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                                 </div>
                             )}
 
-                            {/* Core Competencies (Skills) */}
+                            {/* Tech Skills */}
                             <div>
                                 <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3">
-                                    Core Competencies
+                                    Tech Skills
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
                                     {candidate.skills && candidate.skills.length > 0 ? (
