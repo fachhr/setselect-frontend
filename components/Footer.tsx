@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Layers } from 'lucide-react';
 import { useZenMode } from '@/contexts/ZenModeContext';
 
 export function Footer() {
@@ -16,8 +17,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[var(--gold)] rounded-md flex items-center justify-center">
-              <span className="text-[var(--bg-root)] font-bold text-sm font-serif">S</span>
+            <div className="w-8 h-8 bg-[var(--gold)] rounded-lg flex items-center justify-center shadow-md">
+              <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-[var(--text-primary)] text-sm leading-none">SetSelect</span>

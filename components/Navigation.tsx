@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight, Layers } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
 import { useZenMode } from '@/contexts/ZenModeContext';
@@ -21,8 +21,8 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 bg-[var(--gold)] rounded-md flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
-              <span className="text-[var(--bg-root)] font-bold text-lg font-serif">S</span>
+            <div className="w-8 h-8 bg-[var(--gold)] rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
+              <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
             <span className="text-lg font-bold tracking-tight text-[var(--text-primary)]">
               Set<span className="font-light text-[var(--text-secondary)]">Select</span>
