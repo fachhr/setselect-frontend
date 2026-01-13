@@ -13,7 +13,6 @@ import {
     GraduationCap,
     Globe,
     FileCheck,
-    Layers,
     User
 } from 'lucide-react';
 

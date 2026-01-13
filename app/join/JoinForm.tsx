@@ -200,7 +200,7 @@ const JoinForm: React.FC = () => {
                     <div className="w-16 h-16 bg-[var(--gold)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                         <CheckCircle className="w-8 h-8 text-[var(--bg-root)]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">You're In</h2>
+                    <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">You&apos;re In</h2>
                     <p className="text-[var(--text-secondary)] mb-8 max-w-md mx-auto text-lg">
                         Your profile is now with our team. We personally review every application to match top talent with the right opportunities in Switzerland&apos;s oil & gas sector.
                     </p>
@@ -209,7 +209,7 @@ const JoinForm: React.FC = () => {
                         <ul className="text-sm text-[var(--text-secondary)] space-y-2 text-left">
                             <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>Our team reviews your experience and preferences</li>
                             <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We identify companies that align with your goals</li>
-                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We introduce you directly when there's a strong fit</li>
+                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We introduce you directly when there&apos;s a strong fit</li>
                         </ul>
                     </div>
                     <Button onClick={() => router.push('/')} icon={ArrowLeft}>Back to Candidates</Button>

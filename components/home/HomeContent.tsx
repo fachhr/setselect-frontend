@@ -18,7 +18,6 @@ import {
     Globe,
     FileCheck,
     GraduationCap,
-    Layers,
     Check,
     Maximize2,
     Minimize2,
