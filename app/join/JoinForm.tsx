@@ -234,7 +234,7 @@ const JoinForm: React.FC = () => {
                         </button>
                     </div>
                     <div className="text-center">
-                        <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Join Silvia&apos;s List</h1>
+                        <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Join SetSelect</h1>
                         <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top oil & gas opportunities in Switzerland.</p>
                     </div>
                 </div>

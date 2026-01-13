@@ -1,5 +1,5 @@
 /**
- * Type definitions for Silvia's List Talent Pool
+ * Type definitions for SetSelect Talent Pool
  */
 
 export interface Candidate {

@@ -25,7 +25,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Silvia's List - Top Swiss Tech Talent",
+  title: "SetSelect - Top Swiss Tech Talent",
   description: "Discover pre-screened tech talent in Switzerland.",
 };
 

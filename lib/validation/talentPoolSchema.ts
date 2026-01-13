@@ -9,7 +9,7 @@ import {
 } from '@/lib/formOptions';
 
 /**
- * Base schema for Silvia's List Talent Pool - shared fields between client and server
+ * Base schema for SetSelect Talent Pool - shared fields between client and server
  *
  * This schema validates all user-provided fields:
  * - Contact details (8 fields)

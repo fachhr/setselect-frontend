@@ -1,4 +1,4 @@
-# Silvia's List - Talent Pool Frontend
+# SetSelect - Talent Pool Frontend
 
 A modern, streamlined platform for talent pool signup with automated CV parsing.
 
@@ -33,8 +33,8 @@ A modern, streamlined platform for talent pool signup with automated CV parsing.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/silvias-list-frontend.git
-cd silvias-list-frontend
+git clone https://github.com/fachhr/setselect-frontend.git
+cd setselect-frontend
 ```
 
 2. Install dependencies:
@@ -62,7 +62,7 @@ npm run dev
 ## Project Structure
 
 ```
-silvias-list-frontend/
+setselect-frontend/
 ├── app/
 │   ├── api/                  # API routes
 │   │   └── talent-pool/

@@ -466,9 +466,9 @@ export default function HomeContent() {
     const handleRequestIntro = (candidateId: string) => {
         const candidate = candidates.find(c => c.id === candidateId);
         const subject = `Introduction Request: ${candidateId}`;
-        const body = `Hi Silvia,\n\nI would like to request an introduction to the following candidate:\n\nID: ${candidateId}\nRole: ${candidate?.role || ''}\n\nBest regards,`;
+        const body = `Hello,\n\nI would like to request an introduction to the following candidate:\n\nID: ${candidateId}\nRole: ${candidate?.role || ''}\n\nBest regards,`;
 
-        window.location.href = `mailto:silvia@silviaslist.ch?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = `mailto:hello@setselect.io?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     };
 
     const openDetailModal = (candidate: Candidate) => {

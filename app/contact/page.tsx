@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import ContactPage from './ContactPage';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Silvia\'s List',
+  title: 'Contact Us | SetSelect',
   description: 'Get in touch with our team for hiring, joining, or partnerships.',
 };
 

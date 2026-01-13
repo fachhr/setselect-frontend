@@ -20,7 +20,7 @@ export function Footer() {
               <span className="text-[var(--bg-root)] font-bold text-sm font-serif">S</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-[var(--text-primary)] text-sm leading-none">Silvia&apos;s List</span>
+              <span className="font-bold text-[var(--text-primary)] text-sm leading-none">SetSelect</span>
               <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Tech Recruitment Switzerland</span>
             </div>
           </div>
@@ -36,7 +36,7 @@ export function Footer() {
             </Link>
           </div>
           <div className="text-xs text-[var(--text-tertiary)] font-mono">
-            © 2025 Silvia&apos;s List.
+            © 2025 SetSelect.
           </div>
         </div>
       </div>
