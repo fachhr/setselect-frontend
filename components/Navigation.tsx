@@ -25,7 +25,7 @@ export function Navigation() {
               <span className="text-[var(--bg-root)] font-bold text-lg font-serif">S</span>
             </div>
             <span className="text-lg font-bold tracking-tight text-[var(--text-primary)]">
-              SetSelect
+              Set<span className="font-light text-[var(--text-secondary)]">Select</span>
             </span>
           </Link>
 
