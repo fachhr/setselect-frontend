@@ -200,16 +200,16 @@ const JoinForm: React.FC = () => {
                     <div className="w-16 h-16 bg-[var(--gold)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                         <CheckCircle className="w-8 h-8 text-[var(--bg-root)]" />
                     </div>
-                    <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">Application Received</h2>
+                    <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">You're In</h2>
                     <p className="text-[var(--text-secondary)] mb-8 max-w-md mx-auto text-lg">
-                        We&apos;ve received your profile. Our team will review your anonymized data and match you with leading oil & gas companies within 48 hours.
+                        Your profile is now with our team. We personally review every application to match top talent with the right opportunities in Switzerland&apos;s oil & gas sector.
                     </p>
                     <div className="bg-[var(--bg-surface-2)] rounded-xl p-6 border border-[var(--border-subtle)] max-w-md mx-auto mb-8">
                         <h3 className="font-medium text-[var(--text-primary)] mb-2">What happens next?</h3>
                         <ul className="text-sm text-[var(--text-secondary)] space-y-2 text-left">
-                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We verify your skills and experience</li>
-                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>Your anonymized profile goes live</li>
-                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>Companies request to meet you</li>
+                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>Our team reviews your experience and preferences</li>
+                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We identify companies that align with your goals</li>
+                            <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We introduce you directly when there's a strong fit</li>
                         </ul>
                     </div>
                     <Button onClick={() => router.push('/')} icon={ArrowLeft}>Back to Candidates</Button>
@@ -234,7 +234,7 @@ const JoinForm: React.FC = () => {
                         </button>
                     </div>
                     <div className="text-center">
-                        <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Join SetSelect</h1>
+                        <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Join Set<span className="font-light text-[var(--text-secondary)]">Select</span></h1>
                         <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top oil & gas opportunities in Switzerland.</p>
                     </div>
                 </div>
