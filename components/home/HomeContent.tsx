@@ -476,7 +476,7 @@ export default function HomeContent() {
         const subject = `Introduction Request: ${candidateId}`;
         const body = `Hello,\n\nI would like to request an introduction to the following candidate:\n\nID: ${candidateId}\nRole: ${candidate?.role || ''}\n\nBest regards,`;
 
-        window.location.href = `mailto:hello@setselect.io?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = `mailto:hello@setberry.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     };
 
     const openDetailModal = (candidate: Candidate) => {

@@ -62,8 +62,8 @@ const ContactPage: React.FC = () => {
                         <div className="md:col-span-1 space-y-8">
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-3">Email</h3>
-                                <a href="mailto:hello@setselect.io" className="text-[var(--text-secondary)] hover:text-[var(--gold)] flex items-center gap-2 transition-colors">
-                                    <Mail className="w-4 h-4" /> hello@setselect.io
+                                <a href="mailto:hello@setberry.com" className="text-[var(--text-secondary)] hover:text-[var(--gold)] flex items-center gap-2 transition-colors">
+                                    <Mail className="w-4 h-4" /> hello@setberry.com
                                 </a>
                             </div>
 
@@ -80,7 +80,7 @@ const ContactPage: React.FC = () => {
                             <div className="p-4 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
                                 <h4 className="font-medium text-[var(--text-primary)] mb-1">For Companies</h4>
                                 <p className="text-xs text-[var(--text-tertiary)] mb-3">Looking to hire instantly? Skip the queue.</p>
-                                <a href="mailto:partners@setselect.io" className="text-xs font-bold text-[var(--gold)] hover:underline">Email Sales Team →</a>
+                                <a href="mailto:hello@setberry.com" className="text-xs font-bold text-[var(--gold)] hover:underline">Email Sales Team →</a>
                             </div>
                         </div>
 
