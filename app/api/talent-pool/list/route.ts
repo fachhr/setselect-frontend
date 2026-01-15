@@ -9,46 +9,6 @@ import {
   formatTalentId
 } from '@/lib/utils/talentPoolHelpers';
 
-// Anonymize company names to generic industry descriptors (privacy protection)
-function anonymizeCompany(name: string | undefined): string {
-  if (!name) return '';
-  const lower = name.toLowerCase();
-
-  // Banks & Financial Institutions
-  if (lower.includes('bank') || lower.includes('ubs') || lower.includes('credit suisse') ||
-      lower.includes('julius') || lower.includes('lombard'))
-    return 'Major Bank';
-  if (lower.includes('asset management') || lower.includes('fund') || lower.includes('capital'))
-    return 'Asset Manager';
-
-  // Trading Houses & Commodities
-  if (lower.includes('trafigura') || lower.includes('vitol') || lower.includes('glencore') ||
-      lower.includes('gunvor') || lower.includes('mercuria') || lower.includes('trading'))
-    return 'Trading House';
-
-  // Energy & Utilities
-  if (lower.includes('utility') || lower.includes('power') || lower.includes('energy') ||
-      lower.includes('axpo') || lower.includes('alpiq') || lower.includes('bkw'))
-    return 'Utility';
-
-  // Oil & Gas
-  if (lower.includes('oil') || lower.includes('gas') || lower.includes('petro') ||
-      lower.includes('shell') || lower.includes('bp '))
-    return 'Oil & Gas Company';
-
-  // Consulting
-  if (lower.includes('consult') || lower.includes('mckinsey') || lower.includes('deloitte') ||
-      lower.includes('pwc') || lower.includes('kpmg') || lower.includes('ey '))
-    return 'Consultancy';
-
-  // Tech
-  if (lower.includes('tech') || lower.includes('software') || lower.includes('digital'))
-    return 'Tech Company';
-
-  // Default fallback
-  return 'Company';
-}
-
 // Format duration from dates (conservative: only when BOTH dates are clearly available)
 function formatJobDuration(start: string | undefined, end: string | undefined | null): string {
   if (!start || !end) return '';
@@ -197,18 +157,20 @@ export async function GET(req: NextRequest) {
       if (Array.isArray(profile.professional_experience) && profile.professional_experience.length > 0) {
         previousRoles = profile.professional_experience
           .slice(0, 3) // Limit to 3 most recent roles
-          .map((job: { positionName?: string; companyName?: string; company?: string; startDate?: string; endDate?: string }) => {
-            const position = job.positionName || '';
+          .map((job: { positionName?: string; position_short?: string; company_type?: string; startDate?: string; endDate?: string }) => {
+            // Prefer normalized short title, fallback to original
+            const position = job.position_short || job.positionName || '';
             if (!position) return null; // Skip jobs without position name
 
-            // Anonymize company name to industry descriptor
-            const companyType = anonymizeCompany(job.companyName || job.company);
             const duration = formatJobDuration(job.startDate, job.endDate);
 
-            return {
-              role: companyType ? `${position} @ ${companyType}` : position,
-              duration
-            };
+            // Only show "@ Company Type" if parser provided company_type
+            // No fallback - cleaner to show just position than "Position @ Company"
+            const role = job.company_type
+              ? `${position} @ ${job.company_type}`
+              : position;
+
+            return { role, duration };
           })
           .filter((r: { role: string; duration: string } | null): r is { role: string; duration: string } => r !== null);
       }
