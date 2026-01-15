@@ -152,6 +152,7 @@ interface ApiCandidate {
     desired_roles?: string | null;
     profile_bio?: string | null;
     short_summary?: string | null;
+    previous_roles?: { role: string; duration: string }[] | null;
 }
 
 export default function HomeContent() {
@@ -196,7 +197,7 @@ export default function HomeContent() {
     const [tableFilters, setTableFilters] = useState<{
         id: string;
         role: string;
-        shortSummary: string;
+        previousRoles: string;
         highlight: string;
         expertise: string;
         experience: string;
@@ -209,7 +210,7 @@ export default function HomeContent() {
         languages: string[];
         entryDate: string;
     }>({
-        id: '', role: '', shortSummary: '', highlight: '', expertise: '', experience: '',
+        id: '', role: '', previousRoles: '', highlight: '', expertise: '', experience: '',
         seniority: [], salary: '', education: '', cantons: [],
         workPermit: [], availability: '', languages: [], entryDate: ''
     });
@@ -266,7 +267,8 @@ export default function HomeContent() {
                         languages: c.languages || [],
                         functionalExpertise: c.functional_expertise || [],
                         profileBio: c.profile_bio || undefined,
-                        shortSummary: c.short_summary || undefined
+                        shortSummary: c.short_summary || undefined,
+                        previousRoles: c.previous_roles || undefined
                     }));
                     setCandidates(transformedCandidates);
                 }
@@ -369,7 +371,14 @@ export default function HomeContent() {
 
                 if (key === 'id') return candidate.id.toLowerCase().includes(searchVal);
                 if (key === 'role') return candidate.role.toLowerCase().includes(searchVal);
-                if (key === 'shortSummary') return (candidate.shortSummary || '').toLowerCase().includes(searchVal);
+                if (key === 'previousRoles') {
+                    // Search through previous roles (both role and duration)
+                    if (!candidate.previousRoles || candidate.previousRoles.length === 0) return false;
+                    return candidate.previousRoles.some(r =>
+                        r.role.toLowerCase().includes(searchVal) ||
+                        r.duration.toLowerCase().includes(searchVal)
+                    );
+                }
                 if (key === 'highlight') return (candidate.highlight || '').toLowerCase().includes(searchVal);
                 if (key === 'expertise') return candidate.functionalExpertise?.some(e => e.toLowerCase().includes(searchVal)) || false;
                 if (key === 'experience') return candidate.experience.toLowerCase().includes(searchVal);
@@ -964,11 +973,26 @@ export default function HomeContent() {
                                                 {candidate.role}
                                             </h3>
 
-                                            {/* Short Summary - 2 sentence professional summary */}
-                                            {candidate.shortSummary && (
-                                                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">
-                                                    {candidate.shortSummary}
-                                                </p>
+                                            {/* Previous Roles - Anonymized job history */}
+                                            {candidate.previousRoles && candidate.previousRoles.length > 0 && (
+                                                <div className="mb-4 mt-2">
+                                                    <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mb-1.5 block">
+                                                        Previously
+                                                    </span>
+                                                    <div className="flex flex-col gap-1">
+                                                        {candidate.previousRoles.map((roleObj, idx) => (
+                                                            <div key={idx} className="flex items-center justify-between gap-2 text-sm text-[var(--text-secondary)]">
+                                                                <div className="flex items-center gap-2 overflow-hidden">
+                                                                    <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                                                                    <span className="leading-snug truncate">{roleObj.role}</span>
+                                                                </div>
+                                                                {roleObj.duration && (
+                                                                    <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap">{roleObj.duration}</span>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             )}
 
                                             {/* Highlight Box - Key Achievement Quote */}
@@ -1066,7 +1090,7 @@ export default function HomeContent() {
                                                     { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-52' },
                                                     { label: 'Pref. Location', key: 'cantons', sortable: true, width: 'w-36' },
                                                     { label: 'Salary', key: 'salary', sortable: true, width: 'w-40' },
-                                                    { label: 'Summary', key: 'shortSummary', sortable: false, width: 'w-72' },
+                                                    { label: 'Previous Roles', key: 'previousRoles', sortable: false, width: 'w-72' },
                                                     { label: 'Highlight', key: 'highlight', sortable: false, width: 'w-72' },
                                                     { label: 'Education', key: 'education', sortable: false, width: 'w-64' },
                                                     { label: 'Work Eligibility', key: 'workPermit', sortable: false, width: 'w-36' },
@@ -1159,14 +1183,14 @@ export default function HomeContent() {
                                                         onChange={(e) => updateTableFilter('salary', e.target.value)}
                                                     />
                                                 </th>
-                                                {/* Short Summary */}
+                                                {/* Previous Roles */}
                                                 <th className="px-4 py-2">
                                                     <input
                                                         type="text"
                                                         placeholder="Search"
                                                         className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
-                                                        value={tableFilters.shortSummary}
-                                                        onChange={(e) => updateTableFilter('shortSummary', e.target.value)}
+                                                        value={tableFilters.previousRoles}
+                                                        onChange={(e) => updateTableFilter('previousRoles', e.target.value)}
                                                     />
                                                 </th>
                                                 {/* Highlight */}
@@ -1278,11 +1302,21 @@ export default function HomeContent() {
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
                                                     </td>
-                                                    {/* Short Summary */}
+                                                    {/* Previous Roles */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
-                                                        <span className="break-words line-clamp-2">
-                                                            {candidate.shortSummary || '-'}
-                                                        </span>
+                                                        {candidate.previousRoles && candidate.previousRoles.length > 0 ? (
+                                                            <div className="flex flex-col gap-0.5">
+                                                                {candidate.previousRoles.slice(0, 2).map((r, idx) => (
+                                                                    <div key={idx} className="flex items-center gap-1.5 truncate">
+                                                                        <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                                                                        <span className="truncate">{r.role}</span>
+                                                                        {r.duration && <span className="text-[var(--text-tertiary)] whitespace-nowrap">({r.duration})</span>}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <span>-</span>
+                                                        )}
                                                     </td>
                                                     {/* Highlight */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">

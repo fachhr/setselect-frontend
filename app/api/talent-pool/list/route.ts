@@ -9,6 +9,68 @@ import {
   formatTalentId
 } from '@/lib/utils/talentPoolHelpers';
 
+// Anonymize company names to generic industry descriptors (privacy protection)
+function anonymizeCompany(name: string | undefined): string {
+  if (!name) return '';
+  const lower = name.toLowerCase();
+
+  // Banks & Financial Institutions
+  if (lower.includes('bank') || lower.includes('ubs') || lower.includes('credit suisse') ||
+      lower.includes('julius') || lower.includes('lombard'))
+    return 'Major Bank';
+  if (lower.includes('asset management') || lower.includes('fund') || lower.includes('capital'))
+    return 'Asset Manager';
+
+  // Trading Houses & Commodities
+  if (lower.includes('trafigura') || lower.includes('vitol') || lower.includes('glencore') ||
+      lower.includes('gunvor') || lower.includes('mercuria') || lower.includes('trading'))
+    return 'Trading House';
+
+  // Energy & Utilities
+  if (lower.includes('utility') || lower.includes('power') || lower.includes('energy') ||
+      lower.includes('axpo') || lower.includes('alpiq') || lower.includes('bkw'))
+    return 'Utility';
+
+  // Oil & Gas
+  if (lower.includes('oil') || lower.includes('gas') || lower.includes('petro') ||
+      lower.includes('shell') || lower.includes('bp '))
+    return 'Oil & Gas Company';
+
+  // Consulting
+  if (lower.includes('consult') || lower.includes('mckinsey') || lower.includes('deloitte') ||
+      lower.includes('pwc') || lower.includes('kpmg') || lower.includes('ey '))
+    return 'Consultancy';
+
+  // Tech
+  if (lower.includes('tech') || lower.includes('software') || lower.includes('digital'))
+    return 'Tech Company';
+
+  // Default fallback
+  return 'Company';
+}
+
+// Format duration from dates (conservative: only when BOTH dates are clearly available)
+function formatJobDuration(start: string | undefined, end: string | undefined | null): string {
+  if (!start || !end) return '';
+
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  // Validate dates are parseable
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return '';
+
+  const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+                 (endDate.getMonth() - startDate.getMonth());
+
+  if (months < 0) return ''; // Invalid date range
+
+  if (months >= 12) {
+    const years = Math.round(months / 12);
+    return `${years} yr${years > 1 ? 's' : ''}`;
+  }
+  return `${months} mo${months > 1 ? 's' : ''}`;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -130,6 +192,27 @@ export async function GET(req: NextRequest) {
         }
       }
 
+      // Extract Previous Roles (anonymized job history)
+      let previousRoles: { role: string; duration: string }[] = [];
+      if (Array.isArray(profile.professional_experience) && profile.professional_experience.length > 0) {
+        previousRoles = profile.professional_experience
+          .slice(0, 3) // Limit to 3 most recent roles
+          .map((job: { positionName?: string; companyName?: string; company?: string; startDate?: string; endDate?: string }) => {
+            const position = job.positionName || '';
+            if (!position) return null; // Skip jobs without position name
+
+            // Anonymize company name to industry descriptor
+            const companyType = anonymizeCompany(job.companyName || job.company);
+            const duration = formatJobDuration(job.startDate, job.endDate);
+
+            return {
+              role: companyType ? `${position} @ ${companyType}` : position,
+              duration
+            };
+          })
+          .filter((r: { role: string; duration: string } | null): r is { role: string; duration: string } => r !== null);
+      }
+
       return {
         talent_id: formatTalentId(profile.talent_id || profile.id),
         role: roleStr,
@@ -151,7 +234,8 @@ export async function GET(req: NextRequest) {
         functional_expertise: profile.functional_expertise || [],
         desired_roles: profile.desired_roles || null,
         profile_bio: profile.profile_bio || null,
-        short_summary: profile.short_summary || null
+        short_summary: profile.short_summary || null,
+        previous_roles: previousRoles.length > 0 ? previousRoles : null
       };
     });
 

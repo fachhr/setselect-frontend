@@ -13,7 +13,8 @@ import {
     GraduationCap,
     Globe,
     FileCheck,
-    User
+    User,
+    History
 } from 'lucide-react';
 
 interface CandidateDetailModalProps {
@@ -122,6 +123,28 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                             <p className="text-[var(--text-primary)] text-lg font-medium leading-relaxed">
                                 &ldquo;{candidate.highlight}&rdquo;
                             </p>
+                        </div>
+                    )}
+
+                    {/* Previous Roles Section */}
+                    {candidate.previousRoles && candidate.previousRoles.length > 0 && (
+                        <div>
+                            <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3 flex items-center gap-2">
+                                <History className="w-4 h-4 text-[var(--text-tertiary)]" /> Previous Roles
+                            </h3>
+                            <div className="flex flex-col gap-2">
+                                {candidate.previousRoles.map((roleObj, idx) => (
+                                    <div key={idx} className="flex items-center justify-between gap-3 text-sm text-[var(--text-secondary)]">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)]"></div>
+                                            <span>{roleObj.role}</span>
+                                        </div>
+                                        {roleObj.duration && (
+                                            <span className="text-[var(--text-tertiary)] text-xs">{roleObj.duration}</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
 
