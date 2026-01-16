@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/**
+ * Behind the Nineties - Title/Display Font
+ *
+ * Loaded via @font-face for graceful degradation:
+ * - If font file exists: renders custom font
+ * - If missing: silently falls back to Montserrat (via font stack)
+ *
+ * To enable: Add BehindTheNineties.woff2 to public/fonts/
+ */
+@font-face {
+  font-family: 'Behind the Nineties';
+  src: url('/fonts/BehindTheNineties.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     /* --- OCEAN GRADIENT DARK THEME (Refined) --- */
@@ -85,11 +102,11 @@
     --gradient-glow: radial-gradient(ellipse at center, rgba(0, 180, 216, 0.08) 0%, transparent 70%);
 
     /* --- FONTS --- */
-    /* Maps font-sans to Montserrat */
+    /* Montserrat - set by Next.js via --font-montserrat variable */
     --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-    /* Maps font-title to Behind the Nineties (or fallback) */
-    --font-title: var(--font-behind-the-nineties), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+    /* Behind the Nineties - loaded via @font-face, falls back to Montserrat if missing */
+    --font-title: 'Behind the Nineties', var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
 
     /* --- LEGACY COMPATIBILITY VARS --- */
     --background: var(--bg-root);

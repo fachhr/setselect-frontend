@@ -567,8 +567,8 @@ export default function HomeContent() {
             {!isZenMode && (
                 <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] relative overflow-hidden">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl pointer-events-none">
-                        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--gold)] opacity-5 blur-[100px] rounded-full"></div>
-                        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--blue)] opacity-5 blur-[120px] rounded-full"></div>
+                        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--secondary)] opacity-[0.08] blur-[100px] rounded-full"></div>
+                        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--primary)] opacity-[0.06] blur-[120px] rounded-full"></div>
                     </div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative z-10">
                         <div className="inline-block mb-6">
@@ -576,10 +576,10 @@ export default function HomeContent() {
                         </div>
                         <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                             Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">
                                 Commodities &amp; Energy Talent Pool
                             </span>
-                            <span className="block mt-4 text-lg sm:text-xl font-medium text-[var(--gold)]">
+                            <span className="block mt-4 text-lg sm:text-xl font-medium text-[var(--secondary)]">
                                 Coming Soon
                             </span>
                         </h1>
@@ -788,9 +788,9 @@ export default function HomeContent() {
                                         <button
                                             key={location.code}
                                             onClick={() => toggleLocation(location.code)}
-                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedLocations.includes(location.code)
-                                                ? 'bg-[var(--blue)] border-[var(--blue)] text-white shadow-md'
-                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--blue)]'
+                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedLocations.includes(location.code)
+                                                ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
                                                 }`}
                                         >
                                             {location.name}
@@ -934,7 +934,7 @@ export default function HomeContent() {
                                 {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
-                                        className="group glass-panel rounded-xl hover:border-[var(--primary)] hover:shadow-[0_4px_30px_rgba(59,130,246,0.2)] transition-all duration-300 relative cursor-pointer flex flex-col"
+                                        className="group glass-panel rounded-xl hover:border-[var(--secondary)] hover:shadow-[0_4px_30px_rgba(0,180,216,0.2)] transition-all duration-300 relative cursor-pointer flex flex-col"
                                         onClick={() => openDetailModal(candidate)}
                                     >
                                         {/* Favorite Button */}

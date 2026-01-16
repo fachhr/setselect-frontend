@@ -100,15 +100,15 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                         </h2>
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)]">
                             <div className="flex items-center gap-1.5">
-                                <MapPin className="w-4 h-4 text-[var(--gold)]" />
+                                <MapPin className="w-4 h-4 text-[var(--secondary)]" />
                                 {formatCantons(candidate.cantons)}
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <Briefcase className="w-4 h-4 text-[var(--gold)]" />
+                                <Briefcase className="w-4 h-4 text-[var(--secondary)]" />
                                 {candidate.experience}
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <Clock className="w-4 h-4 text-[var(--gold)]" />
+                                <Clock className="w-4 h-4 text-[var(--secondary)]" />
                                 {candidate.availability}
                             </div>
                         </div>
@@ -116,8 +116,8 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
 
                     {/* Key Achievement / Highlight Box */}
                     {candidate.highlight && (
-                        <div className="bg-[var(--gold-dim)] border border-[var(--gold-border)] rounded-xl p-5 relative overflow-hidden">
-                            <h3 className="text-sm font-bold text-[var(--gold)] mb-2 uppercase tracking-wide flex items-center gap-2">
+                        <div className="bg-[var(--highlight-dim)] border border-[rgba(144,224,239,0.30)] rounded-xl p-5 relative overflow-hidden">
+                            <h3 className="text-sm font-bold text-[var(--highlight)] mb-2 uppercase tracking-wide flex items-center gap-2">
                                 <User className="w-4 h-4" /> Key Achievement
                             </h3>
                             <p className="text-[var(--text-primary)] text-lg font-medium leading-relaxed">

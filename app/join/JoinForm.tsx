@@ -227,7 +227,7 @@ const JoinForm: React.FC = () => {
                     <div className="mb-8">
                         <button
                             onClick={() => router.back()}
-                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--gold)] transition-colors group focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded-md px-1"
+                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors group focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded-md px-1"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                             Back
@@ -270,7 +270,7 @@ const JoinForm: React.FC = () => {
                 ${isDragging ? 'border-[var(--blue)] bg-[var(--bg-surface-2)]' : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-surface-2)]'}
                 ${cvFile ? 'bg-[var(--bg-surface-2)] border-[var(--border-strong)]' : ''}
                 ${errors.cvFile ? 'border-red-500' : ''}
-                focus-within:ring-2 focus-within:ring-[rgba(59,130,246,0.5)] focus-within:ring-offset-2 focus-within:ring-offset-[var(--bg-root)]
+                focus-within:ring-2 focus-within:ring-[var(--border-focus)] focus-within:ring-offset-2 focus-within:ring-offset-[var(--bg-root)]
               `}
                             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                             onDragLeave={() => setIsDragging(false)}
@@ -615,9 +615,9 @@ const JoinForm: React.FC = () => {
                                             key={expertise}
                                             className={`
                                                 cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
-                                                has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
+                                                has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--border-focus)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
                                                 ${(functionalExpertise || []).includes(expertise)
-                                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-md'
+                                                    ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
                                                     : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
                                                 ${!(functionalExpertise || []).includes(expertise) && (functionalExpertise || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                                             `}
@@ -794,9 +794,9 @@ const JoinForm: React.FC = () => {
                                             key={location.code}
                                             className={`
                         cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
-                        has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(59,130,246,0.5)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
+                        has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--border-focus)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
                         ${(desiredLocations || []).some(loc => loc === location.code)
-                                                    ? 'bg-[var(--gold)] border-[var(--gold)] text-[var(--bg-root)] shadow-md'
+                                                    ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
                                                     : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
                         ${!(desiredLocations || []).some(loc => loc === location.code) && (desiredLocations || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
@@ -864,7 +864,7 @@ const JoinForm: React.FC = () => {
                                 className="checkbox-slate mt-1"
                             />
                             <label htmlFor="accepted_terms" className="text-xs text-[var(--text-tertiary)] leading-relaxed">
-                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[rgba(59,130,246,0.5)] focus:ring-offset-1 focus:ring-offset-[var(--bg-surface-2)] rounded">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
+                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-1 focus:ring-offset-[var(--bg-surface-2)] rounded">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
                         {errors.accepted_terms && (

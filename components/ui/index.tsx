@@ -13,9 +13,9 @@ export const Badge: React.FC<BadgeProps> = ({ children, style = 'default', icon:
         dark: 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] border-[var(--border-strong)]',
         outline: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-subtle)]',
         success: 'bg-[rgba(52,211,153,0.10)] text-[#34D399] border-[rgba(52,211,153,0.30)]',
-        gold: 'bg-[var(--primary-dim)] text-[var(--primary-hover)] border-[var(--blue-border)]',
-        blue: 'bg-[var(--primary-dim)] text-[var(--primary-hover)] border-[var(--blue-border)]',
-        purple: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+        gold: 'bg-[var(--highlight-dim)] text-[var(--secondary)] border-[rgba(144,224,239,0.30)]',
+        blue: 'bg-[var(--highlight-dim)] text-[var(--secondary)] border-[rgba(144,224,239,0.30)]',
+        purple: 'bg-[var(--secondary-dim)] text-[var(--highlight)] border-[rgba(0,180,216,0.30)]',
     };
     return (
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border ${styles[style] || styles.default}`}>
@@ -151,9 +151,9 @@ export const Toast: React.FC<ToastProps> = ({
     if (!isVisible) return null;
 
     const typeStyles = {
-        success: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
-        error: 'bg-red-500/10 border-red-500/30 text-red-400',
-        info: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+        success: 'bg-[rgba(52,211,153,0.10)] border-[rgba(52,211,153,0.30)] text-[#34D399]',
+        error: 'bg-[rgba(248,113,113,0.10)] border-[rgba(248,113,113,0.30)] text-[var(--error)]',
+        info: 'bg-[var(--secondary-dim)] border-[rgba(0,180,216,0.30)] text-[var(--secondary)]',
     };
 
     const icons = {

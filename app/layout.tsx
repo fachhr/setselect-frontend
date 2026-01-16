@@ -5,7 +5,25 @@ import { Footer } from '@/components/Footer';
 import { Providers } from '@/components/Providers';
 import "./globals.css";
 
-// Montserrat for body text and headings
+/**
+ * Font Configuration
+ * ==================
+ *
+ * Primary: Montserrat (Google Fonts - auto-optimized by Next.js)
+ * Title:   Behind the Nineties (loaded via CSS @font-face in globals.css)
+ *
+ * The title font uses CSS @font-face for graceful fallback:
+ * - If font file exists: uses custom font
+ * - If missing: silently falls back to Montserrat
+ *
+ * To enable: Add BehindTheNineties.woff2 to public/fonts/
+ */
+
+// Montserrat - Primary font for body text and UI
+// Using next/font/google for automatic optimization:
+// - Self-hosted (no external requests)
+// - Zero layout shift (size-adjusted fallback)
+// - Preloaded for critical path
 const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-montserrat',
@@ -15,17 +33,6 @@ const montserrat = Montserrat({
   fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
   adjustFontFallback: true,
 });
-
-// Behind the Nineties for titles - using local font
-// NOTE: Add BehindTheNineties.woff2 to /public/fonts/ to enable
-// For now, fallback to Montserrat
-// import localFont from 'next/font/local';
-// const behindTheNineties = localFont({
-//   src: '../public/fonts/BehindTheNineties.woff2',
-//   variable: '--font-behind-the-nineties',
-//   weight: '500',
-//   display: 'swap',
-// });
 
 export const metadata: Metadata = {
   title: "SetSelect - Top Swiss Tech Talent",
@@ -39,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} font-sans`}>
+      <body className={`${montserrat.variable} font-sans antialiased`}>
         <Providers>
           <Navigation />
           <main>{children}</main>
