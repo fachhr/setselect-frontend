@@ -3,7 +3,7 @@
 @theme {
   /* Font families - using actual font names registered by Next.js */
   --font-title: 'behindTheNineties', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -98,8 +98,8 @@
     /* --- FONTS --- */
     /* Font variables set by Next.js on body via layout.tsx:
        --font-title: Behind the Nineties (localFont)
-       --font-montserrat: Montserrat (Google Fonts)
-       --font-sans: Defined in @theme, references --font-montserrat */
+       --font-inter: Inter (Google Fonts)
+       --font-sans: Defined in @theme, references Inter */
 
     /* --- LEGACY COMPATIBILITY VARS --- */
     --background: var(--bg-root);
@@ -371,7 +371,7 @@
   }
 }
 
-/* Font utility for Montserrat (main font) */
+/* Font utility for Inter (main font) */
 .font-sans {
   font-family: var(--font-sans);
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
@@ -10,7 +10,7 @@ import "./globals.css";
  * Font Configuration
  * ==================
  *
- * Primary: Montserrat (Google Fonts - auto-optimized by Next.js)
+ * Primary: Inter (Google Fonts - auto-optimized by Next.js)
  * Title:   Behind the Nineties (local font with multiple weights)
  */
 
@@ -29,11 +29,10 @@ const behindTheNineties = localFont({
   display: 'swap',
 });
 
-// Montserrat - Primary font for body text and UI
-const montserrat = Montserrat({
+// Inter - Primary font for body text and UI
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-montserrat',
-  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-inter',
   display: 'swap',
   preload: true,
   fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
@@ -52,7 +51,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${behindTheNineties.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${behindTheNineties.variable} font-sans antialiased`}>
         <Providers>
           <Navigation />
           <main>{children}</main>
