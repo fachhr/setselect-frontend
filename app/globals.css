@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  /* Reference CSS variables that Next.js sets on body */
-  --font-title: var(--font-title, ui-sans-serif);
-  --font-sans: var(--font-montserrat, ui-sans-serif);
+  /* Font families - using actual font names registered by Next.js */
+  --font-title: 'behindTheNineties', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
