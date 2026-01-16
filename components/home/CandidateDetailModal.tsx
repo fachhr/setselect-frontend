@@ -13,8 +13,7 @@ import {
     GraduationCap,
     Globe,
     FileCheck,
-    User,
-    History
+    User
 } from 'lucide-react';
 
 interface CandidateDetailModalProps {
@@ -129,18 +128,18 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                     {/* Previous Roles Section */}
                     {candidate.previousRoles && candidate.previousRoles.length > 0 && (
                         <div>
-                            <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3 flex items-center gap-2">
-                                <History className="w-4 h-4 text-[var(--text-tertiary)]" /> Previous Roles
+                            <h3 className="text-sm font-bold text-[var(--text-primary)] uppercase tracking-wide mb-3">
+                                Previous Roles
                             </h3>
                             <div className="flex flex-col gap-2">
                                 {candidate.previousRoles.map((roleObj, idx) => (
-                                    <div key={idx} className="flex items-center justify-between gap-3 text-sm text-[var(--text-secondary)]">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)]"></div>
+                                    <div key={idx} className="flex items-start justify-between gap-3 text-sm text-[var(--text-secondary)]">
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)] mt-[7px]"></div>
                                             <span>{roleObj.role}</span>
                                         </div>
                                         {roleObj.duration && (
-                                            <span className="text-[var(--text-tertiary)] text-xs">{roleObj.duration}</span>
+                                            <span className="text-[var(--text-tertiary)] text-xs whitespace-nowrap flex-shrink-0">{roleObj.duration}</span>
                                         )}
                                     </div>
                                 ))}
@@ -159,7 +158,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                             </p>
                         ) : (
                             <p className="text-[var(--text-tertiary)] leading-relaxed text-sm italic">
-                                Professional profile will be available once CV parsing is complete.
+                                Professional profile will be available soon.
                             </p>
                         )}
                     </div>
