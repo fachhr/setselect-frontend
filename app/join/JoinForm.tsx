@@ -240,7 +240,7 @@ const JoinForm: React.FC = () => {
                         </button>
                     </div>
                     <div className="text-center">
-                        <h1 className="font-title text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight">Join <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">SetSelect</span></h1>
+                        <h1 className="font-title text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight">Join <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">Set</span><span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">Select</span></h1>
                         <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top energy & commodities opportunities in Switzerland.</p>
                     </div>
                 </div>

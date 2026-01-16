@@ -21,7 +21,7 @@ export function Footer() {
               <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-[var(--text-primary)] text-sm leading-none">SetSelect</span>
+              <span className="font-title font-bold tracking-tight text-[var(--text-primary)] text-sm leading-none">Set<span className="font-light text-[var(--text-secondary)]">Select</span></span>
               <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Energy & Commodities Recruitment</span>
             </div>
           </div>
