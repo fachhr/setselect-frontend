@@ -577,7 +577,7 @@ export default function HomeContent() {
                         <h1 className="font-title mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                             Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">
-                                Energy &amp; Commodities Talent Pool
+                                Energy &amp; Com&shy;modities Talent Pool
                             </span>
                             <span className="block mt-4 text-lg sm:text-xl font-medium text-[var(--secondary)]">
                                 Coming Soon
