@@ -113,8 +113,12 @@ export async function GET(req: NextRequest) {
       // Extract Role - prefer desired_roles, fall back to parsed experience
       let roleStr = 'Professional'; // Default fallback
       if (profile.desired_roles) {
-        // Use the first desired role if multiple are provided
-        roleStr = profile.desired_roles.split(';')[0].trim();
+        // Join all roles with comma for display, trimming each one
+        roleStr = profile.desired_roles
+          .split(';')
+          .map((r: string) => r.trim())
+          .filter((r: string) => r.length > 0)
+          .join(', ');
       } else if (Array.isArray(profile.professional_experience) && profile.professional_experience.length > 0) {
         const mostRecentJob = profile.professional_experience[0];
         if (mostRecentJob && mostRecentJob.positionName) {
