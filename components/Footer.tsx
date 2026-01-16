@@ -22,7 +22,7 @@ export function Footer() {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-[var(--text-primary)] text-sm leading-none">SetSelect</span>
-              <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Tech Recruitment Switzerland</span>
+              <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Energy & Commodities Recruitment</span>
             </div>
           </div>
           <div className="text-sm text-[var(--text-secondary)] flex gap-8">
