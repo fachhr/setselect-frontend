@@ -2,58 +2,87 @@
 
 @layer base {
   :root {
-    /* --- PREMIUM DARK NAVY THEME --- */
+    /* --- OCEAN GRADIENT DARK THEME (Refined) --- */
 
-    /* Backgrounds (Deep Navy, Layered) */
-    --bg-root: #0B1426;
-    --bg-surface-1: #111D33; /* Cards, elevated panels */
-    --bg-surface-2: #182640; /* Inputs, interactive surfaces */
-    --bg-surface-3: #1E2F4D; /* Dropdowns, modals, tertiary */
+    /* Backgrounds (Enhanced hierarchy with deeper root) */
+    --bg-root: #010225;      /* Deep Abyss - page background */
+    --bg-surface-0: #03045E; /* Midnight Navy - sections, containers */
+    --bg-surface-1: #051650; /* Deep Sapphire - cards, elevated panels */
+    --bg-surface-2: #0A2463; /* Royal Blue - inputs, interactive surfaces */
+    --bg-surface-3: #0E3375; /* Bright Navy - dropdowns, modals */
 
-    /* Borders (Subtle White) */
-    --border-subtle: rgba(255, 255, 255, 0.06);
-    --border-strong: rgba(255, 255, 255, 0.12);
-    --border-focus: rgba(59, 130, 246, 0.5);
+    /* Primary Accent (Star Command Blue) - unchanged */
+    --primary: #0077B6;
+    --primary-hover: #00B4D8;
+    --primary-dim: rgba(0, 119, 182, 0.15);
+    --primary-glow: rgba(0, 119, 182, 0.25);
 
-    /* Typography (White + Silver) */
+    /* Secondary (Vibrant Cerulean) - unchanged */
+    --secondary: #00B4D8;
+    --secondary-dim: rgba(0, 180, 216, 0.15);
+
+    /* Highlight (Icy Sky) - unchanged */
+    --highlight: #90E0EF;
+    --highlight-dim: rgba(144, 224, 239, 0.15);
+
+    /* Light Accent (Arctic Mist) - unchanged */
+    --accent-light: #CAF0F8;
+
+    /* Typography (Enhanced with muted/inverse) */
     --text-primary: #FFFFFF;
-    --text-secondary: #A8B8CC;
-    --text-tertiary: #6B7B8F;
-    --text-accent: #60A5FA;
+    --text-secondary: #CAF0F8;
+    --text-tertiary: #90E0EF;
+    --text-accent: #00B4D8;
+    --text-muted: rgba(144, 224, 239, 0.50);   /* Disabled states */
+    --text-inverse: #010225;                    /* For light backgrounds */
 
-    /* Primary Accent (Refined Blue) */
-    --primary: #3B82F6;
-    --primary-dim: rgba(59, 130, 246, 0.15);
-    --primary-hover: #60A5FA;
+    /* Borders (Enhanced with hover/active states) */
+    --border-subtle: rgba(144, 224, 239, 0.10);
+    --border-strong: rgba(144, 224, 239, 0.20);
+    --border-hover: rgba(144, 224, 239, 0.35);  /* Hover state */
+    --border-focus: rgba(0, 180, 216, 0.50);
+    --border-active: rgba(0, 180, 216, 0.60);   /* Active/selected state */
 
-    /* Blue accent colors */
-    --blue: var(--primary);
-    --blue-dim: var(--primary-dim);
-    --blue-border: rgba(59, 130, 246, 0.3);
-
-    /* Backwards compat - gold now maps to primary blue */
+    /* Backwards compat aliases */
     --gold: var(--primary);
     --gold-dim: var(--primary-dim);
-    --gold-border: var(--blue-border);
+    --gold-border: rgba(0, 119, 182, 0.30);
+    --blue: var(--primary);
+    --blue-dim: var(--primary-dim);
+    --blue-border: var(--gold-border);
+    --cyan: var(--secondary);
+    --cyan-dim: var(--secondary-dim);
 
-    /* Expertise accent - now blue */
-    --expertise: var(--primary);
-    --expertise-dim: rgba(59, 130, 246, 0.10);
-    --expertise-border: rgba(59, 130, 246, 0.20);
+    /* Expertise accent - now uses secondary */
+    --expertise: var(--secondary);
+    --expertise-dim: rgba(0, 180, 216, 0.10);
+    --expertise-border: rgba(0, 180, 216, 0.20);
 
-    /* Secondary accent (Cyan) */
-    --cyan: #06B6D4;
-    --cyan-dim: rgba(6, 182, 212, 0.15);
+    /* Status (Ocean-harmonized) */
+    --error: #FF6B6B;                           /* Coral Red - warmer */
+    --error-dim: rgba(255, 107, 107, 0.15);
+    --error-border: rgba(255, 107, 107, 0.30);
+    --success: #2DD4BF;                         /* Sea Green - more teal */
+    --success-dim: rgba(45, 212, 191, 0.15);
+    --success-border: rgba(45, 212, 191, 0.30);
+    --warning: #FBBF24;                         /* Amber glow */
+    --warning-dim: rgba(251, 191, 36, 0.15);
+    --warning-border: rgba(251, 191, 36, 0.30);
 
-    /* Status */
-    --error: #F87171;
-    --success: #34D399;
+    /* Shadows (Layered for depth) */
+    --shadow-sm: 0 1px 2px rgba(1, 2, 37, 0.3),
+                 0 1px 3px rgba(1, 2, 37, 0.15);
+    --shadow-md: 0 2px 4px rgba(1, 2, 37, 0.3),
+                 0 4px 12px rgba(1, 2, 37, 0.2);
+    --shadow-lg: 0 4px 8px rgba(1, 2, 37, 0.3),
+                 0 8px 24px rgba(1, 2, 37, 0.25);
+    --shadow-glow: 0 0 15px rgba(0, 180, 216, 0.25),
+                   0 0 30px rgba(0, 180, 216, 0.10);
+    --shadow-inset: inset 0 1px 2px rgba(1, 2, 37, 0.4);
 
-    /* Shadows (Blue-tinted for premium feel) */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+    /* Gradients (Premium touches) */
+    --gradient-hero: linear-gradient(180deg, var(--bg-root) 0%, rgba(3, 4, 94, 0.8) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, rgba(0, 180, 216, 0.08) 0%, transparent 70%);
 
     /* --- FONTS --- */
     /* Maps font-sans to Montserrat */
@@ -66,12 +95,14 @@
     --background: var(--bg-root);
     --foreground: var(--text-primary);
     --background-gradient: var(--bg-root);
+    --surface-0: var(--bg-surface-0);
     --surface-1: var(--bg-surface-1);
     --surface-2: var(--bg-surface-2);
     --surface-3: var(--bg-surface-3);
     --accent-gold: var(--gold);
     --error-color: var(--error);
     --success-color: var(--success);
+    --warning-color: var(--warning);
   }
 
   html {
@@ -137,7 +168,7 @@
 
   .btn-gold:hover {
     background: var(--primary-hover);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 20px rgba(0, 180, 216, 0.25);
   }
 
   .checkbox-slate {
