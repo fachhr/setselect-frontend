@@ -12,7 +12,7 @@ export const Badge: React.FC<BadgeProps> = ({ children, style = 'default', icon:
         default: 'bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border-[var(--border-subtle)]',
         dark: 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] border-[var(--border-strong)]',
         outline: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-subtle)]',
-        success: 'bg-[rgba(52,211,153,0.10)] text-[#34D399] border-[rgba(52,211,153,0.30)]',
+        success: 'bg-[var(--success-dim)] text-[var(--success)] border-[var(--success-border)]',
         gold: 'bg-[var(--highlight-dim)] text-[var(--secondary)] border-[rgba(144,224,239,0.30)]',
         blue: 'bg-[var(--highlight-dim)] text-[var(--secondary)] border-[rgba(144,224,239,0.30)]',
         purple: 'bg-[var(--secondary-dim)] text-[var(--highlight)] border-[rgba(0,180,216,0.30)]',
@@ -50,7 +50,7 @@ export const Button: React.FC<ButtonProps> = ({
 
     const variants = {
         primary: "btn-gold shadow-md focus:ring-[var(--border-focus)]",
-        secondary: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-primary)] border border-[rgba(255,255,255,0.12)] focus:ring-[var(--border-focus)]",
+        secondary: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-primary)] border border-[var(--border-subtle)] focus:ring-[var(--border-focus)]",
         outline: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] focus:ring-[var(--border-focus)]",
         ghost: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus:ring-[var(--border-focus)]",
     };
@@ -151,8 +151,8 @@ export const Toast: React.FC<ToastProps> = ({
     if (!isVisible) return null;
 
     const typeStyles = {
-        success: 'bg-[rgba(52,211,153,0.10)] border-[rgba(52,211,153,0.30)] text-[#34D399]',
-        error: 'bg-[rgba(248,113,113,0.10)] border-[rgba(248,113,113,0.30)] text-[var(--error)]',
+        success: 'bg-[var(--success-dim)] border-[var(--success-border)] text-[var(--success)]',
+        error: 'bg-[var(--error-dim)] border-[var(--error-border)] text-[var(--error)]',
         info: 'bg-[var(--secondary-dim)] border-[rgba(0,180,216,0.30)] text-[var(--secondary)]',
     };
 

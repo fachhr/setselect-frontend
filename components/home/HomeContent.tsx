@@ -574,7 +574,7 @@ export default function HomeContent() {
                         <div className="inline-block mb-6">
                             <Badge style="gold">Pre-screened &amp; Selected Talent</Badge>
                         </div>
-                        <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
+                        <h1 className="font-title mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                             Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">
                                 Commodities &amp; Energy Talent Pool
@@ -613,7 +613,7 @@ export default function HomeContent() {
                                     <button
                                         onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
                                         className={`p-2 rounded-lg border transition-colors ${showFavoritesOnly
-                                                ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                                ? 'bg-[var(--error-dim)] border-[var(--error-border)] text-[var(--error)]'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)]'
                                             }`}
                                     >
@@ -655,7 +655,7 @@ export default function HomeContent() {
                                     <button
                                         onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
                                         className={`flex items-center gap-2 p-2 rounded-lg border transition-colors text-sm font-medium ${showFavoritesOnly
-                                                ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                                                ? 'bg-[var(--error-dim)] border-[var(--error-border)] text-[var(--error)]'
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                                             }`}
                                     >
@@ -944,8 +944,8 @@ export default function HomeContent() {
                                                 toggleFavorite(candidate.id);
                                             }}
                                             className={`absolute top-4 right-4 p-2 rounded-lg transition-all z-10 ${favorites.includes(candidate.id)
-                                                    ? 'text-red-400'
-                                                    : 'text-[var(--text-tertiary)] hover:text-red-400'
+                                                    ? 'text-[var(--error)]'
+                                                    : 'text-[var(--text-tertiary)] hover:text-[var(--error)]'
                                                 }`}
                                         >
                                             <Heart className={`w-5 h-5 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
@@ -1269,7 +1269,7 @@ export default function HomeContent() {
                                                     <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                                                         <button
                                                             onClick={() => toggleFavorite(candidate.id)}
-                                                            className={`text-[var(--text-tertiary)] hover:text-red-400 transition-colors ${favorites.includes(candidate.id) ? 'text-red-400' : ''
+                                                            className={`text-[var(--text-tertiary)] hover:text-[var(--error)] transition-colors ${favorites.includes(candidate.id) ? 'text-[var(--error)]' : ''
                                                                 }`}
                                                         >
                                                             <Heart className={`w-4 h-4 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />

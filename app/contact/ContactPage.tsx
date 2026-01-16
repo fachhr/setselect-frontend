@@ -35,8 +35,14 @@ const ContactPage: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
             {/* Page Header - Centered Hero Style */}
-            <div className="px-4 sm:px-6 lg:px-8 pt-8 pb-12">
-                <div className="max-w-3xl mx-auto">
+            <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] relative overflow-hidden">
+                {/* Ambient gradient orbs */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--secondary)] opacity-[0.08] blur-[100px] rounded-full"></div>
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--primary)] opacity-[0.06] blur-[120px] rounded-full"></div>
+                </div>
+
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 relative z-10">
                     {/* Back Button */}
                     <div className="mb-8">
                         <button
@@ -48,7 +54,7 @@ const ContactPage: React.FC = () => {
                         </button>
                     </div>
                     <div className="text-center">
-                        <h1 className="mt-6 text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Get in Touch</h1>
+                        <h1 className="font-title mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight">Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">Touch</span></h1>
                         <p className="mt-4 text-lg text-[var(--text-secondary)]">Have a question about hiring, joining, or partnership?</p>
                     </div>
                 </div>

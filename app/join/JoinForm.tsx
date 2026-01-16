@@ -221,8 +221,14 @@ const JoinForm: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
             {/* Page Header */}
-            <div className="px-4 sm:px-6 lg:px-8 pt-8 pb-12">
-                <div className="max-w-3xl mx-auto">
+            <div className="bg-[var(--bg-root)] border-b border-[var(--border-subtle)] relative overflow-hidden">
+                {/* Ambient gradient orbs */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-4xl pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[var(--secondary)] opacity-[0.08] blur-[100px] rounded-full"></div>
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--primary)] opacity-[0.06] blur-[120px] rounded-full"></div>
+                </div>
+
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 relative z-10">
                     {/* Back Button */}
                     <div className="mb-8">
                         <button
@@ -234,7 +240,7 @@ const JoinForm: React.FC = () => {
                         </button>
                     </div>
                     <div className="text-center">
-                        <h1 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] tracking-tight">Join Set<span className="font-light text-[var(--text-secondary)]">Select</span></h1>
+                        <h1 className="font-title text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight">Join <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">SetSelect</span></h1>
                         <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top oil & gas opportunities in Switzerland.</p>
                     </div>
                 </div>
@@ -259,7 +265,7 @@ const JoinForm: React.FC = () => {
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
                                 <div className="w-6 h-6 rounded bg-[var(--gold)] text-[var(--bg-root)] text-xs flex items-center justify-center font-bold">1</div>
-                                Upload CV <span className="text-red-500">*</span>
+                                Upload CV <span className="text-[var(--error)]">*</span>
                             </h2>
                             {cvFile && <Badge style="success">File Selected</Badge>}
                         </div>
@@ -269,7 +275,7 @@ const JoinForm: React.FC = () => {
                 relative border-2 border-dashed rounded-xl p-10 text-center transition-all duration-200 ease-in-out cursor-pointer
                 ${isDragging ? 'border-[var(--blue)] bg-[var(--bg-surface-2)]' : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-surface-2)]'}
                 ${cvFile ? 'bg-[var(--bg-surface-2)] border-[var(--border-strong)]' : ''}
-                ${errors.cvFile ? 'border-red-500' : ''}
+                ${errors.cvFile ? 'border-[var(--error-border)]' : ''}
                 focus-within:ring-2 focus-within:ring-[var(--border-focus)] focus-within:ring-offset-2 focus-within:ring-offset-[var(--bg-root)]
               `}
                             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
@@ -297,7 +303,7 @@ const JoinForm: React.FC = () => {
                                     <p className="text-sm font-medium text-[var(--text-primary)]">{cvFile.name}</p>
                                     <p className="text-xs text-[var(--text-tertiary)] mt-1">{(cvFile.size / 1024 / 1024).toFixed(2)} MB</p>
                                     {errors.cvFile && (
-                                        <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                             <AlertCircle className="w-3.5 h-3.5" />
                                             <span className="font-medium">{errors.cvFile.message}</span>
                                         </div>
@@ -305,7 +311,7 @@ const JoinForm: React.FC = () => {
                                     <button
                                         type="button"
                                         onClick={(e) => { e.stopPropagation(); handleRemoveFile(); }}
-                                        className="mt-4 text-xs text-red-500 hover:text-red-700 font-medium underline"
+                                        className="mt-4 text-xs text-[var(--error)] hover:text-[var(--error)] font-medium underline"
                                     >
                                         Remove file
                                     </button>
@@ -320,7 +326,7 @@ const JoinForm: React.FC = () => {
                                     </p>
                                     <p className="text-xs text-[var(--text-tertiary)] mt-2">PDF or DOCX (Max 5MB)</p>
                                     {errors.cvFile && (
-                                        <div className="flex items-center justify-center gap-2 mt-3 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <div className="flex items-center justify-center gap-2 mt-3 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                             <AlertCircle className="w-3.5 h-3.5" />
                                             <span className="font-medium">{errors.cvFile.message}</span>
                                         </div>
@@ -347,7 +353,7 @@ const JoinForm: React.FC = () => {
                                     value={watch('contact_first_name')} onChange={e => setValue('contact_first_name', e.target.value)}
                                 />
                                 {errors.contact_first_name && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.contact_first_name.message}</span>
                                     </div>
@@ -360,7 +366,7 @@ const JoinForm: React.FC = () => {
                                     value={watch('contact_last_name')} onChange={e => setValue('contact_last_name', e.target.value)}
                                 />
                                 {errors.contact_last_name && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.contact_last_name.message}</span>
                                     </div>
@@ -372,7 +378,7 @@ const JoinForm: React.FC = () => {
                                     value={watch('email')} onChange={e => setValue('email', e.target.value)}
                                 />
                                 {errors.email && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.email.message}</span>
                                     </div>
@@ -385,7 +391,7 @@ const JoinForm: React.FC = () => {
                                 <div className="relative">
                                     <input
                                         type="url"
-                                        className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.linkedinUrl ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
+                                        className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.linkedinUrl ? 'border-[var(--error-border)] focus:border-[var(--error-border)] focus:ring-[var(--error)]' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                             }`}
                                         placeholder="linkedin.com/in/..."
                                         value={linkedinUrl || ''}
@@ -399,7 +405,7 @@ const JoinForm: React.FC = () => {
                                     />
                                 </div>
                                 {errors.linkedinUrl && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.linkedinUrl.message}</span>
                                     </div>
@@ -409,7 +415,7 @@ const JoinForm: React.FC = () => {
                             {/* PHONE SECTION */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                                    Phone Number <span className="text-red-500">*</span>
+                                    Phone Number <span className="text-[var(--error)]">*</span>
                                 </label>
                                 <div className="grid grid-cols-3 gap-3">
                                     <div className="col-span-1">
@@ -439,13 +445,13 @@ const JoinForm: React.FC = () => {
                                     </div>
                                 </div>
                                 {errors.country_code && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.country_code.message}</span>
                                     </div>
                                 )}
                                 {errors.phoneNumber && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.phoneNumber.message}</span>
                                     </div>
@@ -455,7 +461,7 @@ const JoinForm: React.FC = () => {
                             {/* WORK ELIGIBILITY */}
                             <div className="md:col-span-2">
                                 <label htmlFor="work_eligibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                                    Work Eligibility <span className="text-red-500">*</span>
+                                    Work Eligibility <span className="text-[var(--error)]">*</span>
                                 </label>
                                 <select
                                     id="work_eligibility"
@@ -470,7 +476,7 @@ const JoinForm: React.FC = () => {
                                     ))}
                                 </select>
                                 {errors.work_eligibility && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.work_eligibility.message}</span>
                                     </div>
@@ -496,7 +502,7 @@ const JoinForm: React.FC = () => {
                                     value={watch('years_of_experience')?.toString() || ''} onChange={e => setValue('years_of_experience', parseInt(e.target.value) || 0)}
                                 />
                                 {errors.years_of_experience && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.years_of_experience.message}</span>
                                     </div>
@@ -506,7 +512,7 @@ const JoinForm: React.FC = () => {
                             {/* Languages subsection - simplified checkboxes */}
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                                    Languages spoken with professional proficiency <span className="text-red-500">*</span>
+                                    Languages spoken with professional proficiency <span className="text-[var(--error)]">*</span>
                                 </label>
 
                                 <div className="space-y-3">
@@ -561,7 +567,7 @@ const JoinForm: React.FC = () => {
                                                 onChange={(e) => setValue('other_language', e.target.value)}
                                             />
                                             {errors.other_language && (
-                                                <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                                <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                                     <AlertCircle className="w-3.5 h-3.5" />
                                                     <span className="font-medium">{errors.other_language.message}</span>
                                                 </div>
@@ -571,7 +577,7 @@ const JoinForm: React.FC = () => {
 
                                     {/* Validation Error for Languages */}
                                     {errors.languages && (
-                                        <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                             <AlertCircle className="w-3.5 h-3.5" />
                                             <span className="font-medium">{errors.languages.message}</span>
                                         </div>
@@ -594,7 +600,7 @@ const JoinForm: React.FC = () => {
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)] placeholder-[var(--text-tertiary)] resize-none"
                                 />
                                 {(watch('highlight')?.length || 0) > 300 && (
-                                    <p className="text-xs text-red-500 mt-1.5">
+                                    <p className="text-xs text-[var(--error)] mt-1.5">
                                         {watch('highlight')?.length || 0}/300 characters - exceeds limit
                                     </p>
                                 )}
@@ -603,7 +609,7 @@ const JoinForm: React.FC = () => {
                             {/* Functional Expertise */}
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
-                                    Functional Expertise <span className="text-red-500">*</span>
+                                    Functional Expertise <span className="text-[var(--error)]">*</span>
                                     <span className="text-xs text-[var(--text-tertiary)] block mt-1 font-normal">
                                         Select 1-5 areas where you have professional experience
                                     </span>
@@ -649,7 +655,7 @@ const JoinForm: React.FC = () => {
 
                                 {/* Validation error */}
                                 {errors.functional_expertise && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.functional_expertise.message}</span>
                                     </div>
@@ -670,7 +676,7 @@ const JoinForm: React.FC = () => {
                                             Separate multiple areas with semicolons
                                         </p>
                                         {errors.other_expertise && (
-                                            <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                            <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                                 <AlertCircle className="w-3.5 h-3.5" />
                                                 <span className="font-medium">{errors.other_expertise.message}</span>
                                             </div>
@@ -695,7 +701,7 @@ const JoinForm: React.FC = () => {
                             {/* Desired Roles */}
                             <div>
                                 <label htmlFor="desired_roles" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                                    Desired Role(s) <span className="text-red-500">*</span>
+                                    Desired Role(s) <span className="text-[var(--error)]">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -710,7 +716,7 @@ const JoinForm: React.FC = () => {
                                     Separate multiple roles with semicolons
                                 </p>
                                 {errors.desired_roles && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.desired_roles.message}</span>
                                     </div>
@@ -720,7 +726,7 @@ const JoinForm: React.FC = () => {
                             {/* Notice Period */}
                             <div>
                                 <label htmlFor="notice_period_months" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                                    Notice Period <span className="text-red-500">*</span>
+                                    Notice Period <span className="text-[var(--error)]">*</span>
                                 </label>
                                 <select
                                     id="notice_period_months"
@@ -735,7 +741,7 @@ const JoinForm: React.FC = () => {
                                     ))}
                                 </select>
                                 {errors.notice_period_months && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.notice_period_months.message}</span>
                                     </div>
@@ -753,7 +759,7 @@ const JoinForm: React.FC = () => {
                                             type="number"
                                             placeholder="Min (e.g. 120000)"
                                             min="0" step="1000"
-                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.salary_min ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
+                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.salary_min ? 'border-[var(--error-border)] focus:border-[var(--error-border)] focus:ring-[var(--error)]' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
                                             value={salaryMin ?? ''}
                                             onChange={(e) => setValue('salary_min', e.target.value ? parseInt(e.target.value) : null)}
@@ -764,7 +770,7 @@ const JoinForm: React.FC = () => {
                                             type="number"
                                             placeholder="Max (e.g. 150000)"
                                             min="0" step="1000"
-                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.salary_max ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
+                                            className={`block w-full rounded-lg border bg-[var(--bg-surface-2)] p-2.5 text-sm text-[var(--text-primary)] focus:ring-[var(--blue)] transition-colors ${errors.salary_max ? 'border-[var(--error-border)] focus:border-[var(--error-border)] focus:ring-[var(--error)]' : 'border-[var(--border-strong)] focus:border-[var(--blue)]'
                                                 }`}
                                             value={salaryMax ?? ''}
                                             onChange={(e) => setValue('salary_max', e.target.value ? parseInt(e.target.value) : null)}
@@ -773,7 +779,7 @@ const JoinForm: React.FC = () => {
                                 </div>
                                 {/* Validation Error */}
                                 {errors.salary_min && (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.salary_min.message}</span>
                                     </div>
@@ -787,7 +793,7 @@ const JoinForm: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Preferred Locations (Max 5) <span className="text-red-500">*</span></label>
+                                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Preferred Locations (Max 5) <span className="text-[var(--error)]">*</span></label>
                                 <div className="flex flex-wrap gap-2">
                                     {WORK_LOCATIONS.map(location => (
                                         <label
@@ -823,7 +829,7 @@ const JoinForm: React.FC = () => {
                                         {(desiredLocations || []).length}/5 selected
                                     </p>
                                 ) : errors.desired_locations ? (
-                                    <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                         <AlertCircle className="w-3.5 h-3.5" />
                                         <span className="font-medium">{errors.desired_locations.message}</span>
                                     </div>
@@ -842,7 +848,7 @@ const JoinForm: React.FC = () => {
                                         onChange={e => setValue('desired_other_location', e.target.value)}
                                     />
                                     {errors.desired_other_location && (
-                                        <div className="flex items-center gap-2 mt-2 text-red-600 text-xs animate-in slide-in-from-top-2">
+                                        <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                             <AlertCircle className="w-3.5 h-3.5" />
                                             <span className="font-medium">{errors.desired_other_location.message}</span>
                                         </div>
@@ -868,7 +874,7 @@ const JoinForm: React.FC = () => {
                             </label>
                         </div>
                         {errors.accepted_terms && (
-                            <div className="flex items-center gap-2 mb-4 text-red-600 text-xs animate-in slide-in-from-top-2">
+                            <div className="flex items-center gap-2 mb-4 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
                                 <AlertCircle className="w-3.5 h-3.5" />
                                 <span className="font-medium">{errors.accepted_terms.message}</span>
                             </div>

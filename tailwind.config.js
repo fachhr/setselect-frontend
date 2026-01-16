@@ -72,6 +72,10 @@ module.exports = {
         warning: 'var(--warning)',           // NEW
         'warning-dim': 'var(--warning-dim)', // NEW
         'warning-border': 'var(--warning-border)', // NEW
+
+        // Corporate typography colors (for light backgrounds)
+        'corp-primary': '#03045E',
+        'corp-secondary': '#595959',
       },
 
       accentColor: {
@@ -82,6 +86,13 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-sans)', 'Arial', 'sans-serif'],
         title: ['var(--font-title)', 'var(--font-sans)', 'Arial', 'sans-serif'],
+      },
+
+      fontSize: {
+        'corp-title': ['44px', { lineHeight: '1.2' }],
+        'corp-heading': ['20px', { lineHeight: '1.4' }],
+        'corp-subheading': ['18px', { lineHeight: '1.5' }],
+        'corp-text': ['18px', { lineHeight: '1.6' }],
       },
 
       spacing: {

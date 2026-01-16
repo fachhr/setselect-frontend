@@ -57,7 +57,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                     )}
 
                     {/* Title */}
-                    <h1 className="mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
+                    <h1 className="font-title mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
                         {title}
                     </h1>
 

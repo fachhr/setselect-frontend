@@ -24,7 +24,7 @@ export function Navigation() {
             <div className="w-8 h-8 bg-[var(--gold)] rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
               <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
-            <span className="text-lg font-bold tracking-tight text-[var(--text-primary)]">
+            <span className="font-title text-lg font-bold tracking-tight text-[var(--text-primary)]">
               Set<span className="font-light text-[var(--text-secondary)]">Select</span>
             </span>
           </Link>
@@ -33,13 +33,13 @@ export function Navigation() {
           <div className="hidden md:flex items-center gap-8">
             <Link
               href="/companies"
-              className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               For Companies
             </Link>
             <Link
               href="/join"
-              className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               For Talent
             </Link>
