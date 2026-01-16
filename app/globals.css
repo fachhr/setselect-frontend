@@ -123,6 +123,7 @@
     background-color: var(--bg-root);
     color: var(--text-primary);
     font-family: var(--font-sans);
+    font-weight: 300;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -293,6 +294,11 @@
 }
 
 @layer utilities {
+  /* UI elements use normal weight for better clickability/readability */
+  .font-ui {
+    font-weight: 400;
+  }
+
   .animate-in {
     animation-duration: 0.5s;
     animation-fill-mode: both;
