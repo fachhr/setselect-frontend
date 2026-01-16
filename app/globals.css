@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  /* Reference the CSS variable that Next.js sets on body */
+  /* Reference CSS variables that Next.js sets on body */
   --font-title: var(--font-title, ui-sans-serif);
+  --font-sans: var(--font-montserrat, ui-sans-serif);
 }
 
 @layer base {
@@ -95,9 +96,10 @@
     --gradient-glow: radial-gradient(ellipse at center, rgba(0, 180, 216, 0.08) 0%, transparent 70%);
 
     /* --- FONTS --- */
-    /* --font-title: Set by Next.js via localFont() in layout.tsx */
-    /* --font-montserrat: Set by Next.js via Google Fonts in layout.tsx */
-    --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Font variables set by Next.js on body via layout.tsx:
+       --font-title: Behind the Nineties (localFont)
+       --font-montserrat: Montserrat (Google Fonts)
+       --font-sans: Defined in @theme, references --font-montserrat */
 
     /* --- LEGACY COMPATIBILITY VARS --- */
     --background: var(--bg-root);
