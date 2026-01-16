@@ -580,7 +580,7 @@ export default function HomeContent() {
                                 Energy &amp; Commodities Talent Pool
                             </span>
                             <span className="block mt-4 text-lg sm:text-xl font-medium text-[var(--secondary)]">
-                                Website Under Construction
+                                Coming Soon
                             </span>
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
