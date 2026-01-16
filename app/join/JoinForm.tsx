@@ -202,7 +202,7 @@ const JoinForm: React.FC = () => {
                     </div>
                     <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">You&apos;re In</h2>
                     <p className="text-[var(--text-secondary)] mb-8 max-w-md mx-auto text-lg">
-                        Your profile is now with our team. We personally review every application to match top talent with the right opportunities in Switzerland&apos;s oil & gas sector.
+                        Your profile is now with our team. We personally review every application to match top talent with the right opportunities in Switzerland&apos;s energy & commodities sector.
                     </p>
                     <div className="bg-[var(--bg-surface-2)] rounded-xl p-6 border border-[var(--border-subtle)] max-w-md mx-auto mb-8">
                         <h3 className="font-medium text-[var(--text-primary)] mb-2">What happens next?</h3>
