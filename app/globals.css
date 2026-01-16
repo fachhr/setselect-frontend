@@ -2,17 +2,60 @@
 
 /**
  * Behind the Nineties - Title/Display Font
- *
- * Loaded via @font-face for graceful degradation:
- * - If font file exists: renders custom font
- * - If missing: silently falls back to Montserrat (via font stack)
- *
- * To enable: Add BehindTheNineties.woff2 to public/fonts/
+ * Full font family with multiple weights
  */
 @font-face {
   font-family: 'Behind the Nineties';
-  src: url('/fonts/BehindTheNineties.woff2') format('woff2');
+  src: url('/fonts/Behind-The-Nineties-Rg.otf') format('opentype');
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Behind the Nineties';
+  src: url('/fonts/Behind-The-Nineties-It.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Behind the Nineties';
+  src: url('/fonts/Behind-The-Nineties-Md.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Behind the Nineties';
+  src: url('/fonts/Behind-The-Nineties-Smbd.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Behind the Nineties';
+  src: url('/fonts/Behind-The-Nineties-Bd.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Behind the Nineties';
+  src: url('/fonts/Behind-The-Nineties-Xbd.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Behind the Nineties';
+  src: url('/fonts/Behind-The-Nineties-Blk.otf') format('opentype');
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
