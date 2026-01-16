@@ -75,7 +75,7 @@ export const WORK_ELIGIBILITY_OPTIONS: SelectOption[] = [
 export const LANGUAGE_OPTIONS = ['English', 'German', 'French', 'Italian'] as const;
 
 // ====================
-// FUNCTIONAL EXPERTISE OPTIONS (Commodities/Energy/Finance domain)
+// FUNCTIONAL EXPERTISE OPTIONS (Energy/Commodities/Finance domain)
 // ====================
 export const FUNCTIONAL_EXPERTISE_OPTIONS = [
   'Trading',
