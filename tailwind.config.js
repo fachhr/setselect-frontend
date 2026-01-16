@@ -10,53 +10,46 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Navy Prestige Backgrounds
+        // Premium Dark Navy Theme Backgrounds
         'bg-root': 'var(--bg-root)',
         'bg-surface-1': 'var(--bg-surface-1)',
         'bg-surface-2': 'var(--bg-surface-2)',
         'bg-surface-3': 'var(--bg-surface-3)',
 
-        // Navy Prestige Text
+        // Typography
         'text-primary': 'var(--text-primary)',
         'text-secondary': 'var(--text-secondary)',
         'text-tertiary': 'var(--text-tertiary)',
         'text-accent': 'var(--text-accent)',
 
-        // Navy Prestige Borders
+        // Borders
         'border-subtle': 'var(--border-subtle)',
         'border-strong': 'var(--border-strong)',
+        'border-focus': 'var(--border-focus)',
 
-        // Navy Prestige Accents
+        // Primary accent colors (Refined Blue)
+        primary: 'var(--primary)',
+        'primary-dim': 'var(--primary-dim)',
+        'primary-hover': 'var(--primary-hover)',
+
+        // Accent aliases (gold maps to primary blue for backwards compat)
         gold: 'var(--gold)',
         'gold-dim': 'var(--gold-dim)',
         'gold-border': 'var(--gold-border)',
         blue: 'var(--blue)',
         'blue-dim': 'var(--blue-dim)',
 
-        // Legacy compatibility
-        primary: 'var(--primary)',
-        'primary-dark': 'var(--primary-dark)',
-        'primary-light': 'var(--primary-light)',
+        // Secondary accent (Cyan)
+        cyan: 'var(--cyan)',
+        'cyan-dim': 'var(--cyan-dim)',
 
+        // Legacy compatibility
         fg: 'var(--foreground)',
         bg: 'var(--background)',
 
-        darkDefault: 'var(--dark)',
-        'dark-800': 'var(--dark-800)',
-        'dark-600': 'var(--dark-600)',
-        'dark-400': 'var(--dark-400)',
-
-        lightDefault: 'var(--light)',
-        'light-800': 'var(--light-800)',
-        'light-600': 'var(--light-600)',
-        'light-400': 'var(--light-400)',
-
-        grayCustom: 'var(--gray)',
-
+        // Status colors
         error: 'var(--error-color)',
-        'error-bg': 'var(--error-bg)',
         success: 'var(--success-color)',
-        'success-bg': 'var(--success-bg)',
       },
 
       accentColor: {
@@ -66,7 +59,7 @@ module.exports = {
 
       fontFamily: {
         sans: ['var(--font-sans)', 'Arial', 'sans-serif'],
-        serif: ['var(--font-serif)', 'Georgia', 'serif'],
+        title: ['var(--font-title)', 'var(--font-sans)', 'Arial', 'sans-serif'],
       },
 
       spacing: {
@@ -89,7 +82,7 @@ module.exports = {
         sm: 'var(--shadow-sm)',
         md: 'var(--shadow-md)',
         lg: 'var(--shadow-lg)',
-        highlight: 'var(--shadow-highlight)',
+        glow: 'var(--shadow-glow)',
       },
       transitionDuration: {
         'fast': 'var(--transition-fast-duration)',

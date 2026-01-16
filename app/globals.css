@@ -2,48 +2,65 @@
 
 @layer base {
   :root {
-    /* --- PREMIUM SWISS NAVY PALETTE --- */
+    /* --- PREMIUM DARK NAVY THEME --- */
 
-    /* Backgrounds */
-    --bg-root: #0C1929;
-    --bg-surface-1: #0F2035; /* Cards - recalibrated */
-    --bg-surface-2: #162D47; /* Inputs/Hovers - recalibrated */
-    --bg-surface-3: #1E3A5A; /* Dropdowns - recalibrated */
+    /* Backgrounds (Deep Navy, Layered) */
+    --bg-root: #0B1426;
+    --bg-surface-1: #111D33; /* Cards, elevated panels */
+    --bg-surface-2: #182640; /* Inputs, interactive surfaces */
+    --bg-surface-3: #1E2F4D; /* Dropdowns, modals, tertiary */
 
-    /* Borders & Dividers */
-    --border-subtle: #1E3A5A;
-    --border-strong: #2A4A6B;
+    /* Borders (Subtle White) */
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.12);
+    --border-focus: rgba(59, 130, 246, 0.5);
 
-    /* Typography */
-    --text-primary: #F8FAFC;   /* White */
-    --text-secondary: #94A3B8; /* Slate 400 */
-    --text-tertiary: #64748B;  /* Slate 500 */
-    --text-accent: #3B82F6;    /* Brand Blue */
+    /* Typography (White + Silver) */
+    --text-primary: #FFFFFF;
+    --text-secondary: #A8B8CC;
+    --text-tertiary: #6B7B8F;
+    --text-accent: #60A5FA;
 
-    /* Accents */
-    --gold: #D4AF37;
-    --gold-dim: rgba(212, 175, 55, 0.15);
-    --gold-border: rgba(212, 175, 55, 0.3);
+    /* Primary Accent (Refined Blue) */
+    --primary: #3B82F6;
+    --primary-dim: rgba(59, 130, 246, 0.15);
+    --primary-hover: #60A5FA;
 
-    --blue: #3B82F6;
-    --blue-dim: rgba(59, 130, 246, 0.15);
+    /* Blue accent colors */
+    --blue: var(--primary);
+    --blue-dim: var(--primary-dim);
     --blue-border: rgba(59, 130, 246, 0.3);
 
-    /* Expertise accent - soft gold, subtle presence */
-    --expertise: #C9A227;
-    --expertise-dim: rgba(201, 162, 39, 0.10);
-    --expertise-border: rgba(201, 162, 39, 0.20);
+    /* Backwards compat - gold now maps to primary blue */
+    --gold: var(--primary);
+    --gold-dim: var(--primary-dim);
+    --gold-border: var(--blue-border);
+
+    /* Expertise accent - now blue */
+    --expertise: var(--primary);
+    --expertise-dim: rgba(59, 130, 246, 0.10);
+    --expertise-border: rgba(59, 130, 246, 0.20);
+
+    /* Secondary accent (Cyan) */
+    --cyan: #06B6D4;
+    --cyan-dim: rgba(6, 182, 212, 0.15);
 
     /* Status */
-    --error: #EF4444;
-    --success: #10b981;
+    --error: #F87171;
+    --success: #34D399;
+
+    /* Shadows (Blue-tinted for premium feel) */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
 
     /* --- FONTS --- */
-    /* Maps font-sans to Inter */
-    --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Maps font-sans to Montserrat */
+    --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-    /* Maps font-serif to Playfair Display */
-    --font-serif: var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    /* Maps font-title to Behind the Nineties (or fallback) */
+    --font-title: var(--font-behind-the-nineties), var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
 
     /* --- LEGACY COMPATIBILITY VARS --- */
     --background: var(--bg-root);
@@ -52,7 +69,6 @@
     --surface-1: var(--bg-surface-1);
     --surface-2: var(--bg-surface-2);
     --surface-3: var(--bg-surface-3);
-    --primary: var(--gold);
     --accent-gold: var(--gold);
     --error-color: var(--error);
     --success-color: var(--success);
@@ -69,8 +85,8 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .font-serif {
-    font-family: var(--font-serif);
+  .font-title {
+    font-family: var(--font-title);
   }
 
   /* Scrollbar Polish - Vertical (main window) */
@@ -107,25 +123,25 @@
   }
 
   .input-base:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-dim);
     outline: none;
   }
 
   .btn-gold {
-    background: var(--gold);
-    color: var(--bg-root);
+    background: var(--primary);
+    color: #FFFFFF;
     font-weight: 600;
     transition: all 0.2s;
   }
 
   .btn-gold:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
+    background: var(--primary-hover);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
   }
 
   .checkbox-slate {
-    @apply appearance-none h-4 w-4 rounded border border-slate-300 bg-white checked:bg-blue-500 checked:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] transition-colors cursor-pointer relative flex-shrink-0;
+    @apply appearance-none h-4 w-4 rounded border border-[var(--border-strong)] bg-[var(--bg-surface-2)] checked:bg-[var(--primary)] checked:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] transition-colors cursor-pointer relative flex-shrink-0;
   }
 
   .checkbox-slate:checked {
@@ -147,8 +163,8 @@
   input:not([type="range"]):not([type="checkbox"]):focus,
   select:focus,
   textarea:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-dim);
     outline: none;
   }
 
@@ -157,8 +173,8 @@
   }
 
   ::selection {
-    background: var(--gold-dim);
-    color: var(--gold);
+    background: var(--primary-dim);
+    color: var(--primary);
   }
 }
 
@@ -241,7 +257,12 @@
   }
 }
 
-/* Font utility for Playfair Display */
-.font-serif {
-  font-family: var(--font-playfair), Georgia, serif;
+/* Font utility for title font */
+.font-title {
+  font-family: var(--font-title);
+}
+
+/* Font utility for Montserrat (main font) */
+.font-sans {
+  font-family: var(--font-sans);
 }

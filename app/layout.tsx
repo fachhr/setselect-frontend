@@ -1,28 +1,31 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Providers } from '@/components/Providers';
 import "./globals.css";
 
-// Inter for body text
-const inter = Inter({
+// Montserrat for body text and headings
+const montserrat = Montserrat({
   subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap', // Ensure font displays immediately with fallback
-  preload: true,   // Preload for faster initial render
+  variable: '--font-montserrat',
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+  preload: true,
   fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
-  adjustFontFallback: true, // Match fallback font metrics to Inter
+  adjustFontFallback: true,
 });
 
-// Playfair Display for serif accents
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-});
+// Behind the Nineties for titles - using local font
+// NOTE: Add BehindTheNineties.woff2 to /public/fonts/ to enable
+// For now, fallback to Montserrat
+// import localFont from 'next/font/local';
+// const behindTheNineties = localFont({
+//   src: '../public/fonts/BehindTheNineties.woff2',
+//   variable: '--font-behind-the-nineties',
+//   weight: '500',
+//   display: 'swap',
+// });
 
 export const metadata: Metadata = {
   title: "SetSelect - Top Swiss Tech Talent",
@@ -36,9 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`
-        ${inter.variable} ${playfair.variable} font-sans
-      `}>
+      <body className={`${montserrat.variable} font-sans`}>
         <Providers>
           <Navigation />
           <main>{children}</main>

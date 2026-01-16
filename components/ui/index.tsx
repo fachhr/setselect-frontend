@@ -12,9 +12,9 @@ export const Badge: React.FC<BadgeProps> = ({ children, style = 'default', icon:
         default: 'bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border-[var(--border-subtle)]',
         dark: 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] border-[var(--border-strong)]',
         outline: 'bg-transparent text-[var(--text-secondary)] border-[var(--border-subtle)]',
-        success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
-        gold: 'bg-[var(--gold-dim)] text-[var(--gold)] border-[var(--gold-border)]',
-        blue: 'bg-[var(--bg-surface-3)] text-[var(--text-secondary)] border-[var(--border-strong)]',
+        success: 'bg-[rgba(52,211,153,0.10)] text-[#34D399] border-[rgba(52,211,153,0.30)]',
+        gold: 'bg-[var(--primary-dim)] text-[var(--primary-hover)] border-[var(--blue-border)]',
+        blue: 'bg-[var(--primary-dim)] text-[var(--primary-hover)] border-[var(--blue-border)]',
         purple: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
     };
     return (
@@ -49,10 +49,10 @@ export const Button: React.FC<ButtonProps> = ({
     const baseStyle = "inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
-        primary: "btn-gold shadow-lg shadow-[rgba(212,175,55,0.1)] focus:ring-[rgba(212,175,55,0.5)]",
-        secondary: "bg-[var(--bg-surface-2)] hover:bg-[var(--bg-surface-3)] text-[var(--text-primary)] border border-[var(--border-strong)] focus:ring-[rgba(59,130,246,0.5)]",
-        outline: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)] focus:ring-[rgba(59,130,246,0.5)]",
-        ghost: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:ring-[rgba(59,130,246,0.5)]",
+        primary: "btn-gold shadow-md focus:ring-[var(--border-focus)]",
+        secondary: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-primary)] border border-[rgba(255,255,255,0.12)] focus:ring-[var(--border-focus)]",
+        outline: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] focus:ring-[var(--border-focus)]",
+        ghost: "bg-transparent hover:bg-[var(--bg-surface-2)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus:ring-[var(--border-focus)]",
     };
 
     const combinedClassName = `${baseStyle} ${variants[variant]} ${className}`;

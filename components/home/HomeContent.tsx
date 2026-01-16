@@ -579,6 +579,9 @@ export default function HomeContent() {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold)] to-[var(--text-secondary)]">
                                 Commodities &amp; Energy Talent Pool
                             </span>
+                            <span className="block mt-4 text-lg sm:text-xl font-medium text-[var(--gold)]">
+                                Coming Soon
+                            </span>
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
                             Browse pre‑screened and selected talent. Within just a few clicks, get contact information of the candidates you like.
@@ -931,7 +934,7 @@ export default function HomeContent() {
                                 {displayCandidates.map((candidate) => (
                                     <div
                                         key={candidate.id}
-                                        className="group glass-panel rounded-xl hover:border-[#D4AF37] hover:shadow-[0_4px_30px_rgba(212,175,55,0.2)] transition-all duration-300 relative cursor-pointer flex flex-col"
+                                        className="group glass-panel rounded-xl hover:border-[var(--primary)] hover:shadow-[0_4px_30px_rgba(59,130,246,0.2)] transition-all duration-300 relative cursor-pointer flex flex-col"
                                         onClick={() => openDetailModal(candidate)}
                                     >
                                         {/* Favorite Button */}
@@ -969,7 +972,7 @@ export default function HomeContent() {
                                             </div>
 
                                             {/* Role Title */}
-                                            <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[#D4AF37] group-hover:underline decoration-[var(--gold-border)] underline-offset-4 decoration-2 transition-all leading-snug pr-8">
+                                            <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--primary-hover)] group-hover:underline decoration-[var(--blue-border)] underline-offset-4 decoration-2 transition-all leading-snug pr-8">
                                                 {candidate.role}
                                             </h3>
 
