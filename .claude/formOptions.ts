@@ -668,7 +668,7 @@ export const PHONE_COUNTRY_CODE_OPTIONS = [
 
 export const JOB_TYPE_OPTIONS = ['Internship', 'Part-time', 'Career Starter (full-time)'];
 
-// Oil & Gas hub locations in Switzerland
+// Energy & Commodities hub locations in Switzerland
 export const LOCATION_OPTIONS = [
     { value: "ZG",   label: "Zug" },
     { value: "ZH",   label: "Zurich" },
