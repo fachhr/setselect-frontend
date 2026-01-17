@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, X, ArrowRight, Layers } from 'lucide-react';
+import { Menu, X, ArrowRight, ArrowLeft, Layers } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
 import { useZenMode } from '@/contexts/ZenModeContext';
@@ -31,6 +31,13 @@ export function Navigation() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
+            <a
+              href="https://setberry.com/home/"
+              className="nav-link flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Setberry
+            </a>
             <Link
               href="/companies"
               className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
@@ -64,6 +71,13 @@ export function Navigation() {
       {/* Mobile Nav */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-[var(--bg-root)]/95 backdrop-blur-xl border-b border-[var(--border-subtle)] p-4 space-y-4 shadow-xl animate-in slide-in-from-top-2 z-50">
+          <a
+            href="https://setberry.com/home/"
+            className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Setberry
+          </a>
           <Link
             href="/companies"
             className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
