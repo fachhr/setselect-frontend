@@ -98,16 +98,16 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                             {candidate.role}
                         </h2>
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)]">
-                            <div className="flex items-center gap-1.5">
-                                <MapPin className="w-4 h-4 text-[var(--secondary)]" />
+                            <div className="flex items-start gap-1.5">
+                                <MapPin className="w-4 h-4 text-[var(--secondary)] mt-0.5" />
                                 {formatCantons(candidate.cantons)}
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <Briefcase className="w-4 h-4 text-[var(--secondary)]" />
+                            <div className="flex items-start gap-1.5">
+                                <Briefcase className="w-4 h-4 text-[var(--secondary)] mt-0.5" />
                                 {candidate.experience}
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <Clock className="w-4 h-4 text-[var(--secondary)]" />
+                            <div className="flex items-start gap-1.5">
+                                <Clock className="w-4 h-4 text-[var(--secondary)] mt-0.5" />
                                 {candidate.availability}
                             </div>
                         </div>
@@ -217,8 +217,8 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                                 <h3 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase mb-1">
                                     Education
                                 </h3>
-                                <div className="flex items-center gap-2 text-[var(--text-primary)] text-sm font-medium">
-                                    <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                <div className="flex items-start gap-2 text-[var(--text-primary)] text-sm font-medium">
+                                    <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
                                     {candidate.education || 'Not specified'}
                                 </div>
                             </div>
@@ -228,8 +228,8 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                                 <h3 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase mb-1">
                                     Work Eligibility
                                 </h3>
-                                <div className="flex items-center gap-2 text-[var(--text-primary)] text-sm font-medium">
-                                    <FileCheck className="w-4 h-4 text-[var(--text-tertiary)]" />
+                                <div className="flex items-start gap-2 text-[var(--text-primary)] text-sm font-medium">
+                                    <FileCheck className="w-4 h-4 text-[var(--text-tertiary)] mt-0.5" />
                                     {getWorkPermitLabel(candidate.workPermit)}
                                 </div>
                             </div>
@@ -239,8 +239,8 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                                 <h3 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase mb-1">
                                     Salary Expectation
                                 </h3>
-                                <div className="flex items-center gap-2 text-[var(--text-primary)] text-sm font-medium">
-                                    <DollarSign className="w-4 h-4 text-[var(--text-tertiary)]" />
+                                <div className="flex items-start gap-2 text-[var(--text-primary)] text-sm font-medium">
+                                    <DollarSign className="w-4 h-4 text-[var(--text-tertiary)] mt-0.5" />
                                     {formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}
                                 </div>
                             </div>
@@ -250,8 +250,8 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                                 <h3 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase mb-1">
                                     Languages
                                 </h3>
-                                <div className="flex items-center gap-2 text-[var(--text-primary)] text-sm font-medium">
-                                    <Globe className="w-4 h-4 text-[var(--text-tertiary)]" />
+                                <div className="flex items-start gap-2 text-[var(--text-primary)] text-sm font-medium">
+                                    <Globe className="w-4 h-4 text-[var(--text-tertiary)] mt-0.5" />
                                     {candidate.languages && candidate.languages.length > 0
                                         ? candidate.languages.join(', ')
                                         : 'Not specified'

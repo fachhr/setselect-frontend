@@ -1011,31 +1011,31 @@ export default function HomeContent() {
 
                                             {/* Metadata Grid (2 columns) */}
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-[var(--text-secondary)] mb-5">
-                                                <div className="flex items-center gap-2" title="Experience">
-                                                    <Briefcase className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                <div className="flex items-start gap-2" title="Experience">
+                                                    <Briefcase className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
                                                     <span>{candidate.experience}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2" title="Salary Range">
-                                                    <DollarSign className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                <div className="flex items-start gap-2" title="Salary Range">
+                                                    <DollarSign className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
                                                     <span>{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2" title="Preferred Location">
-                                                    <MapPin className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                <div className="flex items-start gap-2" title="Preferred Location">
+                                                    <MapPin className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
                                                     <span>{candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2" title="Availability">
-                                                    <Clock className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                <div className="flex items-start gap-2" title="Availability">
+                                                    <Clock className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
                                                     <span>{candidate.availability}</span>
                                                 </div>
                                                 {candidate.education && (
-                                                    <div className="flex items-center gap-2" title="Education">
-                                                        <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                    <div className="flex items-start gap-2" title="Education">
+                                                        <GraduationCap className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
                                                         <span className="truncate">{candidate.education}</span>
                                                     </div>
                                                 )}
                                                 {candidate.languages && candidate.languages.length > 0 && (
-                                                    <div className="flex items-center gap-2" title="Languages">
-                                                        <Globe className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                                    <div className="flex items-start gap-2" title="Languages">
+                                                        <Globe className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
                                                         <span>{candidate.languages.join(', ')}</span>
                                                     </div>
                                                 )}
