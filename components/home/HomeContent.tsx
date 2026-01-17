@@ -1372,7 +1372,7 @@ export default function HomeContent() {
                                                                 e.stopPropagation();
                                                                 handleRequestIntro(candidate.id);
                                                             }}
-                                                            className="text-[var(--gold)] hover:text-[var(--text-primary)] font-bold text-xs border border-[var(--gold-border)] hover:border-[var(--gold)] px-3 py-1.5 rounded transition-all"
+                                                            className="btn-gold text-xs px-3 py-1.5 rounded"
                                                         >
                                                             Intro
                                                         </button>
