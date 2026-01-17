@@ -9,12 +9,14 @@ import {
   formatTalentId
 } from '@/lib/utils/talentPoolHelpers';
 
-// Format duration from dates (conservative: only when BOTH dates are clearly available)
+// Format duration from dates (uses current date for current jobs with no end date)
 function formatJobDuration(start: string | undefined, end: string | undefined | null): string {
-  if (!start || !end) return '';
+  if (!start) return '';
 
   const startDate = new Date(start);
-  const endDate = new Date(end);
+  // For current jobs (no end date or "Present"), use current date
+  const isCurrent = !end || end.toLowerCase() === 'present';
+  const endDate = isCurrent ? new Date() : new Date(end);
 
   // Validate dates are parseable
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return '';
