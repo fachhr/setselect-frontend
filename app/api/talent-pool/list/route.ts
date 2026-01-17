@@ -48,6 +48,9 @@ export async function GET(req: NextRequest) {
 
     let query = supabaseAdmin.from('user_profiles').select('*');
 
+    // Only show profiles where parsing is complete
+    query = query.not('parsing_completed_at', 'is', null);
+
     // 1. Filter by Cantons / Locations
     if (cantonsParam) {
       const cantons = cantonsParam.split(',').map(c => c.trim()).filter(Boolean);
