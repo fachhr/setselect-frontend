@@ -1090,12 +1090,12 @@ export default function HomeContent() {
                                                 {/* Sortable columns */}
                                                 {[
                                                     { label: 'ID', key: 'id', sortable: true, width: 'w-20' },
-                                                    { label: 'Role', key: 'role', sortable: true, width: 'w-56' },
+                                                    { label: 'Desired Role', key: 'role', sortable: true, width: 'w-56' },
                                                     { label: 'Years Exp.', key: 'experience', sortable: true, width: 'w-24' },
+                                                    { label: 'Previous Roles', key: 'previousRoles', sortable: false, width: 'w-96' },
                                                     { label: 'Expertise', key: 'expertise', sortable: false, width: 'w-52' },
                                                     { label: 'Pref. Location', key: 'cantons', sortable: true, width: 'w-36' },
                                                     { label: 'Salary', key: 'salary', sortable: true, width: 'w-40' },
-                                                    { label: 'Previous Roles', key: 'previousRoles', sortable: false, width: 'w-72' },
                                                     { label: 'Highlight', key: 'highlight', sortable: false, width: 'w-72' },
                                                     { label: 'Education', key: 'education', sortable: false, width: 'w-64' },
                                                     { label: 'Work Eligibility', key: 'workPermit', sortable: false, width: 'w-36' },
@@ -1294,6 +1294,26 @@ export default function HomeContent() {
                                                     <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text-secondary)]">
                                                         {candidate.experience}
                                                     </td>
+                                                    {/* Previous Roles */}
+                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
+                                                        {candidate.previousRoles && candidate.previousRoles.length > 0 ? (
+                                                            <div className="flex flex-col gap-0.5">
+                                                                {candidate.previousRoles.slice(0, 3).map((r, idx) => (
+                                                                    <div key={idx} className="flex items-center gap-1.5 truncate">
+                                                                        <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
+                                                                        <span className="truncate">{r.role}</span>
+                                                                        {(r.location || r.duration) && (
+                                                                            <span className="text-[var(--text-tertiary)] whitespace-nowrap">
+                                                                                ({r.location}{r.location && r.duration && ', '}{r.duration})
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <span>-</span>
+                                                        )}
+                                                    </td>
                                                     {/* Expertise */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
@@ -1309,26 +1329,6 @@ export default function HomeContent() {
                                                     {/* Salary */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">{formatSalaryRange(candidate.salaryMin, candidate.salaryMax)}</span>
-                                                    </td>
-                                                    {/* Previous Roles */}
-                                                    <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
-                                                        {candidate.previousRoles && candidate.previousRoles.length > 0 ? (
-                                                            <div className="flex flex-col gap-0.5">
-                                                                {candidate.previousRoles.slice(0, 2).map((r, idx) => (
-                                                                    <div key={idx} className="flex items-center gap-1.5 truncate">
-                                                                        <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
-                                                                        <span className="truncate">{r.role}</span>
-                                                                        {(r.location || r.duration) && (
-                                                                            <span className="text-[var(--text-tertiary)] whitespace-nowrap">
-                                                                                ({r.location}{r.location && r.duration && ', '}{r.duration})
-                                                                            </span>
-                                                                        )}
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        ) : (
-                                                            <span>-</span>
-                                                        )}
                                                     </td>
                                                     {/* Highlight */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
