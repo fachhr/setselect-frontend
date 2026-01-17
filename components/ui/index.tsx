@@ -192,5 +192,4 @@ export const Toast: React.FC<ToastProps> = ({
     );
 };
 
-export * from './PageHeader';
 export * from './CustomScrollbar';

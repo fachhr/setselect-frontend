@@ -989,8 +989,10 @@ export default function HomeContent() {
                                                                     <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
                                                                     <span className="leading-snug truncate">{roleObj.role}</span>
                                                                 </div>
-                                                                {roleObj.duration && (
-                                                                    <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap">{roleObj.duration}</span>
+                                                                {(roleObj.location || roleObj.duration) && (
+                                                                    <span className="text-xs text-[var(--text-tertiary)] whitespace-nowrap">
+                                                                        {roleObj.location}{roleObj.location && roleObj.duration && ' · '}{roleObj.duration}
+                                                                    </span>
                                                                 )}
                                                             </div>
                                                         ))}
@@ -1313,7 +1315,11 @@ export default function HomeContent() {
                                                                     <div key={idx} className="flex items-center gap-1.5 truncate">
                                                                         <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)] flex-shrink-0"></span>
                                                                         <span className="truncate">{r.role}</span>
-                                                                        {r.duration && <span className="text-[var(--text-tertiary)] whitespace-nowrap">({r.duration})</span>}
+                                                                        {(r.location || r.duration) && (
+                                                                            <span className="text-[var(--text-tertiary)] whitespace-nowrap">
+                                                                                ({r.location}{r.location && r.duration && ', '}{r.duration})
+                                                                            </span>
+                                                                        )}
                                                                     </div>
                                                                 ))}
                                                             </div>

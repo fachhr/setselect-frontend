@@ -138,8 +138,10 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                                             <div className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)] mt-[7px]"></div>
                                             <span>{roleObj.role}</span>
                                         </div>
-                                        {roleObj.duration && (
-                                            <span className="text-[var(--text-tertiary)] text-xs whitespace-nowrap flex-shrink-0">{roleObj.duration}</span>
+                                        {(roleObj.location || roleObj.duration) && (
+                                            <span className="text-[var(--text-tertiary)] text-xs whitespace-nowrap flex-shrink-0">
+                                                {roleObj.location}{roleObj.location && roleObj.duration && ' · '}{roleObj.duration}
+                                            </span>
                                         )}
                                     </div>
                                 ))}

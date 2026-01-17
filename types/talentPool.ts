@@ -21,7 +21,7 @@ export interface Candidate {
   languages?: string[];         // e.g., ['English', 'German'] (from form)
   profileBio?: string;          // AI-generated professional summary (from parser)
   shortSummary?: string;        // AI-generated 2-sentence summary for cards (from parser)
-  previousRoles?: { role: string; duration: string }[]; // Anonymized job history
+  previousRoles?: { role: string; duration: string; location?: string }[]; // Anonymized job history
 }
 
 export interface Canton {
@@ -65,7 +65,7 @@ export interface TalentPoolProfile {
   functional_expertise?: string[] | null;
   profile_bio?: string | null;  // AI-generated professional summary
   short_summary?: string | null;  // AI-generated 2-sentence summary for cards
-  previous_roles?: { role: string; duration: string }[] | null; // Anonymized job history
+  previous_roles?: { role: string; duration: string; location?: string }[] | null; // Anonymized job history
 }
 
 export interface CVUploadResponse {
@@ -112,7 +112,7 @@ export interface AnonymizedTalentProfile {
   desired_roles?: string | null;
   profile_bio?: string | null;  // AI-generated professional summary
   short_summary?: string | null;  // AI-generated 2-sentence summary for cards
-  previous_roles?: { role: string; duration: string }[] | null; // Anonymized job history
+  previous_roles?: { role: string; duration: string; location?: string }[] | null; // Anonymized job history
 }
 
 // Talent pool list response
