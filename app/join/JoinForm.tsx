@@ -14,6 +14,7 @@ import {
 import { Button, Input, Badge } from '@/components/ui';
 import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, type FunctionalExpertise } from '@/lib/formOptions';
 import { talentPoolSchemaRefined, type TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
+import { useRecaptcha } from '@/hooks/useRecaptcha';
 
 // Helper for parsing non-JSON error responses
 const safeJsonParse = async (response: Response) => {
@@ -30,6 +31,9 @@ const JoinForm: React.FC = () => {
     const [step, setStep] = useState(1); // 1: CV, 2: Details, 3: Success
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // reCAPTCHA v3
+    const { executeRecaptcha, error: recaptchaError } = useRecaptcha();
 
     // UI state for showing/hiding the "Other" language input
     const [showOtherLanguage, setShowOtherLanguage] = useState(false);
@@ -107,6 +111,14 @@ const JoinForm: React.FC = () => {
     // Form submission handler (called by react-hook-form after validation passes)
     const onSubmit = async (data: TalentPoolFormData) => {
         try {
+            // STEP 0: Execute reCAPTCHA
+            let recaptchaToken = '';
+            try {
+                recaptchaToken = await executeRecaptcha('join_form');
+            } catch (err) {
+                throw new Error('Unable to verify you are human. Please refresh and try again.');
+            }
+
             // STEP 1: Upload CV
             const uploadFormData = new FormData();
             uploadFormData.append('file', data.cvFile);
@@ -165,6 +177,7 @@ const JoinForm: React.FC = () => {
                 cvStoragePath,
                 originalFilename,
                 accepted_terms: data.accepted_terms,
+                recaptchaToken,
             };
 
             const submitResponse = await fetch('/api/talent-pool/submit', {

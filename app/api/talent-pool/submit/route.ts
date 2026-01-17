@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { talentPoolServerSchemaRefined } from '@/lib/validation/talentPoolSchema';
+import { verifyRecaptchaToken } from '@/lib/recaptcha';
 
 /**
  * POST /api/talent-pool/submit
@@ -19,6 +20,20 @@ import { talentPoolServerSchemaRefined } from '@/lib/validation/talentPoolSchema
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // Verify reCAPTCHA token
+    const recaptchaResult = await verifyRecaptchaToken(
+      body.recaptchaToken || '',
+      'join_form'
+    );
+
+    if (!recaptchaResult.success) {
+      console.warn('[Submit] reCAPTCHA verification failed:', recaptchaResult.error);
+      return NextResponse.json(
+        { success: false, error: 'Security verification failed' },
+        { status: 403 }
+      );
+    }
 
     // Remove cvFile from validation (already uploaded)
     // Extract languages and functional_expertise separately
