@@ -1271,8 +1271,11 @@ export default function HomeContent() {
                                                     <td className="px-4 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                                                         <button
                                                             onClick={() => toggleFavorite(candidate.id)}
-                                                            className={`text-[var(--text-tertiary)] hover:text-[var(--error)] transition-colors ${favorites.includes(candidate.id) ? 'text-[var(--error)]' : ''
-                                                                }`}
+                                                            className={`transition-colors ${
+                                                                favorites.includes(candidate.id)
+                                                                    ? 'text-[var(--error)]'
+                                                                    : 'text-[var(--text-tertiary)] hover:text-[var(--error)]'
+                                                            }`}
                                                         >
                                                             <Heart className={`w-4 h-4 ${favorites.includes(candidate.id) ? 'fill-current' : ''}`} />
                                                         </button>
