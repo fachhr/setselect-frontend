@@ -42,6 +42,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "SetSelect - Top Swiss Tech Talent",
   description: "Discover pre-screened tech talent in Switzerland.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
