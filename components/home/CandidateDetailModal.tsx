@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Candidate } from '@/types/talentPool';
 import { Badge, Button } from '@/components/ui';
 import { WORK_ELIGIBILITY_OPTIONS, WORK_LOCATIONS } from '@/lib/formOptions';
@@ -29,6 +29,17 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     onClose,
     onRequestIntroduction
 }) => {
+    useEffect(() => {
+        if (isOpen) {
+            const originalOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+
+            return () => {
+                document.body.style.overflow = originalOverflow;
+            };
+        }
+    }, [isOpen]);
+
     if (!isOpen || !candidate) return null;
 
     // Map work eligibility value to display label
