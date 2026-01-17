@@ -80,11 +80,11 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
         >
             {/* Modal */}
             <div
-                className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-panel rounded-2xl flex flex-col animate-in zoom-in-95 duration-200"
+                className="relative w-full max-w-2xl max-h-[90vh] glass-panel rounded-2xl flex flex-col animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-surface-1)]">
+                <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-[var(--border-subtle)] bg-[var(--bg-surface-1)] rounded-t-2xl">
                     <div className="flex items-center gap-3">
                         <span className="font-mono text-xs uppercase tracking-wider text-[var(--text-tertiary)] bg-[var(--bg-surface-2)] px-2 py-1 rounded border border-[var(--border-subtle)]">
                             {candidate.id}
@@ -102,7 +102,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                 </div>
 
                 {/* Body */}
-                <div className="p-6 md:p-8 space-y-8">
+                <div className="flex-1 min-h-0 overflow-y-auto modal-scroll p-6 md:p-8 space-y-8">
                     {/* Main Info */}
                     <div>
                         <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
@@ -274,7 +274,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="sticky bottom-0 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface-1)]">
+                <div className="flex-shrink-0 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface-1)] rounded-b-2xl">
                     <p className="text-xs text-[var(--text-tertiary)] text-center sm:text-left">
                         Reference ID: {candidate.id} • Added {candidate.entryDate}
                     </p>
