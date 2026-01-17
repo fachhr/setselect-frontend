@@ -163,7 +163,7 @@ export async function GET(req: NextRequest) {
       if (Array.isArray(profile.professional_experience) && profile.professional_experience.length > 0) {
         previousRoles = profile.professional_experience
           .slice(0, 3) // Limit to 3 most recent roles
-          .map((job: { positionName?: string; position_short?: string; company_type?: string; location?: string; startDate?: string; endDate?: string }) => {
+          .map((job: { positionName?: string; position_short?: string; company_type?: string; city?: string; startDate?: string; endDate?: string }) => {
             // Prefer normalized short title, fallback to original
             const position = job.position_short || job.positionName || '';
             if (!position) return null; // Skip jobs without position name
@@ -176,7 +176,7 @@ export async function GET(req: NextRequest) {
               ? `${position} @ ${job.company_type}`
               : position;
 
-            return { role, duration, location: job.location || undefined };
+            return { role, duration, location: job.city || undefined };
           })
           .filter((r: { role: string; duration: string } | null): r is { role: string; duration: string } => r !== null);
       }
