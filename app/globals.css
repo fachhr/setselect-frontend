@@ -381,3 +381,8 @@
 .font-sans {
   font-family: var(--font-sans);
 }
+
+/* Hide reCAPTCHA badge - required branding text is shown in form */
+.grecaptcha-badge {
+  visibility: hidden;
+}

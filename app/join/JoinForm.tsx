@@ -895,6 +895,11 @@ const JoinForm: React.FC = () => {
                         <Button type="submit" className="w-full py-3 text-base" disabled={isSubmitting}>
                             {isSubmitting ? 'Submitting...' : 'Submit Application'}
                         </Button>
+                        <p className="text-[10px] text-[var(--text-muted)] text-center mt-4">
+                            This site is protected by reCAPTCHA and the Google{' '}
+                            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text-tertiary)]">Privacy Policy</a> and{' '}
+                            <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--text-tertiary)]">Terms of Service</a> apply.
+                        </p>
                     </div>
 
                 </form>
