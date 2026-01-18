@@ -179,6 +179,5 @@ export function getPlaceholderCandidates(
     if (isMobile && viewMode === 'grid') {
         return PLACEHOLDER_CANDIDATES.slice(0, 1);
     }
-    const limit = viewMode === 'table' ? 8 : 3;
-    return PLACEHOLDER_CANDIDATES.slice(0, limit);
+    return PLACEHOLDER_CANDIDATES.slice(0, 8);
 }
