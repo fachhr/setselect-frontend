@@ -242,16 +242,6 @@ const JoinForm: React.FC = () => {
                 </div>
 
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 relative z-10">
-                    {/* Back Button */}
-                    <div className="mb-8">
-                        <button
-                            onClick={() => router.back()}
-                            className="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors group focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] rounded-md px-1"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-                            Back
-                        </button>
-                    </div>
                     <div className="text-center">
                         <h1 className="font-title text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight">Join <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">Set</span><span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">Select</span></h1>
                         <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top energy & commodities opportunities in Switzerland.</p>
