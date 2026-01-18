@@ -192,7 +192,12 @@ export default function HomeContent() {
         type: 'success'
     });
 
-    // Access control state
+    // ============================================================
+    // ACCESS CONTROL STATE
+    // ============================================================
+    // When locked: displayCandidates returns placeholders, overlay shown
+    // When unlocked: displayCandidates returns real data, no overlay
+    // Persistence: localStorage stores granted access
     const [isAccessGranted, setIsAccessGranted] = useState(false);
     const [isAccessHydrated, setIsAccessHydrated] = useState(false);
     const [unlockForm, setUnlockForm] = useState({ email: '', code: '' });
@@ -513,7 +518,9 @@ export default function HomeContent() {
         setShowDetailModal(true);
     };
 
-    // Access control handlers
+    // ============================================================
+    // ACCESS CONTROL HANDLERS
+    // ============================================================
     const ACCESS_CODE = process.env.NEXT_PUBLIC_ACCESS_CODE || '';
 
     const handleUnlock = (e: React.FormEvent) => {
@@ -624,14 +631,98 @@ export default function HomeContent() {
         });
     }, [filteredCandidates, viewMode, sortConfig]);
 
-    // Choose which candidates to display based on view mode
-    // When access is locked, show placeholder candidates (1 for mobile grid, 3 for desktop grid, 8 for table)
+    // ============================================================
+    // DISPLAY DATA - LOCKED/UNLOCKED BOUNDARY
+    // ============================================================
+    // This is THE decision point: locked shows placeholders, unlocked shows real data
     const displayCandidates = useMemo(() => {
         if (!isAccessGranted) {
             return getPlaceholderCandidates(viewMode, isMobile);
         }
         return viewMode === 'table' ? sortedCandidates : filteredCandidates;
     }, [isAccessGranted, viewMode, sortedCandidates, filteredCandidates, isMobile]);
+
+    // ============================================================
+    // LOCKED OVERLAY COMPONENT (local)
+    // ============================================================
+    // Renders blur overlay + unlock form when access is not granted
+    function LockedOverlay() {
+        return (
+            <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
+                {/* Sticky wrapper keeps form visible while scrolling */}
+                <div className="sticky top-24 w-full flex justify-center px-4 pt-8">
+                    <div className="glass-panel rounded-2xl p-8 max-w-md w-full animate-in fade-in zoom-in-95 duration-300">
+                        <div className="text-center mb-6">
+                            <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--border-subtle)]">
+                                <Lock className="w-6 h-6 text-[var(--text-secondary)]" />
+                            </div>
+                            <h3 className="text-xl font-bold text-[var(--text-primary)]">Restricted Access</h3>
+                        </div>
+
+                        <form onSubmit={handleUnlock} className="space-y-4">
+                            {/* Email Input */}
+                            <div>
+                                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Email Address</label>
+                                <div className="relative">
+                                    <input
+                                        type="email"
+                                        required
+                                        className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
+                                        placeholder="name@company.com"
+                                        value={unlockForm.email}
+                                        onChange={e => setUnlockForm({...unlockForm, email: e.target.value})}
+                                    />
+                                    <Mail className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
+                                </div>
+                            </div>
+
+                            {/* Access Code Input */}
+                            <div>
+                                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Please enter the access code provided to you by Setberry</label>
+                                <div className="relative">
+                                    <input
+                                        type="password"
+                                        required
+                                        className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
+                                        placeholder="Enter code"
+                                        value={unlockForm.code}
+                                        onChange={e => setUnlockForm({...unlockForm, code: e.target.value})}
+                                    />
+                                    <Lock className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
+                                </div>
+                            </div>
+
+                            {/* Error Message */}
+                            {authError && (
+                                <div className="text-[var(--error)] text-xs flex items-center gap-1.5 bg-[var(--error-dim)] p-2 rounded border border-[var(--error-border)]">
+                                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                                    {authError}
+                                </div>
+                            )}
+
+                            <Button type="submit" className="w-full" icon={Unlock}>
+                                Unlock Candidates
+                            </Button>
+                        </form>
+
+                        {/* Request Access Section */}
+                        <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] text-center">
+                            <p className="text-xs text-[var(--text-tertiary)]">
+                                Don&apos;t have a code?{' '}
+                                <button
+                                    type="button"
+                                    onClick={handleRequestAccess}
+                                    className="text-[var(--secondary)] font-bold hover:underline transition-all"
+                                >
+                                    Request Access
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div
@@ -678,7 +769,7 @@ export default function HomeContent() {
                         <h2 className="text-xl font-bold text-[var(--text-primary)]">
                             Candidates{' '}
                             <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
-                                {displayCandidates.length} results
+                                {isAccessGranted ? displayCandidates.length : 8} results
                             </span>
                         </h2>
 
@@ -980,82 +1071,8 @@ export default function HomeContent() {
 
                     {/* RESULTS */}
                     <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
-                        {/* LOCKED CONTENT OVERLAY - Only covers results area */}
-                        {!isAccessGranted && (
-                            <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
-                                {/* Sticky wrapper keeps form visible while scrolling */}
-                                <div className="sticky top-24 w-full flex justify-center px-4 pt-8">
-                                    <div className="glass-panel rounded-2xl p-8 max-w-md w-full animate-in fade-in zoom-in-95 duration-300">
-                                        <div className="text-center mb-6">
-                                            <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--border-subtle)]">
-                                                <Lock className="w-6 h-6 text-[var(--text-secondary)]" />
-                                            </div>
-                                            <h3 className="text-xl font-bold text-[var(--text-primary)]">Restricted Access</h3>
-                                        </div>
-
-                                        <form onSubmit={handleUnlock} className="space-y-4">
-                                            {/* Email Input */}
-                                            <div>
-                                                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Email Address</label>
-                                                <div className="relative">
-                                                    <input
-                                                        type="email"
-                                                        required
-                                                        className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
-                                                        placeholder="name@company.com"
-                                                        value={unlockForm.email}
-                                                        onChange={e => setUnlockForm({...unlockForm, email: e.target.value})}
-                                                    />
-                                                    <Mail className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
-                                                </div>
-                                            </div>
-
-                                            {/* Access Code Input */}
-                                            <div>
-                                                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Please enter the access code provided to you by Setberry</label>
-                                                <div className="relative">
-                                                    <input
-                                                        type="password"
-                                                        required
-                                                        className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
-                                                        placeholder="Enter code"
-                                                        value={unlockForm.code}
-                                                        onChange={e => setUnlockForm({...unlockForm, code: e.target.value})}
-                                                    />
-                                                    <Lock className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
-                                                </div>
-                                            </div>
-
-                                            {/* Error Message */}
-                                            {authError && (
-                                                <div className="text-[var(--error)] text-xs flex items-center gap-1.5 bg-[var(--error-dim)] p-2 rounded border border-[var(--error-border)]">
-                                                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                                                    {authError}
-                                                </div>
-                                            )}
-
-                                            <Button type="submit" className="w-full" icon={Unlock}>
-                                                Unlock Candidates
-                                            </Button>
-                                        </form>
-
-                                        {/* Request Access Section */}
-                                        <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] text-center">
-                                            <p className="text-xs text-[var(--text-tertiary)]">
-                                                Don&apos;t have a code?{' '}
-                                                <button
-                                                    type="button"
-                                                    onClick={handleRequestAccess}
-                                                    className="text-[var(--secondary)] font-bold hover:underline transition-all"
-                                                >
-                                                    Request Access
-                                                </button>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        {/* LOCKED STATE OVERLAY */}
+                        {!isAccessGranted && <LockedOverlay />}
                         {isLoading && (isAccessGranted || !isAccessHydrated) ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
