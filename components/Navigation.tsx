@@ -39,16 +39,10 @@ export function Navigation() {
               Setberry
             </a>
             <Link
-              href="/companies"
+              href="/"
               className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
-              For Companies
-            </Link>
-            <Link
-              href="/join"
-              className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              For Talent
+              Access Talent
             </Link>
             <div className="h-4 w-px bg-[var(--border-strong)]"></div>
             <Button variant="primary" icon={ArrowRight} href="/join">
@@ -79,18 +73,11 @@ export function Navigation() {
             Setberry
           </a>
           <Link
-            href="/companies"
+            href="/"
             className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            For Companies
-          </Link>
-          <Link
-            href="/join"
-            className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            For Talent
+            Access Talent
           </Link>
           <Button className="w-full" href="/join" onClick={() => setIsMobileMenuOpen(false)}>
             Join the List
