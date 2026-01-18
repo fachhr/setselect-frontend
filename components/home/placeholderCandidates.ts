@@ -172,7 +172,13 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
 ];
 
 // Helper to get limited placeholders by view mode
-export function getPlaceholderCandidates(viewMode: 'grid' | 'table'): Candidate[] {
+export function getPlaceholderCandidates(
+    viewMode: 'grid' | 'table',
+    isMobile: boolean = false
+): Candidate[] {
+    if (isMobile && viewMode === 'grid') {
+        return PLACEHOLDER_CANDIDATES.slice(0, 1);
+    }
     const limit = viewMode === 'table' ? 8 : 3;
     return PLACEHOLDER_CANDIDATES.slice(0, limit);
 }

@@ -33,6 +33,7 @@ import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
 import { useZenMode } from '@/contexts/ZenModeContext';
 import { getPlaceholderCandidates } from './placeholderCandidates';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // Multi-Select Filter Component for Table View
 interface MultiSelectFilterProps {
@@ -196,6 +197,9 @@ export default function HomeContent() {
     const [isAccessHydrated, setIsAccessHydrated] = useState(false);
     const [unlockForm, setUnlockForm] = useState({ email: '', code: '' });
     const [authError, setAuthError] = useState('');
+
+    // Mobile detection for placeholder count
+    const isMobile = useMediaQuery('(max-width: 767px)');
 
     // Restore access state from localStorage on mount
     useEffect(() => {
@@ -621,13 +625,13 @@ export default function HomeContent() {
     }, [filteredCandidates, viewMode, sortConfig]);
 
     // Choose which candidates to display based on view mode
-    // When access is locked, show placeholder candidates (3 for card view, 8 for table view)
+    // When access is locked, show placeholder candidates (1 for mobile grid, 3 for desktop grid, 8 for table)
     const displayCandidates = useMemo(() => {
         if (!isAccessGranted) {
-            return getPlaceholderCandidates(viewMode);
+            return getPlaceholderCandidates(viewMode, isMobile);
         }
         return viewMode === 'table' ? sortedCandidates : filteredCandidates;
-    }, [isAccessGranted, viewMode, sortedCandidates, filteredCandidates]);
+    }, [isAccessGranted, viewMode, sortedCandidates, filteredCandidates, isMobile]);
 
     return (
         <div
