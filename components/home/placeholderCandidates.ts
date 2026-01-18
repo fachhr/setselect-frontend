@@ -171,10 +171,15 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
     },
 ];
 
-// Helper to get placeholders for locked view - always 8 candidates
+// Helper to get placeholders for locked view with view-specific limits
 export function getPlaceholderCandidates(
-    _viewMode: 'grid' | 'table',
-    _isMobile: boolean = false
+    viewMode: 'grid' | 'table',
+    isMobile: boolean = false
 ): Candidate[] {
-    return PLACEHOLDER_CANDIDATES.slice(0, 8);
+    // Mobile always shows 1 (table toggle isn't visible on mobile)
+    if (isMobile) {
+        return PLACEHOLDER_CANDIDATES.slice(0, 1);
+    }
+    // Desktop: 8 for table, 3 for grid
+    return PLACEHOLDER_CANDIDATES.slice(0, viewMode === 'table' ? 8 : 3);
 }
