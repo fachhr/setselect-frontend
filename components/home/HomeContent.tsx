@@ -21,13 +21,18 @@ import {
     Check,
     Maximize2,
     Minimize2,
-    ArrowUpDown
+    ArrowUpDown,
+    Mail,
+    Lock,
+    Unlock,
+    AlertCircle
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/formOptions';
 import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
 import { useZenMode } from '@/contexts/ZenModeContext';
+import { getPlaceholderCandidates } from './placeholderCandidates';
 
 // Multi-Select Filter Component for Table View
 interface MultiSelectFilterProps {
@@ -185,6 +190,11 @@ export default function HomeContent() {
         isVisible: false,
         type: 'success'
     });
+
+    // Access control state
+    const [isAccessGranted, setIsAccessGranted] = useState(false);
+    const [unlockForm, setUnlockForm] = useState({ email: '', code: '' });
+    const [authError, setAuthError] = useState('');
 
     // Auto-reset shortlist view when all favorites are removed
     useEffect(() => {
@@ -484,6 +494,33 @@ export default function HomeContent() {
         setShowDetailModal(true);
     };
 
+    // Access control handlers
+    const ACCESS_CODE = process.env.NEXT_PUBLIC_ACCESS_CODE || '';
+
+    const handleUnlock = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (unlockForm.code === ACCESS_CODE && unlockForm.email.includes('@')) {
+            setIsAccessGranted(true);
+            setAuthError('');
+            setToast({ message: 'Access Granted', isVisible: true, type: 'success' });
+        } else {
+            setAuthError('Invalid code or email format');
+        }
+    };
+
+    const handleRequestAccess = () => {
+        if (!unlockForm.email || !unlockForm.email.includes('@')) {
+            setAuthError('Please enter a valid email address to request access.');
+            return;
+        }
+        setToast({
+            message: `Request sent! We will contact ${unlockForm.email} shortly.`,
+            isVisible: true,
+            type: 'info'
+        });
+        setAuthError('');
+    };
+
     // Table column sort handler
     const requestSort = (key: string) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -556,7 +593,13 @@ export default function HomeContent() {
     }, [filteredCandidates, viewMode, sortConfig]);
 
     // Choose which candidates to display based on view mode
-    const displayCandidates = viewMode === 'table' ? sortedCandidates : filteredCandidates;
+    // When access is locked, show placeholder candidates (3 for card view, 8 for table view)
+    const displayCandidates = useMemo(() => {
+        if (!isAccessGranted) {
+            return getPlaceholderCandidates(viewMode);
+        }
+        return viewMode === 'table' ? sortedCandidates : filteredCandidates;
+    }, [isAccessGranted, viewMode, sortedCandidates, filteredCandidates]);
 
     return (
         <div
@@ -595,6 +638,7 @@ export default function HomeContent() {
                     ? 'px-4 sm:px-6 lg:px-8 py-8'
                     : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'
                 }`}>
+
                 {/* Header */}
                 <div className="mb-6 pb-4 border-b border-[var(--border-subtle)]">
                     {/* Row 1: Title + View Toggle + Zen Mode (+ Desktop controls) */}
@@ -903,7 +947,83 @@ export default function HomeContent() {
                     )}
 
                     {/* RESULTS */}
-                    <main className="flex-1 overflow-hidden transition-all duration-300">
+                    <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
+                        {/* LOCKED CONTENT OVERLAY - Only covers results area */}
+                        {!isAccessGranted && (
+                            <div className="absolute inset-0 z-40 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
+                                {/* Sticky wrapper keeps form visible while scrolling */}
+                                <div className="sticky top-24 w-full flex justify-center px-4 pt-8">
+                                    <div className="glass-panel rounded-2xl p-8 max-w-md w-full animate-in fade-in zoom-in-95 duration-300">
+                                        <div className="text-center mb-6">
+                                            <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--border-subtle)]">
+                                                <Lock className="w-6 h-6 text-[var(--text-secondary)]" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-[var(--text-primary)]">Restricted Access</h3>
+                                        </div>
+
+                                        <form onSubmit={handleUnlock} className="space-y-4">
+                                            {/* Email Input */}
+                                            <div>
+                                                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Email Address</label>
+                                                <div className="relative">
+                                                    <input
+                                                        type="email"
+                                                        required
+                                                        className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
+                                                        placeholder="name@company.com"
+                                                        value={unlockForm.email}
+                                                        onChange={e => setUnlockForm({...unlockForm, email: e.target.value})}
+                                                    />
+                                                    <Mail className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
+                                                </div>
+                                            </div>
+
+                                            {/* Access Code Input */}
+                                            <div>
+                                                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Please enter the access code provided to you by Setberry</label>
+                                                <div className="relative">
+                                                    <input
+                                                        type="password"
+                                                        required
+                                                        className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
+                                                        placeholder="Enter code"
+                                                        value={unlockForm.code}
+                                                        onChange={e => setUnlockForm({...unlockForm, code: e.target.value})}
+                                                    />
+                                                    <Lock className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
+                                                </div>
+                                            </div>
+
+                                            {/* Error Message */}
+                                            {authError && (
+                                                <div className="text-[var(--error)] text-xs flex items-center gap-1.5 bg-[var(--error-dim)] p-2 rounded border border-[var(--error-border)]">
+                                                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                                                    {authError}
+                                                </div>
+                                            )}
+
+                                            <Button type="submit" className="w-full" icon={Unlock}>
+                                                Unlock Candidates
+                                            </Button>
+                                        </form>
+
+                                        {/* Request Access Section */}
+                                        <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] text-center">
+                                            <p className="text-xs text-[var(--text-tertiary)]">
+                                                Don&apos;t have a code?{' '}
+                                                <button
+                                                    type="button"
+                                                    onClick={handleRequestAccess}
+                                                    className="text-[var(--secondary)] font-bold hover:underline transition-all"
+                                                >
+                                                    Request Access
+                                                </button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         {isLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
