@@ -519,6 +519,12 @@ export default function HomeContent() {
             setAuthError('');
             localStorage.setItem('setselect_access', JSON.stringify({ email: unlockForm.email, granted: true }));
             setToast({ message: 'Access Granted', isVisible: true, type: 'success' });
+            // Fire-and-forget: log access to database
+            fetch('/api/access/log', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: unlockForm.email, accessType: 'unlock' })
+            }).catch(() => {}); // Silently ignore errors
         } else {
             setAuthError('Invalid code or email format');
         }
@@ -535,6 +541,12 @@ export default function HomeContent() {
             type: 'info'
         });
         setAuthError('');
+        // Fire-and-forget: log access request to database
+        fetch('/api/access/log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: unlockForm.email, accessType: 'request' })
+        }).catch(() => {}); // Silently ignore errors
     };
 
     // Table column sort handler
