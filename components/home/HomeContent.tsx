@@ -982,7 +982,7 @@ export default function HomeContent() {
                     <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
                         {/* LOCKED CONTENT OVERLAY - Only covers results area */}
                         {!isAccessGranted && (
-                            <div className="absolute inset-0 z-40 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
+                            <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
                                 {/* Sticky wrapper keeps form visible while scrolling */}
                                 <div className="sticky top-24 w-full flex justify-center px-4 pt-8">
                                     <div className="glass-panel rounded-2xl p-8 max-w-md w-full animate-in fade-in zoom-in-95 duration-300">
