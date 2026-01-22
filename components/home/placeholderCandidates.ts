@@ -3,7 +3,7 @@ import { Candidate } from '@/types/talentPool';
 // Placeholder candidates shown behind blur when access is locked
 export const PLACEHOLDER_CANDIDATES: Candidate[] = [
     {
-        id: 'SVL-PH1',
+        id: 'REF-PH1',
         role: 'Quantitative Trader',
         highlight: 'Built algorithmic trading system generating CHF 12M annual P&L',
         skills: ['Python', 'C++', 'Risk Management'],
@@ -24,7 +24,7 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
         ],
     },
     {
-        id: 'SVL-PH2',
+        id: 'REF-PH2',
         role: 'Energy Trading Analyst',
         highlight: 'Optimized gas procurement strategy saving EUR 3M annually',
         skills: ['Power Markets', 'Excel', 'SQL'],
@@ -44,7 +44,7 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
         ],
     },
     {
-        id: 'SVL-PH3',
+        id: 'REF-PH3',
         role: 'Senior Software Engineer',
         highlight: 'Led migration of ETRM platform to cloud, reducing latency by 40%',
         skills: ['Python', 'AWS', 'Kubernetes'],
@@ -65,7 +65,7 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
         ],
     },
     {
-        id: 'SVL-PH4',
+        id: 'REF-PH4',
         role: 'Chief Technology Officer',
         highlight: 'Scaled trading technology team from 5 to 45 engineers across 3 offices',
         skills: ['Leadership', 'Architecture', 'Strategy'],
@@ -87,7 +87,7 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
         ],
     },
     {
-        id: 'SVL-PH5',
+        id: 'REF-PH5',
         role: 'Risk Manager',
         highlight: 'Implemented enterprise-wide risk framework for CHF 2B trading portfolio',
         skills: ['VaR', 'Credit Risk', 'Basel III'],
@@ -108,7 +108,7 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
         ],
     },
     {
-        id: 'SVL-PH6',
+        id: 'REF-PH6',
         role: 'Data Scientist',
         highlight: 'Developed ML model improving power price forecasting accuracy by 25%',
         skills: ['Machine Learning', 'Python', 'TensorFlow'],
@@ -129,7 +129,7 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
         ],
     },
     {
-        id: 'SVL-PH7',
+        id: 'REF-PH7',
         role: 'Commodities Analyst',
         highlight: 'Published research cited by Bloomberg on MENA oil supply dynamics',
         skills: ['Fundamentals', 'Bloomberg', 'Research'],
@@ -149,7 +149,7 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
         ],
     },
     {
-        id: 'SVL-PH8',
+        id: 'REF-PH8',
         role: 'Head of Operations',
         highlight: 'Reduced trade settlement errors by 90% through process automation',
         skills: ['Process Optimization', 'Team Leadership', 'SAP'],

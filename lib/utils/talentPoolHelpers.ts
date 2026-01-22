@@ -82,7 +82,7 @@ export function formatSalary(min: number | null | undefined, max: number | null 
 
 /**
  * Format talent ID for display
- * Ensures consistent SVL-XXX format
+ * Ensures consistent REF-XXX format
  */
 export function formatTalentId(id: string | null | undefined): string {
   if (!id) {
@@ -90,14 +90,14 @@ export function formatTalentId(id: string | null | undefined): string {
   }
 
   // If already in correct format, return as-is
-  if (id.match(/^SVL-\d+$/)) {
+  if (id.match(/^REF-\d+$/)) {
     return id;
   }
 
   // Otherwise, try to extract number and format
   const numMatch = id.match(/\d+/);
   if (numMatch) {
-    return `SVL-${numMatch[0].padStart(3, '0')}`;
+    return `REF-${numMatch[0].padStart(3, '0')}`;
   }
 
   return id;

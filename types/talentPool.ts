@@ -36,7 +36,7 @@ export interface SelectOption {
 
 export interface TalentPoolProfile {
   id: string;
-  talent_id?: string | null; // Format: SVL-001, SVL-002, etc.
+  talent_id?: string | null; // Format: REF-001, REF-002, etc.
   contact_first_name: string;
   contact_last_name: string;
   email: string;
