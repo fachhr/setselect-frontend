@@ -4,6 +4,8 @@ import localFont from 'next/font/local';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { Providers } from '@/components/Providers';
+import { Analytics } from '@/components/Analytics';
+import { CookieBanner } from '@/components/CookieBanner';
 import "./globals.css";
 
 /**
@@ -59,6 +61,8 @@ export default function RootLayout({
           <Navigation />
           <main>{children}</main>
           <Footer />
+          <CookieBanner />
+          <Analytics />
         </Providers>
       </body>
     </html>

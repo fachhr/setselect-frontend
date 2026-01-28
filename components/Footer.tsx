@@ -25,19 +25,25 @@ export function Footer() {
               <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Energy & Commodities Recruitment</span>
             </div>
           </div>
-          <div className="text-sm text-[var(--text-secondary)] flex gap-8">
+          <div className="text-sm text-[var(--text-secondary)] flex flex-wrap justify-center gap-x-8 gap-y-2">
             <Link href="/terms" className="hover:text-[var(--text-primary)] transition-colors">
               Terms
             </Link>
-            <Link href="/terms" className="hover:text-[var(--text-primary)] transition-colors">
+            <Link href="/privacy" className="hover:text-[var(--text-primary)] transition-colors">
               Privacy
+            </Link>
+            <Link href="/cookies" className="hover:text-[var(--text-primary)] transition-colors">
+              Cookies
+            </Link>
+            <Link href="/impressum" className="hover:text-[var(--text-primary)] transition-colors">
+              Impressum
             </Link>
             <Link href="/contact" className="hover:text-[var(--text-primary)] transition-colors">
               Contact
             </Link>
           </div>
           <div className="text-xs text-[var(--text-tertiary)] font-mono">
-            © 2025 SetSelect.
+            © 2026 SetSelect.
           </div>
         </div>
       </div>

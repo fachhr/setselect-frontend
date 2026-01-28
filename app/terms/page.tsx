@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import TermsPage from './TermsPage';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | SetSelect',
-  description: 'Legal agreements and terms of service for SetSelect.',
+  title: 'Terms & Conditions | SetSelect',
+  description: 'Terms and Conditions for candidates using the SetSelect recruitment platform. Covers data processing, privacy, liability, and your rights under Swiss law.',
 };
 
 export default function TermsRoute() {

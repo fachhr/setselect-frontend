@@ -873,7 +873,7 @@ const JoinForm: React.FC = () => {
                                 className="checkbox-slate mt-1"
                             />
                             <label htmlFor="accepted_terms" className="text-xs text-[var(--text-tertiary)] leading-relaxed">
-                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-1 focus:ring-offset-[var(--bg-surface-2)] rounded">Terms of Service</button> and Privacy Policy. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
+                                I agree to the <button type="button" onClick={() => router.push('/terms')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-1 focus:ring-offset-[var(--bg-surface-2)] rounded">Terms & Conditions</button> and <button type="button" onClick={() => router.push('/privacy')} className="underline text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-1 focus:ring-offset-[var(--bg-surface-2)] rounded">Privacy Policy</button>. I understand that my profile will be anonymized and my contact details will only be shared with companies I explicitly approve.
                             </label>
                         </div>
                         {errors.accepted_terms && (
