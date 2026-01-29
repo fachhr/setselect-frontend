@@ -101,6 +101,7 @@ const CookiesPage: React.FC = () => {
                   <thead>
                     <tr className="border-b border-[var(--border-subtle)]">
                       <th className="text-left py-2 pr-4 font-semibold text-[var(--text-primary)]">Cookie</th>
+                      <th className="text-left py-2 pr-4 font-semibold text-[var(--text-primary)]">Provider</th>
                       <th className="text-left py-2 pr-4 font-semibold text-[var(--text-primary)]">Purpose</th>
                       <th className="text-left py-2 font-semibold text-[var(--text-primary)]">Duration</th>
                     </tr>
@@ -108,18 +109,41 @@ const CookiesPage: React.FC = () => {
                   <tbody className="divide-y divide-[var(--border-subtle)]">
                     <tr>
                       <td className="py-3 pr-4 font-mono text-xs">cookie-consent</td>
+                      <td className="py-3 pr-4">SetSelect (first-party)</td>
                       <td className="py-3 pr-4">Stores your cookie consent preference</td>
-                      <td className="py-3">Persistent</td>
+                      <td className="py-3">1 year (persistent)</td>
                     </tr>
                     <tr>
                       <td className="py-3 pr-4 font-mono text-xs">_grecaptcha</td>
-                      <td className="py-3 pr-4">Google reCAPTCHA for form spam prevention</td>
-                      <td className="py-3">Session</td>
+                      <td className="py-3 pr-4">Google (third-party)</td>
+                      <td className="py-3 pr-4">reCAPTCHA for form spam prevention</td>
+                      <td className="py-3">Session (expires when browser closes)</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
+              <div className="mt-6 p-4 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
+                <h4 className="font-semibold text-[var(--text-primary)] mb-2">Essential Cookie Justification (FDPIC Guidelines, October 2025)</h4>
+                <p className="text-sm">
+                  These cookies are classified as essential under the FDPIC cookie guidelines because they are strictly necessary for the website to function correctly. The <strong>cookie-consent</strong> cookie records your preference to avoid repeated consent requests. The <strong>reCAPTCHA</strong> cookie is required for form spam prevention, which is essential to protect the integrity of the platform and its users.
+                </p>
+              </div>
+
+            </section>
+
+            {/* Your Cookie Rights */}
+            <section>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Your Rights</h2>
+              <p>Under Swiss data protection law and the FDPIC guidelines, you have the right to:</p>
+              <ul className="list-disc list-outside ml-6 space-y-1 mt-4">
+                <li>Refuse non-essential cookies without any disadvantage to your use of the platform.</li>
+                <li>Withdraw your consent at any time using the preference controls above.</li>
+                <li>Request information about cookies set on your device by contacting us at <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>.</li>
+              </ul>
+              <p className="mt-4 text-sm text-[var(--text-tertiary)]">
+                Opt-out is as easy as opt-in: use the &ldquo;Reject&rdquo; or &ldquo;Reset&rdquo; buttons in the preference panel above. Non-essential cookies (analytics) are never activated until you explicitly consent. Simply continuing to browse does not constitute consent.
+              </p>
             </section>
 
             {/* Analytics */}
@@ -150,7 +174,7 @@ const CookiesPage: React.FC = () => {
                 <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link>.
               </p>
               <p className="mt-2">
-                <strong>Last updated:</strong> {COMPANY.terms.lastUpdated}
+                <strong>Last updated:</strong> {COMPANY.cookiePolicy.lastUpdated}
               </p>
             </div>
           </div>

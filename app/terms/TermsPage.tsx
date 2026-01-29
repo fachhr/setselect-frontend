@@ -103,6 +103,9 @@ const TermsPage: React.FC = () => {
                 <p>
                   <strong>1.4</strong> The Agency reserves the right to update these Terms at any time. We will publish updated Terms on this page and, for material changes, notify you via email or in-platform notice. Your continued use after publication of updates constitutes acceptance of the updated Terms.
                 </p>
+                <p>
+                  <strong>1.5</strong> The platform is intended for individuals who are at least 16 years of age and legally eligible to work. By using the platform, you confirm that you meet these requirements.
+                </p>
               </div>
             </section>
 
@@ -182,6 +185,9 @@ const TermsPage: React.FC = () => {
                 <p>
                   You have the right to request human review of any automated decisions that significantly affect how your profile is presented or processed. To request a review, contact the Agency&apos;s data-protection team at <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>.
                 </p>
+                <p>
+                  The Agency monitors developments in Swiss and European AI regulation, including the Council of Europe Convention on Artificial Intelligence (signed by Switzerland in March 2025) and upcoming Swiss AI legislation, and will update its practices accordingly.
+                </p>
               </div>
             </section>
 
@@ -190,15 +196,18 @@ const TermsPage: React.FC = () => {
               <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">4. Data processing, consent, and anonymisation</h2>
               <div className="space-y-4">
                 <h3 className="font-semibold text-[var(--text-primary)]">4.1 Legal basis and scope of processing</h3>
-                <p>You agree that the Agency may process your personal data (including your CV, profile information, contact details, work history, and other professional information) for the following lawful purposes:</p>
+                <p>The Agency processes your personal data (including your CV, profile information, contact details, work history, and other professional information) on the following legal bases under the revised Federal Act on Data Protection (revFADP):</p>
                 <ul className="list-[lower-alpha] list-outside ml-6 space-y-2">
-                  <li><strong>Recruitment services</strong>: Creating and displaying an anonymised or pseudonymised profile on the platform; enabling employers to search, view, and shortlist your profile; and facilitating contact between you and prospective employers.</li>
-                  <li><strong>Profile management</strong>: Managing your profile, responding to your requests (e.g. access, correction, deletion), and enabling you to control which employers can see your data.</li>
-                  <li><strong>Legal compliance</strong>: Ensuring compliance with Swiss data-protection law (revFADP), employment law, tax law, and any court orders or regulatory requests.</li>
-                  <li><strong>Platform security and improvement</strong>: Detecting and preventing fraud, security incidents, abuse, and improving platform functionality and user experience.</li>
-                  <li><strong>Analytics and reporting</strong>: Aggregating and analysing anonymised or pseudonymised data to improve the platform and understand recruitment trends (no individual identification).</li>
-                  <li><strong>Direct marketing</strong> (with separate opt-in consent): Sending you updates about relevant job opportunities, platform news, and recruitment tips. You may opt out of marketing communications at any time.</li>
+                  <li><strong>Recruitment services</strong> (legal basis: performance of the service agreement between you and the Agency, revFADP Art. 6 para. 6-7): Creating and displaying an anonymised or pseudonymised profile on the platform; enabling employers to search, view, and shortlist your profile; and facilitating contact between you and prospective employers.</li>
+                  <li><strong>Profile management</strong> (legal basis: performance of the service agreement): Managing your profile, responding to your requests (e.g. access, correction, deletion), and enabling you to control which employers can see your data.</li>
+                  <li><strong>Legal compliance</strong> (legal basis: legal obligation under revFADP, AVG/AVV, tax law): Ensuring compliance with Swiss data-protection law, employment law, tax law, and any court orders or regulatory requests.</li>
+                  <li><strong>Platform security and improvement</strong> (legal basis: overriding private interest of the Agency, revFADP Art. 31): Detecting and preventing fraud, security incidents, abuse, and improving platform functionality and user experience.</li>
+                  <li><strong>Analytics and reporting</strong> (legal basis: consent, where required under FDPIC guidelines): Aggregating and analysing anonymised or pseudonymised data to improve the platform and understand recruitment trends (no individual identification).</li>
+                  <li><strong>Direct marketing</strong> (legal basis: consent, opt-in): Sending you updates about relevant job opportunities, platform news, and recruitment tips. You may opt out of marketing communications at any time.</li>
                 </ul>
+                <p>
+                  We rely on consent only where specifically required by law (e.g., for marketing communications and analytics). For core recruitment services, the legal basis is the service agreement you enter into by creating a profile and our overriding legitimate interest as a licensed recruitment agency. This approach is consistent with revFADP, which permits data processing unless a justification ground is violated (Art. 6 revFADP), and with Art. 328b of the Swiss Code of Obligations and Art. 18-19 of the Employment Services Act (AVG/AVV).
+                </p>
 
                 <h3 className="font-semibold text-[var(--text-primary)]">4.2 Explicit consent to anonymisation and profile disclosure</h3>
                 <p>By uploading your CV, you explicitly consent to:</p>
@@ -835,11 +844,18 @@ const TermsPage: React.FC = () => {
             <div className="mt-12 pt-8 border-t border-[var(--border-subtle)]">
               <p className="text-sm text-[var(--text-tertiary)]">
                 <strong>Last updated:</strong> {COMPANY.terms.lastUpdated}<br />
-                <strong>Next scheduled review:</strong> January 2027<br />
+                <strong>Next scheduled review:</strong> {COMPANY.terms.nextReview}<br />
                 <strong>Contact:</strong> <a href={`mailto:${COMPANY.contacts.legal}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.legal}</a>
               </p>
+              <div className="mt-4 text-xs text-[var(--text-tertiary)]">
+                <p className="font-semibold mb-1">Version History</p>
+                <ul className="space-y-1">
+                  <li>Version 1.0 &mdash; 25 January 2026: Initial publication.</li>
+                  <li>Version 1.1 &mdash; 29 January 2026: Restructured legal bases (Art. 6 revFADP); added age restriction; added AI regulation monitoring statement; updated review schedule to quarterly.</li>
+                </ul>
+              </div>
               <p className="text-xs text-[var(--text-tertiary)] mt-4 italic">
-                This Terms and Conditions document has been prepared to align with Swiss data-protection law (revFADP), Swiss employment law, and best practices for recruitment platforms.
+                This Terms and Conditions document has been prepared to align with Swiss data-protection law (revFADP), Swiss employment law (OR Art. 328b, AVG/AVV), and best practices for recruitment platforms.
               </p>
             </div>
           </div>

@@ -50,6 +50,9 @@ const ImpressumPage: React.FC = () => {
               <div className="p-6 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
                 <p className="text-2xl font-bold text-[var(--text-primary)]">{COMPANY.legalName}</p>
                 <p className="text-[var(--text-tertiary)]">trading as <strong className="text-[var(--text-primary)]">{COMPANY.tradingAs}</strong></p>
+                <p className="mt-2 text-[var(--text-secondary)]">
+                  Platform: <a href={COMPANY.platformUrl} className="underline hover:text-[var(--gold)]">{COMPANY.platformUrl}</a>
+                </p>
               </div>
             </section>
 
@@ -70,10 +73,16 @@ const ImpressumPage: React.FC = () => {
                 <div>
                   <p className="text-sm text-[var(--text-tertiary)]">Cantonal License (Arbeitsvermittlungsbewilligung)</p>
                   <p className="text-[var(--text-primary)]">{COMPANY.licenses.cantonal}</p>
+                  <p className="text-xs text-[var(--text-tertiary)] mt-1">Cantonal recruitment license issued by the Canton of Zurich for recruitment services.</p>
                 </div>
                 <div>
                   <p className="text-sm text-[var(--text-tertiary)]">Federal License (SECO)</p>
                   <p className="text-[var(--text-primary)]">{COMPANY.licenses.seco}</p>
+                  {COMPANY.licenses.seco === 'Pending' && (
+                    <p className="text-xs text-[var(--text-tertiary)] mt-1">
+                      Note: Our federal (SECO) recruitment license application is currently in process. We are operating under cantonal authorisation while federal licensing is being finalised.
+                    </p>
+                  )}
                 </div>
               </div>
               <p className="text-sm text-[var(--text-tertiary)] mt-3">

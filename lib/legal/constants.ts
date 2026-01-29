@@ -19,9 +19,18 @@ export const COMPANY = {
     support: 'hello@setberry.com',
   },
   terms: {
-    lastUpdated: '2026-01-25',
-    effectiveDate: '2026-01-25',
+    lastUpdated: '2026-01-29',
+    effectiveDate: '2026-01-29',
+    nextReview: 'Reviewed quarterly',
   },
+  privacyPolicy: {
+    lastUpdated: '2026-01-29',
+    effectiveDate: '2026-01-29',
+  },
+  cookiePolicy: {
+    lastUpdated: '2026-01-29',
+  },
+  platformUrl: 'https://setselect.io',
   licenses: {
     cantonal: 'Zurich (received)',
     seco: 'Pending',

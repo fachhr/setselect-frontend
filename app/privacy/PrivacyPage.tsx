@@ -37,7 +37,7 @@ const PrivacyPage: React.FC = () => {
               How we collect, use, and protect your personal data.
             </p>
             <p className="mt-2 text-sm text-[var(--text-tertiary)]">
-              Last updated: {COMPANY.terms.lastUpdated}
+              Last updated: {COMPANY.privacyPolicy.lastUpdated}
             </p>
           </div>
         </div>
@@ -55,7 +55,10 @@ const PrivacyPage: React.FC = () => {
                 This Privacy Policy explains how <strong>{COMPANY.legalName}</strong>, trading as <strong>{COMPANY.tradingAs}</strong> (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;, or the &ldquo;Agency&rdquo;), collects, uses, stores, and protects your personal data when you use our recruitment platform.
               </p>
               <p className="mt-4">
-                We are committed to protecting your privacy and complying with the Swiss Federal Act on Data Protection (revFADP) and, where applicable, the EU General Data Protection Regulation (GDPR).
+                We are committed to protecting your privacy and complying with the Swiss Federal Act on Data Protection (revFADP) and, where applicable, the EU General Data Protection Regulation (GDPR). In addition to the revFADP, we process your data in accordance with Art. 328b of the Swiss Code of Obligations (OR) and Articles 18-19 of the Employment Services Act (AVG) and Employment Services Ordinance (AVV), which govern data processing in the context of recruitment and employment services.
+              </p>
+              <p className="mt-4">
+                We maintain a Record of Processing Activities (Verzeichnis der Bearbeitungst&auml;tigkeiten) as required by Art. 12 revFADP. You may request information about our processing activities by contacting our Data Protection Advisor.
               </p>
               <p className="mt-4">
                 Our platform is intended for individuals who are legally eligible to work. We do not knowingly collect personal data from individuals under 16 years of age.
@@ -75,7 +78,7 @@ const PrivacyPage: React.FC = () => {
                 <p>{COMPANY.address.street}</p>
                 <p>{COMPANY.address.postalCode} {COMPANY.address.city}, {COMPANY.address.country}</p>
                 <p className="mt-2">
-                  <strong>Data Protection Contact:</strong> {COMPANY.owner}<br />
+                  <strong>Data Protection Advisor (Art. 10 revFADP):</strong> {COMPANY.owner}<br />
                   <strong>Email:</strong> <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>
                 </p>
               </div>
@@ -124,15 +127,15 @@ const PrivacyPage: React.FC = () => {
                   <tbody className="divide-y divide-[var(--border-subtle)]">
                     <tr>
                       <td className="py-3 pr-4">Creating and displaying your anonymised profile to employers</td>
-                      <td className="py-3">Consent / Contract performance</td>
+                      <td className="py-3">Contract performance (revFADP Art. 6 para. 6-7)</td>
                     </tr>
                     <tr>
                       <td className="py-3 pr-4">Facilitating contact between you and prospective employers</td>
-                      <td className="py-3">Consent / Contract performance</td>
+                      <td className="py-3">Contract performance (revFADP Art. 6 para. 6-7)</td>
                     </tr>
                     <tr>
                       <td className="py-3 pr-4">AI-powered profile analysis and anonymisation</td>
-                      <td className="py-3">Consent</td>
+                      <td className="py-3">Contract performance / Legitimate interest (with right to human review)</td>
                     </tr>
                     <tr>
                       <td className="py-3 pr-4">Responding to your data access/deletion requests</td>
@@ -140,15 +143,19 @@ const PrivacyPage: React.FC = () => {
                     </tr>
                     <tr>
                       <td className="py-3 pr-4">Platform security and fraud prevention</td>
-                      <td className="py-3">Legitimate interest</td>
+                      <td className="py-3">Overriding private interest (revFADP Art. 31)</td>
                     </tr>
                     <tr>
                       <td className="py-3 pr-4">Website analytics (with consent)</td>
                       <td className="py-3">Consent</td>
                     </tr>
                     <tr>
+                      <td className="py-3 pr-4">Direct marketing communications</td>
+                      <td className="py-3">Consent (opt-in)</td>
+                    </tr>
+                    <tr>
                       <td className="py-3 pr-4">Compliance with Swiss law and regulations</td>
-                      <td className="py-3">Legal obligation</td>
+                      <td className="py-3">Legal obligation (revFADP, AVG/AVV, tax law)</td>
                     </tr>
                   </tbody>
                 </table>
@@ -177,6 +184,20 @@ const PrivacyPage: React.FC = () => {
               </ul>
               <p className="mt-4">
                 To request human review of any automated processing of your profile, contact us at <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>.
+              </p>
+              <p className="mt-4">
+                We monitor developments in Swiss and European AI regulation and will update our practices and disclosures accordingly.
+              </p>
+            </section>
+
+            {/* Data Protection Impact Assessment */}
+            <section>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Data Protection Impact Assessment</h2>
+              <p>
+                We have conducted a Data Protection Impact Assessment (DPIA) for our AI-based profile processing in accordance with Art. 22 revFADP. This assessment evaluates the risks of automated profiling and ensures appropriate safeguards are in place, including the right to human review of automated decisions.
+              </p>
+              <p className="mt-4">
+                The DPIA is reviewed periodically and updated when processing activities change materially. If you have questions about our DPIA or the safeguards we have implemented, please contact our Data Protection Advisor at <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>.
               </p>
             </section>
 
@@ -379,7 +400,7 @@ const PrivacyPage: React.FC = () => {
               <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Contact Us</h2>
               <p>For privacy-related questions or concerns:</p>
               <div className="mt-4 p-4 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
-                <p><strong>Data Protection Contact:</strong> {COMPANY.owner}</p>
+                <p><strong>Data Protection Advisor (Art. 10 revFADP):</strong> {COMPANY.owner}</p>
                 <p><strong>Email:</strong> <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a></p>
                 <p><strong>General Inquiries:</strong> <a href={`mailto:${COMPANY.contacts.support}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.support}</a></p>
               </div>
@@ -388,9 +409,16 @@ const PrivacyPage: React.FC = () => {
             {/* Footer */}
             <div className="mt-12 pt-8 border-t border-[var(--border-subtle)]">
               <p className="text-sm text-[var(--text-tertiary)]">
-                <strong>Last updated:</strong> {COMPANY.terms.lastUpdated}<br />
+                <strong>Last updated:</strong> {COMPANY.privacyPolicy.lastUpdated}<br />
                 <strong>Contact:</strong> <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>
               </p>
+              <div className="mt-4 text-xs text-[var(--text-tertiary)]">
+                <p className="font-semibold mb-1">Version History</p>
+                <ul className="space-y-1">
+                  <li>Version 1.0 &mdash; 25 January 2026: Initial publication.</li>
+                  <li>Version 1.1 &mdash; 29 January 2026: Added DPIA reference; added RoPA statement; formalised DPA designation (Art. 10 revFADP); added employment law references (OR Art. 328b, AVG/AVV); restructured legal bases; added AI regulation monitoring.</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
