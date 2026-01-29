@@ -81,6 +81,29 @@ const ImpressumPage: React.FC = () => {
               </p>
             </section>
 
+            {/* Legal Details */}
+            <section>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Legal Details</h2>
+              <div className="p-6 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)] space-y-3">
+                <div>
+                  <p className="text-sm text-[var(--text-tertiary)]">Legal Form</p>
+                  <p className="text-[var(--text-primary)]">{COMPANY.legalForm}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--text-tertiary)]">Owner / Responsible Person</p>
+                  <p className="text-[var(--text-primary)]">{COMPANY.owner}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--text-tertiary)]">UID (Unternehmens-Identifikationsnummer)</p>
+                  <p className="text-[var(--text-primary)]">{COMPANY.uid}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--text-tertiary)]">Commercial Register Number</p>
+                  <p className="text-[var(--text-primary)]">{COMPANY.registerNumber}</p>
+                </div>
+              </div>
+            </section>
+
             {/* Contact */}
             <section>
               <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Contact</h2>

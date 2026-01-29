@@ -58,6 +58,9 @@ const PrivacyPage: React.FC = () => {
                 We are committed to protecting your privacy and complying with the Swiss Federal Act on Data Protection (revFADP) and, where applicable, the EU General Data Protection Regulation (GDPR).
               </p>
               <p className="mt-4">
+                Our platform is intended for individuals who are legally eligible to work. We do not knowingly collect personal data from individuals under 16 years of age.
+              </p>
+              <p className="mt-4">
                 This Privacy Policy should be read together with our <Link href="/terms" className="underline hover:text-[var(--gold)]">Terms &amp; Conditions</Link>.
               </p>
             </section>
@@ -152,6 +155,31 @@ const PrivacyPage: React.FC = () => {
               </div>
             </section>
 
+            {/* Automated Decision-Making */}
+            <section>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Automated Decision-Making and Profiling</h2>
+              <p>
+                We use artificial intelligence (OpenAI) to assist with profile analysis and anonymisation. This involves automated processing of your CV and professional data to:
+              </p>
+              <ul className="list-disc list-outside ml-6 space-y-1 mt-4">
+                <li>Extract and structure professional information from your CV</li>
+                <li>Generate an anonymised version of your profile for employer viewing</li>
+                <li>Detect and extract profile pictures from uploaded documents</li>
+                <li>Categorise skills and experience for matching purposes</li>
+              </ul>
+              <p className="mt-4">
+                These automated processes influence how your profile is presented to employers. Under Swiss data protection law, you have the right to:
+              </p>
+              <ul className="list-disc list-outside ml-6 space-y-1 mt-4">
+                <li>Be informed about automated decisions that significantly affect you</li>
+                <li>Express your view on such decisions</li>
+                <li>Request that an automated decision be reviewed by a person</li>
+              </ul>
+              <p className="mt-4">
+                To request human review of any automated processing of your profile, contact us at <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>.
+              </p>
+            </section>
+
             {/* Third-Party Processors */}
             <section>
               <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Third-Party Service Providers</h2>
@@ -179,7 +207,7 @@ const PrivacyPage: React.FC = () => {
               </div>
 
               <p className="mt-4">
-                All processors are bound by Data Processing Agreements (DPAs) that require them to protect your data in accordance with revFADP and implement appropriate security measures.
+                All processors are bound by Data Processing Agreements (DPAs) aligned with European data protection standards. These agreements require processors to implement appropriate security measures and restrict how they may process your data.
               </p>
             </section>
 
@@ -196,7 +224,7 @@ const PrivacyPage: React.FC = () => {
                 <li>Is only enabled after you provide consent</li>
               </ul>
               <p className="mt-4">
-                You can manage your analytics preferences through our cookie consent banner. If you reject analytics cookies, no usage data will be collected.
+                You can manage your analytics preferences through our consent banner. If you decline analytics consent, no usage data will be collected.
               </p>
             </section>
 
@@ -210,8 +238,8 @@ const PrivacyPage: React.FC = () => {
                 When transferring data internationally, we ensure adequate protection through:
               </p>
               <ul className="list-disc list-outside ml-6 space-y-1 mt-2">
-                <li><strong>Standard Contractual Clauses (SCCs)</strong> approved by the Swiss Federal Data Protection and Information Commissioner</li>
-                <li><strong>Swiss-specific data protection addenda</strong> incorporated into processor contracts</li>
+                <li><strong>Standard Contractual Clauses (SCCs)</strong> as recognised by the Swiss Federal Data Protection and Information Commissioner</li>
+                <li><strong>Contractual data protection obligations</strong> within our processor agreements</li>
                 <li><strong>Technical safeguards</strong> including encryption in transit and at rest</li>
               </ul>
               <p className="mt-4">
@@ -269,22 +297,19 @@ const PrivacyPage: React.FC = () => {
 
               <ul className="list-disc list-outside ml-6 space-y-3 mt-4">
                 <li>
-                  <strong>Right to access (Art. 25):</strong> Request information about what personal data we hold about you and how it is processed.
+                  <strong>Right to access:</strong> Request information about what personal data we hold about you and how it is processed.
                 </li>
                 <li>
-                  <strong>Right to correction (Art. 26):</strong> Request correction of inaccurate or incomplete data.
+                  <strong>Right to correction:</strong> Request correction of inaccurate or incomplete data.
                 </li>
                 <li>
-                  <strong>Right to deletion (Art. 27):</strong> Request deletion of your personal data (subject to legal retention requirements).
+                  <strong>Right to deletion:</strong> Request deletion of your personal data (subject to legal retention requirements).
                 </li>
                 <li>
-                  <strong>Right to object (Art. 21):</strong> Object to processing for direct marketing or other purposes.
+                  <strong>Right to object:</strong> Object to processing that infringes your rights, including for direct marketing purposes.
                 </li>
                 <li>
-                  <strong>Right to data portability (Art. 28):</strong> Receive your data in a standard format (e.g., CSV, JSON).
-                </li>
-                <li>
-                  <strong>Right to restrict processing (Art. 28a):</strong> Request limitation of processing in certain circumstances.
+                  <strong>Right to data portability:</strong> Request your personal data in a commonly used electronic format.
                 </li>
                 <li>
                   <strong>Right to withdraw consent:</strong> Withdraw your consent at any time (this does not affect lawfulness of prior processing).
@@ -322,8 +347,7 @@ const PrivacyPage: React.FC = () => {
               <ul className="list-disc list-outside ml-6 space-y-1 mt-4">
                 <li>Encryption of data in transit (TLS/HTTPS) and at rest</li>
                 <li>Access controls and authentication requirements</li>
-                <li>Regular security assessments</li>
-                <li>Employee training on data protection</li>
+                <li>Periodic review of security practices</li>
                 <li>Incident response procedures</li>
               </ul>
               <p className="mt-4">

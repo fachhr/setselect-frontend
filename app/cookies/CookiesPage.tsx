@@ -53,7 +53,7 @@ const CookiesPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex-1">
                   <p className="text-sm">
-                    Analytics cookies:{' '}
+                    Analytics:{' '}
                     <span className={`font-semibold ${consent === 'accepted' ? 'text-green-500' : consent === 'rejected' ? 'text-red-500' : 'text-[var(--text-tertiary)]'}`}>
                       {consent === 'accepted' ? 'Enabled' : consent === 'rejected' ? 'Disabled' : 'Not set'}
                     </span>
@@ -88,20 +88,11 @@ const CookiesPage: React.FC = () => {
               </div>
             </section>
 
-            {/* What Are Cookies */}
+            {/* Cookies We Use */}
             <section>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">What Are Cookies?</h2>
-              <p>
-                Cookies are small text files stored on your device when you visit a website. They help websites remember information about your visit, such as your preferences, which can make your next visit easier and the site more useful to you.
-              </p>
-            </section>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Cookies We Use</h2>
 
-            {/* How We Use Cookies */}
-            <section>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">How We Use Cookies</h2>
-              <p>We use a minimal set of cookies, categorised as follows:</p>
-
-              <h3 className="font-semibold text-[var(--text-primary)] mt-6 mb-3">Essential Cookies</h3>
+              <h3 className="font-semibold text-[var(--text-primary)] mb-3">Essential Cookies</h3>
               <p className="mb-4">
                 These cookies are necessary for the website to function and cannot be switched off. They are usually only set in response to actions you take, such as setting your privacy preferences.
               </p>
@@ -129,100 +120,36 @@ const CookiesPage: React.FC = () => {
                 </table>
               </div>
 
-              <h3 className="font-semibold text-[var(--text-primary)] mt-6 mb-3">Analytics Cookies (Optional)</h3>
-              <p className="mb-4">
-                These cookies help us understand how visitors interact with our website. They are only enabled if you give consent.
+            </section>
+
+            {/* Analytics */}
+            <section>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Analytics</h2>
+              <p>
+                We use Vercel Analytics to understand how visitors interact with our website. This service is <strong className="text-[var(--text-primary)]">cookieless</strong> — it does not store cookies on your device and does not collect personal identifiers. Data collected includes page views, referrer, and country (anonymised).
               </p>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
-                  <thead>
-                    <tr className="border-b border-[var(--border-subtle)]">
-                      <th className="text-left py-2 pr-4 font-semibold text-[var(--text-primary)]">Service</th>
-                      <th className="text-left py-2 pr-4 font-semibold text-[var(--text-primary)]">Purpose</th>
-                      <th className="text-left py-2 font-semibold text-[var(--text-primary)]">Data Collected</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-[var(--border-subtle)]">
-                      <td className="py-3 pr-4 font-medium">Vercel Analytics</td>
-                      <td className="py-3 pr-4">Website usage analytics</td>
-                      <td className="py-3">Page views, referrer, country (anonymised)</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p className="mt-4 text-sm text-[var(--text-tertiary)]">
-                Vercel Analytics is a privacy-friendly analytics solution that does not use cookies for tracking and does not collect personal identifiers.
+              <p className="mt-3 text-sm text-[var(--text-tertiary)]">
+                Vercel Analytics is only active when you have given consent via the preference panel above.
               </p>
             </section>
 
-            {/* Managing Cookies */}
+            {/* Third-Party Services */}
             <section>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Managing Your Preferences</h2>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Third-Party Services</h2>
               <p>
-                You can manage your cookie preferences at any time using the controls at the top of this page, or through our cookie consent banner when you first visit the site.
-              </p>
-              <p className="mt-4">
-                You can also control cookies through your browser settings. Most browsers allow you to:
-              </p>
-              <ul className="list-disc list-outside ml-6 space-y-1 mt-2">
-                <li>View what cookies are stored and delete them individually</li>
-                <li>Block third-party cookies</li>
-                <li>Block cookies from specific websites</li>
-                <li>Block all cookies</li>
-                <li>Delete all cookies when you close your browser</li>
-              </ul>
-              <p className="mt-4 text-sm text-[var(--text-tertiary)]">
-                Note: Blocking all cookies may affect the functionality of some websites.
-              </p>
-            </section>
-
-            {/* Third-Party Cookies */}
-            <section>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Third-Party Cookies</h2>
-              <p>
-                We use Google reCAPTCHA to protect our forms from spam and abuse. This service may set cookies on your device. For more information, see{' '}
+                We use Google reCAPTCHA to protect our forms from spam and abuse. This service may set cookies on your device (classified as essential). For more information, see{' '}
                 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--gold)]">
                   Google&apos;s Privacy Policy
                 </a>.
               </p>
             </section>
 
-            {/* Updates */}
-            <section>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Updates to This Policy</h2>
+            <div className="pt-6 border-t border-[var(--border-subtle)] text-sm text-[var(--text-tertiary)]">
               <p>
-                We may update this Cookie Policy from time to time. Any changes will be posted on this page with an updated revision date.
+                For details on how we process personal data, see our{' '}
+                <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link>.
               </p>
-            </section>
-
-            {/* Contact */}
-            <section>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Contact Us</h2>
-              <p>
-                If you have questions about our use of cookies, please contact us at{' '}
-                <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">
-                  {COMPANY.contacts.privacy}
-                </a>.
-              </p>
-            </section>
-
-            {/* Related Links */}
-            <section>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Related Policies</h2>
-              <ul className="list-disc list-outside ml-6 space-y-2">
-                <li>
-                  <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link> – How we collect and use your personal data
-                </li>
-                <li>
-                  <Link href="/terms" className="underline hover:text-[var(--gold)]">Terms & Conditions</Link> – Rules for using our platform
-                </li>
-              </ul>
-            </section>
-
-            {/* Footer */}
-            <div className="mt-12 pt-8 border-t border-[var(--border-subtle)]">
-              <p className="text-sm text-[var(--text-tertiary)]">
+              <p className="mt-2">
                 <strong>Last updated:</strong> {COMPANY.terms.lastUpdated}
               </p>
             </div>

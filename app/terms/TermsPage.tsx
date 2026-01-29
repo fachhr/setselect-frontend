@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { COMPANY, THIRD_PARTY_PROCESSORS, FDPIC_CONTACT } from '@/lib/legal/constants';
+import { COMPANY, FDPIC_CONTACT } from '@/lib/legal/constants';
 
 const sections = [
   { id: 'introduction', title: '1. Introduction and scope' },
@@ -177,7 +177,10 @@ const TermsPage: React.FC = () => {
 
                 <h3 className="font-semibold text-[var(--text-primary)]">3.5 Use of AI and automated services</h3>
                 <p>
-                  You acknowledge that the Agency uses third-party artificial intelligence and automated services (including Claude, owned by Anthropic) to assist with profile analysis, anonymisation, matching, and platform operations. By uploading your data, you consent to the processing of your personal data by these AI services as described in the Privacy Policy.
+                  You acknowledge that the Agency uses third-party artificial intelligence and automated services (including OpenAI) to assist with profile analysis, anonymisation, matching, and platform operations. By uploading your data, you consent to the processing of your personal data by these AI services as described in the Privacy Policy.
+                </p>
+                <p>
+                  You have the right to request human review of any automated decisions that significantly affect how your profile is presented or processed. To request a review, contact the Agency&apos;s data-protection team at <a href={`mailto:${COMPANY.contacts.privacy}`} className="underline hover:text-[var(--gold)]">{COMPANY.contacts.privacy}</a>.
                 </p>
               </div>
             </section>
@@ -218,9 +221,9 @@ const TermsPage: React.FC = () => {
                 <p>You explicitly consent to:</p>
                 <ul className="list-[lower-alpha] list-outside ml-6 space-y-2">
                   <li>The <strong>storage and processing of your personal data</strong> by the Agency and its authorised third-party <strong>service providers</strong> (i.e. data processors acting on the Agency&apos;s behalf), including cloud infrastructure and hosting providers, artificial intelligence and machine-learning platforms, backup, security, logging, and monitoring services, and payment processors and analytics providers.</li>
-                  <li>The <strong>transfer of your personal data</strong> to countries <strong>outside Switzerland and the European Economic Area</strong> (e.g. the United States), where such transfers are made under <strong>Standard Contractual Clauses (SCCs)</strong>, Swiss-specific data-protection addenda, or other legally recognised safeguards (as detailed in the Privacy Policy).</li>
+                  <li>The <strong>transfer of your personal data</strong> to countries <strong>outside Switzerland and the European Economic Area</strong> (e.g. the United States), where such transfers are made under <strong>Standard Contractual Clauses (SCCs)</strong> as recognised by the Swiss Federal Data Protection and Information Commissioner, contractual data protection obligations, or other legally recognised safeguards (as detailed in the Privacy Policy).</li>
                   <li>The <strong>disclosure of your full CV, contact details, and professional information</strong> to employers that use the Agency&apos;s platform, if you have given explicit consent or initiated contact with them.</li>
-                  <li>The processing of your <strong>particularly sensitive personal data</strong> (as defined under Swiss data-protection law), if you have voluntarily provided it (e.g. health information, biometric data, ethnic background, union membership, political affiliation). You must give <strong>separate, explicit consent</strong> for any such sensitive data to be processed.</li>
+                  <li>The processing of your <strong>particularly sensitive personal data</strong> (as defined under Swiss data-protection law), if you have voluntarily provided it (e.g. health information, biometric data, ethnic background, union membership, political affiliation). By voluntarily including such information in your CV or profile, you consent to its processing as described in the <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link>.</li>
                 </ul>
 
                 <h3 className="font-semibold text-[var(--text-primary)]">4.5 Withdrawal of consent</h3>
@@ -251,51 +254,26 @@ const TermsPage: React.FC = () => {
               <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">5. Third-party services, data transfers, and processor responsibilities</h2>
               <div className="space-y-4">
                 <h3 className="font-semibold text-[var(--text-primary)]">5.1 Use of third-party providers</h3>
-                <p>The platform relies on <strong>third-party software, cloud infrastructure, and service providers</strong> to operate, secure, store, and process your data. These providers include:</p>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse">
-                    <thead>
-                      <tr className="border-b border-[var(--border-subtle)]">
-                        <th className="text-left py-2 pr-4 font-semibold text-[var(--text-primary)]">Provider</th>
-                        <th className="text-left py-2 pr-4 font-semibold text-[var(--text-primary)]">Role</th>
-                        <th className="text-left py-2 font-semibold text-[var(--text-primary)]">Purpose</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {THIRD_PARTY_PROCESSORS.map((processor) => (
-                        <tr key={processor.provider} className="border-b border-[var(--border-subtle)]">
-                          <td className="py-2 pr-4 font-medium">{processor.provider}</td>
-                          <td className="py-2 pr-4">{processor.role}</td>
-                          <td className="py-2">{processor.purpose}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <p>The platform relies on <strong>third-party software, cloud infrastructure, and service providers</strong> to operate, secure, store, and process your data. For a complete list of our third-party service providers and their roles, see our <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link>.</p>
 
                 <h3 className="font-semibold text-[var(--text-primary)]">5.2 Your acknowledgement</h3>
                 <p>You acknowledge and accept that:</p>
                 <ul className="list-[lower-alpha] list-outside ml-6 space-y-2">
                   <li>These providers act as <strong>data processors</strong> (or sub-processors) under Swiss data-protection law and process your data <strong>on behalf of</strong> the Agency.</li>
-                  <li>The Agency has <strong>contractually obligated</strong> these providers to comply with data-protection law and implement appropriate security measures (via <strong>Data Processing Agreements</strong>, or &ldquo;DPAs&rdquo;).</li>
+                  <li>The Agency has contractually obligated these providers to implement appropriate data protection measures. See our <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link> for details on Data Processing Agreements and safeguards.</li>
                   <li>Your data may be <strong>stored or processed in Switzerland, the European Economic Area (EEA), or other countries</strong> (including the United States), depending on the provider&apos;s infrastructure and operations.</li>
                   <li>The Agency <strong>cannot guarantee</strong> that third-party services will be <strong>free from errors, outages, security incidents, or data breaches</strong>.</li>
                   <li>You use the platform and third-party services <strong>at your own risk</strong>, understanding that no system is 100% secure.</li>
                 </ul>
 
                 <h3 className="font-semibold text-[var(--text-primary)]">5.3 Data transfers abroad (Non-EEA countries)</h3>
-                <ul className="list-[lower-alpha] list-outside ml-6 space-y-2">
-                  <li>Where data is transferred to countries <strong>without equivalent data protection</strong> (e.g. the United States): The Agency relies on <strong>Standard Contractual Clauses (SCCs)</strong> or <strong>Swiss-specific data-protection addenda</strong> to ensure adequate safeguards. These clauses are incorporated into contracts with Supabase, Vercel, Railway, and other providers.</li>
-                  <li>You consent to these transfers, understanding that: Laws in non-EEA countries may require data access by government authorities. Some data-protection rights available in Switzerland may not be available in other jurisdictions.</li>
-                  <li>See the <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link> for detailed information on countries, safeguards, and your rights regarding international transfers.</li>
-                </ul>
+                <p>Where data is transferred to countries without equivalent data protection, the Agency relies on Standard Contractual Clauses and contractual data protection obligations. You consent to these transfers, understanding that laws in non-EEA countries may require data access by government authorities. See our <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link> for details on international transfer safeguards.</p>
 
                 <h3 className="font-semibold text-[var(--text-primary)]">5.4 The Agency&apos;s responsibility for processors</h3>
                 <p>The Agency remains the <strong>data controller</strong> and is responsible for:</p>
                 <ul className="list-disc list-outside ml-6 space-y-1">
                   <li><strong>Carefully selecting</strong> processors based on their security capabilities and data-protection compliance.</li>
-                  <li><strong>Contracting with processors</strong> under Data Processing Agreements (DPAs) that bind them to revFADP requirements.</li>
+                  <li><strong>Contracting with processors</strong> under agreements that require appropriate data protection measures (see <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link> for details).</li>
                   <li><strong>Monitoring and auditing</strong> processors&apos; security and compliance measures.</li>
                   <li><strong>Responding to data-subject rights requests</strong> (access, deletion, etc.).</li>
                 </ul>
@@ -328,10 +306,10 @@ const TermsPage: React.FC = () => {
                 <ul className="list-disc list-outside ml-6 space-y-1">
                   <li>Encryption of data in transit and at rest.</li>
                   <li>Secure authentication (passwords, multi-factor authentication).</li>
-                  <li>Regular security audits and vulnerability assessments.</li>
+                  <li>Periodic review of security practices.</li>
                   <li>Network firewalls, intrusion detection, and logging.</li>
                   <li>Access controls and least-privilege principles.</li>
-                  <li>Employee training on data security and confidentiality.</li>
+                  <li>Ongoing data protection awareness by the controller.</li>
                   <li>Incident response and breach-notification procedures.</li>
                 </ul>
                 <p>Measures are aligned with the <strong>Swiss Data Protection Authority (FDPIC)</strong> guidelines and <strong>revFADP Article 8</strong> requirements.</p>
@@ -430,16 +408,16 @@ const TermsPage: React.FC = () => {
               <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">8. Your rights under Swiss data-protection law</h2>
               <div className="space-y-4">
                 <h3 className="font-semibold text-[var(--text-primary)]">8.1 Rights under revFADP</h3>
-                <p>Under the revised <strong>Federal Act on Data Protection (revFADP)</strong>, you have the following rights:</p>
-                <ul className="list-[lower-alpha] list-outside ml-6 space-y-2">
-                  <li><strong>Right to information / Access (Article 25)</strong>: You may request information about what personal data the Agency holds about you, how it is processed, and for what purposes. The Agency must provide this information within <strong>30 days</strong> of your request, usually <strong>free of charge</strong>.</li>
-                  <li><strong>Right to correction (Article 26)</strong>: You may request that the Agency correct inaccurate, incomplete, or outdated personal data.</li>
-                  <li><strong>Right to deletion/erasure (Article 27)</strong>: You may request that the Agency delete your personal data, especially if: the data is no longer necessary for the original purpose; you withdraw your consent; the processing is unlawful; you exercise your right to object. <strong>Exception</strong>: The Agency may retain data as required by Swiss law (e.g. tax records for {COMPANY.dataRetentionYears} years).</li>
-                  <li><strong>Right to objection (Article 21)</strong>: You may object to the processing of your personal data for certain purposes (e.g. direct marketing), and the Agency must cease processing unless it has a compelling legal reason to continue.</li>
-                  <li><strong>Right to data portability (Article 28)</strong>: You may request that the Agency transfer your personal data (that you provided or that is automatically processed under your consent or a contract) to you or another data controller in a <strong>standard electronic format</strong> (e.g. CSV, JSON).</li>
-                  <li><strong>Right to restrict processing (Article 28a)</strong>: You may request that the Agency restrict processing of your data in certain circumstances (e.g. pending verification of accuracy).</li>
-                  <li><strong>Right to be informed of data-subject rights</strong>: The Agency must inform you of your rights in plain, easily understandable language.</li>
+                <p>Under the revised <strong>Federal Act on Data Protection (revFADP)</strong>, you have rights including:</p>
+                <ul className="list-disc list-outside ml-6 space-y-1">
+                  <li>Access to your personal data</li>
+                  <li>Correction of inaccurate data</li>
+                  <li>Deletion of your data (subject to legal retention requirements)</li>
+                  <li>Objection to processing</li>
+                  <li>Data portability</li>
+                  <li>Withdrawal of consent</li>
                 </ul>
+                <p className="mt-4">For detailed descriptions of each right and how they apply, see our <Link href="/privacy" className="underline hover:text-[var(--gold)]">Privacy Policy</Link>.</p>
 
                 <h3 className="font-semibold text-[var(--text-primary)]">8.2 How to exercise your rights</h3>
                 <p>To exercise any of the above rights, please contact the Agency&apos;s <strong>data-protection team</strong> at:</p>
@@ -687,12 +665,13 @@ const TermsPage: React.FC = () => {
                 <p>Unauthorised use is a violation of intellectual-property law and these Terms, and may result in legal action and damages.</p>
 
                 <h3 className="font-semibold text-[var(--text-primary)]">13.3 Your IP</h3>
-                <p>You retain <strong>ownership of your CV, profile information, and uploaded content</strong>. By uploading, you grant the Agency a <strong>non-exclusive, royalty-free, worldwide, perpetual license</strong> to:</p>
+                <p>You retain <strong>ownership of your CV, profile information, and uploaded content</strong>. By uploading, you grant the Agency a <strong>non-exclusive, royalty-free, worldwide license</strong> to:</p>
                 <ul className="list-disc list-outside ml-6 space-y-1">
                   <li>Store, process, and display your CV and profile.</li>
                   <li>Anonymise and disclose your profile to employers.</li>
                   <li>Use your data for analytics, research, and platform improvement (in anonymised form).</li>
                 </ul>
+                <p className="mt-2">This license terminates upon deletion of your profile and data, except for anonymised data that no longer identifies you.</p>
               </div>
             </section>
 

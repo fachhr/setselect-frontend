@@ -18,7 +18,7 @@ export function CookieBanner() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
               <p className="text-sm text-[var(--text-secondary)]">
-                We use cookies to analyse website traffic and improve your experience.{' '}
+                We use analytics to understand how visitors use our website and improve your experience.{' '}
                 <Link href="/cookies" className="underline hover:text-[var(--gold)]">
                   Learn more
                 </Link>
