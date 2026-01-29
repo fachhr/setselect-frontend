@@ -14,13 +14,13 @@ export const COMPANY = {
   jurisdiction: 'Aargau',
   owner: 'Silvia Filipova',
   contacts: {
-    privacy: 'privacy@setselect.io',
-    legal: 'legal@setselect.io',
-    support: 'support@setselect.io',
+    privacy: 'hello@setberry.com',
+    legal: 'hello@setberry.com',
+    support: 'hello@setberry.com',
   },
   terms: {
     lastUpdated: '2026-01-25',
-    effectiveDate: '[TO BE SET]',
+    effectiveDate: '2026-01-25',
   },
   licenses: {
     cantonal: 'Zurich (received)',
@@ -48,7 +48,7 @@ export const THIRD_PARTY_PROCESSORS = [
     purpose: 'Running platform services',
   },
   {
-    provider: 'Claude (Anthropic)',
+    provider: 'OpenAI',
     role: 'AI services',
     purpose: 'Profile analysis and anonymisation',
   },

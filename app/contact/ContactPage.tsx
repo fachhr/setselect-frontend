@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Send, Mail, MessageSquare } from 'lucide-react';
 import { Button, Input, TextArea } from '@/components/ui';
+import { COMPANY } from '@/lib/legal/constants';
 
 const ContactPage: React.FC = () => {
     const router = useRouter();
@@ -76,10 +77,10 @@ const ContactPage: React.FC = () => {
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-3">Office</h3>
                                 <p className="text-[var(--text-secondary)] leading-relaxed text-sm">
-                                    SetSelect<br />
-                                    Bahnhofstrasse 10<br />
-                                    8001 Zürich<br />
-                                    Switzerland
+                                    {COMPANY.tradingAs}<br />
+                                    {COMPANY.address.street}<br />
+                                    {COMPANY.address.postalCode} {COMPANY.address.city}<br />
+                                    {COMPANY.address.country}
                                 </p>
                             </div>
 
