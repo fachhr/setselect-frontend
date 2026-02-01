@@ -34,10 +34,9 @@ yarn-error.log*
 .env
 SETSELECT_CREDENTIALS.txt
 
-# deployment documentation (internal / contains secrets)
+# deployment documentation (contains secrets)
 DEPLOYMENT_STATUS.md
 PRODUCTION_DEPLOYMENT_CHECKLIST.md
-INFRASTRUCTURE.md
 
 # vercel
 .vercel
