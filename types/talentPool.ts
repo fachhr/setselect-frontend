@@ -68,6 +68,39 @@ export interface TalentPoolProfile {
   previous_roles?: { role: string; duration: string; location?: string }[] | null; // Anonymized job history
 }
 
+// Display-only profile from talent_profiles table (zero PII)
+export interface TalentProfile {
+  id: string;
+  profile_id: string;
+  talent_id: string | null;
+  years_of_experience: number | null;
+  work_eligibility: string | null;
+  desired_roles: string | null;
+  notice_period_months: string | null;
+  desired_locations: string[] | null;
+  desired_other_location: string | null;
+  salary_min: number | null;
+  salary_max: number | null;
+  highlight: string | null;
+  languages: string[] | null;
+  functional_expertise: string[] | null;
+  other_expertise: string | null;
+  profile_bio: string | null;
+  short_summary: string | null;
+  education_history: Record<string, unknown>[] | null;
+  professional_experience: Record<string, unknown>[] | null; // companyName stripped
+  technical_skills: Record<string, unknown>[] | null;
+  soft_skills: Record<string, unknown>[] | null;
+  industry_specific_skills: Record<string, unknown>[] | null;
+  certifications: Record<string, unknown>[] | null;
+  professional_interests: Record<string, unknown>[] | null;
+  extracurricular_activities: Record<string, unknown>[] | null;
+  base_projects: Record<string, unknown>[] | null;
+  base_languages: Record<string, unknown>[] | null;
+  parsing_completed_at: string | null;
+  created_at: string;
+}
+
 export interface CVUploadResponse {
   success: boolean;
   profileId: string;

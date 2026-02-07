@@ -24,6 +24,21 @@
 - **US services (Resend)**: Only the requester's email address is sent to Resend for delivery. If stricter controls are needed, consider an EU-based email provider or ensure Resend's DPA with Standard Contractual Clauses is in place.
 - **Google reCAPTCHA**: Sends browser telemetry (IP, behaviour signals) to Google for scoring. No PII is stored by the application, but Google's own processing may involve US infrastructure. A cookie/privacy notice should disclose this.
 
+## Two-Table Architecture (PII Separation)
+
+The database uses two tables to separate PII from display data:
+
+| Table | Purpose | Contains PII? | Queried by frontend? |
+|-------|---------|---------------|----------------------|
+| `user_profiles` | Complete candidate data (source of truth) | Yes (name, email, phone, LinkedIn, company names) | No (admin/internal only) |
+| `talent_profiles` | Neutralised display data for the website | No | Yes (`/api/talent-pool/list`) |
+
+**How it works:**
+- When a candidate submits the join form, both `user_profiles` (full data) and `talent_profiles` (display fields only) are inserted.
+- When the CV parser completes, a database trigger and application code write parsed fields to **both** tables. `talent_profiles` receives the same data but with `companyName` stripped from `professional_experience` entries.
+- The `/api/talent-pool/list` endpoint queries **only** `talent_profiles`, so even with direct DB access the display table reveals nothing identifying.
+- `talent_profiles.profile_id` is a FK to `user_profiles.id` with `ON DELETE CASCADE`.
+
 ## API Routes & External Services
 
 | Route                              | Method | External Service(s)                     | Description                                                  |

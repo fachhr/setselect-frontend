@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
         // All other fields are NULL and will be filled by parser
         // (education_history, professional_experience, skills, etc.)
       })
-      .select('id, email')
+      .select('id, email, talent_id')
       .single();
 
     if (profileError) {
@@ -115,6 +115,32 @@ export async function POST(req: NextRequest) {
         { success: false, error: 'Failed to create profile' },
         { status: 500 }
       );
+    }
+
+    // Create talent_profiles record (display-only, PII-free)
+    const { error: talentProfileError } = await supabaseAdmin
+      .from('talent_profiles')
+      .insert({
+        profile_id: profile.id,
+        talent_id: profile.talent_id,
+        years_of_experience: validatedData.years_of_experience,
+        work_eligibility: validatedData.work_eligibility || null,
+        desired_roles: validatedData.desired_roles || null,
+        notice_period_months: validatedData.notice_period_months,
+        desired_locations: validatedData.desired_locations,
+        desired_other_location: validatedData.desired_other_location || null,
+        salary_min: validatedData.salary_min,
+        salary_max: validatedData.salary_max,
+        highlight: validatedData.highlight || null,
+        languages: languages || null,
+        functional_expertise: validatedData.functional_expertise || null,
+        other_expertise: validatedData.other_expertise || null,
+        // Parser-populated fields left NULL — filled by trigger + parser
+      });
+
+    if (talentProfileError) {
+      console.error('talent_profiles insert error:', talentProfileError);
+      // Non-fatal — user_profiles is the source of truth
     }
 
     // Create parsing job

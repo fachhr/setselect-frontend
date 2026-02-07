@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
     const sortBy = searchParams.get('sort_by') || 'created_at';
     const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 100);
 
-    let query = supabaseAdmin.from('user_profiles').select('*');
+    let query = supabaseAdmin.from('talent_profiles').select('*');
 
     // Only show profiles where parsing is complete
     query = query.not('parsing_completed_at', 'is', null);
