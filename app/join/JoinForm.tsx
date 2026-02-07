@@ -152,6 +152,14 @@ const JoinForm: React.FC = () => {
                 }
             }
 
+            // Clean semicolon-delimited text: split, trim, remove empty/punctuation-only entries
+            const cleanedDesiredRoles = data.desired_roles?.trim()
+                ? data.desired_roles.split(';').map((r: string) => r.trim()).filter((r: string) => r.length > 0 && !/^[\s,]+$/.test(r)).join('; ')
+                : undefined;
+            const cleanedOtherExpertise = data.other_expertise?.trim()
+                ? data.other_expertise.split(';').map((e: string) => e.trim()).filter((e: string) => e.length > 0 && !/^[\s,]+$/.test(e)).join('; ')
+                : undefined;
+
             // STEP 2: Submit Profile
             const profileData = {
                 contact_first_name: data.contact_first_name,
@@ -164,7 +172,7 @@ const JoinForm: React.FC = () => {
                 phoneNumber: data.phoneNumber,
                 years_of_experience: data.years_of_experience,
                 work_eligibility: data.work_eligibility,
-                desired_roles: data.desired_roles,
+                desired_roles: cleanedDesiredRoles || undefined,
                 notice_period_months: data.notice_period_months,
                 desired_locations: data.desired_locations,
                 desired_other_location: data.desired_other_location || undefined,
@@ -173,7 +181,7 @@ const JoinForm: React.FC = () => {
                 languages: processedLanguages.length > 0 ? processedLanguages : null,
                 highlight: data.highlight || undefined,
                 functional_expertise: data.functional_expertise,
-                other_expertise: data.other_expertise || undefined,
+                other_expertise: cleanedOtherExpertise || undefined,
                 cvStoragePath,
                 originalFilename,
                 accepted_terms: data.accepted_terms,
