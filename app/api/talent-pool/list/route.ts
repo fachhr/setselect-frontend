@@ -207,7 +207,8 @@ export async function GET(req: NextRequest) {
         desired_roles: profile.desired_roles || null,
         profile_bio: profile.profile_bio || null,
         short_summary: profile.short_summary || null,
-        previous_roles: previousRoles.length > 0 ? previousRoles : null
+        previous_roles: previousRoles.length > 0 ? previousRoles : null,
+        desired_other_location: profile.desired_other_location?.trim() || null,
       };
     });
 
