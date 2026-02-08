@@ -398,7 +398,6 @@ export default function HomeContent() {
         highlight: string;
         expertise: string;
         experience: string;
-        seniority: string[];
         salary: string;
         education: string;
         cantons: string[];
@@ -408,7 +407,7 @@ export default function HomeContent() {
         entryDate: string;
     }>({
         id: '', role: '', previousRoles: '', highlight: '', expertise: '', experience: '',
-        seniority: [], salary: '', education: '', cantons: [],
+        salary: '', education: '', cantons: [],
         workPermit: [], availability: '', languages: [], entryDate: ''
     });
 
@@ -550,9 +549,6 @@ export default function HomeContent() {
 
                 // Handle multi-select array filters
                 if (Array.isArray(filterValue)) {
-                    if (key === 'seniority') {
-                        return filterValue.includes(candidate.seniority);
-                    }
                     if (key === 'cantons') {
                         return candidate.cantons.some(c => filterValue.includes(c));
                     }
@@ -575,6 +571,7 @@ export default function HomeContent() {
                     if (!candidate.previousRoles || candidate.previousRoles.length === 0) return false;
                     return candidate.previousRoles.some(r =>
                         r.role.toLowerCase().includes(searchVal) ||
+                        (r.location || '').toLowerCase().includes(searchVal) ||
                         r.duration.toLowerCase().includes(searchVal)
                     );
                 }
@@ -773,11 +770,6 @@ export default function HomeContent() {
                 case 'experience':
                     aValue = parseInt(a.experience) || 0;
                     bValue = parseInt(b.experience) || 0;
-                    break;
-                case 'seniority':
-                    const seniorityOrder = { 'Junior': 1, 'Mid-level': 2, 'Senior': 3, 'Not specified': 0 };
-                    aValue = seniorityOrder[a.seniority as keyof typeof seniorityOrder] || 0;
-                    bValue = seniorityOrder[b.seniority as keyof typeof seniorityOrder] || 0;
                     break;
                 case 'salary':
                     aValue = a.salaryMin;
@@ -1431,6 +1423,16 @@ export default function HomeContent() {
                                                         onChange={(e) => updateTableFilter('experience', e.target.value)}
                                                     />
                                                 </th>
+                                                {/* Previous Roles */}
+                                                <th className="px-4 py-2">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Search"
+                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
+                                                        value={tableFilters.previousRoles}
+                                                        onChange={(e) => updateTableFilter('previousRoles', e.target.value)}
+                                                    />
+                                                </th>
                                                 {/* Expertise */}
                                                 <th className="px-4 py-2">
                                                     <input
@@ -1458,16 +1460,6 @@ export default function HomeContent() {
                                                         className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
                                                         value={tableFilters.salary}
                                                         onChange={(e) => updateTableFilter('salary', e.target.value)}
-                                                    />
-                                                </th>
-                                                {/* Previous Roles */}
-                                                <th className="px-4 py-2">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Search"
-                                                        className="w-full text-xs border-[var(--border-subtle)] bg-[var(--bg-surface-1)] text-[var(--text-primary)] rounded py-1 px-2 focus:ring-1 focus:ring-[var(--blue)] focus:border-[var(--blue)] font-normal placeholder:text-[var(--text-tertiary)] h-7"
-                                                        value={tableFilters.previousRoles}
-                                                        onChange={(e) => updateTableFilter('previousRoles', e.target.value)}
                                                     />
                                                 </th>
                                                 {/* Highlight */}
