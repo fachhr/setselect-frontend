@@ -146,6 +146,7 @@ interface ApiCandidate {
     years_of_experience: number;
     seniority_level: string;
     preferred_cantons: string[];
+    desired_other_location?: string | null;
     salary_range: { min: number | null; max: number | null };
     availability: string;
     entry_date: string;
@@ -448,6 +449,7 @@ export default function HomeContent() {
                             c.seniority_level === 'mid' ? 'Mid-level' :
                                 c.seniority_level === 'senior' ? 'Senior' : 'Not specified',
                         cantons: c.preferred_cantons || [],
+                        otherLocation: c.desired_other_location || null,
                         salaryMin: c.salary_range?.min || 0,
                         salaryMax: c.salary_range?.max || 0,
                         availability: c.availability || 'Negotiable',
@@ -496,6 +498,7 @@ export default function HomeContent() {
                 (candidate.seniority?.toLowerCase().includes(lowerTerm) ?? false) ||
                 (candidate.workPermit?.toLowerCase().includes(lowerTerm) ?? false) ||
                 (candidate.languages?.some((l) => l.toLowerCase().includes(lowerTerm)) ?? false) ||
+                (candidate.otherLocation?.toLowerCase().includes(lowerTerm) ?? false) ||
                 (candidate.cantons?.some((c) =>
                     c.toLowerCase().includes(lowerTerm) ||
                     WORK_LOCATIONS.find((k) => k.code === c)?.name.toLowerCase().includes(lowerTerm)
@@ -1049,7 +1052,7 @@ export default function HomeContent() {
                                                 : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
                                                 }`}
                                         >
-                                            {location.name}
+                                            {location.code === 'Others' ? 'Other Locations' : location.name}
                                         </button>
                                     ))}
                                 </div>
@@ -1290,7 +1293,7 @@ export default function HomeContent() {
                                                 </div>
                                                 <div className="flex items-start gap-2" title="Preferred Location">
                                                     <MapPin className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
-                                                    <span>{candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}</span>
+                                                    <span>{candidate.cantons.map(code => code === 'Others' ? candidate.otherLocation : WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).filter(Boolean).join('; ')}</span>
                                                 </div>
                                                 <div className="flex items-start gap-2" title="Availability">
                                                     <Clock className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0 mt-0.5" />
@@ -1592,7 +1595,7 @@ export default function HomeContent() {
                                                     {/* Location */}
                                                     <td className="px-4 py-4 text-xs text-[var(--text-secondary)] overflow-hidden">
                                                         <span className="break-words">
-                                                            {candidate.cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join('; ')}
+                                                            {candidate.cantons.map(code => code === 'Others' ? candidate.otherLocation : WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).filter(Boolean).join('; ')}
                                                         </span>
                                                     </td>
                                                     {/* Salary */}

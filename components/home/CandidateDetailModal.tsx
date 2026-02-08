@@ -68,9 +68,12 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     };
 
     // Format canton codes to names
-    const formatCantons = (cantons: string[]): string => {
+    const formatCantons = (cantons: string[], otherLocation?: string | null): string => {
         if (!cantons || cantons.length === 0) return 'Flexible';
-        return cantons.map(code => WORK_LOCATIONS.find(c => c.code === code)?.name ?? code).join(', ');
+        return cantons
+            .map(code => code === 'Others' ? otherLocation : WORK_LOCATIONS.find(c => c.code === code)?.name ?? code)
+            .filter(Boolean)
+            .join(', ');
     };
 
     return (
@@ -111,7 +114,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)]">
                             <div className="flex items-start gap-1.5">
                                 <MapPin className="w-4 h-4 text-[var(--secondary)] mt-0.5" />
-                                {formatCantons(candidate.cantons)}
+                                {formatCantons(candidate.cantons, candidate.otherLocation)}
                             </div>
                             <div className="flex items-start gap-1.5">
                                 <Briefcase className="w-4 h-4 text-[var(--secondary)] mt-0.5" />

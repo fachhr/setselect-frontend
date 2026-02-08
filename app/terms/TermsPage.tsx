@@ -60,6 +60,9 @@ const TermsPage: React.FC = () => {
             <p className="mt-2 text-sm text-[var(--text-tertiary)]">
               Last updated: {COMPANY.terms.lastUpdated} | Effective date: {COMPANY.terms.effectiveDate}
             </p>
+            <p className="mt-3 text-xs text-[var(--text-tertiary)] border border-[var(--border-subtle)] rounded-lg px-4 py-2 bg-[var(--bg-secondary)] inline-block">
+              SetSelect is currently in beta. These terms may be updated as the platform evolves.
+            </p>
           </div>
         </div>
       </div>

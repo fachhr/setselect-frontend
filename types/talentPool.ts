@@ -9,6 +9,7 @@ export interface Candidate {
   experience: string;
   seniority: string;
   cantons: string[];
+  otherLocation?: string | null;
   salaryMin: number;
   salaryMax: number;
   availability: string;
@@ -131,6 +132,7 @@ export interface AnonymizedTalentProfile {
   entry_date: string; // ISO date string
   years_of_experience: number | null;
   preferred_cantons: string[];
+  desired_other_location?: string | null;
   salary_range: {
     min: number | null;
     max: number | null;
