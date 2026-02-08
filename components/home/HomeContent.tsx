@@ -446,7 +446,7 @@ export default function HomeContent() {
                         experience: c.years_of_experience ? `${c.years_of_experience} years` : 'Not specified',
                         seniority: c.seniority_level === 'junior' ? 'Junior' :
                             c.seniority_level === 'mid' ? 'Mid-level' :
-                                c.seniority_level === 'senior' ? 'Senior' : 'Executive',
+                                c.seniority_level === 'senior' ? 'Senior' : 'Not specified',
                         cantons: c.preferred_cantons || [],
                         salaryMin: c.salary_range?.min || 0,
                         salaryMax: c.salary_range?.max || 0,
@@ -772,7 +772,7 @@ export default function HomeContent() {
                     bValue = parseInt(b.experience) || 0;
                     break;
                 case 'seniority':
-                    const seniorityOrder = { 'Junior': 1, 'Mid-level': 2, 'Senior': 3, 'Executive': 4 };
+                    const seniorityOrder = { 'Junior': 1, 'Mid-level': 2, 'Senior': 3, 'Not specified': 0 };
                     aValue = seniorityOrder[a.seniority as keyof typeof seniorityOrder] || 0;
                     bValue = seniorityOrder[b.seniority as keyof typeof seniorityOrder] || 0;
                     break;
@@ -835,7 +835,7 @@ export default function HomeContent() {
                                 Energy &amp; Com&shy;modities Talent Pool
                             </span>
                             <span className="block mt-4 text-lg sm:text-xl font-medium text-[var(--secondary)]">
-                                Coming Soon
+                                Beta
                             </span>
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
@@ -1227,7 +1227,7 @@ export default function HomeContent() {
                                                 <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] px-1.5 py-0.5 rounded">
                                                     {candidate.id}
                                                 </span>
-                                                <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
+                                                <Badge style="default">
                                                     {candidate.seniority}
                                                 </Badge>
                                                 {candidate.workPermit && (

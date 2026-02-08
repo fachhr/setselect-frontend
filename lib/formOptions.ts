@@ -102,7 +102,6 @@ export const SENIORITY_LEVELS: SelectOption[] = [
   { label: 'Junior (0-2 years)', value: 'Junior' },
   { label: 'Mid-level (3-6 years)', value: 'Mid-level' },
   { label: 'Senior (7+ years)', value: 'Senior' },
-  { label: 'Executive / Lead', value: 'Executive' },
 ];
 
 // ====================

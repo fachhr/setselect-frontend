@@ -89,7 +89,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                         <span className="font-mono text-xs uppercase tracking-wider text-[var(--text-tertiary)] bg-[var(--bg-surface-2)] px-2 py-1 rounded border border-[var(--border-subtle)]">
                             {candidate.id}
                         </span>
-                        <Badge style={candidate.seniority === 'Executive' ? 'gold' : 'default'}>
+                        <Badge style="default">
                             {candidate.seniority}
                         </Badge>
                     </div>
