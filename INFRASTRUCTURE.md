@@ -8,6 +8,7 @@
 | **Vercel**         | Hosting & serverless functions | Frankfurt, Germany (fra1)| Transit only   |
 | **Railway**        | CV parser microservice         | Amsterdam, Netherlands   | Transit only   |
 | **Resend**         | Transactional email            | US (global edge)         | Email address  |
+| **OpenAI**           | Grammar/spelling correction  | US (API)                 | No PII         |
 | **Google reCAPTCHA** | Bot protection (v3)          | Global                   | No PII stored  |
 
 ## Data Residency
@@ -15,6 +16,7 @@
 - **At rest**: All personal data (profiles, CVs, contact details) is stored exclusively in **Supabase Zurich**.
 - **In transit (Vercel)**: Serverless functions in Frankfurt receive requests and proxy to Supabase/Railway. No personal data is persisted on Vercel; it passes through during request handling.
 - **In transit (Railway)**: The parser service in Amsterdam receives a CV storage path, reads the file from Supabase, extracts structured data, and writes results back to Supabase. No personal data is persisted on Railway.
+- **OpenAI**: Receives only non-PII form text (highlight, desired roles, expertise, locations, languages) for grammar/spelling correction. Runs asynchronously after form submission via `after()`. If the API call fails, original text remains in DB unchanged.
 - **Resend**: Receives only the requester's email address to send transactional notifications. Resend's processing may occur in the US.
 
 ## Swiss Regulatory Notes (nDSG / revFADP)
@@ -44,7 +46,7 @@ The database uses two tables to separate PII from display data:
 | Route                              | Method | External Service(s)                     | Description                                                  |
 | ---------------------------------- | ------ | --------------------------------------- | ------------------------------------------------------------ |
 | `/api/talent-pool/upload-cv`       | POST   | Supabase Storage                        | Validates and uploads CV file to `talent-pool-cvs` bucket    |
-| `/api/talent-pool/submit`          | POST   | Supabase DB, Google reCAPTCHA, Railway  | Validates form, verifies reCAPTCHA, inserts profile, triggers parser |
+| `/api/talent-pool/submit`          | POST   | Supabase DB, Google reCAPTCHA, Railway, OpenAI | Validates form, verifies reCAPTCHA, inserts profile, triggers parser, async grammar correction |
 | `/api/talent-pool/list`            | GET    | Supabase DB                             | Queries and returns filtered/sorted candidate profiles       |
 | `/api/access/log`                  | POST   | Supabase DB                             | Logs company access events (email + access type)             |
 | `/api/email/request-access`        | POST   | Resend                                  | Sends access-request notification email via Resend           |
@@ -60,6 +62,7 @@ The database uses two tables to separate PII from display data:
 | `PARSER_API_KEY`                  | Parser auth         | Server  |
 | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`  | reCAPTCHA widget    | Client  |
 | `RECAPTCHA_SECRET_KEY`            | reCAPTCHA verify    | Server  |
+| `OPENAI_API_KEY`                  | OpenAI grammar fix  | Server  |
 | `RESEND_API_KEY`                  | Resend email        | Server  |
 
 ## Recommendations

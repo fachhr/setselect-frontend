@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { talentPoolServerSchemaRefined } from '@/lib/validation/talentPoolSchema';
 import { verifyRecaptchaToken } from '@/lib/recaptcha';
+import { correctGrammar } from '@/lib/ai/grammarCorrection';
 
 /**
  * POST /api/talent-pool/submit
@@ -142,6 +144,47 @@ export async function POST(req: NextRequest) {
       console.error('talent_profiles insert error:', talentProfileError);
       // Non-fatal — user_profiles is the source of truth
     }
+
+    // Trigger async grammar correction (runs after response is sent)
+    after(async () => {
+      try {
+        const fieldsToCorrect = {
+          highlight: validatedData.highlight || null,
+          desired_roles: validatedData.desired_roles || null,
+          other_expertise: validatedData.other_expertise || null,
+          desired_other_location: validatedData.desired_other_location || null,
+          languages: languages || null,
+        };
+
+        const hasContent = Object.values(fieldsToCorrect).some(v => v);
+        if (!hasContent) return;
+
+        const corrected = await correctGrammar(fieldsToCorrect);
+
+        // Build update objects with only changed fields
+        const updates: Record<string, string | string[]> = {};
+        for (const [key, value] of Object.entries(corrected)) {
+          if (value && JSON.stringify(value) !== JSON.stringify(fieldsToCorrect[key as keyof typeof fieldsToCorrect])) {
+            updates[key] = value;
+          }
+        }
+
+        if (Object.keys(updates).length === 0) {
+          console.log('[Grammar] No corrections needed');
+          return;
+        }
+
+        console.log('[Grammar] Corrections applied:', updates);
+
+        await Promise.all([
+          supabaseAdmin.from('user_profiles').update(updates).eq('id', profile.id),
+          supabaseAdmin.from('talent_profiles').update(updates).eq('profile_id', profile.id),
+        ]);
+      } catch (err) {
+        console.error('[Grammar] Correction failed:', err);
+        // Non-fatal — original text remains in DB
+      }
+    });
 
     // Create parsing job
     const { data: jobData, error: jobError } = await supabaseAdmin
