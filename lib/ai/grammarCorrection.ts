@@ -72,10 +72,15 @@ export async function correctGrammar(fields: GrammarFields): Promise<GrammarFiel
       }
     }
 
-    // Merge corrections back, preserving null fields that weren't sent
+    // Only keep keys we sent — ignore any extras OpenAI may have added
+    const filtered: Record<string, string | string[]> = {};
+    for (const key of Object.keys(payload)) {
+      if (key in corrected) filtered[key] = corrected[key];
+    }
+
     return {
       ...fields,
-      ...corrected,
+      ...filtered,
     } as GrammarFields;
   } catch (err) {
     console.error('[Grammar] OpenAI call failed:', err);

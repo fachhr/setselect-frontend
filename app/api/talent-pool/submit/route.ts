@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
           desired_roles: validatedData.desired_roles || null,
           other_expertise: validatedData.other_expertise || null,
           desired_other_location: validatedData.desired_other_location || null,
-          languages: languages || null,
+          languages: validatedData.languages || null,
         };
 
         const hasContent = Object.values(fieldsToCorrect).some(v => v);
