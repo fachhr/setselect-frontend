@@ -55,7 +55,7 @@ const JoinForm: React.FC = () => {
             linkedinUrl: '',
             country_code: '',
             phoneNumber: '',
-            years_of_experience: 0,
+            years_of_experience: undefined as unknown as number,
             work_eligibility: undefined,
             desired_roles: '',
             notice_period_months: undefined,
@@ -513,7 +513,10 @@ const JoinForm: React.FC = () => {
                             <div>
                                 <Input
                                     label="Years of Relevant Experience" id="years_of_experience" type="number" placeholder="e.g. 5" required min="0" max="50"
-                                    value={watch('years_of_experience')?.toString() || ''} onChange={e => setValue('years_of_experience', parseInt(e.target.value) || 0)}
+                                    value={watch('years_of_experience')?.toString() ?? ''} onChange={e => {
+                                        const parsed = parseInt(e.target.value);
+                                        setValue('years_of_experience', (e.target.value === '' || isNaN(parsed) ? undefined : parsed) as unknown as number);
+                                    }}
                                 />
                                 {errors.years_of_experience && (
                                     <div className="flex items-center gap-2 mt-2 text-[var(--error)] text-xs animate-in slide-in-from-top-2">
