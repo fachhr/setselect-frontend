@@ -78,18 +78,21 @@ export const LANGUAGE_OPTIONS = ['English', 'German', 'French', 'Italian'] as co
 // FUNCTIONAL EXPERTISE OPTIONS (Energy/Commodities/Finance domain)
 // ====================
 export const FUNCTIONAL_EXPERTISE_OPTIONS = [
-  'Trading',
-  'Risk Management',
-  'Quantitative Analysis',
-  'Technology',
-  'Operations',
+  'Analytics',
+  'Communication',
+  'Compliance',
+  'Engineering',
   'Finance',
+  'HR',
   'Leadership',
   'Legal',
-  'Compliance',
+  'Operations',
+  'Quantitative Analysis',
   'Research',
-  'Analytics',
-  'Engineering',
+  'Risk Management',
+  'Strategy',
+  'Technology',
+  'Trading',
   'Other'  // Triggers free-text input
 ] as const;
 
