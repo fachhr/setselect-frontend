@@ -28,6 +28,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/formOptions';
+import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
 import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
@@ -1078,6 +1079,7 @@ export default function HomeContent() {
                             </div>
 
                             {/* Work Eligibility Filter */}
+                            {SIDEBAR_FILTERS.workEligibility && (
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
                                     <FileCheck className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Work Eligibility
@@ -1103,8 +1105,10 @@ export default function HomeContent() {
                                     ))}
                                 </div>
                             </div>
+                            )}
 
                             {/* Salary Filter */}
+                            {SIDEBAR_FILTERS.salary && (
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
                                     <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Salary (CHF)
@@ -1133,9 +1137,10 @@ export default function HomeContent() {
                                     />
                                 </div>
                             </div>
+                            )}
 
                             {/* Clear Filters */}
-                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedWorkEligibility.length > 0 || searchTerm || salaryFilter.min !== null || salaryFilter.max !== null) && (
+                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || (SIDEBAR_FILTERS.workEligibility && selectedWorkEligibility.length > 0) || searchTerm || (SIDEBAR_FILTERS.salary && (salaryFilter.min !== null || salaryFilter.max !== null))) && (
                                 <button
                                     onClick={() => {
                                         setSelectedLocations([]);
