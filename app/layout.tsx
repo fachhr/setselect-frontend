@@ -42,8 +42,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SetSelect - Top Swiss Tech Talent",
-  description: "Discover pre-screened tech talent in Switzerland.",
+  title: "SetSelect - Energy & Commodities Talent in Switzerland",
+  description: "Browse pre-screened and selected energy & commodities talent in Switzerland.",
   icons: {
     icon: "/favicon.svg",
   },
