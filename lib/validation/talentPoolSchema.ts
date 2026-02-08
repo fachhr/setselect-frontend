@@ -5,7 +5,8 @@ import {
   WORK_ELIGIBILITY_VALUES,
   NOTICE_PERIOD_VALUES,
   WORK_LOCATION_CODES,
-  FUNCTIONAL_EXPERTISE_OPTIONS
+  FUNCTIONAL_EXPERTISE_OPTIONS,
+  ALL_FUNCTIONAL_EXPERTISE_VALUES
 } from '@/lib/formOptions';
 
 /**
@@ -108,7 +109,7 @@ export const talentPoolBaseSchema = z.object({
     .or(z.literal('')),
 
   // Functional expertise areas (1-5 required)
-  functional_expertise: z.array(z.enum(FUNCTIONAL_EXPERTISE_OPTIONS))
+  functional_expertise: z.array(z.enum(ALL_FUNCTIONAL_EXPERTISE_VALUES as unknown as readonly [string, ...string[]]))
     .min(1, 'Please select at least one area of expertise')
     .max(5, 'Please select up to 5 areas of expertise'),
 

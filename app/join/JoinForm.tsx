@@ -9,10 +9,11 @@ import {
     FileText,
     CheckCircle,
     ArrowLeft,
-    AlertCircle
+    AlertCircle,
+    ChevronDown
 } from 'lucide-react';
 import { Button, Input, Badge } from '@/components/ui';
-import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, type FunctionalExpertise } from '@/lib/formOptions';
+import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS, type FunctionalExpertise } from '@/lib/formOptions';
 import { talentPoolSchemaRefined, type TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
 
@@ -37,6 +38,9 @@ const JoinForm: React.FC = () => {
 
     // UI state for showing/hiding the "Other" language input
     const [showOtherLanguage, setShowOtherLanguage] = useState(false);
+
+    // UI state for expanding/collapsing Trading sub-options
+    const [tradingExpanded, setTradingExpanded] = useState(false);
 
     // React Hook Form with Zod validation
     const {
@@ -83,6 +87,7 @@ const JoinForm: React.FC = () => {
     const acceptedTerms = watch('accepted_terms');
     const functionalExpertise = watch('functional_expertise') as TalentPoolFormData['functional_expertise'] | undefined;
     const showOtherExpertise = functionalExpertise?.includes('Other');
+    const hasAnyTradingSubSelected = (functionalExpertise || []).some(e => (TRADING_SUB_OPTIONS as readonly string[]).includes(e));
 
     // File handlers with Zod validation
     const handleDrop = (e: React.DragEvent) => {
@@ -633,35 +638,97 @@ const JoinForm: React.FC = () => {
                                 </label>
 
                                 <div className="flex flex-wrap gap-2">
-                                    {FUNCTIONAL_EXPERTISE_OPTIONS.map((expertise: FunctionalExpertise) => (
-                                        <label
-                                            key={expertise}
-                                            className={`
-                                                cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
-                                                has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--border-focus)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
-                                                ${(functionalExpertise || []).includes(expertise)
-                                                    ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
-                                                    : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
-                                                ${!(functionalExpertise || []).includes(expertise) && (functionalExpertise || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
-                                            `}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                className="sr-only"
-                                                checked={(functionalExpertise || []).includes(expertise)}
-                                                disabled={!(functionalExpertise || []).includes(expertise) && (functionalExpertise || []).length >= 5}
-                                                onChange={() => {
-                                                    const current = functionalExpertise || [];
-                                                    const updated = current.includes(expertise)
-                                                        ? current.filter(e => e !== expertise)
-                                                        : current.length < 5 ? [...current, expertise as typeof current[number]] : current;
-                                                    setValue('functional_expertise', updated, { shouldValidate: true });
-                                                }}
-                                            />
-                                            {expertise}
-                                        </label>
-                                    ))}
+                                    {FUNCTIONAL_EXPERTISE_OPTIONS.map((expertise: FunctionalExpertise) => {
+                                        if (expertise === 'Trading') {
+                                            // Render Trading as expand/collapse trigger
+                                            return (
+                                                <button
+                                                    key="Trading"
+                                                    type="button"
+                                                    onClick={() => setTradingExpanded(prev => !prev)}
+                                                    className={`
+                                                        cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none inline-flex items-center gap-1
+                                                        focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-root)]
+                                                        ${hasAnyTradingSubSelected
+                                                            ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                            : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
+                                                    `}
+                                                >
+                                                    Trading
+                                                    <ChevronDown className={`w-3 h-3 transition-transform ${tradingExpanded ? 'rotate-180' : ''}`} />
+                                                </button>
+                                            );
+                                        }
+                                        return (
+                                            <label
+                                                key={expertise}
+                                                className={`
+                                                    cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
+                                                    has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--border-focus)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
+                                                    ${(functionalExpertise || []).includes(expertise)
+                                                        ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                        : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
+                                                    ${!(functionalExpertise || []).includes(expertise) && (functionalExpertise || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
+                                                `}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only"
+                                                    checked={(functionalExpertise || []).includes(expertise)}
+                                                    disabled={!(functionalExpertise || []).includes(expertise) && (functionalExpertise || []).length >= 5}
+                                                    onChange={() => {
+                                                        const current = functionalExpertise || [];
+                                                        const updated = current.includes(expertise)
+                                                            ? current.filter(e => e !== expertise)
+                                                            : current.length < 5 ? [...current, expertise as typeof current[number]] : current;
+                                                        setValue('functional_expertise', updated, { shouldValidate: true });
+                                                    }}
+                                                />
+                                                {expertise}
+                                            </label>
+                                        );
+                                    })}
                                 </div>
+
+                                {/* Trading sub-options (expandable) */}
+                                {tradingExpanded && (
+                                    <div className="mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                                        <div className="flex flex-wrap gap-2">
+                                            {TRADING_SUB_OPTIONS.map(sub => {
+                                                const isSelected = (functionalExpertise || []).includes(sub as unknown as FunctionalExpertise);
+                                                const isDisabled = !isSelected && (functionalExpertise || []).length >= 5;
+                                                return (
+                                                    <label
+                                                        key={sub}
+                                                        className={`
+                                                            cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
+                                                            has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--border-focus)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
+                                                            ${isSelected
+                                                                ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                                : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
+                                                            ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
+                                                        `}
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            className="sr-only"
+                                                            checked={isSelected}
+                                                            disabled={isDisabled}
+                                                            onChange={() => {
+                                                                const current = (functionalExpertise || []) as string[];
+                                                                const updated = current.includes(sub)
+                                                                    ? current.filter(e => e !== sub)
+                                                                    : current.length < 5 ? [...current, sub] : current;
+                                                                setValue('functional_expertise', updated as TalentPoolFormData['functional_expertise'], { shouldValidate: true });
+                                                            }}
+                                                        />
+                                                        {sub}
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Selection counter */}
                                 {(functionalExpertise || []).length > 0 && (

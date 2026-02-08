@@ -98,6 +98,22 @@ export const FUNCTIONAL_EXPERTISE_OPTIONS = [
 
 export type FunctionalExpertise = typeof FUNCTIONAL_EXPERTISE_OPTIONS[number];
 
+export const TRADING_SUB_OPTIONS = [
+  'Energy Trading',
+  'Gas Trading',
+  'Power Trading',
+  'LNG Trading',
+  'Trading',
+] as const;
+
+export type TradingSubOption = typeof TRADING_SUB_OPTIONS[number];
+
+// All valid values for the functional_expertise array (main options minus parent 'Trading' + sub-options)
+export const ALL_FUNCTIONAL_EXPERTISE_VALUES = [
+  ...FUNCTIONAL_EXPERTISE_OPTIONS.filter(o => o !== 'Trading'),
+  ...TRADING_SUB_OPTIONS,
+] as const;
+
 // ====================
 // SENIORITY LEVELS
 // ====================
