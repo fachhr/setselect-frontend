@@ -1264,15 +1264,6 @@ export default function HomeContent() {
                                                 </div>
                                             )}
 
-                                            {/* Highlight Box - Key Achievement Quote */}
-                                            {candidate.highlight && (
-                                                <div className="mb-5 p-3 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--blue-border)]">
-                                                    <span className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                                                        &ldquo;{candidate.highlight}&rdquo;
-                                                    </span>
-                                                </div>
-                                            )}
-
                                             {/* Metadata Grid (2 columns) */}
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-[var(--text-secondary)] mb-5">
                                                 <div className="flex items-start gap-2" title="Experience">
