@@ -927,7 +927,7 @@ const JoinForm: React.FC = () => {
                                     <Input
                                         label="Other Preferred Location"
                                         id="desired_other_location"
-                                        placeholder="e.g., Remote, Berlin, Paris"
+                                        placeholder="e.g., Berlin, Paris, Dubai"
                                         required
                                         value={watch('desired_other_location') || ''}
                                         onChange={e => setValue('desired_other_location', e.target.value)}

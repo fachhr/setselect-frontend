@@ -6,7 +6,7 @@ import { SelectOption } from '@/types/talentPool';
 // ====================
 // VALUE CONSTANTS (for z.enum validation)
 // ====================
-export const WORK_LOCATION_CODES = ['Zug', 'Zurich', 'Geneva', 'Bern', 'Lugano', 'Switzerland', 'Global', 'Others'] as const;
+export const WORK_LOCATION_CODES = ['Zug', 'Zurich', 'Geneva', 'Bern', 'Lugano', 'Switzerland', 'Remote', 'Global', 'Others'] as const;
 export const WORK_ELIGIBILITY_VALUES = [
   'swiss_citizen', 'c_permit', 'eu_efta', 'b_permit', 'g_permit', 'requires_sponsorship'
 ] as const;
@@ -53,6 +53,7 @@ export const WORK_LOCATIONS: WorkLocation[] = [
   { code: 'Bern', name: 'Bern' },
   { code: 'Lugano', name: 'Lugano' },
   { code: 'Switzerland', name: 'Switzerland' },
+  { code: 'Remote', name: 'Remote' },
   { code: 'Global', name: 'Global' },
   { code: 'Others', name: 'Others' },
 ];
