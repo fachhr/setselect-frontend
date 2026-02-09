@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { Candidate } from '@/types/talentPool';
 import { Badge, Button } from '@/components/ui';
 import { WORK_ELIGIBILITY_OPTIONS } from '@/lib/formOptions';
+import { CANDIDATE_DETAIL } from '@/lib/featureFlags';
 import {
     X,
     MapPin,
@@ -124,7 +125,7 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
                     </div>
 
                     {/* Key Achievement / Highlight Box */}
-                    {candidate.highlight && (
+                    {CANDIDATE_DETAIL.highlight && candidate.highlight && (
                         <div className="bg-[var(--highlight-dim)] border border-[rgba(144,224,239,0.30)] rounded-xl p-5 relative overflow-hidden">
                             <h3 className="text-sm font-bold text-[var(--highlight)] mb-2 uppercase tracking-wide flex items-center gap-2">
                                 <User className="w-4 h-4" /> Key Achievement
