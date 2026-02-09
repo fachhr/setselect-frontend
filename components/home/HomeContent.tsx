@@ -1028,27 +1028,6 @@ export default function HomeContent() {
                                 </div>
                             </div>
 
-                            {/* Location Filter */}
-                            <div>
-                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <MapPin className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Preferred Location
-                                </h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {WORK_LOCATIONS.map((location) => (
-                                        <button
-                                            key={location.code}
-                                            onClick={() => toggleLocation(location.code)}
-                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedLocations.includes(location.code)
-                                                ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
-                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
-                                                }`}
-                                        >
-                                            {location.code === 'Others' ? 'Other Locations' : location.name}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
                             {/* Language Filter */}
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -1072,6 +1051,27 @@ export default function HomeContent() {
                                                 {lang}
                                             </span>
                                         </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Location Filter */}
+                            <div>
+                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <MapPin className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Preferred Location
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {WORK_LOCATIONS.map((location) => (
+                                        <button
+                                            key={location.code}
+                                            onClick={() => toggleLocation(location.code)}
+                                            className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedLocations.includes(location.code)
+                                                ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
+                                                }`}
+                                        >
+                                            {location.code === 'Others' ? 'Other Locations' : location.name}
+                                        </button>
                                     ))}
                                 </div>
                             </div>
