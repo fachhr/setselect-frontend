@@ -6,7 +6,10 @@ import { SelectOption } from '@/types/talentPool';
 // ====================
 // VALUE CONSTANTS (for z.enum validation)
 // ====================
-export const WORK_LOCATION_CODES = ['Zug', 'Zurich', 'Geneva', 'Bern', 'Lugano', 'Switzerland', 'Remote', 'Global', 'Others'] as const;
+export const WORK_LOCATION_CODES = [
+  'Basel', 'Bern', 'Geneva', 'Lausanne', 'Lucerne', 'Lugano', 'Zug', 'Zurich',
+  'Switzerland', 'Remote', 'Global', 'Others'
+] as const;
 export const WORK_ELIGIBILITY_VALUES = [
   'swiss_citizen', 'c_permit', 'eu_efta', 'b_permit', 'g_permit', 'requires_sponsorship'
 ] as const;
@@ -47,11 +50,14 @@ export const MIME_TO_EXTENSION: Record<string, string> = {
 // WORK LOCATIONS (Swiss Cantons + Global)
 // ====================
 export const WORK_LOCATIONS: WorkLocation[] = [
+  { code: 'Basel', name: 'Basel' },
+  { code: 'Bern', name: 'Bern' },
+  { code: 'Geneva', name: 'Geneva' },
+  { code: 'Lausanne', name: 'Lausanne' },
+  { code: 'Lucerne', name: 'Lucerne' },
+  { code: 'Lugano', name: 'Lugano' },
   { code: 'Zug', name: 'Zug' },
   { code: 'Zurich', name: 'Zurich' },
-  { code: 'Geneva', name: 'Geneva' },
-  { code: 'Bern', name: 'Bern' },
-  { code: 'Lugano', name: 'Lugano' },
   { code: 'Switzerland', name: 'Switzerland' },
   { code: 'Remote', name: 'Remote' },
   { code: 'Global', name: 'Global' },
