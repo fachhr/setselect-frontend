@@ -82,7 +82,6 @@ export async function POST(req: NextRequest) {
         desired_roles: validatedData.desired_roles || null,
         notice_period_months: validatedData.notice_period_months,
         desired_locations: validatedData.desired_locations,
-        desired_other_location: validatedData.desired_other_location || null,
         salary_min: validatedData.salary_min,
         salary_max: validatedData.salary_max,
 
@@ -130,7 +129,6 @@ export async function POST(req: NextRequest) {
         desired_roles: validatedData.desired_roles || null,
         notice_period_months: validatedData.notice_period_months,
         desired_locations: validatedData.desired_locations,
-        desired_other_location: validatedData.desired_other_location || null,
         salary_min: validatedData.salary_min,
         salary_max: validatedData.salary_max,
         highlight: validatedData.highlight || null,
@@ -152,7 +150,6 @@ export async function POST(req: NextRequest) {
           highlight: validatedData.highlight || null,
           desired_roles: validatedData.desired_roles || null,
           other_expertise: validatedData.other_expertise || null,
-          desired_other_location: validatedData.desired_other_location || null,
           languages: validatedData.languages || null,
         };
 

@@ -4,7 +4,6 @@ import {
   VALID_CV_MIME_TYPES,
   WORK_ELIGIBILITY_VALUES,
   NOTICE_PERIOD_VALUES,
-  WORK_LOCATION_CODES,
   FUNCTIONAL_EXPERTISE_OPTIONS,
   ALL_FUNCTIONAL_EXPERTISE_VALUES
 } from '@/lib/formOptions';
@@ -83,10 +82,10 @@ export const talentPoolBaseSchema = z.object({
     errorMap: () => ({ message: 'Please select your notice period' })
   }),
 
-  // Locations (at least 1 required, max 5)
-  desired_locations: z.array(z.enum(WORK_LOCATION_CODES))
+  // Locations (at least 1 required, max 10 — predefined + custom entries)
+  desired_locations: z.array(z.string().min(1).max(100))
     .min(1, 'Please select at least one preferred location')
-    .max(5, 'You can select up to 5 locations'),
+    .max(10, 'You can select up to 10 locations'),
 
   desired_other_location: z.string()
     .max(100, 'Location must be less than 100 characters')

@@ -9,7 +9,6 @@ export interface Candidate {
   experience: string;
   seniority: string;
   cantons: string[];
-  otherLocation?: string | null;
   salaryMin: number;
   salaryMax: number;
   availability: string;
@@ -48,7 +47,6 @@ export interface TalentPoolProfile {
   notice_period_months: string;
   desired_job_types: string[];
   desired_locations: string[];
-  desired_other_location?: string | null;
   desired_industries: string[];
   salary_min?: number | null;
   salary_max?: number | null;
@@ -79,7 +77,6 @@ export interface TalentProfile {
   desired_roles: string | null;
   notice_period_months: string | null;
   desired_locations: string[] | null;
-  desired_other_location: string | null;
   salary_min: number | null;
   salary_max: number | null;
   highlight: string | null;
@@ -132,7 +129,6 @@ export interface AnonymizedTalentProfile {
   entry_date: string; // ISO date string
   years_of_experience: number | null;
   preferred_cantons: string[];
-  desired_other_location?: string | null;
   salary_range: {
     min: number | null;
     max: number | null;

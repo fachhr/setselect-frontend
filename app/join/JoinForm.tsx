@@ -164,9 +164,11 @@ const JoinForm: React.FC = () => {
             const cleanedOtherExpertise = data.other_expertise?.trim()
                 ? data.other_expertise.split(';').map((e: string) => e.trim()).filter((e: string) => e.length > 0 && !/^[\s,]+$/.test(e)).join('; ')
                 : undefined;
-            const cleanedOtherLocation = data.desired_other_location?.trim()
-                ? data.desired_other_location.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0).join(', ')
-                : undefined;
+            // Merge custom locations into desired_locations: strip 'Others' sentinel, parse comma-separated text
+            const mergedLocations = [
+                ...data.desired_locations.filter((l: string) => l !== 'Others'),
+                ...(data.desired_other_location?.split(',').map((l: string) => l.trim()).filter((l: string) => l.length > 0) || []),
+            ];
 
             // STEP 2: Submit Profile
             const profileData = {
@@ -182,8 +184,7 @@ const JoinForm: React.FC = () => {
                 work_eligibility: data.work_eligibility,
                 desired_roles: cleanedDesiredRoles || undefined,
                 notice_period_months: data.notice_period_months,
-                desired_locations: data.desired_locations,
-                desired_other_location: cleanedOtherLocation || undefined,
+                desired_locations: mergedLocations,
                 salary_min: data.salary_min,
                 salary_max: data.salary_max,
                 languages: processedLanguages.length > 0 ? processedLanguages : null,

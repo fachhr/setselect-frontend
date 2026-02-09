@@ -10,14 +10,13 @@ interface GrammarFields {
   highlight?: string | null;
   desired_roles?: string | null;
   other_expertise?: string | null;
-  desired_other_location?: string | null;
   languages?: string[] | null;
 }
 
 const SYSTEM_PROMPT = `You correct grammar, spelling, and capitalization in form field values. Nothing else.
 Rules:
 - Fix errors only. Do NOT rephrase, reword, or add content.
-- Preserve delimiters: semicolons (;) separate items in desired_roles and other_expertise; commas (,) separate items in desired_other_location.
+- Preserve delimiters: semicolons (;) separate items in desired_roles and other_expertise.
 - Capitalize the first letter of each list item and proper nouns.
 - For the "languages" array: fix spelling, capitalize language names properly, and split any entry that contains commas or semicolons into separate entries (e.g., ["english, spanish"] → ["English", "Spanish"]). Deduplicate.
 - Return JSON with the exact same field names as the input.
