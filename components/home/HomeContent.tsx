@@ -852,7 +852,9 @@ export default function HomeContent() {
                         <h2 className="text-xl font-bold text-[var(--text-primary)]">
                             Candidates{' '}
                             <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
-                                {isAccessGranted ? displayCandidates.length : 8} results
+                                {isAccessGranted
+                                    ? displayCandidates.length
+                                    : isLoading ? '\u2014' : candidates.length} results
                             </span>
                         </h2>
 
