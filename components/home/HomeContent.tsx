@@ -170,6 +170,8 @@ interface ApiCandidate {
 // IMPORTANT: Defined outside HomeContent to maintain stable component identity
 // across renders, preventing mobile keyboard dismissal on each keystroke.
 
+const ENABLE_REQUEST_ACCESS = false;
+
 interface LockedOverlayProps {
     isRequestMode: boolean;
     setIsRequestMode: (v: boolean) => void;
@@ -202,11 +204,11 @@ const LockedOverlay: React.FC<LockedOverlayProps> = ({
                             <Lock className="w-6 h-6 text-[var(--text-secondary)]" />
                         </div>
                         <h3 className="text-xl font-bold text-[var(--text-primary)]">
-                            {isRequestMode ? 'Request Access' : 'Restricted Access'}
+                            {ENABLE_REQUEST_ACCESS && isRequestMode ? 'Request Access' : 'Restricted Access'}
                         </h3>
                     </div>
 
-                    {isRequestMode ? (
+                    {ENABLE_REQUEST_ACCESS && isRequestMode ? (
                         /* REQUEST MODE: Email + Request button */
                         <>
                             <form onSubmit={handleRequestAccessSubmit} className="space-y-4">
@@ -303,6 +305,7 @@ const LockedOverlay: React.FC<LockedOverlayProps> = ({
                             </form>
 
                             {/* Switch to Request Mode */}
+                            {ENABLE_REQUEST_ACCESS && (
                             <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] text-center">
                                 <p className="text-xs text-[var(--text-tertiary)]">
                                     Don&apos;t have a code?{' '}
@@ -315,6 +318,7 @@ const LockedOverlay: React.FC<LockedOverlayProps> = ({
                                     </button>
                                 </p>
                             </div>
+                            )}
                         </>
                     )}
                 </div>
