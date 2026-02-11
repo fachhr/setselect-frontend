@@ -26,6 +26,7 @@ export function Navigation() {
             </div>
             <span className="font-title text-lg font-bold tracking-tight text-[var(--text-primary)]">
               Set<span className="font-light text-[var(--text-secondary)]">Select</span>
+              <sup className="ml-1 text-[10px] font-light tracking-wide text-[var(--text-secondary)]">beta</sup>
             </span>
           </Link>
 

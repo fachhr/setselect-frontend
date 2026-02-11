@@ -828,9 +828,6 @@ export default function HomeContent() {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">
                                 Energy &amp; Com&shy;modities Talent Pool
                             </span>
-                            <span className="block mt-4 text-lg sm:text-xl font-medium text-[var(--secondary)]">
-                                Beta
-                            </span>
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
                             Browse pre‑screened and selected talent. Within just a few clicks, get contact information of the candidates you like.
