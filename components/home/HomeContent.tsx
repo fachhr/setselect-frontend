@@ -847,12 +847,12 @@ export default function HomeContent() {
                     {/* Row 1: Title + View Toggle + Zen Mode (+ Desktop controls) */}
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                            Candidates{' '}
-                            <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
-                                {isAccessGranted
-                                    ? displayCandidates.length
-                                    : isLoading ? '\u2014' : candidates.length} results
-                            </span>
+                            Candidates
+                            {isAccessGranted && (
+                                <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
+                                    {displayCandidates.length} results
+                                </span>
+                            )}
                         </h2>
 
                         <div className="flex items-center gap-3">
