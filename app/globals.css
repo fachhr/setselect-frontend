@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    /* --- OCEAN GRADIENT DARK THEME --- */
+
+    /* Backgrounds */
+    --bg-root: #010225;
+    --bg-surface-0: #03045E;
+    --bg-surface-1: #051650;
+    --bg-surface-2: #0A2463;
+    --bg-surface-3: #0E3375;
+
+    /* Primary Accent */
+    --primary: #0077B6;
+    --primary-hover: #00B4D8;
+    --primary-dim: rgba(0, 119, 182, 0.15);
+    --primary-glow: rgba(0, 119, 182, 0.25);
+
+    /* Secondary */
+    --secondary: #00B4D8;
+    --secondary-dim: rgba(0, 180, 216, 0.15);
+
+    /* Highlight */
+    --highlight: #90E0EF;
+    --highlight-dim: rgba(144, 224, 239, 0.15);
+
+    /* Light Accent */
+    --accent-light: #CAF0F8;
+
+    /* Typography */
+    --text-primary: #FFFFFF;
+    --text-secondary: #CAF0F8;
+    --text-tertiary: #90E0EF;
+    --text-accent: #00B4D8;
+    --text-muted: rgba(144, 224, 239, 0.50);
+    --text-inverse: #010225;
+
+    /* Borders */
+    --border-subtle: rgba(144, 224, 239, 0.10);
+    --border-strong: rgba(144, 224, 239, 0.20);
+    --border-hover: rgba(144, 224, 239, 0.35);
+    --border-focus: rgba(0, 180, 216, 0.50);
+    --border-active: rgba(0, 180, 216, 0.60);
+
+    /* Status */
+    --error: #FF6B6B;
+    --error-dim: rgba(255, 107, 107, 0.15);
+    --error-border: rgba(255, 107, 107, 0.30);
+    --success: #2DD4BF;
+    --success-dim: rgba(45, 212, 191, 0.15);
+    --success-border: rgba(45, 212, 191, 0.30);
+    --warning: #FBBF24;
+    --warning-dim: rgba(251, 191, 36, 0.15);
+    --warning-border: rgba(251, 191, 36, 0.30);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(1, 2, 37, 0.3),
+                 0 1px 3px rgba(1, 2, 37, 0.15);
+    --shadow-md: 0 2px 4px rgba(1, 2, 37, 0.3),
+                 0 4px 12px rgba(1, 2, 37, 0.2);
+    --shadow-lg: 0 4px 8px rgba(1, 2, 37, 0.3),
+                 0 8px 24px rgba(1, 2, 37, 0.25);
+    --shadow-glow: 0 0 15px rgba(0, 180, 216, 0.25),
+                   0 0 30px rgba(0, 180, 216, 0.10);
+  }
+
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--bg-root);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-root);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
+}
+
+@layer components {
+  .glass-panel {
+    background: var(--bg-surface-1);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .input-base {
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .input-base:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px var(--secondary-dim), 0 0 20px var(--primary-glow);
+    outline: none;
+  }
+
+  .btn-gold {
+    background: var(--primary);
+    color: #FFFFFF;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-gold:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 0 25px rgba(0, 180, 216, 0.3), 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  input:not([type="range"]):not([type="checkbox"]),
+  select,
+  textarea {
+    background-color: var(--bg-surface-2);
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+    transition: all 0.2s;
+  }
+
+  input:not([type="range"]):not([type="checkbox"]):focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-dim);
+    outline: none;
+  }
+
+  ::placeholder {
+    color: var(--text-tertiary) !important;
+  }
+
+  ::selection {
+    background: var(--primary-dim);
+    color: var(--primary);
+  }
+}
+
+@layer utilities {
+  .font-ui {
+    font-weight: 400;
+  }
+
+  .animate-in {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fade-in {
+    animation-name: fadeIn;
+  }
+
+  .slide-in-from-bottom-4 {
+    animation-name: slideInFromBottom;
+  }
+
+  .slide-in-from-right {
+    animation-name: slideInFromRight;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(1rem); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}

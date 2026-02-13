@@ -1,0 +1,155 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import type { RecruiterCandidateView, RecruiterStats } from '@/types/recruiter';
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const search = searchParams.get('search') || '';
+  const status = searchParams.get('status') || '';
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '20', 10);
+  const offset = (page - 1) * limit;
+
+  try {
+    // Build query joining user_profiles with recruiter_candidates
+    let query = supabaseAdmin
+      .from('user_profiles')
+      .select(
+        `
+        id,
+        talent_id,
+        contact_first_name,
+        contact_last_name,
+        email,
+        country_code,
+        phoneNumber,
+        linkedinUrl,
+        years_of_experience,
+        desired_roles,
+        desired_locations,
+        salary_min,
+        salary_max,
+        cv_storage_path,
+        cv_original_filename,
+        profile_bio,
+        short_summary,
+        education_history,
+        professional_experience,
+        technical_skills,
+        functional_expertise,
+        base_languages,
+        work_eligibility,
+        notice_period_months,
+        highlight,
+        parsing_completed_at,
+        created_at,
+        recruiter_candidates!inner(
+          status,
+          owner,
+          notes,
+          status_changed_at
+        )
+      `,
+        { count: 'exact' }
+      )
+      .order('created_at', { ascending: false });
+
+    // Apply search filter
+    if (search) {
+      query = query.or(
+        `contact_first_name.ilike.%${search}%,contact_last_name.ilike.%${search}%,email.ilike.%${search}%,desired_roles.ilike.%${search}%`
+      );
+    }
+
+    // Apply status filter
+    if (status) {
+      query = query.eq('recruiter_candidates.status', status);
+    }
+
+    // Apply pagination
+    query = query.range(offset, offset + limit - 1);
+
+    const { data, count, error } = await query;
+
+    if (error) {
+      console.error('Supabase query error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Transform to flat structure
+    const candidates: RecruiterCandidateView[] = (data || []).map((row) => {
+      const rc = Array.isArray(row.recruiter_candidates)
+        ? row.recruiter_candidates[0]
+        : row.recruiter_candidates;
+
+      return {
+        profile_id: row.id,
+        talent_id: row.talent_id,
+        contact_first_name: row.contact_first_name,
+        contact_last_name: row.contact_last_name,
+        email: row.email,
+        country_code: row.country_code || '',
+        phoneNumber: row.phoneNumber || '',
+        linkedinUrl: row.linkedinUrl,
+        years_of_experience: row.years_of_experience,
+        desired_roles: row.desired_roles,
+        desired_locations: row.desired_locations || [],
+        salary_min: row.salary_min,
+        salary_max: row.salary_max,
+        cv_storage_path: row.cv_storage_path || '',
+        cv_original_filename: row.cv_original_filename || '',
+        profile_bio: row.profile_bio,
+        short_summary: row.short_summary,
+        education_history: row.education_history,
+        professional_experience: row.professional_experience,
+        technical_skills: row.technical_skills,
+        functional_expertise: row.functional_expertise,
+        languages: row.base_languages,
+        work_eligibility: row.work_eligibility,
+        notice_period_months: row.notice_period_months || '',
+        highlight: row.highlight,
+        parsing_completed_at: row.parsing_completed_at,
+        profile_created_at: row.created_at,
+        status: rc?.status || 'new',
+        owner: rc?.owner || null,
+        notes: rc?.notes || [],
+        status_changed_at: rc?.status_changed_at || row.created_at,
+      };
+    });
+
+    // Calculate stats (separate query for accurate counts)
+    const { data: allCandidates } = await supabaseAdmin
+      .from('recruiter_candidates')
+      .select('status, created_at');
+
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const stats: RecruiterStats = {
+      total: allCandidates?.length || 0,
+      active:
+        allCandidates?.filter((c) =>
+          ['screening', 'interviewing', 'offer'].includes(c.status)
+        ).length || 0,
+      placed: allCandidates?.filter((c) => c.status === 'placed').length || 0,
+      newThisWeek:
+        allCandidates?.filter(
+          (c) => new Date(c.created_at) >= weekAgo
+        ).length || 0,
+    };
+
+    return NextResponse.json({
+      candidates,
+      stats,
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / limit),
+      },
+    });
+  } catch (err) {
+    console.error('Candidates API error:', err);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
+}
