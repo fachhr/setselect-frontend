@@ -848,11 +848,13 @@ export default function HomeContent() {
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold text-[var(--text-primary)]">
                             Candidates
+                            {/* TODO(ui): re-enable result count when designs are finalized
                             {isAccessGranted && (
                                 <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
                                     {displayCandidates.length} results
                                 </span>
                             )}
+                            */}
                         </h2>
 
                         <div className="flex items-center gap-3">
