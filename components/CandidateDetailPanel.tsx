@@ -255,7 +255,7 @@ export function CandidateDetailPanel({
                     key={i}
                     className="px-2 py-1 text-xs bg-[var(--primary-dim)] text-[var(--secondary)] rounded-md"
                   >
-                    {typeof lang === 'string' ? lang : JSON.stringify(lang)}
+                    {typeof lang === 'string' ? lang : String(lang)}
                   </span>
                 ))}
               </div>
