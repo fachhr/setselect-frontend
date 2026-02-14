@@ -32,7 +32,7 @@ export function SearchBar({ search, onSearchChange, status, onStatusChange, onAd
           />
           <input
             type="text"
-            placeholder="Search by name, email, or role..."
+            placeholder="Search by name, email, role, ref ID, phone..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="input-base w-full sm:w-80 pl-10 pr-4 py-2 rounded-lg text-sm"

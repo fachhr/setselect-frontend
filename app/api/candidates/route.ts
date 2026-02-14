@@ -2,6 +2,56 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { RecruiterCandidateView, RecruiterStats } from '@/types/recruiter';
 
+/**
+ * Sanitize search input to prevent PostgREST filter injection.
+ * Strips characters that have special meaning in PostgREST .or() filters.
+ */
+function sanitizeSearch(raw: string): string {
+  return raw.replace(/[,()\\]/g, '').trim();
+}
+
+/**
+ * Build a PostgREST `.or()` filter string for candidate search.
+ * Searches 10 fields with smart handling for ref IDs and phone numbers.
+ */
+function buildSearchFilter(rawSearch: string): string {
+  const search = sanitizeSearch(rawSearch);
+  if (!search) return '';
+
+  // Base ilike clauses for all 10 fields
+  const clauses: string[] = [
+    `contact_first_name.ilike.%${search}%`,
+    `contact_last_name.ilike.%${search}%`,
+    `email.ilike.%${search}%`,
+    `desired_roles.ilike.%${search}%`,
+    `talent_id.ilike.%${search}%`,
+    `phoneNumber.ilike.%${search}%`,
+    `work_eligibility.ilike.%${search}%`,
+    `highlight.ilike.%${search}%`,
+    `short_summary.ilike.%${search}%`,
+    `profile_bio.ilike.%${search}%`,
+  ];
+
+  // Smart ref ID search: "SL-042", "REF-42", or bare number "42" → extract digits
+  const refIdMatch = search.match(/^(?:SL|REF|ref|sl)[- ]?(\d+)$/i) || search.match(/^(\d{1,6})$/);
+  if (refIdMatch) {
+    const digits = refIdMatch[1];
+    // Add a targeted clause that matches the numeric portion of talent_id
+    clauses.push(`talent_id.ilike.%${digits}%`);
+  }
+
+  // Phone normalization: strip spaces, dashes, parens, leading zero
+  const phoneDigits = search.replace(/[\s\-().+]/g, '');
+  if (phoneDigits.length >= 4 && /^\d+$/.test(phoneDigits)) {
+    const normalized = phoneDigits.replace(/^0+/, '');
+    if (normalized !== search) {
+      clauses.push(`phoneNumber.ilike.%${normalized}%`);
+    }
+  }
+
+  return clauses.join(',');
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get('search') || '';
@@ -55,10 +105,9 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     // Apply search filter
-    if (search) {
-      query = query.or(
-        `contact_first_name.ilike.%${search}%,contact_last_name.ilike.%${search}%,email.ilike.%${search}%,desired_roles.ilike.%${search}%`
-      );
+    const searchFilter = buildSearchFilter(search);
+    if (searchFilter) {
+      query = query.or(searchFilter);
     }
 
     // Apply status filter
