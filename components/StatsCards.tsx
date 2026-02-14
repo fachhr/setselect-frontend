@@ -18,7 +18,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       {cards.map((card) => (
         <div
           key={card.key}
-          className="glass-panel rounded-xl p-5 flex items-center justify-between"
+          className="group glass-panel rounded-xl p-5 flex items-center justify-between hover:border-[var(--secondary)] hover:shadow-[0_4px_30px_rgba(0,180,216,0.2)] transition-all duration-300"
         >
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">

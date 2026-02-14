@@ -9,7 +9,7 @@ interface TopBarProps {
 
 export function TopBar({ title, onMenuToggle }: TopBarProps) {
   return (
-    <header className="h-16 border-b border-[var(--border-subtle)] bg-[var(--bg-surface-1)] flex items-center justify-between px-4 sm:px-8">
+    <header className="h-16 border-b border-[var(--border-subtle)] bg-[var(--bg-surface-1)]/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-8">
       <div className="flex items-center gap-4">
         <button
           onClick={onMenuToggle}

@@ -62,7 +62,7 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
             {candidates.map((c) => (
               <tr
                 key={c.profile_id}
-                className="group hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
+                className="group hover:bg-[var(--bg-surface-2)] transition-all duration-200 cursor-pointer"
                 onClick={() => onSelect(c)}
               >
                 <td className="px-6 py-4">
@@ -134,7 +134,7 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
                           e.stopPropagation();
                           onDownloadCv(c.profile_id);
                         }}
-                        className="p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-colors cursor-pointer border border-[var(--border-subtle)]"
+                        className="p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-200 hover:-translate-y-0.5 cursor-pointer border border-[var(--border-subtle)]"
                         title="Download CV"
                       >
                         <FileText size={15} />
@@ -145,7 +145,7 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
                         e.stopPropagation();
                         onSelect(c);
                       }}
-                      className="p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-colors cursor-pointer border border-[var(--border-subtle)]"
+                      className="p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-200 hover:-translate-y-0.5 cursor-pointer border border-[var(--border-subtle)]"
                       title="Edit"
                     >
                       <Edit2 size={15} />

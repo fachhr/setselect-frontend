@@ -32,7 +32,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in">
+    <div className="space-y-6 animate-in fade-in relative">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-64 max-w-4xl pointer-events-none -z-10">
+        <div className="absolute top-0 left-1/4 w-64 h-64 bg-[var(--secondary)] opacity-[0.04] blur-[100px] rounded-full"></div>
+        <div className="absolute top-0 right-1/4 w-64 h-64 bg-[var(--primary)] opacity-[0.03] blur-[120px] rounded-full"></div>
+      </div>
       <StatsCards stats={stats} />
 
       {/* Recent candidates */}
@@ -70,7 +74,7 @@ export default function DashboardPage() {
               {recent.map((c) => (
                 <tr
                   key={c.profile_id}
-                  className="hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
+                  className="hover:bg-[var(--bg-surface-2)] transition-all duration-200 cursor-pointer"
                   onClick={() => router.push('/candidates')}
                 >
                   <td className="px-6 py-4">

@@ -71,7 +71,7 @@ export function CandidateDetailPanel({
     <div className="fixed inset-0 z-[60] flex justify-end">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[var(--bg-root)]/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-[var(--bg-root)]/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -101,7 +101,7 @@ export function CandidateDetailPanel({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+        <div className="flex-1 overflow-y-auto modal-scroll p-6 space-y-8">
           {/* Status section */}
           <div className="border border-[var(--border-subtle)] rounded-xl p-4 shadow-sm">
             <span className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Status</span>
@@ -269,7 +269,7 @@ export function CandidateDetailPanel({
                 {c.functional_expertise.map((skill, i) => (
                   <span
                     key={i}
-                    className="px-2 py-1 text-xs bg-[var(--bg-surface-2)] text-[var(--text-tertiary)] rounded-md border border-[var(--border-subtle)]"
+                    className="px-2.5 py-1 text-xs bg-[var(--bg-surface-2)] text-[var(--text-tertiary)] rounded-md border border-[var(--border-subtle)] hover:border-[var(--secondary)] hover:text-[var(--text-primary)] transition-colors cursor-default"
                   >
                     {skill}
                   </span>
@@ -286,7 +286,7 @@ export function CandidateDetailPanel({
                 {c.languages.map((lang, i) => (
                   <span
                     key={i}
-                    className="px-2 py-1 text-xs bg-[var(--primary-dim)] text-[var(--secondary)] rounded-md"
+                    className="px-2.5 py-1 text-xs bg-[var(--primary-dim)] text-[var(--secondary)] rounded-md border border-transparent hover:border-[var(--secondary)] transition-colors cursor-default"
                   >
                     {typeof lang === 'string' ? lang : String(lang)}
                   </span>

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  --font-title: 'behindTheNineties', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -67,6 +68,7 @@
                  0 8px 24px rgba(1, 2, 37, 0.25);
     --shadow-glow: 0 0 15px rgba(0, 180, 216, 0.25),
                    0 0 30px rgba(0, 180, 216, 0.10);
+    --shadow-inset: inset 0 1px 2px rgba(1, 2, 37, 0.4);
   }
 
   html {
@@ -93,6 +95,20 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+  }
+
+  .modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  .modal-scroll::-webkit-scrollbar { width: 8px; }
+  .modal-scroll::-webkit-scrollbar-track { background: transparent; margin: 8px 0; }
+  .modal-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-strong); border-radius: 4px;
+    border: 2px solid transparent; background-clip: padding-box;
+  }
+  .modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--border-hover); border: 2px solid transparent; background-clip: padding-box;
   }
 }
 
@@ -178,6 +194,26 @@
   .slide-in-from-right {
     animation-name: slideInFromRight;
   }
+
+  .slide-in-from-top-2 {
+    animation-name: slideInFromTop;
+  }
+
+  .zoom-in {
+    animation-name: zoomIn;
+  }
+
+  .duration-200 {
+    animation-duration: 0.2s;
+  }
+
+  .duration-300 {
+    animation-duration: 0.3s;
+  }
+
+  .duration-500 {
+    animation-duration: 0.5s;
+  }
 }
 
 @keyframes fadeIn {
@@ -193,4 +229,14 @@
 @keyframes slideInFromRight {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
+}
+
+@keyframes slideInFromTop {
+  from { transform: translateY(-0.5rem); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, LogOut, X } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, X, Layers } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -42,13 +42,13 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         {/* Logo */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[var(--secondary)] rounded flex items-center justify-center">
-              <span className="text-white font-bold text-sm font-serif">S</span>
+            <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center shadow-md">
+              <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
-            <div>
-              <h1 className="font-bold text-lg tracking-tight text-[var(--text-primary)]">SetSelect</h1>
-              <p className="text-xs font-light text-[var(--text-muted)]">List</p>
-            </div>
+            <h1 className="font-[family-name:var(--font-title)] font-bold text-lg tracking-tight text-[var(--text-primary)]">
+              Set<span className="font-light text-[var(--text-secondary)]">Select</span>
+              <span className="font-light text-[var(--text-muted)] ml-1">Recruiter</span>
+            </h1>
           </div>
           <button
             onClick={onClose}

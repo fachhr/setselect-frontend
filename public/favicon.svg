@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Blue rounded square background -->
+  <rect width="32" height="32" rx="6" fill="#0077B6"/>
+
+  <!-- Layers icon (matching Lucide Layers design) -->
+  <g fill="none" stroke="#010225" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bottom layer -->
+    <polygon points="16,6 26,11.5 16,17 6,11.5"/>
+    <!-- Middle layer -->
+    <polyline points="6,16 16,21.5 26,16"/>
+    <!-- Top layer -->
+    <polyline points="6,20.5 16,26 26,20.5"/>
+  </g>
+</svg>
