@@ -36,6 +36,9 @@ const JoinForm: React.FC = () => {
     // reCAPTCHA v3
     const { executeRecaptcha, error: recaptchaError } = useRecaptcha();
 
+    // Submission error (replaces native alert)
+    const [submitError, setSubmitError] = useState<string | null>(null);
+
     // UI state for showing/hiding the "Other" language input
     const [showOtherLanguage, setShowOtherLanguage] = useState(false);
 
@@ -115,6 +118,7 @@ const JoinForm: React.FC = () => {
 
     // Form submission handler (called by react-hook-form after validation passes)
     const onSubmit = async (data: TalentPoolFormData) => {
+        setSubmitError(null);
         try {
             // STEP 0: Execute reCAPTCHA
             let recaptchaToken = '';
@@ -213,7 +217,7 @@ const JoinForm: React.FC = () => {
 
         } catch (error) {
             console.error('Submission error:', error);
-            alert(error instanceof Error ? error.message : 'An error occurred. Please try again.');
+            setSubmitError(error instanceof Error ? error.message : 'An error occurred. Please try again.');
         }
     };
 
@@ -945,6 +949,12 @@ const JoinForm: React.FC = () => {
 
                     {/* SUBMIT */}
                     <div className="pt-4">
+                        {submitError && (
+                            <div className="flex items-center gap-2 mb-4 p-3 rounded-lg border border-[var(--error-border)] bg-[var(--error-bg,rgba(239,68,68,0.08))] text-[var(--error)] text-sm animate-in slide-in-from-top-2">
+                                <AlertCircle className="w-4 h-4 shrink-0" />
+                                <span className="font-medium">{submitError}</span>
+                            </div>
+                        )}
                         <div className="flex items-start gap-3 mb-6 bg-[var(--bg-surface-2)] p-4 rounded-lg border border-[var(--border-subtle)]">
                             <input
                                 type="checkbox"

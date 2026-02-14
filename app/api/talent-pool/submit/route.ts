@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     if (!recaptchaResult.success) {
       console.warn('[Submit] reCAPTCHA verification failed:', recaptchaResult.error);
       return NextResponse.json(
-        { success: false, error: 'Security verification failed' },
+        { success: false, error: 'Security verification failed. Please try again.' },
         { status: 403 }
       );
     }
