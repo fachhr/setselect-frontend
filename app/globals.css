@@ -11,7 +11,6 @@
 
     /* Backgrounds */
     --bg-root: #010225;
-    --bg-surface-0: #03045E;
     --bg-surface-1: #051650;
     --bg-surface-2: #0A2463;
     --bg-surface-3: #0E3375;
@@ -85,9 +84,14 @@
 
   ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: var(--bg-root);
+  }
+
+  .glass-panel ::-webkit-scrollbar-track {
+    background: var(--bg-surface-1);
   }
   ::-webkit-scrollbar-thumb {
     background: var(--border-strong);

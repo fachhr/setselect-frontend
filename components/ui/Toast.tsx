@@ -61,7 +61,7 @@ export function ToastContainer() {
         return (
           <div
             key={t.id}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-surface-0)] text-[var(--text-primary)] animate-in slide-in-from-bottom-2 shadow-lg max-w-sm border border-[var(--border-subtle)]"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-surface-1)] text-[var(--text-primary)] animate-in slide-in-from-bottom-2 shadow-lg max-w-sm border border-[var(--border-subtle)]"
           >
             <Icon size={18} className={iconClasses[t.type]} />
             <span className="text-sm flex-1">{t.message}</span>

@@ -11,10 +11,17 @@ import {
   Globe,
   Users,
   Download,
-  CalendarPlus,
-  Send,
 } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
+
+const WORK_ELIGIBILITY_LABELS: Record<string, string> = {
+  swiss_citizen: 'Swiss Citizen',
+  c_permit: 'Swiss C Permit',
+  eu_efta: 'EU/EFTA Citizen',
+  b_permit: 'Swiss B Permit (Non-EU)',
+  g_permit: 'Swiss G Permit (Cross-border)',
+  requires_sponsorship: 'Non-EU / Requires Sponsorship',
+};
 import { NotesSection } from '@/components/NotesSection';
 import { toast } from '@/components/ui/Toast';
 import {
@@ -78,7 +85,7 @@ export function CandidateDetailPanel({
       {/* Panel */}
       <div className="relative w-full max-w-lg flex flex-col bg-[var(--bg-surface-1)] border-l border-[var(--border-subtle)] animate-in slide-in-from-right shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-4 bg-[var(--bg-surface-0)] border-b border-[var(--border-subtle)] flex items-center justify-between">
+        <div className="px-6 py-4 bg-[var(--bg-surface-1)] border-b border-[var(--border-subtle)] flex items-center justify-between">
           <div>
             <h3 className="text-lg font-bold text-[var(--text-primary)]">
               {c.contact_first_name} {c.contact_last_name}
@@ -110,19 +117,6 @@ export function CandidateDetailPanel({
               <span className="text-xs text-[var(--text-muted)]">
                 Last updated {formatEntryDate(c.profile_created_at, true)}
               </span>
-            </div>
-
-            <div className="border-t border-[var(--border-subtle)] mt-4 pt-4">
-              <div className="grid grid-cols-2 gap-2">
-                <button className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer">
-                  <CalendarPlus size={14} />
-                  Schedule Interview
-                </button>
-                <button className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer">
-                  <Send size={14} />
-                  Send Email
-                </button>
-              </div>
             </div>
 
             <div className="mt-4 space-y-3">
@@ -245,7 +239,7 @@ export function CandidateDetailPanel({
                   <span className="text-xs text-[var(--text-muted)]">Work Eligibility</span>
                 </div>
                 <p className="text-sm text-[var(--text-primary)]">
-                  {c.work_eligibility || 'N/A'}
+                  {(c.work_eligibility && WORK_ELIGIBILITY_LABELS[c.work_eligibility]) || c.work_eligibility || 'N/A'}
                 </p>
               </div>
             </div>
