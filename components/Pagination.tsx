@@ -14,7 +14,7 @@ export function Pagination({ page, totalPages, total, showing, onPageChange }: P
   const displayShowing = showing ?? total;
 
   return (
-    <div className="bg-[var(--bg-surface-0)] border-t border-[var(--border-subtle)] px-6 py-4 flex items-center justify-between rounded-b-xl">
+    <div className="px-6 py-4 flex items-center justify-between">
       <span className="text-xs text-[var(--text-muted)]">
         Showing {displayShowing} of {total} candidates
       </span>
