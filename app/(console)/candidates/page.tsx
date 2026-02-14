@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { SearchBar } from '@/components/SearchBar';
 import { CandidateTable } from '@/components/CandidateTable';
 import { CandidateDetailPanel } from '@/components/CandidateDetailPanel';
-import { Pagination } from '@/components/Pagination';
+
 import { toast } from '@/components/ui/Toast';
 import type { RecruiterCandidateView, RecruiterStatus } from '@/types/recruiter';
 
@@ -198,16 +198,12 @@ export default function CandidatesPage() {
           candidates={candidates}
           onSelect={setSelected}
           onDownloadCv={handleDownloadCv}
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          onPageChange={setPage}
         />
       )}
-
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        total={total}
-        showing={candidates.length}
-        onPageChange={setPage}
-      />
 
       {selected && (
         <CandidateDetailPanel

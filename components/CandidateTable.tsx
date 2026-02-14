@@ -10,6 +10,10 @@ interface CandidateTableProps {
   candidates: RecruiterCandidateView[];
   onSelect: (candidate: RecruiterCandidateView) => void;
   onDownloadCv: (profileId: string) => void;
+  page?: number;
+  totalPages?: number;
+  total?: number;
+  onPageChange?: (page: number) => void;
 }
 
 function copyToClipboard(text: string, label: string) {
@@ -17,7 +21,7 @@ function copyToClipboard(text: string, label: string) {
   toast('success', `${label} copied`);
 }
 
-export function CandidateTable({ candidates, onSelect, onDownloadCv }: CandidateTableProps) {
+export function CandidateTable({ candidates, onSelect, onDownloadCv, page, totalPages, total, onPageChange }: CandidateTableProps) {
   if (candidates.length === 0) {
     return (
       <div className="glass-panel rounded-xl p-12 text-center">
@@ -157,6 +161,31 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
           </tbody>
         </table>
       </div>
+      {total !== undefined && (
+        <div className="border-t border-[var(--border-subtle)] px-6 py-4 flex items-center justify-between">
+          <span className="text-xs text-[var(--text-muted)]">
+            Showing {candidates.length} of {total} candidates
+          </span>
+          {totalPages !== undefined && totalPages > 1 && onPageChange && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => onPageChange(page! - 1)}
+                disabled={!page || page <= 1}
+                className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => onPageChange(page! + 1)}
+                disabled={!page || page >= totalPages}
+                className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
