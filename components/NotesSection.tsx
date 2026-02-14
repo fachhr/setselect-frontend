@@ -30,7 +30,7 @@ export function NotesSection({ notes, onAdd, onDelete }: NotesSectionProps) {
 
   return (
     <div className="space-y-3">
-      <h4 className="text-sm font-medium text-[var(--text-primary)]">Notes</h4>
+      <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Notes</h4>
 
       {/* Add note form */}
       <form onSubmit={handleSubmit} className="flex gap-2">
@@ -59,7 +59,7 @@ export function NotesSection({ notes, onAdd, onDelete }: NotesSectionProps) {
           notes.map((note) => (
             <div
               key={note.id}
-              className="bg-[var(--bg-surface-2)] rounded-lg p-3 group"
+              className="bg-[var(--bg-surface-2)] rounded-lg p-4 group"
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm text-[var(--text-secondary)] flex-1">

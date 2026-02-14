@@ -17,12 +17,6 @@ const icons: Record<ToastType, typeof CheckCircle> = {
   info: Info,
 };
 
-const typeClasses: Record<ToastType, string> = {
-  success: 'border-[var(--success-border)] bg-[var(--success-dim)]',
-  error: 'border-[var(--error-border)] bg-[var(--error-dim)]',
-  info: 'border-[rgba(0,180,216,0.20)] bg-[var(--primary-dim)]',
-};
-
 const iconClasses: Record<ToastType, string> = {
   success: 'text-[var(--success)]',
   error: 'text-[var(--error)]',
@@ -61,16 +55,16 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
       {toasts.map((t) => {
         const Icon = icons[t.type];
         return (
           <div
             key={t.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${typeClasses[t.type]} animate-in slide-in-from-bottom-4 shadow-lg max-w-sm`}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-surface-0)] text-[var(--text-primary)] animate-in slide-in-from-bottom-2 shadow-lg max-w-sm border border-[var(--border-subtle)]"
           >
             <Icon size={18} className={iconClasses[t.type]} />
-            <span className="text-sm text-[var(--text-primary)] flex-1">{t.message}</span>
+            <span className="text-sm flex-1">{t.message}</span>
             <button
               onClick={() => dismiss(t.id)}
               className="text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"

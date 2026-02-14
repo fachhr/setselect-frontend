@@ -29,21 +29,26 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       {/* Mobile overlay */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-[var(--bg-root)]/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={onClose}
         />
       )}
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-[var(--bg-surface-0)] border-r border-[var(--border-subtle)] z-50 flex flex-col transition-transform duration-200 lg:translate-x-0 ${
+        className={`fixed top-0 left-0 h-full w-64 bg-[var(--bg-surface-1)] border-r border-[var(--border-subtle)] z-50 flex flex-col transition-transform duration-200 lg:translate-x-0 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Logo */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border-subtle)]">
-          <div>
-            <h1 className="text-lg font-semibold text-[var(--text-primary)]">SetSelect</h1>
-            <p className="text-xs text-[var(--text-muted)]">Recruiter Console</p>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[var(--secondary)] rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm font-serif">S</span>
+            </div>
+            <div>
+              <h1 className="font-bold text-lg tracking-tight text-[var(--text-primary)]">SetSelect</h1>
+              <p className="text-xs font-light text-[var(--text-muted)]">List</p>
+            </div>
           </div>
           <button
             onClick={onClose}
@@ -62,9 +67,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-[var(--primary-dim)] text-[var(--secondary)] border border-[rgba(0,180,216,0.15)]'
+                    ? 'bg-[var(--secondary-dim)] text-[var(--secondary)] border border-[var(--border-subtle)]'
                     : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -79,7 +84,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="p-4 border-t border-[var(--border-subtle)]">
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--error)] transition-colors w-full cursor-pointer"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--error)] transition-colors w-full cursor-pointer"
           >
             <LogOut size={18} />
             Sign Out

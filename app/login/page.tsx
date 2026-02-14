@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock } from 'lucide-react';
 
 export default function LoginPage() {
   const [password, setPassword] = useState('');
@@ -37,17 +36,20 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="glass-panel rounded-2xl p-8 w-full max-w-sm animate-in fade-in">
+      <div className="glass-panel rounded-2xl p-8 w-full max-w-sm animate-in fade-in shadow-xl">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[var(--primary-dim)] mb-4">
-            <Lock size={22} className="text-[var(--secondary)]" />
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-[var(--primary)] rounded-lg shadow-lg mb-4">
+            <span className="text-white font-bold text-xl font-serif">S</span>
           </div>
-          <h1 className="text-xl font-semibold text-[var(--text-primary)]">SetSelect</h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1">Recruiter Console</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">SetSelect</h1>
+          <p className="text-sm text-[var(--text-muted)] mb-8">Recruiter Console</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <label className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted)] block mb-2">
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -65,11 +67,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={!password || loading}
-            className="btn-gold w-full py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="btn-gold w-full py-3 rounded-lg text-sm shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {loading ? 'Authenticating...' : 'Access Console'}
           </button>
         </form>
+
+        <p className="text-xs text-[var(--text-muted)] text-center mt-6">
+          Hint: Use the password from your .env configuration
+        </p>
       </div>
     </div>
   );

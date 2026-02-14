@@ -2,10 +2,10 @@ import { Users, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import type { RecruiterStats } from '@/types/recruiter';
 
 const cards = [
-  { key: 'total' as const, label: 'Total Candidates', icon: Users, color: 'text-[var(--secondary)]' },
-  { key: 'active' as const, label: 'Active Pipeline', icon: Clock, color: 'text-[var(--warning)]' },
-  { key: 'placed' as const, label: 'Placed', icon: CheckCircle, color: 'text-[var(--success)]' },
-  { key: 'newThisWeek' as const, label: 'New This Week', icon: AlertCircle, color: 'text-[var(--highlight)]' },
+  { key: 'total' as const, label: 'Total Candidates', icon: Users, color: 'text-[var(--secondary)]', bg: 'bg-[var(--secondary-dim)]' },
+  { key: 'active' as const, label: 'Active Pipeline', icon: Clock, color: 'text-[var(--warning)]', bg: 'bg-[var(--warning-dim)]' },
+  { key: 'placed' as const, label: 'Placed', icon: CheckCircle, color: 'text-[var(--success)]', bg: 'bg-[var(--success-dim)]' },
+  { key: 'newThisWeek' as const, label: 'New This Week', icon: AlertCircle, color: 'text-[var(--highlight)]', bg: 'bg-[var(--primary-dim)]' },
 ];
 
 interface StatsCardsProps {
@@ -18,16 +18,18 @@ export function StatsCards({ stats }: StatsCardsProps) {
       {cards.map((card) => (
         <div
           key={card.key}
-          className="glass-panel rounded-xl p-5 flex items-center gap-4"
+          className="glass-panel rounded-xl p-5 flex items-center justify-between"
         >
-          <div className={`p-2.5 rounded-lg bg-[var(--bg-surface-2)] ${card.color}`}>
-            <card.icon size={22} />
-          </div>
           <div>
-            <p className="text-2xl font-semibold text-[var(--text-primary)]">
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">
+              {card.label}
+            </p>
+            <p className="text-2xl font-bold text-[var(--text-primary)] mt-1">
               {stats[card.key]}
             </p>
-            <p className="text-xs text-[var(--text-muted)]">{card.label}</p>
+          </div>
+          <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center`}>
+            <card.icon size={20} className={card.color} />
           </div>
         </div>
       ))}

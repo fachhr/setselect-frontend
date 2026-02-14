@@ -1,6 +1,6 @@
 'use client';
 
-import { Copy, FileText, ChevronRight } from 'lucide-react';
+import { Copy, FileText, Edit2, Mail, Phone } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
 import { formatTalentId, formatEntryDate, formatCantons } from '@/lib/helpers';
 import { toast } from '@/components/ui/Toast';
@@ -31,29 +31,29 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-surface-0)]">
-              <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+            <tr className="border-b border-[var(--border-strong)] bg-[var(--bg-surface-2)]">
+              <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                 Ref ID
               </th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                 Name & Role
               </th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider hidden md:table-cell">
+              <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider hidden md:table-cell">
                 Contact
               </th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider hidden lg:table-cell">
+              <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider hidden lg:table-cell">
                 Location
               </th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                 Status
               </th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider hidden lg:table-cell">
+              <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider hidden lg:table-cell">
                 Owner
               </th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider hidden sm:table-cell">
+              <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider hidden sm:table-cell">
                 Added
               </th>
-              <th className="px-4 py-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <th className="px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -62,33 +62,34 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
             {candidates.map((c) => (
               <tr
                 key={c.profile_id}
-                className="hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
+                className="group hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
                 onClick={() => onSelect(c)}
               >
-                <td className="px-4 py-3">
-                  <span className="text-[var(--text-accent)] font-mono text-xs">
+                <td className="px-6 py-4">
+                  <span className="font-mono text-xs font-medium bg-[var(--bg-surface-2)] px-2 py-1 rounded text-[var(--text-accent)]">
                     {formatTalentId(c.talent_id)}
                   </span>
                 </td>
-                <td className="px-4 py-3">
-                  <div className="font-medium text-[var(--text-primary)]">
+                <td className="px-6 py-4">
+                  <div className="text-sm font-bold text-[var(--text-primary)]">
                     {c.contact_first_name} {c.contact_last_name}
                   </div>
                   <div className="text-xs text-[var(--text-tertiary)]">
                     {c.desired_roles || 'No role specified'}
                   </div>
                 </td>
-                <td className="px-4 py-3 hidden md:table-cell">
+                <td className="px-6 py-4 hidden md:table-cell">
                   <div className="space-y-0.5">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         copyToClipboard(c.email, 'Email');
                       }}
-                      className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors cursor-pointer group"
+                      className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors cursor-pointer"
                     >
+                      <Mail size={12} className="text-[var(--text-muted)]" />
                       <span className="text-xs truncate max-w-[180px]">{c.email}</span>
-                      <Copy size={10} className="opacity-0 group-hover:opacity-100" />
+                      <Copy size={10} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[var(--bg-surface-3)] rounded" />
                     </button>
                     {c.phoneNumber && (
                       <button
@@ -96,35 +97,36 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
                           e.stopPropagation();
                           copyToClipboard(`${c.country_code}${c.phoneNumber}`, 'Phone');
                         }}
-                        className="flex items-center gap-1 text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-colors cursor-pointer group"
+                        className="flex items-center gap-1.5 text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-colors cursor-pointer"
                       >
+                        <Phone size={12} className="text-[var(--text-muted)]" />
                         <span className="text-xs">
                           {c.country_code} {c.phoneNumber}
                         </span>
-                        <Copy size={10} className="opacity-0 group-hover:opacity-100" />
+                        <Copy size={10} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[var(--bg-surface-3)] rounded" />
                       </button>
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-3 hidden lg:table-cell">
+                <td className="px-6 py-4 hidden lg:table-cell">
                   <span className="text-xs text-[var(--text-tertiary)]">
                     {formatCantons(c.desired_locations)}
                   </span>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-6 py-4">
                   <StatusBadge status={c.status} />
                 </td>
-                <td className="px-4 py-3 hidden lg:table-cell">
+                <td className="px-6 py-4 hidden lg:table-cell">
                   <span className="text-xs text-[var(--text-tertiary)]">
                     {c.owner || '—'}
                   </span>
                 </td>
-                <td className="px-4 py-3 hidden sm:table-cell">
+                <td className="px-6 py-4 hidden sm:table-cell">
                   <span className="text-xs text-[var(--text-muted)]">
                     {formatEntryDate(c.profile_created_at, true)}
                   </span>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-6 py-4">
                   <div className="flex items-center gap-1">
                     {c.cv_storage_path && (
                       <button
@@ -132,16 +134,22 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv }: Candidate
                           e.stopPropagation();
                           onDownloadCv(c.profile_id);
                         }}
-                        className="p-1.5 rounded-md hover:bg-[var(--bg-surface-3)] text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-colors cursor-pointer"
+                        className="p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-colors cursor-pointer border border-[var(--border-subtle)]"
                         title="Download CV"
                       >
                         <FileText size={15} />
                       </button>
                     )}
-                    <ChevronRight
-                      size={15}
-                      className="text-[var(--text-muted)]"
-                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelect(c);
+                      }}
+                      className="p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-colors cursor-pointer border border-[var(--border-subtle)]"
+                      title="Edit"
+                    >
+                      <Edit2 size={15} />
+                    </button>
                   </div>
                 </td>
               </tr>

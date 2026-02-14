@@ -37,8 +37,8 @@ export default function DashboardPage() {
 
       {/* Recent candidates */}
       <div className="glass-panel rounded-xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+        <div className="px-6 py-4 border-b border-[var(--border-subtle)] flex items-center justify-between">
+          <h3 className="text-sm font-bold text-[var(--text-primary)]">
             Recent Candidates
           </h3>
           <button
@@ -51,17 +51,17 @@ export default function DashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-surface-0)]">
-                <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+              <tr className="border-b border-[var(--border-strong)] bg-[var(--bg-surface-2)]">
+                <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                   Ref
                 </th>
-                <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                   Name
                 </th>
-                <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="text-left px-4 py-2.5 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                <th className="text-left px-6 py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider">
                   Added
                 </th>
               </tr>
@@ -73,18 +73,20 @@ export default function DashboardPage() {
                   className="hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
                   onClick={() => router.push('/candidates')}
                 >
-                  <td className="px-4 py-3 text-[var(--text-accent)] font-mono text-xs">
-                    {formatTalentId(c.talent_id)}
+                  <td className="px-6 py-4">
+                    <span className="font-mono text-xs font-medium bg-[var(--bg-surface-2)] px-2 py-1 rounded text-[var(--text-accent)]">
+                      {formatTalentId(c.talent_id)}
+                    </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-[var(--text-primary)]">
+                  <td className="px-6 py-4">
+                    <span className="text-[var(--text-primary)] font-bold">
                       {c.contact_first_name} {c.contact_last_name}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-4">
                     <StatusBadge status={c.status} />
                   </td>
-                  <td className="px-4 py-3 text-xs text-[var(--text-muted)]">
+                  <td className="px-6 py-4 text-xs text-[var(--text-muted)]">
                     {formatEntryDate(c.profile_created_at, true)}
                   </td>
                 </tr>

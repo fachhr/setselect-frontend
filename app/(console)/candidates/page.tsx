@@ -1,17 +1,15 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { StatsCards } from '@/components/StatsCards';
 import { SearchBar } from '@/components/SearchBar';
 import { CandidateTable } from '@/components/CandidateTable';
 import { CandidateDetailPanel } from '@/components/CandidateDetailPanel';
 import { Pagination } from '@/components/Pagination';
 import { toast } from '@/components/ui/Toast';
-import type { RecruiterCandidateView, RecruiterStats, RecruiterStatus } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus } from '@/types/recruiter';
 
 export default function CandidatesPage() {
   const [candidates, setCandidates] = useState<RecruiterCandidateView[]>([]);
-  const [stats, setStats] = useState<RecruiterStats>({ total: 0, active: 0, placed: 0, newThisWeek: 0 });
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<RecruiterStatus | ''>('');
   const [page, setPage] = useState(1);
@@ -33,7 +31,6 @@ export default function CandidatesPage() {
       const data = await res.json();
 
       setCandidates(data.candidates);
-      setStats(data.stats);
       setTotalPages(data.pagination.totalPages);
       setTotal(data.pagination.total);
     } catch {
@@ -185,8 +182,6 @@ export default function CandidatesPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in">
-      <StatsCards stats={stats} />
-
       <SearchBar
         search={searchInput}
         onSearchChange={setSearchInput}
@@ -210,6 +205,7 @@ export default function CandidatesPage() {
         page={page}
         totalPages={totalPages}
         total={total}
+        showing={candidates.length}
         onPageChange={setPage}
       />
 

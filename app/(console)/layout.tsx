@@ -22,11 +22,11 @@ export default function ConsoleLayout({
   const title = pageTitles[pathname] || 'Console';
 
   return (
-    <div className="min-h-screen">
+    <div className="flex font-sans">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="lg:ml-64">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden lg:ml-64">
         <TopBar title={title} onMenuToggle={() => setSidebarOpen(true)} />
-        <main className="p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-4 sm:p-8">{children}</main>
       </div>
       <ToastContainer />
     </div>

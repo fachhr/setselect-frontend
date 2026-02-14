@@ -1,43 +1,38 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-
 interface PaginationProps {
   page: number;
   totalPages: number;
   total: number;
+  showing?: number;
   onPageChange: (page: number) => void;
 }
 
-export function Pagination({ page, totalPages, total, onPageChange }: PaginationProps) {
+export function Pagination({ page, totalPages, total, showing, onPageChange }: PaginationProps) {
   if (totalPages <= 1) return null;
 
+  const displayShowing = showing ?? total;
+
   return (
-    <div className="flex items-center justify-between">
-      <p className="text-xs text-[var(--text-muted)]">
-        {total} candidate{total !== 1 ? 's' : ''} total
-      </p>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
+    <div className="bg-[var(--bg-surface-0)] border-t border-[var(--border-subtle)] px-6 py-4 flex items-center justify-between rounded-b-xl">
+      <span className="text-xs text-[var(--text-muted)]">
+        Showing {displayShowing} of {total} candidates
+      </span>
+      <div className="flex gap-2">
+        <button
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
-          className="px-2 py-1.5"
+          className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
         >
-          <ChevronLeft size={16} />
-        </Button>
-        <span className="text-sm text-[var(--text-secondary)]">
-          {page} / {totalPages}
-        </span>
-        <Button
-          variant="outline"
+          Previous
+        </button>
+        <button
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
-          className="px-2 py-1.5"
+          className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
         >
-          <ChevronRight size={16} />
-        </Button>
+          Next
+        </button>
       </div>
     </div>
   );

@@ -14,9 +14,8 @@ export function formatSalary(min: number | null | undefined, max: number | null 
 
 export function formatTalentId(id: string | null | undefined): string {
   if (!id) return 'N/A';
-  if (id.match(/^REF-\d+$/)) return id;
   const numMatch = id.match(/\d+/);
-  if (numMatch) return `REF-${numMatch[0].padStart(3, '0')}`;
+  if (numMatch) return numMatch[0].padStart(3, '0');
   return id;
 }
 

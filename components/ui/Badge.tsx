@@ -4,8 +4,8 @@ type BadgeVariant = 'default' | 'blue' | 'purple' | 'gold' | 'success' | 'warnin
 
 const variantClasses: Record<BadgeVariant, string> = {
   default: 'bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)]',
-  blue: 'bg-[var(--primary-dim)] text-[var(--secondary)] border border-[rgba(0,180,216,0.20)]',
-  purple: 'bg-[rgba(139,92,246,0.15)] text-[#a78bfa] border border-[rgba(139,92,246,0.20)]',
+  blue: 'bg-[var(--highlight-dim)] text-[var(--secondary)] border border-[rgba(144,224,239,0.30)]',
+  purple: 'bg-[var(--secondary-dim)] text-[var(--highlight)] border border-[rgba(0,180,216,0.30)]',
   gold: 'bg-[var(--warning-dim)] text-[var(--warning)] border border-[var(--warning-border)]',
   success: 'bg-[var(--success-dim)] text-[var(--success)] border border-[var(--success-border)]',
   warning: 'bg-[var(--warning-dim)] text-[var(--warning)] border border-[var(--warning-border)]',
