@@ -52,14 +52,14 @@ export function NotesSection({ notes, onAdd, onDelete }: NotesSectionProps) {
       </form>
 
       {/* Notes list */}
-      <div className="space-y-2 max-h-64 overflow-y-auto">
+      <div className="space-y-2 max-h-32 sm:max-h-64 overflow-y-auto">
         {notes.length === 0 ? (
           <p className="text-xs text-[var(--text-muted)] py-2">No notes yet</p>
         ) : (
           notes.map((note) => (
             <div
               key={note.id}
-              className="bg-[var(--bg-surface-2)] rounded-lg p-4 group"
+              className="bg-[var(--bg-surface-2)] rounded-lg p-3 sm:p-4 group"
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm text-[var(--text-secondary)] flex-1">

@@ -11,17 +11,10 @@ import {
   Globe,
   Users,
   Download,
+  ChevronDown,
 } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
-
-const WORK_ELIGIBILITY_LABELS: Record<string, string> = {
-  swiss_citizen: 'Swiss Citizen',
-  c_permit: 'Swiss C Permit',
-  eu_efta: 'EU/EFTA Citizen',
-  b_permit: 'Swiss B Permit (Non-EU)',
-  g_permit: 'Swiss G Permit (Cross-border)',
-  requires_sponsorship: 'Non-EU / Requires Sponsorship',
-};
+import { WORK_ELIGIBILITY_LABELS } from '@/lib/constants';
 import { NotesSection } from '@/components/NotesSection';
 import { toast } from '@/components/ui/Toast';
 import {
@@ -85,13 +78,13 @@ export function CandidateDetailPanel({
       {/* Panel */}
       <div className="relative w-full max-w-lg flex flex-col bg-[var(--bg-surface-1)] border-l border-[var(--border-subtle)] animate-in slide-in-from-right shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-4 bg-[var(--bg-surface-1)] border-b border-[var(--border-subtle)] flex items-center justify-between">
+        <div className="px-4 py-3 sm:px-6 sm:py-4 bg-[var(--bg-surface-1)] border-b border-[var(--border-subtle)] flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-bold text-[var(--text-primary)]">
+            <h3 className="text-base sm:text-lg font-bold text-[var(--text-primary)]">
               {c.contact_first_name} {c.contact_last_name}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="font-mono text-xs font-medium bg-[var(--bg-surface-2)] px-2 py-0.5 rounded text-[var(--text-accent)]">
+              <span className="font-mono text-[10px] sm:text-xs font-medium bg-[var(--bg-surface-2)] px-2 py-0.5 rounded text-[var(--text-muted)] sm:text-[var(--text-accent)]">
                 {formatTalentId(c.talent_id)}
               </span>
               <span className="text-[var(--text-muted)]">&bull;</span>
@@ -108,22 +101,22 @@ export function CandidateDetailPanel({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto modal-scroll p-6 space-y-8">
+        <div className="flex-1 overflow-y-auto modal-scroll p-4 sm:p-6 space-y-4 sm:space-y-8">
           {/* Status section */}
-          <div className="border border-[var(--border-subtle)] rounded-xl p-4 shadow-sm">
+          <div className="border border-[var(--border-subtle)] rounded-xl p-3 sm:p-4 shadow-sm">
             <span className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Status</span>
             <div className="flex items-center justify-between mt-2">
               <StatusBadge status={c.status} />
-              <span className="text-xs text-[var(--text-muted)]">
+              <span className="text-xs text-[var(--text-muted)] hidden sm:inline">
                 Last updated {formatEntryDate(c.profile_created_at, true)}
               </span>
             </div>
 
-            <div className="mt-4 space-y-3">
+            <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
               <select
                 value={c.status}
                 onChange={(e) => onUpdateStatus(c.profile_id, e.target.value as RecruiterStatus)}
-                className="input-base w-full px-3 py-2 rounded-lg text-sm cursor-pointer"
+                className="input-base w-full px-3 py-1.5 sm:py-2 rounded-lg text-sm cursor-pointer"
               >
                 {ALL_STATUSES.map((s) => (
                   <option key={s} value={s}>
@@ -142,19 +135,19 @@ export function CandidateDetailPanel({
                   onChange={(e) => setOwnerInput(e.target.value)}
                   onBlur={handleOwnerBlur}
                   placeholder="Assign owner..."
-                  className="input-base w-full px-3 py-2 rounded-lg text-sm"
+                  className="input-base w-full px-3 py-1.5 sm:py-2 rounded-lg text-sm"
                 />
               </div>
             </div>
           </div>
 
           {/* Contact Details */}
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <div className="flex items-center gap-2">
               <Users size={14} className="text-[var(--text-muted)]" />
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Contact</h4>
             </div>
-            <div className="bg-[var(--bg-surface-2)] rounded-lg p-4 border border-[var(--border-subtle)] space-y-3">
+            <div className="bg-[var(--bg-surface-2)] rounded-lg p-3 sm:p-4 border border-[var(--border-subtle)] space-y-2 sm:space-y-3">
               <button
                 onClick={() => copy(c.email, 'Email')}
                 className="flex items-center justify-between text-sm w-full cursor-pointer group"
@@ -203,11 +196,11 @@ export function CandidateDetailPanel({
           </div>
 
           {/* Professional Info */}
-          <div className="space-y-2">
+          <div className="space-y-1.5 sm:space-y-2">
             <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Professional</h4>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-3">
-                <div className="flex items-center gap-1.5 mb-1">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
                   <Briefcase size={12} className="text-[var(--text-muted)]" />
                   <span className="text-xs text-[var(--text-muted)]">Experience</span>
                 </div>
@@ -215,8 +208,8 @@ export function CandidateDetailPanel({
                   {formatYearsExperience(c.years_of_experience)}
                 </p>
               </div>
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-3">
-                <div className="flex items-center gap-1.5 mb-1">
+              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
                   <DollarSign size={12} className="text-[var(--text-muted)]" />
                   <span className="text-xs text-[var(--text-muted)]">Salary</span>
                 </div>
@@ -224,8 +217,8 @@ export function CandidateDetailPanel({
                   {formatSalary(c.salary_min, c.salary_max)}
                 </p>
               </div>
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-3">
-                <div className="flex items-center gap-1.5 mb-1">
+              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
                   <Calendar size={12} className="text-[var(--text-muted)]" />
                   <span className="text-xs text-[var(--text-muted)]">Notice</span>
                 </div>
@@ -233,8 +226,8 @@ export function CandidateDetailPanel({
                   {c.notice_period_months ? `${c.notice_period_months} months` : 'N/A'}
                 </p>
               </div>
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-3">
-                <div className="flex items-center gap-1.5 mb-1">
+              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
                   <Globe size={12} className="text-[var(--text-muted)]" />
                   <span className="text-xs text-[var(--text-muted)]">Work Eligibility</span>
                 </div>
@@ -249,7 +242,7 @@ export function CandidateDetailPanel({
           {c.short_summary && (
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Summary</h4>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed bg-[var(--bg-surface-2)] rounded-lg p-3">
+              <p className="text-sm text-[var(--text-secondary)] leading-snug sm:leading-relaxed bg-[var(--bg-surface-2)] rounded-lg p-2.5 sm:p-3">
                 {c.short_summary}
               </p>
             </div>
@@ -257,7 +250,7 @@ export function CandidateDetailPanel({
 
           {/* Skills */}
           {c.functional_expertise && c.functional_expertise.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Expertise</h4>
               <div className="flex flex-wrap gap-1.5">
                 {c.functional_expertise.map((skill, i) => (
@@ -274,7 +267,7 @@ export function CandidateDetailPanel({
 
           {/* Languages */}
           {c.languages && c.languages.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Languages</h4>
               <div className="flex flex-wrap gap-1.5">
                 {c.languages.map((lang, i) => (
@@ -293,7 +286,7 @@ export function CandidateDetailPanel({
           {c.cv_storage_path && (
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Documents</h4>
-              <div className="flex items-center gap-3 bg-[var(--bg-surface-2)] rounded-lg p-3 border border-[var(--border-subtle)]">
+              <div className="flex items-center gap-2 sm:gap-3 bg-[var(--bg-surface-2)] rounded-lg p-2.5 sm:p-3 border border-[var(--border-subtle)]">
                 <div className="bg-[var(--error-dim)] text-[var(--error)] rounded w-8 h-8 flex items-center justify-center flex-shrink-0">
                   <FileText size={16} />
                 </div>
@@ -319,12 +312,29 @@ export function CandidateDetailPanel({
             Added {formatEntryDate(c.profile_created_at)}
           </div>
 
-          {/* Notes */}
-          <NotesSection
-            notes={c.notes}
-            onAdd={(text) => onAddNote(c.profile_id, text)}
-            onDelete={(noteId) => onDeleteNote(c.profile_id, noteId)}
-          />
+          {/* Notes — collapsible on mobile */}
+          <div className="sm:hidden">
+            <details>
+              <summary className="flex items-center gap-2 cursor-pointer text-xs font-bold uppercase tracking-wide text-[var(--text-muted)] list-none [&::-webkit-details-marker]:hidden">
+                Notes ({c.notes.length})
+                <ChevronDown size={14} className="transition-transform [[open]>&]:rotate-180" />
+              </summary>
+              <div className="mt-2">
+                <NotesSection
+                  notes={c.notes}
+                  onAdd={(text) => onAddNote(c.profile_id, text)}
+                  onDelete={(noteId) => onDeleteNote(c.profile_id, noteId)}
+                />
+              </div>
+            </details>
+          </div>
+          <div className="hidden sm:block">
+            <NotesSection
+              notes={c.notes}
+              onAdd={(text) => onAddNote(c.profile_id, text)}
+              onDelete={(noteId) => onDeleteNote(c.profile_id, noteId)}
+            />
+          </div>
         </div>
       </div>
     </div>

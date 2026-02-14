@@ -23,9 +23,9 @@ interface SearchBarProps {
 
 export function SearchBar({ search, onSearchChange, status, onStatusChange, onAddCandidate }: SearchBarProps) {
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-      <div className="flex items-center gap-2 w-full sm:w-auto">
-        <div className="relative flex-1 sm:flex-initial">
+    <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
+        <div className="relative">
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
@@ -35,14 +35,14 @@ export function SearchBar({ search, onSearchChange, status, onStatusChange, onAd
             placeholder="Search by name, email, role, ref ID, phone..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="input-base w-full sm:w-80 pl-10 pr-4 py-2 rounded-lg text-sm"
+            className="input-base w-full sm:w-80 pl-10 pr-4 py-1.5 sm:py-2 rounded-lg text-sm"
           />
         </div>
         <div className="relative">
           <select
             value={status}
             onChange={(e) => onStatusChange(e.target.value as RecruiterStatus | '')}
-            className="input-base appearance-none pl-4 pr-10 py-2 rounded-lg text-sm min-w-[160px] cursor-pointer"
+            className="input-base appearance-none w-full sm:w-auto pl-4 pr-10 py-1.5 sm:py-2 rounded-lg text-sm sm:min-w-[160px] cursor-pointer"
           >
             {statusOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>

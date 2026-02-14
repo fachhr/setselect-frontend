@@ -136,6 +136,24 @@
     outline: none;
   }
 
+  input.filter-input {
+    background: var(--bg-surface-1) !important;
+    background-color: var(--bg-surface-1) !important;
+    border: none !important;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .filter-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .filter-input:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 1px var(--secondary);
+    outline: none;
+  }
+
   .btn-gold {
     background: var(--primary);
     color: #FFFFFF;

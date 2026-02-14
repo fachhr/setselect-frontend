@@ -57,8 +57,10 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search') || '';
   const status = searchParams.get('status') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '20', 10);
-  const offset = (page - 1) * limit;
+  const limitParam = searchParams.get('limit') || '20';
+  const limit = parseInt(limitParam, 10);
+  const fetchAll = limit === 0;
+  const offset = (page - 1) * (fetchAll ? 1 : limit);
 
   try {
     // Build query joining user_profiles with recruiter_candidates
@@ -115,8 +117,10 @@ export async function GET(request: NextRequest) {
       query = query.eq('recruiter_candidates.status', status);
     }
 
-    // Apply pagination
-    query = query.range(offset, offset + limit - 1);
+    // Apply pagination (skip when fetching all)
+    if (!fetchAll) {
+      query = query.range(offset, offset + limit - 1);
+    }
 
     const { data, count, error } = await query;
 
@@ -191,15 +195,14 @@ export async function GET(request: NextRequest) {
         ).length || 0,
     };
 
+    const totalCount = count || 0;
+
     return NextResponse.json({
       candidates,
       stats,
-      pagination: {
-        page,
-        limit,
-        total: count || 0,
-        totalPages: Math.ceil((count || 0) / limit),
-      },
+      pagination: fetchAll
+        ? { page: 1, limit: totalCount, total: totalCount, totalPages: 1 }
+        : { page, limit, total: totalCount, totalPages: Math.ceil(totalCount / limit) },
     });
   } catch (err) {
     console.error('Candidates API error:', err);
