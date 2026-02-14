@@ -189,7 +189,7 @@ export function CandidateDetailPanel({
               <div className="flex items-center justify-between text-sm">
                 <span className="text-[var(--text-muted)]">Location</span>
                 <span className="text-[var(--text-secondary)]">
-                  {formatCantons(c.desired_locations)}
+                  {formatCantons(c.desired_locations, Infinity)}
                 </span>
               </div>
             </div>
