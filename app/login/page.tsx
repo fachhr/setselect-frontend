@@ -80,10 +80,6 @@ export default function LoginPage() {
             {loading ? 'Authenticating...' : 'Access Console'}
           </button>
         </form>
-
-        <p className="text-xs text-[var(--text-muted)] text-center mt-6">
-          Hint: Use the password from your .env configuration
-        </p>
       </div>
     </div>
   );

@@ -69,10 +69,8 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv, page, total
                 className="group hover:bg-[var(--bg-surface-2)] transition-all duration-200 cursor-pointer"
                 onClick={() => onSelect(c)}
               >
-                <td className="px-6 py-4">
-                  <span className="font-mono text-xs font-medium bg-[var(--bg-surface-2)] px-2 py-1 rounded text-[var(--text-accent)]">
-                    {formatTalentId(c.talent_id)}
-                  </span>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="font-mono text-xs font-medium bg-[var(--bg-surface-2)] px-2 py-1 rounded text-[var(--text-accent)]">{formatTalentId(c.talent_id)}</span>
                 </td>
                 <td className="px-6 py-4">
                   <div className="text-sm font-bold text-[var(--text-primary)]">
@@ -162,7 +160,7 @@ export function CandidateTable({ candidates, onSelect, onDownloadCv, page, total
         </table>
       </div>
       {total !== undefined && (
-        <div className="border-t border-[var(--border-subtle)] px-6 py-4 flex items-center justify-between">
+        <div className="border-t border-[var(--border-strong)] bg-[var(--bg-surface-2)] px-6 py-4 flex items-center justify-between">
           <span className="text-xs text-[var(--text-muted)]">
             Showing {candidates.length} of {total} candidates
           </span>

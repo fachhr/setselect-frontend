@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, LogOut, X, Layers } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, X, Layers, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -13,9 +13,11 @@ const navItems = [
 interface SidebarProps {
   open: boolean;
   onClose: () => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export function Sidebar({ open, onClose }: SidebarProps) {
+export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -35,31 +37,35 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-[var(--bg-surface-1)] border-r border-[var(--border-subtle)] z-50 flex flex-col transition-transform duration-200 lg:translate-x-0 ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 left-0 h-full bg-[var(--bg-surface-1)] border-r border-[var(--border-subtle)] z-50 flex flex-col overflow-hidden transition-all duration-200 lg:translate-x-0 ${
+          collapsed ? 'lg:w-16' : 'lg:w-64'
+        } w-64 ${open ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--border-subtle)]">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center shadow-md">
+        <div className={`flex items-center p-6 ${collapsed ? 'justify-center' : 'justify-between'}`}>
+          <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
+            <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center shadow-md shrink-0">
               <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
-            <h1 className="font-[family-name:var(--font-title)] font-bold text-lg tracking-tight text-[var(--text-primary)]">
-              Set<span className="font-light text-[var(--text-secondary)]">Select</span>
-              <span className="font-light text-[var(--text-muted)] ml-1">Recruiter</span>
-            </h1>
+            {!collapsed && (
+              <h1 className="font-[family-name:var(--font-title)] font-bold text-lg tracking-tight text-[var(--text-primary)] whitespace-nowrap">
+                Set<span className="font-light text-[var(--text-secondary)]">Select</span>
+                <span className="font-light text-[var(--text-muted)] ml-1">Recruiter</span>
+              </h1>
+            )}
           </div>
-          <button
-            onClick={onClose}
-            className="lg:hidden text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
-          >
-            <X size={20} />
-          </button>
+          {!collapsed && (
+            <button
+              onClick={onClose}
+              className="lg:hidden text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+          )}
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className={`flex-1 p-4 space-y-1 ${collapsed ? 'px-2' : ''}`}>
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -67,27 +73,47 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                title={collapsed ? item.label : undefined}
+                className={`flex items-center rounded-lg text-sm font-medium transition-colors ${
+                  collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
+                } ${
                   isActive
                     ? 'bg-[var(--secondary-dim)] text-[var(--secondary)] border border-[var(--border-subtle)]'
                     : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)]'
                 }`}
               >
-                <item.icon size={18} />
-                {item.label}
+                <item.icon size={18} className="shrink-0" />
+                {!collapsed && item.label}
               </Link>
             );
           })}
         </nav>
 
+        {/* Collapse toggle (desktop only) */}
+        <div className={`hidden lg:flex border-t border-[var(--border-subtle)] ${collapsed ? 'px-2 py-2 justify-center' : 'px-4 py-2'}`}>
+          <button
+            onClick={onToggleCollapse}
+            className={`flex items-center rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)] transition-colors cursor-pointer ${
+              collapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3 w-full'
+            }`}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <ChevronsRight size={18} /> : <ChevronsLeft size={18} />}
+            {!collapsed && <span>Collapse</span>}
+          </button>
+        </div>
+
         {/* Sign out */}
-        <div className="p-4 border-t border-[var(--border-subtle)]">
+        <div className={`border-t border-[var(--border-subtle)] ${collapsed ? 'px-2 py-4' : 'p-4'}`}>
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--error)] transition-colors w-full cursor-pointer"
+            title={collapsed ? 'Sign Out' : undefined}
+            className={`flex items-center rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--error)] transition-colors w-full cursor-pointer ${
+              collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
+            }`}
           >
-            <LogOut size={18} />
-            Sign Out
+            <LogOut size={18} className="shrink-0" />
+            {!collapsed && 'Sign Out'}
           </button>
         </div>
       </aside>
