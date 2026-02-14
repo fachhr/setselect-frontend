@@ -42,17 +42,15 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: SidebarP
         } w-64 ${open ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {/* Logo */}
-        <div className={`flex items-center p-6 ${collapsed ? 'justify-center' : 'justify-between'}`}>
-          <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
+        <div className={`flex items-center h-16 px-8 border-b border-[var(--border-subtle)] transition-all duration-200 ${collapsed ? 'justify-center' : 'justify-between'}`}>
+          <div className={`flex items-center transition-all duration-200 ${collapsed ? 'justify-center' : 'gap-3'}`}>
             <div className="w-8 h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center shadow-md shrink-0">
               <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
-            {!collapsed && (
-              <h1 className="font-[family-name:var(--font-title)] font-bold text-lg tracking-tight text-[var(--text-primary)] whitespace-nowrap">
-                Set<span className="font-light text-[var(--text-secondary)]">Select</span>
-                <span className="font-light text-[var(--text-muted)] ml-1">Recruiter</span>
-              </h1>
-            )}
+            <h1 className={`font-[family-name:var(--font-title)] font-bold text-lg tracking-tight text-[var(--text-primary)] overflow-hidden whitespace-nowrap transition-all duration-200 ${collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'}`}>
+              Set<span className="font-light text-[var(--text-secondary)]">Select</span>
+              <span className="font-light text-[var(--text-muted)] ml-1">Recruiter</span>
+            </h1>
           </div>
           {!collapsed && (
             <button
@@ -65,7 +63,7 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: SidebarP
         </div>
 
         {/* Navigation */}
-        <nav className={`flex-1 p-4 space-y-1 ${collapsed ? 'px-2' : ''}`}>
+        <nav className={`flex-1 p-4 space-y-1 transition-all duration-200 ${collapsed ? 'px-2' : ''}`}>
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -74,7 +72,7 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: SidebarP
                 href={item.href}
                 onClick={onClose}
                 title={collapsed ? item.label : undefined}
-                className={`flex items-center rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center rounded-lg text-sm font-medium transition-all duration-200 overflow-hidden ${
                   collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
                 } ${
                   isActive
@@ -83,37 +81,37 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: SidebarP
                 }`}
               >
                 <item.icon size={18} className="shrink-0" />
-                {!collapsed && item.label}
+                <span className={`overflow-hidden whitespace-nowrap transition-all duration-200 ${collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'}`}>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
         {/* Collapse toggle (desktop only) */}
-        <div className={`hidden lg:flex border-t border-[var(--border-subtle)] ${collapsed ? 'px-2 py-2 justify-center' : 'px-4 py-2'}`}>
+        <div className={`hidden lg:flex border-t border-[var(--border-subtle)] transition-all duration-200 ${collapsed ? 'px-2 py-2 justify-center' : 'px-4 py-2'}`}>
           <button
             onClick={onToggleCollapse}
-            className={`flex items-center rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)] transition-colors cursor-pointer ${
+            className={`flex items-center rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)] transition-all duration-200 cursor-pointer ${
               collapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3 w-full'
             }`}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <ChevronsRight size={18} /> : <ChevronsLeft size={18} />}
-            {!collapsed && <span>Collapse</span>}
+            <span className={`overflow-hidden whitespace-nowrap transition-all duration-200 ${collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'}`}>Collapse</span>
           </button>
         </div>
 
         {/* Sign out */}
-        <div className={`border-t border-[var(--border-subtle)] ${collapsed ? 'px-2 py-4' : 'p-4'}`}>
+        <div className={`border-t border-[var(--border-subtle)] transition-all duration-200 ${collapsed ? 'px-2 py-4' : 'p-4'}`}>
           <button
             onClick={handleSignOut}
             title={collapsed ? 'Sign Out' : undefined}
-            className={`flex items-center rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--error)] transition-colors w-full cursor-pointer ${
+            className={`flex items-center rounded-lg text-sm text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--error)] transition-all duration-200 w-full cursor-pointer ${
               collapsed ? 'justify-center px-0 py-3' : 'gap-3 px-4 py-3'
             }`}
           >
             <LogOut size={18} className="shrink-0" />
-            {!collapsed && 'Sign Out'}
+            <span className={`overflow-hidden whitespace-nowrap transition-all duration-200 ${collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'}`}>Sign Out</span>
           </button>
         </div>
       </aside>
