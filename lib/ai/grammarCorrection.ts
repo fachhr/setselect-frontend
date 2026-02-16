@@ -16,7 +16,7 @@ interface GrammarFields {
 const SYSTEM_PROMPT = `You correct grammar, spelling, and capitalization in form field values. Nothing else.
 Rules:
 - Fix errors only. Do NOT rephrase, reword, or add content.
-- Preserve delimiters: semicolons (;) separate items in desired_roles and other_expertise.
+- In desired_roles and other_expertise: items should be separated by semicolons (;). If items are separated by slashes (/) or commas (,), convert those delimiters to semicolons. Example: "Quant Analyst/Trader/Researcher" → "Quant Analyst; Trader; Researcher".
 - Capitalize the first letter of each list item and proper nouns.
 - For the "languages" array: fix spelling, capitalize language names properly, and split any entry that contains commas or semicolons into separate entries (e.g., ["english, spanish"] → ["English", "Spanish"]). Deduplicate.
 - Return JSON with the exact same field names as the input.
