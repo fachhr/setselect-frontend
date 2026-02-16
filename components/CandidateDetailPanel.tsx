@@ -674,7 +674,10 @@ export function CandidateDetailPanel({
           {c.cv_storage_path && (
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Documents</h4>
-              <div className="flex items-center gap-2 sm:gap-3 bg-[var(--bg-surface-2)] rounded-lg p-2.5 sm:p-3 border border-[var(--border-subtle)]">
+              <button
+                onClick={() => onDownloadCv(c.profile_id)}
+                className="flex items-center gap-2 sm:gap-3 bg-[var(--bg-surface-2)] rounded-lg p-2.5 sm:p-3 border border-[var(--border-subtle)] w-full text-left cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors"
+              >
                 <div className="bg-[var(--error-dim)] text-[var(--error)] rounded w-8 h-8 flex items-center justify-center flex-shrink-0">
                   <FileText size={16} />
                 </div>
@@ -684,13 +687,10 @@ export function CandidateDetailPanel({
                   </p>
                   <p className="text-xs text-[var(--text-muted)]">PDF Document</p>
                 </div>
-                <button
-                  onClick={() => onDownloadCv(c.profile_id)}
-                  className="text-[var(--text-muted)] hover:text-[var(--secondary)] transition-colors cursor-pointer p-1"
-                >
+                <div className="text-[var(--text-muted)] p-1">
                   <Download size={16} />
-                </button>
-              </div>
+                </div>
+              </button>
             </div>
           )}
 
