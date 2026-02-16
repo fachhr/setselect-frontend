@@ -147,7 +147,7 @@ const JoinForm: React.FC = () => {
             // Process languages: include base selections + split "Other" by semicolon
             const baseLanguages = data.languages || [];
             const otherLanguages = data.other_language?.trim()
-                ? data.other_language.split(';').map(l => l.trim()).filter(l => l.length > 0)
+                ? data.other_language.split(';').map(l => l.replace(/\s*\([^)]*\)\s*$/, '').trim()).filter(l => l.length > 0)
                 : [];
 
             // Deduplicate (case-insensitive), preserving first occurrence

@@ -18,7 +18,7 @@ Rules:
 - Fix errors only. Do NOT rephrase, reword, or add content.
 - In desired_roles and other_expertise: items should be separated by semicolons (;). If items are separated by slashes (/) or commas (,), convert those delimiters to semicolons. Example: "Quant Analyst/Trader/Researcher" → "Quant Analyst; Trader; Researcher".
 - Capitalize the first letter of each list item and proper nouns.
-- For the "languages" array: fix spelling, capitalize language names properly, and split any entry that contains commas or semicolons into separate entries (e.g., ["english, spanish"] → ["English", "Spanish"]). Deduplicate.
+- For the "languages" array: fix spelling, capitalize language names properly, strip any proficiency annotations in parentheses (e.g., "Mandarin (Native)" → "Mandarin", "Spanish (Fluent)" → "Spanish"), and split any entry that contains commas or semicolons into separate entries (e.g., ["english, spanish"] → ["English", "Spanish"]). Deduplicate.
 - Return JSON with the exact same field names as the input.
 - If a field is already correct, return it unchanged.`;
 
