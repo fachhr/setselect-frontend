@@ -25,9 +25,10 @@ import {
     Mail,
     Lock,
     Unlock,
-    AlertCircle
+    AlertCircle,
+    Layers
 } from 'lucide-react';
-import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '@/lib/formOptions';
+import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS } from '@/lib/formOptions';
 import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
 import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
@@ -336,6 +337,8 @@ export default function HomeContent() {
     const [selectedSeniority, setSelectedSeniority] = useState<string[]>([]);
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
     const [selectedWorkEligibility, setSelectedWorkEligibility] = useState<string[]>([]);
+    const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
+    const [expertiseExpanded, setExpertiseExpanded] = useState(false);
     const [salaryFilter, setSalaryFilter] = useState<{ min: number | null; max: number | null }>({
         min: null,
         max: null
@@ -522,6 +525,11 @@ export default function HomeContent() {
                 selectedWorkEligibility.length === 0 ||
                 selectedWorkEligibility.includes(candidate.workPermit || '');
 
+            // Expertise filter (candidate matches ANY selected expertise — OR logic)
+            const matchesExpertise =
+                selectedExpertise.length === 0 ||
+                (candidate.functionalExpertise?.some((e) => selectedExpertise.includes(e)) ?? false);
+
             const matchesSalary = (() => {
                 const { min: filterMin, max: filterMax } = salaryFilter;
 
@@ -607,7 +615,7 @@ export default function HomeContent() {
                 return true;
             });
 
-            return matchesFavorites && matchesSearch && matchesLocation && matchesSeniority && matchesLanguage && matchesWorkEligibility && matchesSalary && matchesTableFilters;
+            return matchesFavorites && matchesSearch && matchesLocation && matchesSeniority && matchesLanguage && matchesWorkEligibility && matchesExpertise && matchesSalary && matchesTableFilters;
         }).sort((a, b) => {
             if (sortBy === 'newest') {
                 // Sort by entry date (newest first)
@@ -632,7 +640,7 @@ export default function HomeContent() {
                 return scoreA - scoreB;
             }
         });
-    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, salaryFilter, sortBy, showFavoritesOnly, favorites, tableFilters, viewMode]);
+    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, selectedExpertise, salaryFilter, sortBy, showFavoritesOnly, favorites, tableFilters, viewMode]);
 
     const toggleLocation = (code: string) => {
         setSelectedLocations((prev) =>
@@ -654,6 +662,12 @@ export default function HomeContent() {
 
     const toggleWorkEligibility = (value: string) => {
         setSelectedWorkEligibility((prev) =>
+            prev.includes(value) ? prev.filter((e) => e !== value) : [...prev, value]
+        );
+    };
+
+    const toggleExpertise = (value: string) => {
+        setSelectedExpertise((prev) =>
             prev.includes(value) ? prev.filter((e) => e !== value) : [...prev, value]
         );
     };
@@ -1029,6 +1043,63 @@ export default function HomeContent() {
                                 </div>
                             </div>
 
+                            {/* Functional Expertise Filter */}
+                            <div>
+                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <Layers className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Expertise
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {FUNCTIONAL_EXPERTISE_OPTIONS.map((expertise) => {
+                                        if (expertise === 'Other') return null;
+                                        if (expertise === 'Trading') {
+                                            const hasAnyTradingSubSelected = TRADING_SUB_OPTIONS.some(sub => selectedExpertise.includes(sub));
+                                            return (
+                                                <div key={expertise}>
+                                                    <button
+                                                        onClick={() => setExpertiseExpanded(!expertiseExpanded)}
+                                                        className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] flex items-center gap-1 ${hasAnyTradingSubSelected
+                                                            ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                            : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
+                                                            }`}
+                                                    >
+                                                        Trading
+                                                        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${expertiseExpanded ? 'rotate-180' : ''}`} />
+                                                    </button>
+                                                    {expertiseExpanded && (
+                                                        <div className="mt-2 flex flex-wrap gap-2">
+                                                            {TRADING_SUB_OPTIONS.map((sub) => (
+                                                                <button
+                                                                    key={sub}
+                                                                    onClick={() => toggleExpertise(sub)}
+                                                                    className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedExpertise.includes(sub)
+                                                                        ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
+                                                                        }`}
+                                                                >
+                                                                    {sub}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        }
+                                        return (
+                                            <button
+                                                key={expertise}
+                                                onClick={() => toggleExpertise(expertise)}
+                                                className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedExpertise.includes(expertise)
+                                                    ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                    : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
+                                                    }`}
+                                            >
+                                                {expertise}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
                             {/* Language Filter */}
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -1139,12 +1210,14 @@ export default function HomeContent() {
                             )}
 
                             {/* Clear Filters */}
-                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || (SIDEBAR_FILTERS.workEligibility && selectedWorkEligibility.length > 0) || searchTerm || (SIDEBAR_FILTERS.salary && (salaryFilter.min !== null || salaryFilter.max !== null))) && (
+                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedExpertise.length > 0 || (SIDEBAR_FILTERS.workEligibility && selectedWorkEligibility.length > 0) || searchTerm || (SIDEBAR_FILTERS.salary && (salaryFilter.min !== null || salaryFilter.max !== null))) && (
                                 <button
                                     onClick={() => {
                                         setSelectedLocations([]);
                                         setSelectedSeniority([]);
                                         setSelectedLanguages([]);
+                                        setSelectedExpertise([]);
+                                        setExpertiseExpanded(false);
                                         setSelectedWorkEligibility([]);
                                         setSearchTerm('');
                                         setSalaryFilter({ min: null, max: null });
