@@ -1054,34 +1054,17 @@ export default function HomeContent() {
                                         if (expertise === 'Trading') {
                                             const hasAnyTradingSubSelected = TRADING_SUB_OPTIONS.some(sub => selectedExpertise.includes(sub));
                                             return (
-                                                <div key={expertise}>
-                                                    <button
-                                                        onClick={() => setExpertiseExpanded(!expertiseExpanded)}
-                                                        className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] flex items-center gap-1 ${hasAnyTradingSubSelected
-                                                            ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
-                                                            : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
-                                                            }`}
-                                                    >
-                                                        Trading
-                                                        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${expertiseExpanded ? 'rotate-180' : ''}`} />
-                                                    </button>
-                                                    {expertiseExpanded && (
-                                                        <div className="mt-2 flex flex-wrap gap-2">
-                                                            {TRADING_SUB_OPTIONS.map((sub) => (
-                                                                <button
-                                                                    key={sub}
-                                                                    onClick={() => toggleExpertise(sub)}
-                                                                    className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedExpertise.includes(sub)
-                                                                        ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
-                                                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
-                                                                        }`}
-                                                                >
-                                                                    {sub}
-                                                                </button>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                <button
+                                                    key={expertise}
+                                                    onClick={() => setExpertiseExpanded(!expertiseExpanded)}
+                                                    className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] flex items-center gap-1 ${hasAnyTradingSubSelected
+                                                        ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                        : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
+                                                        }`}
+                                                >
+                                                    Trading
+                                                    <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${expertiseExpanded ? 'rotate-180' : ''}`} />
+                                                </button>
                                             );
                                         }
                                         return (
@@ -1098,6 +1081,22 @@ export default function HomeContent() {
                                         );
                                     })}
                                 </div>
+                                {expertiseExpanded && (
+                                    <div className="mt-2 flex flex-wrap gap-2">
+                                        {TRADING_SUB_OPTIONS.map((sub) => (
+                                            <button
+                                                key={sub}
+                                                onClick={() => toggleExpertise(sub)}
+                                                className={`px-3 py-1.5 text-xs font-medium rounded border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)] ${selectedExpertise.includes(sub)
+                                                    ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                    : 'bg-[var(--bg-surface-2)] border-[var(--border-strong)] text-[var(--text-secondary)] hover:border-[var(--secondary)]'
+                                                    }`}
+                                            >
+                                                {sub}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Language Filter */}
