@@ -22,7 +22,13 @@ async function hmacSign(data: string, secret: string): Promise<string> {
 
 async function hmacVerify(data: string, signature: string, secret: string): Promise<boolean> {
   const expected = await hmacSign(data, secret);
-  return expected === signature;
+  // Constant-time comparison to prevent timing attacks
+  if (expected.length !== signature.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < expected.length; i++) {
+    mismatch |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return mismatch === 0;
 }
 
 export async function createSessionToken(): Promise<string> {

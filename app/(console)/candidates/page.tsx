@@ -282,6 +282,24 @@ export default function CandidatesPage() {
     }
   };
 
+  const handleDeleteCandidate = async (profileId: string) => {
+    let res: Response;
+    try {
+      res = await fetch(`/api/candidates/${profileId}`, { method: 'DELETE' });
+    } catch {
+      toast('error', 'Network error — could not delete profile');
+      throw new Error('Delete failed');
+    }
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      toast('error', data.error || 'Failed to delete profile');
+      throw new Error('Delete failed');
+    }
+    setAllCandidates((prev) => prev.filter((c) => c.profile_id !== profileId));
+    setSelected(null);
+    toast('success', 'Profile deleted');
+  };
+
   const handleDownloadCv = async (profileId: string) => {
     try {
       const res = await fetch(`/api/candidates/${profileId}/cv`);
@@ -336,6 +354,7 @@ export default function CandidatesPage() {
           onAddNote={handleAddNote}
           onDeleteNote={handleDeleteNote}
           onDownloadCv={handleDownloadCv}
+          onDelete={handleDeleteCandidate}
         />
       )}
     </div>

@@ -26,7 +26,14 @@ async function isValidSession(token: string): Promise<boolean> {
 
   const [encoded, signature] = parts;
   const expected = await hmacSign(encoded, secret);
-  if (expected !== signature) return false;
+
+  // Constant-time comparison to prevent timing attacks
+  if (expected.length !== signature.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < expected.length; i++) {
+    mismatch |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  if (mismatch !== 0) return false;
 
   try {
     const payload = JSON.parse(atob(encoded.replace(/-/g, '+').replace(/_/g, '/')));

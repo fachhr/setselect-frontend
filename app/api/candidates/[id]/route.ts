@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { RecruiterStatus } from '@/types/recruiter';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const VALID_STATUSES: RecruiterStatus[] = [
   'new',
   'screening',
@@ -48,6 +50,57 @@ export async function PATCH(
     return NextResponse.json(data);
   } catch (err) {
     console.error('PATCH error:', err);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  if (!UUID_RE.test(id)) {
+    return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
+  }
+
+  try {
+    // Fetch CV path before deleting the profile
+    const { data: profile, error: fetchError } = await supabaseAdmin
+      .from('user_profiles')
+      .select('cv_storage_path')
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !profile) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+    }
+
+    // Best-effort: delete CV from storage
+    if (profile.cv_storage_path) {
+      const { error: storageError } = await supabaseAdmin.storage
+        .from('talent-pool-cvs')
+        .remove([profile.cv_storage_path]);
+
+      if (storageError) {
+        console.error('Storage deletion failed (non-blocking):', storageError);
+      }
+    }
+
+    // Delete profile row (cascades to recruiter_candidates)
+    const { error: deleteError } = await supabaseAdmin
+      .from('user_profiles')
+      .delete()
+      .eq('id', id);
+
+    if (deleteError) {
+      console.error('Delete error:', deleteError);
+      return NextResponse.json({ error: deleteError.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('DELETE error:', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

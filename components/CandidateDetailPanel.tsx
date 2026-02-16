@@ -12,10 +12,12 @@ import {
   Users,
   Download,
   ChevronDown,
+  Trash2,
 } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
 import { WORK_ELIGIBILITY_LABELS } from '@/lib/constants';
 import { NotesSection } from '@/components/NotesSection';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { toast } from '@/components/ui/Toast';
 import {
   formatTalentId,
@@ -43,6 +45,7 @@ interface CandidateDetailPanelProps {
   onAddNote: (profileId: string, text: string) => Promise<void>;
   onDeleteNote: (profileId: string, noteId: string) => Promise<void>;
   onDownloadCv: (profileId: string) => void;
+  onDelete: (profileId: string) => Promise<void>;
 }
 
 function copy(text: string, label: string) {
@@ -58,12 +61,24 @@ export function CandidateDetailPanel({
   onAddNote,
   onDeleteNote,
   onDownloadCv,
+  onDelete,
 }: CandidateDetailPanelProps) {
   const [ownerInput, setOwnerInput] = useState(c.owner || '');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleOwnerBlur = () => {
     if (ownerInput !== (c.owner || '')) {
       onUpdateOwner(c.profile_id, ownerInput);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      await onDelete(c.profile_id);
+    } catch {
+      setDeleting(false);
     }
   };
 
@@ -335,7 +350,28 @@ export function CandidateDetailPanel({
               onDelete={(noteId) => onDeleteNote(c.profile_id, noteId)}
             />
           </div>
+
+          {/* Delete */}
+          <div className="pt-4 border-t border-[var(--border-subtle)]">
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-2 text-sm text-[var(--error)] hover:text-[var(--error)] hover:bg-[var(--error-dim)] px-3 py-2 rounded-lg transition-colors cursor-pointer"
+            >
+              <Trash2 size={14} />
+              Delete Profile
+            </button>
+          </div>
         </div>
+
+        <ConfirmDialog
+          open={showDeleteConfirm}
+          title="Delete Profile"
+          message={`Permanently delete ${c.contact_first_name} ${c.contact_last_name}'s profile? This will remove all data and cannot be undone.`}
+          confirmLabel="Delete"
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+          loading={deleting}
+        />
       </div>
     </div>
   );
