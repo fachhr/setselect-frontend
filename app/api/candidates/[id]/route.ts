@@ -29,7 +29,7 @@ const PROFILE_FIELDS = new Set([
   'work_eligibility',
   'short_summary',
   'functional_expertise',
-  'base_languages',
+  'languages',
 ]);
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,7 +52,7 @@ function validateProfileFields(fields: Record<string, unknown>): string | null {
       if (isNaN(val) || val < 0) return `${key} must be a non-negative number or null`;
     }
   }
-  for (const key of ['desired_locations', 'functional_expertise', 'base_languages'] as const) {
+  for (const key of ['desired_locations', 'functional_expertise', 'languages'] as const) {
     if (key in fields && fields[key] !== null) {
       if (!Array.isArray(fields[key])) return `${key} must be an array or null`;
     }

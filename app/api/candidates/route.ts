@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
         professional_experience,
         technical_skills,
         functional_expertise,
-        base_languages,
+        languages,
         work_eligibility,
         notice_period_months,
         highlight,
@@ -157,8 +157,8 @@ export async function GET(request: NextRequest) {
         professional_experience: row.professional_experience,
         technical_skills: row.technical_skills,
         functional_expertise: row.functional_expertise,
-        languages: Array.isArray(row.base_languages)
-          ? row.base_languages.map((l: unknown) =>
+        languages: Array.isArray(row.languages)
+          ? row.languages.map((l: unknown) =>
               typeof l === 'string' ? l : `${(l as Record<string, string>).language} · ${(l as Record<string, string>).proficiency}`
             )
           : null,

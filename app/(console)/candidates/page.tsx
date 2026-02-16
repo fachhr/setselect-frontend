@@ -42,9 +42,10 @@ export default function CandidatesPage() {
       params.set('limit', '0');
 
       const res = await fetch(`/api/candidates?${params}`);
+      if (!res.ok) throw new Error('API error');
       const data = await res.json();
 
-      setAllCandidates(data.candidates);
+      setAllCandidates(data.candidates ?? []);
     } catch {
       toast('error', 'Failed to load candidates');
     } finally {
@@ -314,7 +315,7 @@ export default function CandidatesPage() {
       short_summary: formData.short_summary || null,
       notice_period_months: formData.notice_period_months || null,
       functional_expertise: formData.functional_expertise.length > 0 ? formData.functional_expertise : null,
-      base_languages: formData.languages.length > 0 ? formData.languages : null,
+      languages: formData.languages.length > 0 ? formData.languages.map(l => ({ language: l })) : null,
       years_of_experience: formData.years_of_experience ? Number(formData.years_of_experience) : null,
       salary_min: formData.salary_min ? Number(formData.salary_min) : null,
       salary_max: formData.salary_max ? Number(formData.salary_max) : null,
