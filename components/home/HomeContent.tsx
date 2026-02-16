@@ -505,7 +505,15 @@ export default function HomeContent() {
                 (candidate.languages?.some((l) => l.toLowerCase().includes(lowerTerm)) ?? false) ||
                 (candidate.cantons?.some((c) => c.toLowerCase().includes(lowerTerm)) ?? false) ||
                 candidate.availability.toLowerCase().includes(lowerTerm) ||
-                formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(lowerTerm)
+                formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(lowerTerm) ||
+                (candidate.profileBio?.toLowerCase().includes(lowerTerm) ?? false) ||
+                (candidate.shortSummary?.toLowerCase().includes(lowerTerm) ?? false) ||
+                (candidate.previousRoles?.some((r) =>
+                    r.role.toLowerCase().includes(lowerTerm) ||
+                    r.duration.toLowerCase().includes(lowerTerm) ||
+                    (r.location?.toLowerCase().includes(lowerTerm) ?? false)
+                ) ?? false) ||
+                candidate.entryDate.toLowerCase().includes(lowerTerm)
             );
 
             const matchesLocation =
