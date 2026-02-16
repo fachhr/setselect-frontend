@@ -13,41 +13,129 @@ const VALID_STATUSES: RecruiterStatus[] = [
   'rejected',
 ];
 
+const PROFILE_FIELDS = new Set([
+  'contact_first_name',
+  'contact_last_name',
+  'email',
+  'country_code',
+  'phoneNumber',
+  'linkedinUrl',
+  'years_of_experience',
+  'desired_roles',
+  'desired_locations',
+  'salary_min',
+  'salary_max',
+  'notice_period_months',
+  'work_eligibility',
+  'short_summary',
+  'functional_expertise',
+  'base_languages',
+]);
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateProfileFields(fields: Record<string, unknown>): string | null {
+  if ('contact_first_name' in fields && (!fields.contact_first_name || typeof fields.contact_first_name !== 'string')) {
+    return 'First name is required';
+  }
+  if ('contact_last_name' in fields && (!fields.contact_last_name || typeof fields.contact_last_name !== 'string')) {
+    return 'Last name is required';
+  }
+  if ('email' in fields) {
+    if (!fields.email || typeof fields.email !== 'string' || !EMAIL_RE.test(fields.email)) {
+      return 'Valid email is required';
+    }
+  }
+  for (const key of ['years_of_experience', 'salary_min', 'salary_max'] as const) {
+    if (key in fields && fields[key] !== null) {
+      const val = Number(fields[key]);
+      if (isNaN(val) || val < 0) return `${key} must be a non-negative number or null`;
+    }
+  }
+  for (const key of ['desired_locations', 'functional_expertise', 'base_languages'] as const) {
+    if (key in fields && fields[key] !== null) {
+      if (!Array.isArray(fields[key])) return `${key} must be an array or null`;
+    }
+  }
+  return null;
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
+  if (!UUID_RE.test(id)) {
+    return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
+  }
+
   try {
     const body = await request.json();
-    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+
+    // Partition into recruiter fields and profile fields
+    const recruiterUpdates: Record<string, unknown> = {};
+    const profileUpdates: Record<string, unknown> = {};
+    let hasRecruiterUpdates = false;
+    let hasProfileUpdates = false;
 
     if (body.status) {
       if (!VALID_STATUSES.includes(body.status)) {
         return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
       }
-      updates.status = body.status;
-      updates.status_changed_at = new Date().toISOString();
+      recruiterUpdates.status = body.status;
+      recruiterUpdates.status_changed_at = new Date().toISOString();
+      hasRecruiterUpdates = true;
     }
 
     if (body.owner !== undefined) {
-      updates.owner = body.owner;
+      recruiterUpdates.owner = body.owner;
+      hasRecruiterUpdates = true;
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('recruiter_candidates')
-      .update(updates)
-      .eq('profile_id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Update error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    for (const key of Object.keys(body)) {
+      if (PROFILE_FIELDS.has(key)) {
+        profileUpdates[key] = body[key];
+        hasProfileUpdates = true;
+      }
     }
 
-    return NextResponse.json(data);
+    // Validate profile fields
+    if (hasProfileUpdates) {
+      const validationError = validateProfileFields(profileUpdates);
+      if (validationError) {
+        return NextResponse.json({ error: validationError }, { status: 400 });
+      }
+    }
+
+    // Update recruiter_candidates if needed
+    if (hasRecruiterUpdates) {
+      recruiterUpdates.updated_at = new Date().toISOString();
+      const { error } = await supabaseAdmin
+        .from('recruiter_candidates')
+        .update(recruiterUpdates)
+        .eq('profile_id', id);
+
+      if (error) {
+        console.error('Recruiter update error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+    }
+
+    // Update user_profiles if needed
+    if (hasProfileUpdates) {
+      const { error } = await supabaseAdmin
+        .from('user_profiles')
+        .update(profileUpdates)
+        .eq('id', id);
+
+      if (error) {
+        console.error('Profile update error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+    }
+
+    return NextResponse.json({ success: true });
   } catch (err) {
     console.error('PATCH error:', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

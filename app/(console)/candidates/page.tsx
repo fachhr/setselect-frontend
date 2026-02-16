@@ -8,7 +8,7 @@ import type { TableFilters, SortConfig } from '@/components/CandidateTable';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
 
 import { toast } from '@/components/ui/Toast';
-import type { RecruiterCandidateView, RecruiterStatus } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData } from '@/types/recruiter';
 
 const EMPTY_FILTERS: TableFilters = {
   talent_id: '',
@@ -300,6 +300,60 @@ export default function CandidatesPage() {
     toast('success', 'Profile deleted');
   };
 
+  const handleUpdateProfile = async (profileId: string, formData: ProfileEditData) => {
+    const apiBody: Record<string, unknown> = {
+      contact_first_name: formData.contact_first_name,
+      contact_last_name: formData.contact_last_name,
+      email: formData.email,
+      country_code: formData.country_code,
+      phoneNumber: formData.phoneNumber,
+      linkedinUrl: formData.linkedinUrl || null,
+      desired_roles: formData.desired_roles || null,
+      desired_locations: formData.desired_locations.length > 0 ? formData.desired_locations : null,
+      work_eligibility: formData.work_eligibility || null,
+      short_summary: formData.short_summary || null,
+      notice_period_months: formData.notice_period_months || null,
+      functional_expertise: formData.functional_expertise.length > 0 ? formData.functional_expertise : null,
+      base_languages: formData.languages.length > 0 ? formData.languages : null,
+      years_of_experience: formData.years_of_experience ? Number(formData.years_of_experience) : null,
+      salary_min: formData.salary_min ? Number(formData.salary_min) : null,
+      salary_max: formData.salary_max ? Number(formData.salary_max) : null,
+    };
+
+    const res = await fetch(`/api/candidates/${profileId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(apiBody),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      toast('error', data.error || 'Failed to update profile');
+      throw new Error('Update failed');
+    }
+
+    toast('success', 'Profile updated');
+    updateCandidateLocally(profileId, (c) => ({
+      ...c,
+      contact_first_name: formData.contact_first_name,
+      contact_last_name: formData.contact_last_name,
+      email: formData.email,
+      country_code: formData.country_code,
+      phoneNumber: formData.phoneNumber,
+      linkedinUrl: formData.linkedinUrl || null,
+      desired_roles: formData.desired_roles || null,
+      desired_locations: formData.desired_locations.length > 0 ? formData.desired_locations : [],
+      work_eligibility: formData.work_eligibility || null,
+      short_summary: formData.short_summary || null,
+      notice_period_months: formData.notice_period_months || '',
+      functional_expertise: formData.functional_expertise.length > 0 ? formData.functional_expertise : null,
+      languages: formData.languages.length > 0 ? formData.languages : null,
+      years_of_experience: formData.years_of_experience ? Number(formData.years_of_experience) : 0,
+      salary_min: formData.salary_min ? Number(formData.salary_min) : null,
+      salary_max: formData.salary_max ? Number(formData.salary_max) : null,
+    }));
+  };
+
   const handleDownloadCv = async (profileId: string) => {
     try {
       const res = await fetch(`/api/candidates/${profileId}/cv`);
@@ -355,6 +409,7 @@ export default function CandidatesPage() {
           onDeleteNote={handleDeleteNote}
           onDownloadCv={handleDownloadCv}
           onDelete={handleDeleteCandidate}
+          onUpdateProfile={handleUpdateProfile}
         />
       )}
     </div>

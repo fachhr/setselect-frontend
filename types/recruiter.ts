@@ -43,6 +43,25 @@ export interface RecruiterCandidateView {
   status_changed_at: string;
 }
 
+export interface ProfileEditData {
+  contact_first_name: string;
+  contact_last_name: string;
+  email: string;
+  country_code: string;
+  phoneNumber: string;
+  linkedinUrl: string;
+  years_of_experience: string;
+  desired_roles: string;
+  desired_locations: string[];
+  salary_min: string;
+  salary_max: string;
+  notice_period_months: string;
+  work_eligibility: string;
+  short_summary: string;
+  functional_expertise: string[];
+  languages: string[];
+}
+
 export interface RecruiterStats {
   total: number;
   active: number;

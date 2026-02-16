@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   X,
   Copy,
@@ -13,9 +13,11 @@ import {
   Download,
   ChevronDown,
   Trash2,
+  Pencil,
+  Loader2,
 } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
-import { WORK_ELIGIBILITY_LABELS } from '@/lib/constants';
+import { WORK_ELIGIBILITY_LABELS, WORK_ELIGIBILITY_OPTIONS } from '@/lib/constants';
 import { NotesSection } from '@/components/NotesSection';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { toast } from '@/components/ui/Toast';
@@ -26,7 +28,7 @@ import {
   formatCantons,
   formatEntryDate,
 } from '@/lib/helpers';
-import type { RecruiterCandidateView, RecruiterStatus } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData } from '@/types/recruiter';
 
 const ALL_STATUSES: RecruiterStatus[] = [
   'new',
@@ -37,6 +39,8 @@ const ALL_STATUSES: RecruiterStatus[] = [
   'rejected',
 ];
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 interface CandidateDetailPanelProps {
   candidate: RecruiterCandidateView;
   onClose: () => void;
@@ -46,11 +50,33 @@ interface CandidateDetailPanelProps {
   onDeleteNote: (profileId: string, noteId: string) => Promise<void>;
   onDownloadCv: (profileId: string) => void;
   onDelete: (profileId: string) => Promise<void>;
+  onUpdateProfile: (profileId: string, data: ProfileEditData) => Promise<void>;
 }
 
 function copy(text: string, label: string) {
   navigator.clipboard.writeText(text);
   toast('success', `${label} copied`);
+}
+
+function buildFormData(c: RecruiterCandidateView): ProfileEditData {
+  return {
+    contact_first_name: c.contact_first_name,
+    contact_last_name: c.contact_last_name,
+    email: c.email,
+    country_code: c.country_code,
+    phoneNumber: c.phoneNumber,
+    linkedinUrl: c.linkedinUrl || '',
+    years_of_experience: c.years_of_experience ? String(c.years_of_experience) : '',
+    desired_roles: c.desired_roles || '',
+    desired_locations: c.desired_locations || [],
+    salary_min: c.salary_min ? String(c.salary_min) : '',
+    salary_max: c.salary_max ? String(c.salary_max) : '',
+    notice_period_months: c.notice_period_months || '',
+    work_eligibility: c.work_eligibility || '',
+    short_summary: c.short_summary || '',
+    functional_expertise: c.functional_expertise || [],
+    languages: c.languages || [],
+  };
 }
 
 export function CandidateDetailPanel({
@@ -62,10 +88,68 @@ export function CandidateDetailPanel({
   onDeleteNote,
   onDownloadCv,
   onDelete,
+  onUpdateProfile,
 }: CandidateDetailPanelProps) {
   const [ownerInput, setOwnerInput] = useState(c.owner || '');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState<ProfileEditData>(() => buildFormData(c));
+  const [errors, setErrors] = useState<Partial<Record<keyof ProfileEditData, string>>>({});
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
+
+  // Reset edit mode when candidate changes
+  useEffect(() => {
+    setIsEditing(false);
+    setSaving(false);
+    setFormData(buildFormData(c));
+    setErrors({});
+    setOwnerInput(c.owner || '');
+  }, [c.profile_id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const hasUnsavedChanges = useCallback(() => {
+    if (!isEditing) return false;
+    const original = buildFormData(c);
+    return JSON.stringify(formData) !== JSON.stringify(original);
+  }, [isEditing, formData, c]);
+
+  const closeAfterDiscard = useRef(false);
+
+  const handleEscape = useCallback(() => {
+    if (hasUnsavedChanges()) {
+      closeAfterDiscard.current = false;
+      setShowDiscardConfirm(true);
+    } else if (isEditing) {
+      setIsEditing(false);
+    } else {
+      onClose();
+    }
+  }, [hasUnsavedChanges, isEditing, onClose]);
+
+  const handleClosePanel = useCallback(() => {
+    if (hasUnsavedChanges()) {
+      closeAfterDiscard.current = true;
+      setShowDiscardConfirm(true);
+    } else {
+      onClose();
+    }
+  }, [hasUnsavedChanges, onClose]);
+
+  // Escape key handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showDiscardConfirm || showDeleteConfirm) return;
+        e.preventDefault();
+        handleEscape();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleEscape, showDiscardConfirm, showDeleteConfirm]);
 
   const handleOwnerBlur = () => {
     if (ownerInput !== (c.owner || '')) {
@@ -82,12 +166,78 @@ export function CandidateDetailPanel({
     }
   };
 
+  const handleBackdropClick = () => {
+    if (saving) return;
+    handleClosePanel();
+  };
+
+  const updateField = <K extends keyof ProfileEditData>(key: K, value: ProfileEditData[K]) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<keyof ProfileEditData, string>> = {};
+
+    if (!formData.contact_first_name.trim()) newErrors.contact_first_name = 'Required';
+    if (!formData.contact_last_name.trim()) newErrors.contact_last_name = 'Required';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Required';
+    } else if (!EMAIL_RE.test(formData.email)) {
+      newErrors.email = 'Invalid email';
+    }
+
+    if (formData.years_of_experience && (isNaN(Number(formData.years_of_experience)) || Number(formData.years_of_experience) < 0)) {
+      newErrors.years_of_experience = 'Must be a valid number';
+    }
+    if (formData.salary_min && (isNaN(Number(formData.salary_min)) || Number(formData.salary_min) < 0)) {
+      newErrors.salary_min = 'Must be a valid number';
+    }
+    if (formData.salary_max && (isNaN(Number(formData.salary_max)) || Number(formData.salary_max) < 0)) {
+      newErrors.salary_max = 'Must be a valid number';
+    }
+    if (formData.salary_min && formData.salary_max) {
+      const min = Number(formData.salary_min);
+      const max = Number(formData.salary_max);
+      if (!isNaN(min) && !isNaN(max) && max < min) {
+        newErrors.salary_max = 'Must be >= min';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) return;
+    setSaving(true);
+    try {
+      await onUpdateProfile(c.profile_id, formData);
+      setIsEditing(false);
+      setErrors({});
+    } catch {
+      // stay in edit mode
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData(buildFormData(c));
+    setErrors({});
+    setIsEditing(false);
+  };
+
+  const inputClass = 'input-base w-full px-3 py-1.5 sm:py-2 rounded-lg text-sm';
+  const labelClass = 'text-xs text-[var(--text-muted)] uppercase tracking-wider block mb-1';
+  const errorClass = 'text-xs text-[var(--error)] mt-0.5';
+
   return (
     <div className="fixed inset-0 z-[60] flex justify-end">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-[var(--bg-root)]/60 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleBackdropClick}
       />
 
       {/* Panel */}
@@ -108,16 +258,45 @@ export function CandidateDetailPanel({
               </span>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer p-2 hover:bg-[var(--bg-surface-3)] rounded-full"
-          >
-            <X size={20} />
-          </button>
+          <div className="flex items-center gap-1">
+            {isEditing ? (
+              <>
+                <button
+                  onClick={handleCancel}
+                  disabled={saving}
+                  className="text-sm px-3 py-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-3)] transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="text-sm px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)] transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {saving && <Loader2 size={14} className="animate-spin" />}
+                  Save
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer p-2 hover:bg-[var(--bg-surface-3)] rounded-full"
+                title="Edit profile"
+              >
+                <Pencil size={16} />
+              </button>
+            )}
+            <button
+              onClick={handleClosePanel}
+              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer p-2 hover:bg-[var(--bg-surface-3)] rounded-full"
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto modal-scroll p-4 sm:p-6 space-y-4 sm:space-y-8">
-          {/* Status section */}
+          {/* Status section — always editable, no change */}
           <div className="border border-[var(--border-subtle)] rounded-xl p-3 sm:p-4 shadow-sm">
             <span className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Status</span>
             <div className="flex items-center justify-between mt-2">
@@ -141,16 +320,14 @@ export function CandidateDetailPanel({
               </select>
 
               <div>
-                <label className="text-xs text-[var(--text-muted)] uppercase tracking-wider block mb-1">
-                  Owner
-                </label>
+                <label className={labelClass}>Owner</label>
                 <input
                   type="text"
                   value={ownerInput}
                   onChange={(e) => setOwnerInput(e.target.value)}
                   onBlur={handleOwnerBlur}
                   placeholder="Assign owner..."
-                  className="input-base w-full px-3 py-1.5 sm:py-2 rounded-lg text-sm"
+                  className={inputClass}
                 />
               </div>
             </div>
@@ -162,139 +339,335 @@ export function CandidateDetailPanel({
               <Users size={14} className="text-[var(--text-muted)]" />
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Contact</h4>
             </div>
-            <div className="bg-[var(--bg-surface-2)] rounded-lg p-3 sm:p-4 border border-[var(--border-subtle)] space-y-2 sm:space-y-3">
-              <button
-                onClick={() => copy(c.email, 'Email')}
-                className="flex items-center justify-between text-sm w-full cursor-pointer group"
-              >
-                <span className="text-[var(--text-muted)]">Email</span>
-                <span className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors">
-                  {c.email}
-                  <Copy size={12} className="opacity-0 group-hover:opacity-100" />
-                </span>
-              </button>
 
-              {c.phoneNumber && (
+            {isEditing ? (
+              <div className="bg-[var(--bg-surface-2)] rounded-lg p-3 sm:p-4 border border-[var(--border-subtle)] space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={labelClass}>First Name *</label>
+                    <input
+                      type="text"
+                      value={formData.contact_first_name}
+                      onChange={(e) => updateField('contact_first_name', e.target.value)}
+                      className={inputClass}
+                    />
+                    {errors.contact_first_name && <p className={errorClass}>{errors.contact_first_name}</p>}
+                  </div>
+                  <div>
+                    <label className={labelClass}>Last Name *</label>
+                    <input
+                      type="text"
+                      value={formData.contact_last_name}
+                      onChange={(e) => updateField('contact_last_name', e.target.value)}
+                      className={inputClass}
+                    />
+                    {errors.contact_last_name && <p className={errorClass}>{errors.contact_last_name}</p>}
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Email *</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                    className={inputClass}
+                  />
+                  {errors.email && <p className={errorClass}>{errors.email}</p>}
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-24">
+                    <label className={labelClass}>Code</label>
+                    <input
+                      type="text"
+                      value={formData.country_code}
+                      onChange={(e) => updateField('country_code', e.target.value)}
+                      placeholder="+41"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className={labelClass}>Phone</label>
+                    <input
+                      type="text"
+                      value={formData.phoneNumber}
+                      onChange={(e) => updateField('phoneNumber', e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>LinkedIn URL</label>
+                  <input
+                    type="url"
+                    value={formData.linkedinUrl}
+                    onChange={(e) => updateField('linkedinUrl', e.target.value)}
+                    placeholder="https://linkedin.com/in/..."
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="bg-[var(--bg-surface-2)] rounded-lg p-3 sm:p-4 border border-[var(--border-subtle)] space-y-2 sm:space-y-3">
                 <button
-                  onClick={() => copy(`${c.country_code}${c.phoneNumber}`, 'Phone')}
+                  onClick={() => copy(c.email, 'Email')}
                   className="flex items-center justify-between text-sm w-full cursor-pointer group"
                 >
-                  <span className="text-[var(--text-muted)]">Phone</span>
+                  <span className="text-[var(--text-muted)]">Email</span>
                   <span className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors">
-                    {c.country_code} {c.phoneNumber}
+                    {c.email}
                     <Copy size={12} className="opacity-0 group-hover:opacity-100" />
                   </span>
                 </button>
-              )}
 
-              {c.linkedinUrl && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-[var(--text-muted)]">LinkedIn</span>
-                  <a
-                    href={c.linkedinUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors"
+                {c.phoneNumber && (
+                  <button
+                    onClick={() => copy(`${c.country_code}${c.phoneNumber}`, 'Phone')}
+                    className="flex items-center justify-between text-sm w-full cursor-pointer group"
                   >
-                    View Profile
-                  </a>
-                </div>
-              )}
+                    <span className="text-[var(--text-muted)]">Phone</span>
+                    <span className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors">
+                      {c.country_code} {c.phoneNumber}
+                      <Copy size={12} className="opacity-0 group-hover:opacity-100" />
+                    </span>
+                  </button>
+                )}
 
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-[var(--text-muted)]">Location</span>
-                <span className="text-[var(--text-secondary)]">
-                  {formatCantons(c.desired_locations, Infinity)}
-                </span>
+                {c.linkedinUrl && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-[var(--text-muted)]">LinkedIn</span>
+                    <a
+                      href={c.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors"
+                    >
+                      View Profile
+                    </a>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[var(--text-muted)]">Location</span>
+                  <span className="text-[var(--text-secondary)]">
+                    {formatCantons(c.desired_locations, Infinity)}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Professional Info */}
           <div className="space-y-1.5 sm:space-y-2">
             <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Professional</h4>
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
-                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
-                  <Briefcase size={12} className="text-[var(--text-muted)]" />
-                  <span className="text-xs text-[var(--text-muted)]">Experience</span>
+
+            {isEditing ? (
+              <div className="bg-[var(--bg-surface-2)] rounded-lg p-3 sm:p-4 border border-[var(--border-subtle)] space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={labelClass}>Experience (years)</label>
+                    <input
+                      type="text"
+                      value={formData.years_of_experience}
+                      onChange={(e) => updateField('years_of_experience', e.target.value)}
+                      placeholder="e.g. 5"
+                      className={inputClass}
+                    />
+                    {errors.years_of_experience && <p className={errorClass}>{errors.years_of_experience}</p>}
+                  </div>
+                  <div>
+                    <label className={labelClass}>Notice (months)</label>
+                    <input
+                      type="text"
+                      value={formData.notice_period_months}
+                      onChange={(e) => updateField('notice_period_months', e.target.value)}
+                      placeholder="e.g. 3"
+                      className={inputClass}
+                    />
+                  </div>
                 </div>
-                <p className="text-sm text-[var(--text-primary)]">
-                  {formatYearsExperience(c.years_of_experience)}
-                </p>
-              </div>
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
-                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
-                  <DollarSign size={12} className="text-[var(--text-muted)]" />
-                  <span className="text-xs text-[var(--text-muted)]">Salary</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={labelClass}>Salary Min (CHF)</label>
+                    <input
+                      type="text"
+                      value={formData.salary_min}
+                      onChange={(e) => updateField('salary_min', e.target.value)}
+                      placeholder="e.g. 100000"
+                      className={inputClass}
+                    />
+                    {errors.salary_min && <p className={errorClass}>{errors.salary_min}</p>}
+                  </div>
+                  <div>
+                    <label className={labelClass}>Salary Max (CHF)</label>
+                    <input
+                      type="text"
+                      value={formData.salary_max}
+                      onChange={(e) => updateField('salary_max', e.target.value)}
+                      placeholder="e.g. 150000"
+                      className={inputClass}
+                    />
+                    {errors.salary_max && <p className={errorClass}>{errors.salary_max}</p>}
+                  </div>
                 </div>
-                <p className="text-sm text-[var(--text-primary)]">
-                  {formatSalary(c.salary_min, c.salary_max)}
-                </p>
-              </div>
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
-                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
-                  <Calendar size={12} className="text-[var(--text-muted)]" />
-                  <span className="text-xs text-[var(--text-muted)]">Notice</span>
+                <div>
+                  <label className={labelClass}>Desired Role</label>
+                  <input
+                    type="text"
+                    value={formData.desired_roles}
+                    onChange={(e) => updateField('desired_roles', e.target.value)}
+                    placeholder="e.g. Product Manager"
+                    className={inputClass}
+                  />
                 </div>
-                <p className="text-sm text-[var(--text-primary)]">
-                  {c.notice_period_months ? `${c.notice_period_months} months` : 'N/A'}
-                </p>
-              </div>
-              <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
-                <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
-                  <Globe size={12} className="text-[var(--text-muted)]" />
-                  <span className="text-xs text-[var(--text-muted)]">Work Eligibility</span>
+                <div>
+                  <label className={labelClass}>Locations (comma-separated)</label>
+                  <input
+                    type="text"
+                    value={formData.desired_locations.join(', ')}
+                    onChange={(e) => updateField('desired_locations', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
+                    placeholder="e.g. Zurich, Bern, Basel"
+                    className={inputClass}
+                  />
                 </div>
-                <p className="text-sm text-[var(--text-primary)]">
-                  {(c.work_eligibility && WORK_ELIGIBILITY_LABELS[c.work_eligibility]) || c.work_eligibility || 'N/A'}
-                </p>
+                <div>
+                  <label className={labelClass}>Work Eligibility</label>
+                  <select
+                    value={formData.work_eligibility}
+                    onChange={(e) => updateField('work_eligibility', e.target.value)}
+                    className={`${inputClass} cursor-pointer`}
+                  >
+                    <option value="">Select...</option>
+                    {WORK_ELIGIBILITY_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                  <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
+                    <Briefcase size={12} className="text-[var(--text-muted)]" />
+                    <span className="text-xs text-[var(--text-muted)]">Experience</span>
+                  </div>
+                  <p className="text-sm text-[var(--text-primary)]">
+                    {formatYearsExperience(c.years_of_experience)}
+                  </p>
+                </div>
+                <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                  <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
+                    <DollarSign size={12} className="text-[var(--text-muted)]" />
+                    <span className="text-xs text-[var(--text-muted)]">Salary</span>
+                  </div>
+                  <p className="text-sm text-[var(--text-primary)]">
+                    {formatSalary(c.salary_min, c.salary_max)}
+                  </p>
+                </div>
+                <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                  <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
+                    <Calendar size={12} className="text-[var(--text-muted)]" />
+                    <span className="text-xs text-[var(--text-muted)]">Notice</span>
+                  </div>
+                  <p className="text-sm text-[var(--text-primary)]">
+                    {c.notice_period_months ? `${c.notice_period_months} months` : 'N/A'}
+                  </p>
+                </div>
+                <div className="bg-[var(--bg-surface-2)] rounded-lg p-2 sm:p-3">
+                  <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
+                    <Globe size={12} className="text-[var(--text-muted)]" />
+                    <span className="text-xs text-[var(--text-muted)]">Work Eligibility</span>
+                  </div>
+                  <p className="text-sm text-[var(--text-primary)]">
+                    {(c.work_eligibility && WORK_ELIGIBILITY_LABELS[c.work_eligibility]) || c.work_eligibility || 'N/A'}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Summary */}
-          {c.short_summary && (
+          {isEditing ? (
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Summary</h4>
-              <p className="text-sm text-[var(--text-secondary)] leading-snug sm:leading-relaxed bg-[var(--bg-surface-2)] rounded-lg p-2.5 sm:p-3">
-                {c.short_summary}
-              </p>
+              <textarea
+                value={formData.short_summary}
+                onChange={(e) => updateField('short_summary', e.target.value)}
+                rows={4}
+                placeholder="Brief candidate summary..."
+                className={`${inputClass} resize-y`}
+              />
             </div>
+          ) : (
+            c.short_summary && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Summary</h4>
+                <p className="text-sm text-[var(--text-secondary)] leading-snug sm:leading-relaxed bg-[var(--bg-surface-2)] rounded-lg p-2.5 sm:p-3">
+                  {c.short_summary}
+                </p>
+              </div>
+            )
           )}
 
-          {/* Skills */}
-          {c.functional_expertise && c.functional_expertise.length > 0 && (
+          {/* Skills / Expertise */}
+          {isEditing ? (
             <div className="space-y-1.5 sm:space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Expertise</h4>
-              <div className="flex flex-wrap gap-1.5">
-                {c.functional_expertise.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 text-xs bg-[var(--bg-surface-2)] text-[var(--text-tertiary)] rounded-md border border-[var(--border-subtle)] hover:border-[var(--secondary)] hover:text-[var(--text-primary)] transition-colors cursor-default"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
+              <input
+                type="text"
+                value={formData.functional_expertise.join(', ')}
+                onChange={(e) => updateField('functional_expertise', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
+                placeholder="e.g. Finance, Strategy, Operations"
+                className={inputClass}
+              />
             </div>
+          ) : (
+            c.functional_expertise && c.functional_expertise.length > 0 && (
+              <div className="space-y-1.5 sm:space-y-2">
+                <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Expertise</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {c.functional_expertise.map((skill, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 text-xs bg-[var(--bg-surface-2)] text-[var(--text-tertiary)] rounded-md border border-[var(--border-subtle)] hover:border-[var(--secondary)] hover:text-[var(--text-primary)] transition-colors cursor-default"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )
           )}
 
           {/* Languages */}
-          {c.languages && c.languages.length > 0 && (
+          {isEditing ? (
             <div className="space-y-1.5 sm:space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Languages</h4>
-              <div className="flex flex-wrap gap-1.5">
-                {c.languages.map((lang, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 text-xs bg-[var(--primary-dim)] text-[var(--secondary)] rounded-md border border-transparent hover:border-[var(--secondary)] transition-colors cursor-default"
-                  >
-                    {typeof lang === 'string' ? lang : String(lang)}
-                  </span>
-                ))}
-              </div>
+              <input
+                type="text"
+                value={formData.languages.join(', ')}
+                onChange={(e) => updateField('languages', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
+                placeholder="e.g. English, German, French"
+                className={inputClass}
+              />
             </div>
+          ) : (
+            c.languages && c.languages.length > 0 && (
+              <div className="space-y-1.5 sm:space-y-2">
+                <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Languages</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {c.languages.map((lang, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 text-xs bg-[var(--primary-dim)] text-[var(--secondary)] rounded-md border border-transparent hover:border-[var(--secondary)] transition-colors cursor-default"
+                    >
+                      {typeof lang === 'string' ? lang : String(lang)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )
           )}
 
           {/* Documents */}
@@ -371,6 +744,21 @@ export function CandidateDetailPanel({
           onConfirm={handleDelete}
           onCancel={() => setShowDeleteConfirm(false)}
           loading={deleting}
+        />
+
+        <ConfirmDialog
+          open={showDiscardConfirm}
+          title="Discard Changes"
+          message="You have unsaved changes. Discard them?"
+          confirmLabel="Discard"
+          onConfirm={() => {
+            setShowDiscardConfirm(false);
+            setIsEditing(false);
+            setFormData(buildFormData(c));
+            setErrors({});
+            if (closeAfterDiscard.current) onClose();
+          }}
+          onCancel={() => setShowDiscardConfirm(false)}
         />
       </div>
     </div>
