@@ -1099,6 +1099,7 @@ export default function HomeContent() {
                             </div>
 
                             {/* Functional Expertise Filter */}
+                            {SIDEBAR_FILTERS.expertise && (
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
                                     <Layers className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Expertise
@@ -1153,6 +1154,7 @@ export default function HomeContent() {
                                     </div>
                                 )}
                             </div>
+                            )}
 
                             {/* Language Filter */}
                             <div>
@@ -1264,7 +1266,7 @@ export default function HomeContent() {
                             )}
 
                             {/* Clear Filters */}
-                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedExpertise.length > 0 || (SIDEBAR_FILTERS.workEligibility && selectedWorkEligibility.length > 0) || searchTags.length > 0 || (SIDEBAR_FILTERS.salary && (salaryFilter.min !== null || salaryFilter.max !== null))) && (
+                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || (SIDEBAR_FILTERS.expertise && selectedExpertise.length > 0) || (SIDEBAR_FILTERS.workEligibility && selectedWorkEligibility.length > 0) || searchTags.length > 0 || (SIDEBAR_FILTERS.salary && (salaryFilter.min !== null || salaryFilter.max !== null))) && (
                                 <button
                                     onClick={() => {
                                         setSelectedLocations([]);

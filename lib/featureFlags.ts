@@ -6,6 +6,7 @@
 export const SIDEBAR_FILTERS = {
   workEligibility: false,
   salary: false,
+  expertise: false,
 } as const;
 
 /** Candidate detail modal sections. Set to `true` to re-enable. */
