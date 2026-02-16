@@ -147,6 +147,8 @@ export async function POST(req: NextRequest) {
     after(async () => {
       try {
         // Grammar correction works on string[] — extract language names for it
+        const languageJsonb: { language: string; proficiency?: string }[] | null =
+          languages ? languages.map((l: string) => ({ language: l })) : null;
         const languageNames = languages || null;
 
         const fieldsToCorrect = {
@@ -162,12 +164,19 @@ export async function POST(req: NextRequest) {
         const corrected = await correctGrammar(fieldsToCorrect);
 
         // Build update objects with only changed fields
-        const updates: Record<string, string | string[] | { language: string }[]> = {};
+        const updates: Record<string, string | string[] | { language: string; proficiency?: string }[]> = {};
+        // Map original language names to their JSONB objects (preserves proficiency)
+        const langMap = new Map(
+          (languageJsonb || []).map(l => [l.language.toLowerCase(), l])
+        );
         for (const [key, value] of Object.entries(corrected)) {
           if (value && JSON.stringify(value) !== JSON.stringify(fieldsToCorrect[key as keyof typeof fieldsToCorrect])) {
             if (key === 'languages' && Array.isArray(value)) {
-              // Convert corrected language names back to JSONB objects
-              updates[key] = (value as string[]).map(l => ({ language: l }));
+              // Convert corrected language names back to JSONB, preserving proficiency
+              updates[key] = (value as string[]).map(l => {
+                const existing = langMap.get(l.toLowerCase());
+                return existing ? { ...existing, language: l } : { language: l };
+              });
             } else {
               updates[key] = value;
             }
