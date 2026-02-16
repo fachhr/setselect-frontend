@@ -487,6 +487,17 @@ export default function HomeContent() {
         fetchCandidates();
     }, []);
 
+    // Escape special regex characters in user input
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // Build a word-boundary regex that handles terms starting/ending with non-word chars (e.g. C++, C#, .NET)
+    const buildSearchRegex = (term: string) => {
+        const escaped = escapeRegex(term);
+        const prefix = /^\w/.test(term) ? '\\b' : '';
+        const suffix = /\w$/.test(term) ? '\\b' : '';
+        return new RegExp(`${prefix}${escaped}${suffix}`, 'i');
+    };
+
     // Filter Logic
     const filteredCandidates = useMemo(() => {
         return candidates.filter((candidate) => {
@@ -494,29 +505,29 @@ export default function HomeContent() {
             const matchesFavorites = !showFavoritesOnly || favorites.includes(candidate.id);
 
             const matchesSearch = searchTags.length === 0 || searchTags.every((tag) => {
-                const lowerTerm = tag.toLowerCase();
+                const regex = buildSearchRegex(tag);
                 return (
-                    candidate.role.toLowerCase().includes(lowerTerm) ||
-                    candidate.id.toLowerCase().includes(lowerTerm) ||
-                    candidate.skills.some((s) => s.toLowerCase().includes(lowerTerm)) ||
-                    (candidate.highlight?.toLowerCase().includes(lowerTerm) ?? false) ||
-                    (candidate.functionalExpertise?.some((f) => f.toLowerCase().includes(lowerTerm)) ?? false) ||
-                    (candidate.education?.toLowerCase().includes(lowerTerm) ?? false) ||
-                    candidate.experience.toLowerCase().includes(lowerTerm) ||
-                    (candidate.seniority?.toLowerCase().includes(lowerTerm) ?? false) ||
-                    (candidate.workPermit?.toLowerCase().includes(lowerTerm) ?? false) ||
-                    (candidate.languages?.some((l) => l.toLowerCase().includes(lowerTerm)) ?? false) ||
-                    (candidate.cantons?.some((c) => c.toLowerCase().includes(lowerTerm)) ?? false) ||
-                    candidate.availability.toLowerCase().includes(lowerTerm) ||
-                    formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(lowerTerm) ||
-                    (candidate.profileBio?.toLowerCase().includes(lowerTerm) ?? false) ||
-                    (candidate.shortSummary?.toLowerCase().includes(lowerTerm) ?? false) ||
+                    regex.test(candidate.role) ||
+                    regex.test(candidate.id) ||
+                    candidate.skills.some((s) => regex.test(s)) ||
+                    (candidate.highlight ? regex.test(candidate.highlight) : false) ||
+                    (candidate.functionalExpertise?.some((f) => regex.test(f)) ?? false) ||
+                    (candidate.education ? regex.test(candidate.education) : false) ||
+                    regex.test(candidate.experience) ||
+                    (candidate.seniority ? regex.test(candidate.seniority) : false) ||
+                    (candidate.workPermit ? regex.test(candidate.workPermit) : false) ||
+                    (candidate.languages?.some((l) => regex.test(l)) ?? false) ||
+                    (candidate.cantons?.some((c) => regex.test(c)) ?? false) ||
+                    regex.test(candidate.availability) ||
+                    regex.test(formatSalaryRange(candidate.salaryMin, candidate.salaryMax)) ||
+                    (candidate.profileBio ? regex.test(candidate.profileBio) : false) ||
+                    (candidate.shortSummary ? regex.test(candidate.shortSummary) : false) ||
                     (candidate.previousRoles?.some((r) =>
-                        r.role.toLowerCase().includes(lowerTerm) ||
-                        r.duration.toLowerCase().includes(lowerTerm) ||
-                        (r.location?.toLowerCase().includes(lowerTerm) ?? false)
+                        regex.test(r.role) ||
+                        regex.test(r.duration) ||
+                        (r.location ? regex.test(r.location) : false)
                     ) ?? false) ||
-                    candidate.entryDate.toLowerCase().includes(lowerTerm)
+                    regex.test(candidate.entryDate)
                 );
             });
 
@@ -581,27 +592,26 @@ export default function HomeContent() {
                 }
 
                 // Handle text filters
-                const searchVal = filterValue.toLowerCase();
+                const tableRegex = buildSearchRegex(filterValue);
 
-                if (key === 'id') return candidate.id.toLowerCase().includes(searchVal);
-                if (key === 'role') return candidate.role.toLowerCase().includes(searchVal);
+                if (key === 'id') return tableRegex.test(candidate.id);
+                if (key === 'role') return tableRegex.test(candidate.role);
                 if (key === 'previousRoles') {
-                    // Search through previous roles (both role and duration)
                     if (!candidate.previousRoles || candidate.previousRoles.length === 0) return false;
                     return candidate.previousRoles.some(r =>
-                        r.role.toLowerCase().includes(searchVal) ||
-                        (r.location || '').toLowerCase().includes(searchVal) ||
-                        r.duration.toLowerCase().includes(searchVal)
+                        tableRegex.test(r.role) ||
+                        tableRegex.test(r.location || '') ||
+                        tableRegex.test(r.duration)
                     );
                 }
-                if (key === 'highlight') return (candidate.highlight || '').toLowerCase().includes(searchVal);
-                if (key === 'expertise') return candidate.functionalExpertise?.some(e => e.toLowerCase().includes(searchVal)) || false;
-                if (key === 'experience') return candidate.experience.toLowerCase().includes(searchVal);
-                if (key === 'education') return (candidate.education || '').toLowerCase().includes(searchVal);
-                if (key === 'availability') return candidate.availability.toLowerCase().includes(searchVal);
-                if (key === 'entryDate') return candidate.entryDate.toLowerCase().includes(searchVal);
+                if (key === 'highlight') return tableRegex.test(candidate.highlight || '');
+                if (key === 'expertise') return candidate.functionalExpertise?.some(e => tableRegex.test(e)) || false;
+                if (key === 'experience') return tableRegex.test(candidate.experience);
+                if (key === 'education') return tableRegex.test(candidate.education || '');
+                if (key === 'availability') return tableRegex.test(candidate.availability);
+                if (key === 'entryDate') return tableRegex.test(candidate.entryDate);
                 if (key === 'salary') {
-                    const val = searchVal.trim();
+                    const val = filterValue.trim();
                     if (!val) return true;
 
                     // Parse "min-max", "-max", "min-", or just "min"
@@ -611,7 +621,7 @@ export default function HomeContent() {
 
                     if (tableFilterMin === null && tableFilterMax === null) {
                         // Text search fallback
-                        return formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(val);
+                        return tableRegex.test(formatSalaryRange(candidate.salaryMin, candidate.salaryMax));
                     }
 
                     if (candidate.salaryMin == null && candidate.salaryMax == null) return true;
