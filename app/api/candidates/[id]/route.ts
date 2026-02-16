@@ -32,6 +32,19 @@ const PROFILE_FIELDS = new Set([
   'languages',
 ]);
 
+const TALENT_PROFILE_FIELDS = new Set([
+  'years_of_experience',
+  'desired_roles',
+  'desired_locations',
+  'salary_min',
+  'salary_max',
+  'notice_period_months',
+  'work_eligibility',
+  'short_summary',
+  'functional_expertise',
+  'languages',
+]);
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validateProfileFields(fields: Record<string, unknown>): string | null {
@@ -132,6 +145,27 @@ export async function PATCH(
       if (error) {
         console.error('Profile update error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      // Sync non-PII fields to talent_profiles (best-effort)
+      const talentProfileUpdates: Record<string, unknown> = {};
+      let hasTalentUpdates = false;
+      for (const key of Object.keys(profileUpdates)) {
+        if (TALENT_PROFILE_FIELDS.has(key)) {
+          talentProfileUpdates[key] = profileUpdates[key];
+          hasTalentUpdates = true;
+        }
+      }
+
+      if (hasTalentUpdates) {
+        const { error: talentError } = await supabaseAdmin
+          .from('talent_profiles')
+          .update(talentProfileUpdates)
+          .eq('profile_id', id);
+
+        if (talentError) {
+          console.warn('talent_profiles sync failed (non-blocking):', talentError);
+        }
       }
     }
 
