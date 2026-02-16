@@ -644,6 +644,7 @@ const JoinForm: React.FC = () => {
 
                                 <div className="flex flex-wrap gap-2">
                                     {FUNCTIONAL_EXPERTISE_OPTIONS.map((expertise: FunctionalExpertise) => {
+                                        if (expertise === 'Other' && tradingExpanded) return null;
                                         if (expertise === 'Trading') {
                                             // Render Trading as expand/collapse trigger
                                             return (
@@ -731,6 +732,32 @@ const JoinForm: React.FC = () => {
                                                     </label>
                                                 );
                                             })}
+                                            <label
+                                                key="Other"
+                                                className={`
+                                                    cursor-pointer px-3 py-1.5 text-xs font-medium rounded border transition-all select-none
+                                                    has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--border-focus)] has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-[var(--bg-root)]
+                                                    ${(functionalExpertise || []).includes('Other')
+                                                        ? 'bg-[var(--primary)] border-[var(--primary)] text-white shadow-md'
+                                                        : 'bg-[var(--bg-surface-1)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'}
+                                                    ${!(functionalExpertise || []).includes('Other') && (functionalExpertise || []).length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}
+                                                `}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only"
+                                                    checked={(functionalExpertise || []).includes('Other')}
+                                                    disabled={!(functionalExpertise || []).includes('Other') && (functionalExpertise || []).length >= 5}
+                                                    onChange={() => {
+                                                        const current = functionalExpertise || [];
+                                                        const updated = current.includes('Other')
+                                                            ? current.filter(e => e !== 'Other')
+                                                            : current.length < 5 ? [...current, 'Other' as typeof current[number]] : current;
+                                                        setValue('functional_expertise', updated, { shouldValidate: true });
+                                                    }}
+                                                />
+                                                Other
+                                            </label>
                                         </div>
                                     </div>
                                 )}
