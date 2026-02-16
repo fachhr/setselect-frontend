@@ -332,7 +332,8 @@ export default function HomeContent() {
     const { isZenMode, toggleZenMode } = useZenMode();
     const [candidates, setCandidates] = useState<Candidate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTags, setSearchTags] = useState<string[]>([]);
+    const [searchInput, setSearchInput] = useState('');
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
     const [selectedSeniority, setSelectedSeniority] = useState<string[]>([]);
     const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
@@ -491,30 +492,32 @@ export default function HomeContent() {
             // Favorites filter
             const matchesFavorites = !showFavoritesOnly || favorites.includes(candidate.id);
 
-            const lowerTerm = searchTerm.toLowerCase();
-            const matchesSearch = !searchTerm || (
-                candidate.role.toLowerCase().includes(lowerTerm) ||
-                candidate.id.toLowerCase().includes(lowerTerm) ||
-                candidate.skills.some((s) => s.toLowerCase().includes(lowerTerm)) ||
-                (candidate.highlight?.toLowerCase().includes(lowerTerm) ?? false) ||
-                (candidate.functionalExpertise?.some((f) => f.toLowerCase().includes(lowerTerm)) ?? false) ||
-                (candidate.education?.toLowerCase().includes(lowerTerm) ?? false) ||
-                candidate.experience.toLowerCase().includes(lowerTerm) ||
-                (candidate.seniority?.toLowerCase().includes(lowerTerm) ?? false) ||
-                (candidate.workPermit?.toLowerCase().includes(lowerTerm) ?? false) ||
-                (candidate.languages?.some((l) => l.toLowerCase().includes(lowerTerm)) ?? false) ||
-                (candidate.cantons?.some((c) => c.toLowerCase().includes(lowerTerm)) ?? false) ||
-                candidate.availability.toLowerCase().includes(lowerTerm) ||
-                formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(lowerTerm) ||
-                (candidate.profileBio?.toLowerCase().includes(lowerTerm) ?? false) ||
-                (candidate.shortSummary?.toLowerCase().includes(lowerTerm) ?? false) ||
-                (candidate.previousRoles?.some((r) =>
-                    r.role.toLowerCase().includes(lowerTerm) ||
-                    r.duration.toLowerCase().includes(lowerTerm) ||
-                    (r.location?.toLowerCase().includes(lowerTerm) ?? false)
-                ) ?? false) ||
-                candidate.entryDate.toLowerCase().includes(lowerTerm)
-            );
+            const matchesSearch = searchTags.length === 0 || searchTags.every((tag) => {
+                const lowerTerm = tag.toLowerCase();
+                return (
+                    candidate.role.toLowerCase().includes(lowerTerm) ||
+                    candidate.id.toLowerCase().includes(lowerTerm) ||
+                    candidate.skills.some((s) => s.toLowerCase().includes(lowerTerm)) ||
+                    (candidate.highlight?.toLowerCase().includes(lowerTerm) ?? false) ||
+                    (candidate.functionalExpertise?.some((f) => f.toLowerCase().includes(lowerTerm)) ?? false) ||
+                    (candidate.education?.toLowerCase().includes(lowerTerm) ?? false) ||
+                    candidate.experience.toLowerCase().includes(lowerTerm) ||
+                    (candidate.seniority?.toLowerCase().includes(lowerTerm) ?? false) ||
+                    (candidate.workPermit?.toLowerCase().includes(lowerTerm) ?? false) ||
+                    (candidate.languages?.some((l) => l.toLowerCase().includes(lowerTerm)) ?? false) ||
+                    (candidate.cantons?.some((c) => c.toLowerCase().includes(lowerTerm)) ?? false) ||
+                    candidate.availability.toLowerCase().includes(lowerTerm) ||
+                    formatSalaryRange(candidate.salaryMin, candidate.salaryMax).toLowerCase().includes(lowerTerm) ||
+                    (candidate.profileBio?.toLowerCase().includes(lowerTerm) ?? false) ||
+                    (candidate.shortSummary?.toLowerCase().includes(lowerTerm) ?? false) ||
+                    (candidate.previousRoles?.some((r) =>
+                        r.role.toLowerCase().includes(lowerTerm) ||
+                        r.duration.toLowerCase().includes(lowerTerm) ||
+                        (r.location?.toLowerCase().includes(lowerTerm) ?? false)
+                    ) ?? false) ||
+                    candidate.entryDate.toLowerCase().includes(lowerTerm)
+                );
+            });
 
             const matchesLocation =
                 selectedLocations.length === 0 ||
@@ -648,7 +651,7 @@ export default function HomeContent() {
                 return scoreA - scoreB;
             }
         });
-    }, [candidates, searchTerm, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, selectedExpertise, salaryFilter, sortBy, showFavoritesOnly, favorites, tableFilters, viewMode]);
+    }, [candidates, searchTags, selectedLocations, selectedSeniority, selectedLanguages, selectedWorkEligibility, selectedExpertise, salaryFilter, sortBy, showFavoritesOnly, favorites, tableFilters, viewMode]);
 
     const toggleLocation = (code: string) => {
         setSelectedLocations((prev) =>
@@ -982,7 +985,7 @@ export default function HomeContent() {
                                     <LayoutGrid className="w-4 h-4" />
                                 </button>
                                 <button
-                                    onClick={() => setViewMode('table')}
+                                    onClick={() => { setViewMode('table'); setSearchTags([]); setSearchInput(''); }}
                                     className={`p-1.5 rounded-md transition-all ${viewMode === 'table'
                                             ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] shadow-sm'
                                             : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
@@ -1013,15 +1016,48 @@ export default function HomeContent() {
                     {viewMode === 'grid' && !isZenMode && isSidebarOpen && (
                         <aside className="w-full lg:w-72 flex-shrink-0 space-y-8 animate-in slide-in-from-left-4 fade-in duration-300">
                             {/* Search */}
-                            <div className="relative group">
-                                <input
-                                    type="text"
-                                    placeholder="Search candidates..."
-                                    className="input-base w-full pl-10 pr-4 py-2.5 rounded-lg text-sm"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                                <Search className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-3" />
+                            <div className="space-y-2">
+                                <div className="relative group">
+                                    <input
+                                        type="text"
+                                        placeholder="Search candidates..."
+                                        className="input-base w-full pl-10 pr-4 py-2.5 rounded-lg text-sm"
+                                        value={searchInput}
+                                        onChange={(e) => setSearchInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                const trimmed = searchInput.trim();
+                                                if (trimmed && !searchTags.some((t) => t.toLowerCase() === trimmed.toLowerCase())) {
+                                                    setSearchTags((prev) => [...prev, trimmed]);
+                                                }
+                                                setSearchInput('');
+                                            }
+                                        }}
+                                    />
+                                    <Search className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-3" />
+                                </div>
+                                {searchTags.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5" role="list" aria-label="Active search filters">
+                                        {searchTags.map((tag) => (
+                                            <span
+                                                key={tag}
+                                                role="listitem"
+                                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--primary)] border border-[var(--primary)] text-white"
+                                            >
+                                                {tag}
+                                                <button
+                                                    type="button"
+                                                    aria-label={`Remove search filter: ${tag}`}
+                                                    onClick={() => setSearchTags((prev) => prev.filter((t) => t !== tag))}
+                                                    className="hover:opacity-70 transition-opacity"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Seniority Filter */}
@@ -1217,7 +1253,7 @@ export default function HomeContent() {
                             )}
 
                             {/* Clear Filters */}
-                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedExpertise.length > 0 || (SIDEBAR_FILTERS.workEligibility && selectedWorkEligibility.length > 0) || searchTerm || (SIDEBAR_FILTERS.salary && (salaryFilter.min !== null || salaryFilter.max !== null))) && (
+                            {(selectedLocations.length > 0 || selectedSeniority.length > 0 || selectedLanguages.length > 0 || selectedExpertise.length > 0 || (SIDEBAR_FILTERS.workEligibility && selectedWorkEligibility.length > 0) || searchTags.length > 0 || (SIDEBAR_FILTERS.salary && (salaryFilter.min !== null || salaryFilter.max !== null))) && (
                                 <button
                                     onClick={() => {
                                         setSelectedLocations([]);
@@ -1226,7 +1262,8 @@ export default function HomeContent() {
                                         setSelectedExpertise([]);
                                         setExpertiseExpanded(false);
                                         setSelectedWorkEligibility([]);
-                                        setSearchTerm('');
+                                        setSearchTags([]);
+                                        setSearchInput('');
                                         setSalaryFilter({ min: null, max: null });
                                     }}
                                     className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-medium flex items-center gap-1.5 transition-colors border-b border-transparent hover:border-[var(--text-primary)] pb-0.5 w-max"
