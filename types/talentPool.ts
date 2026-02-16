@@ -60,7 +60,7 @@ export interface TalentPoolProfile {
   work_eligibility?: string | null;
   desired_roles?: string | null;
   highlight?: string | null;
-  languages?: string[] | null;
+  languages?: { language: string; proficiency?: string }[] | null;
   functional_expertise?: string[] | null;
   profile_bio?: string | null;  // AI-generated professional summary
   short_summary?: string | null;  // AI-generated 2-sentence summary for cards
@@ -80,7 +80,7 @@ export interface TalentProfile {
   salary_min: number | null;
   salary_max: number | null;
   highlight: string | null;
-  languages: string[] | null;
+  languages: { language: string; proficiency?: string }[] | null;
   functional_expertise: string[] | null;
   other_expertise: string | null;
   profile_bio: string | null;
@@ -94,7 +94,6 @@ export interface TalentProfile {
   professional_interests: Record<string, unknown>[] | null;
   extracurricular_activities: Record<string, unknown>[] | null;
   base_projects: Record<string, unknown>[] | null;
-  base_languages: Record<string, unknown>[] | null;
   parsing_completed_at: string | null;
   created_at: string;
 }

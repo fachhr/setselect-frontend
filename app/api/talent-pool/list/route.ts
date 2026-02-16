@@ -69,10 +69,11 @@ export async function GET(req: NextRequest) {
     }
 
     // 3. Filter by Languages (candidates must have ALL selected languages)
+    // Column is JSONB array of {language, proficiency?} objects — use JSONB containment
     if (languagesParam) {
       const languages = languagesParam.split(',').map(l => l.trim()).filter(Boolean);
       if (languages.length > 0) {
-        query = query.contains('languages', languages);
+        query = query.contains('languages', languages.map(l => ({ language: l })));
       }
     }
 
@@ -202,7 +203,7 @@ export async function GET(req: NextRequest) {
         highlight: profile.highlight || null,
         education: educationStr,
         work_eligibility: profile.work_eligibility || null,
-        languages: profile.languages || [],
+        languages: (profile.languages || []).map((l: any) => typeof l === 'string' ? l : l.language),
         functional_expertise: profile.functional_expertise || [],
         desired_roles: profile.desired_roles || null,
         profile_bio: profile.profile_bio || null,

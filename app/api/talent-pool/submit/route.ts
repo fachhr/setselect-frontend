@@ -85,8 +85,8 @@ export async function POST(req: NextRequest) {
         salary_min: validatedData.salary_min,
         salary_max: validatedData.salary_max,
 
-        // Languages (simplified array of strings)
-        languages: languages || null,
+        // Languages (JSONB objects)
+        languages: languages ? languages.map((l: string) => ({ language: l })) : null,
 
         // Key achievement/highlight (user-provided)
         highlight: validatedData.highlight || null,
@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
         salary_min: validatedData.salary_min,
         salary_max: validatedData.salary_max,
         highlight: validatedData.highlight || null,
-        languages: languages || null,
+        languages: languages ? languages.map((l: string) => ({ language: l })) : null,
         functional_expertise: validatedData.functional_expertise || null,
         other_expertise: validatedData.other_expertise || null,
         // Parser-populated fields left NULL — filled by trigger + parser
@@ -146,11 +146,14 @@ export async function POST(req: NextRequest) {
     // Trigger async grammar correction (runs after response is sent)
     after(async () => {
       try {
+        // Grammar correction works on string[] — extract language names for it
+        const languageNames = languages || null;
+
         const fieldsToCorrect = {
           highlight: validatedData.highlight || null,
           desired_roles: validatedData.desired_roles || null,
           other_expertise: validatedData.other_expertise || null,
-          languages: validatedData.languages || null,
+          languages: languageNames,
         };
 
         const hasContent = Object.values(fieldsToCorrect).some(v => v);
@@ -159,10 +162,15 @@ export async function POST(req: NextRequest) {
         const corrected = await correctGrammar(fieldsToCorrect);
 
         // Build update objects with only changed fields
-        const updates: Record<string, string | string[]> = {};
+        const updates: Record<string, string | string[] | { language: string }[]> = {};
         for (const [key, value] of Object.entries(corrected)) {
           if (value && JSON.stringify(value) !== JSON.stringify(fieldsToCorrect[key as keyof typeof fieldsToCorrect])) {
-            updates[key] = value;
+            if (key === 'languages' && Array.isArray(value)) {
+              // Convert corrected language names back to JSONB objects
+              updates[key] = (value as string[]).map(l => ({ language: l }));
+            } else {
+              updates[key] = value;
+            }
           }
         }
 
