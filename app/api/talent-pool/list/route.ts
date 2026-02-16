@@ -203,7 +203,7 @@ export async function GET(req: NextRequest) {
         highlight: profile.highlight || null,
         education: educationStr,
         work_eligibility: profile.work_eligibility || null,
-        languages: (profile.languages || []).map((l: any) => typeof l === 'string' ? l : l.language),
+        languages: (profile.languages || []).map((l: { language: string; proficiency?: string }) => l.language),
         functional_expertise: profile.functional_expertise || [],
         desired_roles: profile.desired_roles || null,
         profile_bio: profile.profile_bio || null,
