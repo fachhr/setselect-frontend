@@ -34,6 +34,55 @@ jobs:
         env:
           PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
+      - name: Download CVs from Supabase Storage
+        run: |
+          mkdir -p cvs
+          python3 << 'PYEOF'
+          import urllib.request, json, os, sys
+
+          url = os.environ['SUPABASE_URL'].strip() + '/storage/v1/object/list/talent-pool-cvs'
+          key = os.environ['SUPABASE_SERVICE_ROLE_KEY'].strip()
+          headers = {
+              'Authorization': f'Bearer {key}',
+              'apikey': key,
+              'Content-Type': 'application/json'
+          }
+
+          # List all folders in the bucket
+          body = json.dumps({"prefix": "", "limit": 1000}).encode()
+          req = urllib.request.Request(url, data=body, headers=headers)
+          resp = urllib.request.urlopen(req)
+          folders = json.loads(resp.read().decode())
+          print(f"Found {len(folders)} profile folders")
+
+          # Download each CV
+          for folder_obj in folders:
+              folder = folder_obj['name']
+              # List files inside each profile folder
+              body = json.dumps({"prefix": f"{folder}/", "limit": 100}).encode()
+              req = urllib.request.Request(url, data=body, headers=headers)
+              resp = urllib.request.urlopen(req)
+              files = json.loads(resp.read().decode())
+
+              for file_obj in files:
+                  filename = file_obj['name']
+                  filepath = f"{folder}/{filename}"
+                  os.makedirs(f"cvs/{folder}", exist_ok=True)
+
+                  dl_url = f"{os.environ['SUPABASE_URL']}/storage/v1/object/talent-pool-cvs/{filepath}"
+                  dl_req = urllib.request.Request(dl_url, headers={
+                      'Authorization': f'Bearer {key}',
+                      'apikey': key
+                  })
+                  dl_resp = urllib.request.urlopen(dl_req)
+                  with open(f"cvs/{filepath}", 'wb') as f:
+                      f.write(dl_resp.read())
+                  print(f"Downloaded: {filepath}")
+          PYEOF
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_URL: https://vwugqnddhdtlxmimihic.supabase.co
+
       - name: Checkout backup repo
         uses: actions/checkout@v4
         with:
@@ -41,13 +90,15 @@ jobs:
           token: ${{ secrets.BACKUP_REPO_PAT }}
           path: backup-repo
 
-      - name: Copy dumps and commit
+      - name: Copy dumps and CVs, then commit
         run: |
-          cp schema.sql data.sql backup-repo/
           cd backup-repo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add schema.sql data.sql
+          git pull --rebase
+          cp ../schema.sql ../data.sql .
+          cp -r ../cvs .
+          git add schema.sql data.sql cvs/
           timestamp=$(date -u +"%Y-%m-%d %H:%M UTC")
           git diff --staged --quiet || git commit -m "Backup: ${timestamp}"
           git push

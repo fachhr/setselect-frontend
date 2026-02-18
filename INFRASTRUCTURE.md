@@ -160,10 +160,11 @@ The Supabase Free plan includes **no built-in backups**. Automated daily backups
 
 **What's backed up:**
 
-| File | Contents |
-|------|----------|
+| File / Directory | Contents |
+|------------------|----------|
 | `schema.sql` | All tables, indexes, RLS policies, triggers (including `sync_parsed_cv_data_to_profile()`) |
 | `data.sql` | Full data dump of all tables (`user_profiles`, `talent_profiles`, `cv_parsing_jobs`, `company_access_log`) |
+| `cvs/` | All CV files from the `talent-pool-cvs` Supabase Storage bucket, organised by profile subfolder |
 
 **Connection**: Uses the Supabase session-mode pooler (`aws-1-eu-central-2.pooler.supabase.com:5432`) since the direct DB host is IPv6-only and GitHub Actions runners lack IPv6 support.
 
@@ -172,6 +173,7 @@ The Supabase Free plan includes **no built-in backups**. Automated daily backups
 | Secret | Description |
 |--------|-------------|
 | `SUPABASE_DB_PASSWORD` | Database password from Supabase Dashboard → Connect → Reveal password |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key from Supabase Dashboard → Settings → API (used to download CVs from Storage) |
 | `BACKUP_REPO_PAT` | Fine-grained PAT with `Contents: Read and write` scoped to `setselect-backups` only |
 
 ### Restoring from Backup
@@ -188,8 +190,8 @@ psql "$NEW_DB_URL" -f data.sql
 
 ### What's NOT Backed Up
 
-- **Storage buckets** (CVs in `talent-pool-cvs`, profile pictures) — backed by S3 with 11-nines durability, low risk of loss
-- Backup SQL files are **not encrypted** — access is controlled by the private repo
+- **Profile pictures** — backed by S3 with 11-nines durability, low risk of loss
+- Backup files are **not encrypted** — access is controlled by the private repo
 
 ## Recommendations
 
