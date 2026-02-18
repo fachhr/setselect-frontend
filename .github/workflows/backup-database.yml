@@ -1,0 +1,53 @@
+name: Backup Supabase Database
+
+on:
+  schedule:
+    # Every 12 hours: midnight and noon UTC
+    - cron: '0 */12 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  PGHOST: aws-1-eu-central-2.pooler.supabase.com
+  PGPORT: '5432'
+  PGDATABASE: postgres
+  PGUSER: postgres.vwugqnddhdtlxmimihic
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Dump schema
+        run: pg_dump --schema-only -f schema.sql
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Dump data
+        run: pg_dump --data-only -f data.sql
+        env:
+          PGPASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Checkout backup repo
+        uses: actions/checkout@v4
+        with:
+          repository: fachhr/setselect-backups
+          token: ${{ secrets.BACKUP_REPO_PAT }}
+          path: backup-repo
+
+      - name: Copy dumps and commit
+        run: |
+          cp schema.sql data.sql backup-repo/
+          cd backup-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add schema.sql data.sql
+          timestamp=$(date -u +"%Y-%m-%d %H:%M UTC")
+          git diff --staged --quiet || git commit -m "Backup: ${timestamp}"
+          git push

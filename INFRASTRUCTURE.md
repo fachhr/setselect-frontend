@@ -146,6 +146,51 @@ ORDER BY cpj.completed_at DESC LIMIT 10;
 
 All re-triggered profiles should show `status = 'completed'` and `parsing_completed_at` set. They will be immediately visible on setselect.io.
 
+## Backups
+
+### Database Backups (Automated)
+
+The Supabase Free plan includes **no built-in backups**. Automated daily backups run via GitHub Actions to compensate.
+
+- **Schedule**: Every 12 hours (midnight and noon UTC)
+- **Workflow**: `.github/workflows/backup-database.yml` in `setselect-frontend`
+- **Destination**: Private repo [`fachhr/setselect-backups`](https://github.com/fachhr/setselect-backups)
+- **RPO**: 12 hours
+- **Cost**: $0
+
+**What's backed up:**
+
+| File | Contents |
+|------|----------|
+| `schema.sql` | All tables, indexes, RLS policies, triggers (including `sync_parsed_cv_data_to_profile()`) |
+| `data.sql` | Full data dump of all tables (`user_profiles`, `talent_profiles`, `cv_parsing_jobs`, `company_access_log`) |
+
+**Connection**: Uses the Supabase session-mode pooler (`aws-1-eu-central-2.pooler.supabase.com:5432`) since the direct DB host is IPv6-only and GitHub Actions runners lack IPv6 support.
+
+**Required GitHub Secrets** (on `setselect-frontend` repo):
+
+| Secret | Description |
+|--------|-------------|
+| `SUPABASE_DB_PASSWORD` | Database password from Supabase Dashboard → Connect → Reveal password |
+| `BACKUP_REPO_PAT` | Fine-grained PAT with `Contents: Read and write` scoped to `setselect-backups` only |
+
+### Restoring from Backup
+
+To restore to a new or existing Supabase project:
+
+```bash
+# 1. Restore schema
+psql "$NEW_DB_URL" -f schema.sql
+
+# 2. Restore data
+psql "$NEW_DB_URL" -f data.sql
+```
+
+### What's NOT Backed Up
+
+- **Storage buckets** (CVs in `talent-pool-cvs`, profile pictures) — backed by S3 with 11-nines durability, low risk of loss
+- Backup SQL files are **not encrypted** — access is controlled by the private repo
+
 ## Recommendations
 
 1. **Keep Supabase in Zurich** — this is the strongest data-residency guarantee and avoids any cross-border storage discussion.

@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../setselect-recruiterview"
+		},
+		{
+			"path": "../setselect-backups"
 		}
 	],
 	"settings": {}
