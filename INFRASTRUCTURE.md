@@ -65,6 +65,87 @@ The database uses two tables to separate PII from display data:
 | `OPENAI_API_KEY`                  | OpenAI grammar fix  | Server  |
 | `RESEND_API_KEY`                  | Resend email        | Server  |
 
+## Database Sync Trigger
+
+The `sync_parsed_cv_data_to_profile()` trigger in Supabase automatically syncs parsed CV data from `cv_parsing_jobs` to both `user_profiles` and `talent_profiles` when a job's status transitions to `completed`.
+
+- **Source file**: `setselect-parser/database/sync_trigger.sql`
+- **Deployment**: Manual — copy into Supabase SQL Editor and run. NOT auto-deployed with Railway or Vercel.
+- **Idempotent**: `CREATE OR REPLACE FUNCTION` + `DROP TRIGGER IF EXISTS` — safe to re-run at any time.
+- **After any column type migration**: You MUST re-deploy the trigger. It is a compiled function — column type changes do not propagate to it.
+
+### Column Type Reference
+
+The trigger must match column types exactly. A mismatch in any `COALESCE` crashes the entire transaction silently (profiles appear never to have been parsed).
+
+| Column | Type | Tables | Trigger Cast |
+|--------|------|--------|-------------|
+| `languages` | `JSONB` | both | `'[]'::jsonb` |
+| `education_history` | `JSONB` | both | `::JSONB` |
+| `professional_experience` | `JSONB` | both | `::JSONB` |
+| `technical_skills` | `JSONB` | both | `::JSONB` |
+| `soft_skills` | `JSONB` | both | `::JSONB` |
+| `industry_specific_skills` | `JSONB` | both | `::JSONB` |
+| `certifications` | `JSONB` | both | `::JSONB` |
+| `professional_interests` | `JSONB` | both | `::JSONB` |
+| `extracurricular_activities` | `JSONB` | both | `::JSONB` |
+| `base_projects` | `JSONB` | both | `::JSONB` |
+| `contact_address` | `JSONB` | `user_profiles` | `::JSONB` |
+| `functional_expertise` | `TEXT[]` | both | `ARRAY(SELECT jsonb_array_elements_text(...))` |
+
+### Runbook: Re-trigger Failed CV Parsing Jobs
+
+When parsing jobs fail (profiles invisible on site, `parsing_completed_at` is NULL), follow these steps.
+
+**1. Identify failed jobs**
+```sql
+SELECT cpj.id AS job_id, up.cv_storage_path, up.contact_first_name, cpj.status
+FROM cv_parsing_jobs cpj
+JOIN user_profiles up ON up.id = cpj.profile_id
+WHERE cpj.status = 'failed'
+ORDER BY cpj.created_at DESC;
+```
+
+**2. If the failure is a trigger bug, fix and re-deploy the trigger**
+```sql
+-- Check current trigger source for issues:
+SELECT prosrc FROM pg_proc WHERE proname = 'sync_parsed_cv_data_to_profile';
+
+-- After fixing sync_trigger.sql locally, copy full file into SQL Editor and run.
+```
+
+**3. Reset failed jobs**
+```sql
+UPDATE cv_parsing_jobs
+SET status = 'pending', error_message = NULL, completed_at = NULL, extracted_data = NULL
+WHERE status = 'failed';
+```
+
+**4. Re-trigger each job via parser API**
+
+Credentials are in `setselect-frontend/.env.local` (`RAILWAY_API_URL`, `PARSER_API_KEY`).
+
+```bash
+curl -X POST {RAILWAY_API_URL}/api/v1/parse \
+  -H "Content-Type: application/json" \
+  -H "x-internal-api-key: {PARSER_API_KEY}" \
+  -d '{"jobId": "<job_id>", "storagePath": "<cv_storage_path>"}'
+```
+
+The parser has NO auto-retry — each job must be triggered individually.
+
+**5. Verify**
+```sql
+SELECT tp.talent_id, up.contact_first_name, cpj.status, tp.parsing_completed_at
+FROM cv_parsing_jobs cpj
+JOIN user_profiles up ON up.id = cpj.profile_id
+JOIN talent_profiles tp ON tp.profile_id = cpj.profile_id
+WHERE cpj.status = 'completed'
+ORDER BY cpj.completed_at DESC LIMIT 10;
+```
+
+All re-triggered profiles should show `status = 'completed'` and `parsing_completed_at` set. They will be immediately visible on setselect.io.
+
 ## Recommendations
 
 1. **Keep Supabase in Zurich** — this is the strongest data-residency guarantee and avoids any cross-border storage discussion.
