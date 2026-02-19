@@ -22,10 +22,6 @@ import {
     Maximize2,
     Minimize2,
     ArrowUpDown,
-    Mail,
-    Lock,
-    Unlock,
-    AlertCircle,
     Layers
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS } from '@/lib/formOptions';
@@ -33,9 +29,10 @@ import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
 import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
+import { IntroRequestModal } from './IntroRequestModal';
 import { useZenMode } from '@/contexts/ZenModeContext';
-import { getPlaceholderCandidates } from './placeholderCandidates';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useShortlists } from '@/hooks/useShortlists';
+import { useIntroRequests } from '@/hooks/useIntroRequests';
 
 // Multi-Select Filter Component for Table View
 interface MultiSelectFilterProps {
@@ -163,171 +160,6 @@ interface ApiCandidate {
     previous_roles?: { role: string; duration: string }[] | null;
 }
 
-// ============================================================
-// LOCKED OVERLAY COMPONENT (extracted to prevent re-creation)
-// ============================================================
-// Renders blur overlay + unlock form when access is not granted
-// Two modes: Request Mode (email only) and Unlock Mode (email + code)
-// IMPORTANT: Defined outside HomeContent to maintain stable component identity
-// across renders, preventing mobile keyboard dismissal on each keystroke.
-
-const ENABLE_REQUEST_ACCESS = false;
-
-interface LockedOverlayProps {
-    isRequestMode: boolean;
-    setIsRequestMode: (v: boolean) => void;
-    unlockForm: { email: string; code: string };
-    setUnlockForm: (v: { email: string; code: string }) => void;
-    authError: string;
-    setAuthError: (v: string) => void;
-    handleRequestAccessSubmit: (e: React.FormEvent) => void;
-    handleUnlock: (e: React.FormEvent) => void;
-}
-
-const LockedOverlay: React.FC<LockedOverlayProps> = ({
-    isRequestMode,
-    setIsRequestMode,
-    unlockForm,
-    setUnlockForm,
-    authError,
-    setAuthError,
-    handleRequestAccessSubmit,
-    handleUnlock,
-}) => {
-    return (
-        <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
-            {/* Sticky wrapper keeps form visible while scrolling */}
-            <div className="sticky top-24 w-full flex justify-center px-4 pt-8">
-                <div className="glass-panel rounded-2xl p-8 max-w-md w-full animate-in fade-in zoom-in-95 duration-300">
-                    {/* Header */}
-                    <div className="text-center mb-6">
-                        <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--border-subtle)]">
-                            <Lock className="w-6 h-6 text-[var(--text-secondary)]" />
-                        </div>
-                        <h3 className="text-xl font-bold text-[var(--text-primary)]">
-                            {ENABLE_REQUEST_ACCESS && isRequestMode ? 'Request Access' : 'Restricted Access'}
-                        </h3>
-                    </div>
-
-                    {ENABLE_REQUEST_ACCESS && isRequestMode ? (
-                        /* REQUEST MODE: Email + Request button */
-                        <>
-                            <form onSubmit={handleRequestAccessSubmit} className="space-y-4">
-                                {/* Email Input */}
-                                <div>
-                                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Email Address</label>
-                                    <div className="relative">
-                                        <input
-                                            type="email"
-                                            required
-                                            className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
-                                            placeholder="name@company.com"
-                                            value={unlockForm.email}
-                                            onChange={e => setUnlockForm({...unlockForm, email: e.target.value})}
-                                        />
-                                        <Mail className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
-                                    </div>
-                                </div>
-
-                                {/* Error Message */}
-                                {authError && (
-                                    <div className="text-[var(--error)] text-xs flex items-center gap-1.5 bg-[var(--error-dim)] p-2 rounded border border-[var(--error-border)]">
-                                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                                        {authError}
-                                    </div>
-                                )}
-
-                                <Button type="submit" className="w-full" icon={Mail}>
-                                    Request Access
-                                </Button>
-                            </form>
-
-                            {/* Switch to Unlock Mode */}
-                            <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] text-center">
-                                <p className="text-xs text-[var(--text-tertiary)]">
-                                    Already have a code?{' '}
-                                    <button
-                                        type="button"
-                                        onClick={() => { setIsRequestMode(false); setAuthError(''); }}
-                                        className="text-[var(--secondary)] font-bold hover:underline transition-all"
-                                    >
-                                        Sign In
-                                    </button>
-                                </p>
-                            </div>
-                        </>
-                    ) : (
-                        /* UNLOCK MODE: Email + Code + Unlock button */
-                        <>
-                            <form onSubmit={handleUnlock} className="space-y-4">
-                                {/* Email Input */}
-                                <div>
-                                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Email Address</label>
-                                    <div className="relative">
-                                        <input
-                                            type="email"
-                                            required
-                                            className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
-                                            placeholder="name@company.com"
-                                            value={unlockForm.email}
-                                            onChange={e => setUnlockForm({...unlockForm, email: e.target.value})}
-                                        />
-                                        <Mail className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
-                                    </div>
-                                </div>
-
-                                {/* Access Code Input */}
-                                <div>
-                                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Please enter the access code provided to you by Setberry</label>
-                                    <div className="relative">
-                                        <input
-                                            type="password"
-                                            required
-                                            className="input-base w-full pl-9 pr-3 py-2 rounded-lg text-sm"
-                                            placeholder="Enter code"
-                                            value={unlockForm.code}
-                                            onChange={e => setUnlockForm({...unlockForm, code: e.target.value})}
-                                        />
-                                        <Lock className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-2.5" />
-                                    </div>
-                                </div>
-
-                                {/* Error Message */}
-                                {authError && (
-                                    <div className="text-[var(--error)] text-xs flex items-center gap-1.5 bg-[var(--error-dim)] p-2 rounded border border-[var(--error-border)]">
-                                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                                        {authError}
-                                    </div>
-                                )}
-
-                                <Button type="submit" className="w-full" icon={Unlock}>
-                                    Unlock Candidates
-                                </Button>
-                            </form>
-
-                            {/* Switch to Request Mode */}
-                            {ENABLE_REQUEST_ACCESS && (
-                            <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] text-center">
-                                <p className="text-xs text-[var(--text-tertiary)]">
-                                    Don&apos;t have a code?{' '}
-                                    <button
-                                        type="button"
-                                        onClick={() => { setIsRequestMode(true); setAuthError(''); }}
-                                        className="text-[var(--secondary)] font-bold hover:underline transition-all"
-                                    >
-                                        Request Access
-                                    </button>
-                                </p>
-                            </div>
-                            )}
-                        </>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
-
 export default function HomeContent() {
     const { isZenMode, toggleZenMode } = useZenMode();
     const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -352,45 +184,19 @@ export default function HomeContent() {
         key: null,
         direction: 'asc'
     });
-    // New state for favorites, detail modal, toast
-    const [favorites, setFavorites] = useState<string[]>([]);
+    // Server-persisted shortlists and intro requests
+    const { shortlistedIds: favorites, toggleShortlist } = useShortlists();
+    const { getRequestStatus, submitRequest } = useIntroRequests();
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
+    const [introModalCandidate, setIntroModalCandidate] = useState<Candidate | null>(null);
     const [toast, setToast] = useState<{ message: string; isVisible: boolean; type: 'success' | 'error' | 'info' }>({
         message: '',
         isVisible: false,
         type: 'success'
     });
 
-    // ============================================================
-    // ACCESS CONTROL STATE
-    // ============================================================
-    // When locked: displayCandidates returns placeholders, overlay shown
-    // When unlocked: displayCandidates returns real data, no overlay
-    // Persistence: localStorage stores granted access
-    const [isAccessGranted, setIsAccessGranted] = useState(false);
-    const [isAccessHydrated, setIsAccessHydrated] = useState(false);
-    const [unlockForm, setUnlockForm] = useState({ email: '', code: '' });
-    const [authError, setAuthError] = useState('');
-    const [isRequestMode, setIsRequestMode] = useState(false);
-
-    // Mobile detection for placeholder count
-    const isMobile = useMediaQuery('(max-width: 767px)');
-
-    // Restore access state from localStorage on mount
-    useEffect(() => {
-        const stored = localStorage.getItem('setselect_access');
-        if (stored) {
-            try {
-                const { granted } = JSON.parse(stored);
-                if (granted) setIsAccessGranted(true);
-            } catch {
-                // Invalid stored data, ignore
-            }
-        }
-        setIsAccessHydrated(true);
-    }, []);
 
     // Auto-reset shortlist view when all favorites are removed
     useEffect(() => {
@@ -695,75 +501,19 @@ export default function HomeContent() {
     };
 
     const toggleFavorite = (id: string) => {
-        setFavorites((prev) =>
-            prev.includes(id)
-                ? prev.filter((f) => f !== id)
-                : [...prev, id]
-        );
+        toggleShortlist(id);
     };
 
     const handleRequestIntro = (candidateId: string) => {
         const candidate = candidates.find(c => c.id === candidateId);
-        const subject = `Introduction Request: ${candidateId}`;
-        const body = `Hello,\n\nI would like to request an introduction to the following candidate:\n\nID: ${candidateId}\nRole: ${candidate?.role || ''}\n\nBest regards,`;
-
-        window.location.href = `mailto:hello@setberry.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        if (candidate) {
+            setIntroModalCandidate(candidate);
+        }
     };
 
     const openDetailModal = (candidate: Candidate) => {
         setSelectedCandidate(candidate);
         setShowDetailModal(true);
-    };
-
-    // ============================================================
-    // ACCESS CONTROL HANDLERS
-    // ============================================================
-    const ACCESS_CODE = process.env.NEXT_PUBLIC_ACCESS_CODE || '';
-
-    const handleUnlock = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (unlockForm.code === ACCESS_CODE && unlockForm.email.includes('@')) {
-            setIsAccessGranted(true);
-            setAuthError('');
-            localStorage.setItem('setselect_access', JSON.stringify({ email: unlockForm.email, granted: true }));
-            setToast({ message: 'Access Granted', isVisible: true, type: 'success' });
-            // Fire-and-forget: log access to database
-            fetch('/api/access/log', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: unlockForm.email, accessType: 'unlock' })
-            }).catch(() => {}); // Silently ignore errors
-        } else {
-            setAuthError('Invalid code or email format');
-        }
-    };
-
-    const handleRequestAccessSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!unlockForm.email || !unlockForm.email.includes('@')) {
-            setAuthError('Please enter a valid email address.');
-            return;
-        }
-        setToast({
-            message: `Request sent! We'll email you an access code shortly.`,
-            isVisible: true,
-            type: 'info'
-        });
-        setAuthError('');
-        // Fire-and-forget: log access request to database
-        fetch('/api/access/log', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: unlockForm.email, accessType: 'request' })
-        }).catch(() => {}); // Silently ignore errors
-        // Fire-and-forget: send notification email
-        fetch('/api/email/request-access', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: unlockForm.email })
-        }).catch(() => {}); // Silently ignore errors
-        // Clear email after successful submission
-        setUnlockForm({ ...unlockForm, email: '' });
     };
 
     // Table column sort handler
@@ -832,16 +582,9 @@ export default function HomeContent() {
         });
     }, [filteredCandidates, viewMode, sortConfig]);
 
-    // ============================================================
-    // DISPLAY DATA - LOCKED/UNLOCKED BOUNDARY
-    // ============================================================
-    // This is THE decision point: locked shows placeholders, unlocked shows real data
     const displayCandidates = useMemo(() => {
-        if (!isAccessGranted) {
-            return getPlaceholderCandidates(viewMode, isMobile);
-        }
         return viewMode === 'table' ? sortedCandidates : filteredCandidates;
-    }, [isAccessGranted, viewMode, sortedCandidates, filteredCandidates, isMobile]);
+    }, [viewMode, sortedCandidates, filteredCandidates]);
 
     return (
         <div
@@ -884,13 +627,6 @@ export default function HomeContent() {
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold text-[var(--text-primary)]">
                             Candidates
-                            {/* TODO(ui): re-enable result count when designs are finalized
-                            {isAccessGranted && (
-                                <span className="text-[var(--text-tertiary)] font-light ml-2 text-lg">
-                                    {displayCandidates.length} results
-                                </span>
-                            )}
-                            */}
                         </h2>
 
                         <div className="flex items-center gap-3">
@@ -1289,20 +1025,7 @@ export default function HomeContent() {
 
                     {/* RESULTS */}
                     <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
-                        {/* LOCKED STATE OVERLAY */}
-                        {!isAccessGranted && (
-                            <LockedOverlay
-                                isRequestMode={isRequestMode}
-                                setIsRequestMode={setIsRequestMode}
-                                unlockForm={unlockForm}
-                                setUnlockForm={setUnlockForm}
-                                authError={authError}
-                                setAuthError={setAuthError}
-                                handleRequestAccessSubmit={handleRequestAccessSubmit}
-                                handleUnlock={handleUnlock}
-                            />
-                        )}
-                        {isLoading && (isAccessGranted || !isAccessHydrated) ? (
+                        {isLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
                                     <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
@@ -1453,16 +1176,31 @@ export default function HomeContent() {
 
                                         {/* Card Footer */}
                                         <div className="mt-auto pt-4 px-6 pb-6 border-t border-[var(--border-subtle)] flex justify-end">
-                                            <Button
-                                                variant="primary"
-                                                className="w-full sm:w-auto text-xs sm:text-sm"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleRequestIntro(candidate.id);
-                                                }}
-                                            >
-                                                Request Intro
-                                            </Button>
+                                            {(() => {
+                                                const status = getRequestStatus(candidate.id);
+                                                if (status === 'pending') {
+                                                    return (
+                                                        <Badge style="gold">Intro Pending</Badge>
+                                                    );
+                                                }
+                                                if (status === 'accepted') {
+                                                    return (
+                                                        <Badge style="success">Intro Accepted</Badge>
+                                                    );
+                                                }
+                                                return (
+                                                    <Button
+                                                        variant="primary"
+                                                        className="w-full sm:w-auto text-xs sm:text-sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleRequestIntro(candidate.id);
+                                                        }}
+                                                    >
+                                                        Request Intro
+                                                    </Button>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 ))}
@@ -1756,15 +1494,26 @@ export default function HomeContent() {
                                                     </td>
                                                     {/* Actions */}
                                                     <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleRequestIntro(candidate.id);
-                                                            }}
-                                                            className="btn-gold text-xs px-3 py-1.5 rounded"
-                                                        >
-                                                            Intro
-                                                        </button>
+                                                        {(() => {
+                                                            const status = getRequestStatus(candidate.id);
+                                                            if (status === 'pending') {
+                                                                return <Badge style="gold">Pending</Badge>;
+                                                            }
+                                                            if (status === 'accepted') {
+                                                                return <Badge style="success">Accepted</Badge>;
+                                                            }
+                                                            return (
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleRequestIntro(candidate.id);
+                                                                    }}
+                                                                    className="btn-gold text-xs px-3 py-1.5 rounded"
+                                                                >
+                                                                    Intro
+                                                                </button>
+                                                            );
+                                                        })()}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -1800,6 +1549,23 @@ export default function HomeContent() {
                 onRequestIntroduction={(id) => {
                     setShowDetailModal(false);
                     handleRequestIntro(id);
+                }}
+            />
+
+            {/* Intro Request Modal */}
+            <IntroRequestModal
+                candidateId={introModalCandidate?.id || ''}
+                candidateRole={introModalCandidate?.role}
+                isOpen={!!introModalCandidate}
+                onClose={() => setIntroModalCandidate(null)}
+                onSubmit={async (talentId, message) => {
+                    const success = await submitRequest(talentId, message);
+                    if (success) {
+                        setToast({ message: 'Introduction request sent!', isVisible: true, type: 'success' });
+                    } else {
+                        setToast({ message: 'Failed to send request. Please try again.', isVisible: true, type: 'error' });
+                    }
+                    return success;
                 }}
             />
 

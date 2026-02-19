@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { getCompanyFromRequest } from '@/lib/auth/getCompanyFromRequest';
 import {
   SeniorityLevel
 } from '@/types/talentPool';
@@ -35,6 +36,15 @@ function formatJobDuration(start: string | undefined, end: string | undefined | 
 
 export async function GET(req: NextRequest) {
   try {
+    // Auth guard: only authenticated company accounts can access
+    const company = await getCompanyFromRequest();
+    if (!company) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
 
     // Parse params

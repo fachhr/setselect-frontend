@@ -193,6 +193,49 @@ psql "$NEW_DB_URL" -f data.sql
 - **Profile pictures** — backed by S3 with 11-nines durability, low risk of loss
 - Backup files are **not encrypted** — access is controlled by the private repo
 
+## Authentication Architecture
+
+### Overview
+Company access uses **Supabase Auth** with magic link (passwordless) login. Sessions are managed via HTTP-only cookies using `@supabase/ssr`.
+
+### How It Works
+1. **Admin invites company** via `POST /api/admin/invite-company` (protected by `x-admin-key` header)
+2. This creates an `auth.users` entry + `company_accounts` row + sends magic link email
+3. Company clicks magic link → `/auth/callback` exchanges code for session cookie
+4. Middleware (`middleware.ts`) refreshes session on every request and redirects unauthenticated users to `/login`
+5. API routes use `getCompanyFromRequest()` to validate session + resolve company identity
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `lib/supabase/server.ts` | Server-side Supabase client (cookie-based sessions) |
+| `lib/supabase/browser.ts` | Client-side Supabase client (for `onAuthStateChange`) |
+| `lib/supabase/middleware.ts` | Session refresh + route protection logic |
+| `lib/supabase/admin.ts` | Service-role client for data queries (unchanged) |
+| `lib/auth/getCompanyFromRequest.ts` | Session → company resolver for API routes |
+| `middleware.ts` | Next.js middleware entry point |
+| `contexts/AuthContext.tsx` | React context for `useAuth()` hook |
+
+### Database Tables
+| Table | Purpose |
+|-------|---------|
+| `company_accounts` | Links `auth.users` to company identity + status |
+| `company_shortlists` | Persisted candidate favorites per company |
+| `intro_requests` | Introduction requests with status tracking |
+
+### Public Paths (no auth required)
+`/login`, `/auth/callback`, `/join`, `/contact`, `/terms`, `/privacy`, `/impressum`, `/cookies`
+
+### Admin Operations (V1 — No Admin UI)
+- **Invite company**: `curl -X POST /api/admin/invite-company -H "x-admin-key: $ADMIN_API_KEY" -d '{"email":"...","companyName":"..."}'`
+- **Manage intro requests**: Update `intro_requests.status` in Supabase Dashboard
+- **Suspend account**: Update `company_accounts.status` to `'suspended'` in Supabase Dashboard
+
+### Supabase Dashboard Setup Required
+1. **Auth → Providers → Email**: Enable Magic Link
+2. **Auth → URL Configuration**: Add redirect URLs (`https://setselect.vercel.app/auth/callback`, `http://localhost:3000/auth/callback`)
+3. **Project Settings → Auth → SMTP**: Configure Resend SMTP for branded magic link emails
+
 ## Recommendations
 
 1. **Keep Supabase in Zurich** — this is the strongest data-residency guarantee and avoids any cross-border storage discussion.

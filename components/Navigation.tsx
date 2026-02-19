@@ -1,14 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, X, ArrowRight, ArrowLeft, Layers } from 'lucide-react';
+import { Menu, X, ArrowRight, ArrowLeft, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
 import { useZenMode } from '@/contexts/ZenModeContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isZenMode } = useZenMode();
+  const { user, signOut } = useAuth();
 
   // Hide navigation in Zen Mode
   if (isZenMode) {
@@ -49,6 +51,15 @@ export function Navigation() {
             <Button variant="primary" icon={ArrowRight} href="/join">
               Join the List
             </Button>
+            {user && (
+              <button
+                onClick={signOut}
+                className="flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+                title="Sign out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -83,6 +94,15 @@ export function Navigation() {
           <Button className="w-full" href="/join" onClick={() => setIsMobileMenuOpen(false)}>
             Join the List
           </Button>
+          {user && (
+            <button
+              onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
+              className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          )}
         </div>
       )}
     </nav>
