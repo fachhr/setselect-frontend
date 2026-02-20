@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { Plus, RefreshCw, Copy, Check, Building2 } from 'lucide-react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { Plus, RefreshCw, Copy, Check, Building2, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { InviteCompanyDialog } from '@/components/InviteCompanyDialog';
 import { formatEntryDate } from '@/lib/helpers';
@@ -10,18 +10,31 @@ import type { CompanyAccount } from '@/types/recruiter';
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState<CompanyAccount[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [inviteOpen, setInviteOpen] = useState(false);
 
   // Regenerate link state per company
   const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
   const [regeneratedLink, setRegeneratedLink] = useState<{ id: string; link: string } | null>(null);
+  const [regenerateError, setRegenerateError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const fetchCompanies = useCallback(async () => {
+    setFetchError(null);
+    setRegenerateError(null);
+    setRegeneratedLink(null);
     try {
       const res = await fetch('/api/companies');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setFetchError(data.error || `Failed to load companies (${res.status})`);
+        return;
+      }
       const data = await res.json();
       setCompanies(data.companies || []);
+    } catch {
+      setFetchError('Connection error — could not load companies');
     } finally {
       setLoading(false);
     }
@@ -31,9 +44,15 @@ export default function CompaniesPage() {
     fetchCompanies();
   }, [fetchCompanies]);
 
+  // Cleanup copy timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(copyTimerRef.current);
+  }, []);
+
   const handleRegenerate = async (company: CompanyAccount) => {
     setRegeneratingId(company.id);
     setRegeneratedLink(null);
+    setRegenerateError(null);
 
     try {
       const res = await fetch('/api/companies/invite', {
@@ -47,18 +66,29 @@ export default function CompaniesPage() {
       });
 
       const data = await res.json();
-      if (res.ok && data.actionLink) {
+      if (!res.ok) {
+        setRegenerateError(data.error || 'Failed to regenerate link');
+        return;
+      }
+      if (data.actionLink) {
         setRegeneratedLink({ id: company.id, link: data.actionLink });
       }
+    } catch {
+      setRegenerateError('Connection error');
     } finally {
       setRegeneratingId(null);
     }
   };
 
   const handleCopyLink = async (companyId: string, link: string) => {
-    await navigator.clipboard.writeText(link);
-    setCopiedId(companyId);
-    setTimeout(() => setCopiedId(null), 2000);
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopiedId(companyId);
+      clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      // Fallback: select the input text for manual copy
+    }
   };
 
   if (loading) {
@@ -82,7 +112,31 @@ export default function CompaniesPage() {
         </button>
       </div>
 
-      {companies.length === 0 ? (
+      {/* Fetch error */}
+      {fetchError && (
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-[var(--error)]/10 border border-[var(--error)]/20">
+          <AlertCircle size={16} className="text-[var(--error)] mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm text-[var(--error)]">{fetchError}</p>
+            <button
+              onClick={fetchCompanies}
+              className="text-xs text-[var(--error)] underline mt-1 cursor-pointer hover:opacity-80"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Regenerate error */}
+      {regenerateError && (
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--error)]/10 border border-[var(--error)]/20">
+          <AlertCircle size={16} className="text-[var(--error)] mt-0.5 shrink-0" />
+          <p className="text-sm text-[var(--error)]">{regenerateError}</p>
+        </div>
+      )}
+
+      {!fetchError && companies.length === 0 ? (
         /* Empty state */
         <div className="glass-panel rounded-xl p-12 text-center">
           <Building2 size={48} className="mx-auto mb-4 text-[var(--text-muted)]" />
@@ -100,7 +154,7 @@ export default function CompaniesPage() {
             Invite Company
           </button>
         </div>
-      ) : (
+      ) : companies.length > 0 ? (
         /* Company table */
         <div className="glass-panel rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
@@ -204,7 +258,7 @@ export default function CompaniesPage() {
             </table>
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Invite dialog */}
       <InviteCompanyDialog

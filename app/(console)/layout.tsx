@@ -21,7 +21,9 @@ export default function ConsoleLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const pathname = usePathname();
-  const title = pageTitles[pathname] || 'Console';
+  const title = pageTitles[pathname]
+    || Object.entries(pageTitles).find(([path]) => path !== '/' && pathname.startsWith(path))?.[1]
+    || 'Console';
 
   return (
     <div className="flex font-sans">

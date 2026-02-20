@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Send, Copy, Check, AlertCircle, X } from 'lucide-react';
 
 interface InviteCompanyDialogProps {
@@ -18,6 +18,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
   const [message, setMessage] = useState('');
   const [actionLink, setActionLink] = useState('');
   const [copied, setCopied] = useState(false);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -31,6 +32,21 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
       setCopied(false);
     }
   }, [open]);
+
+  // Escape key handler
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && status !== 'loading') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, status, onClose]);
+
+  // Cleanup copy timer
+  useEffect(() => {
+    return () => clearTimeout(copyTimerRef.current);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +82,14 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(actionLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(actionLink);
+      setCopied(true);
+      clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback: input is already selected/readable
+    }
   };
 
   if (!open) return null;
@@ -82,10 +103,15 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
       />
 
       {/* Dialog */}
-      <div className="relative w-full max-w-lg mx-4 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="invite-company-title"
+        className="relative w-full max-w-lg mx-4 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-[var(--text-primary)]">Invite Company</h2>
+          <h2 id="invite-company-title" className="text-lg font-bold text-[var(--text-primary)]">Invite Company</h2>
           <button
             onClick={onClose}
             disabled={status === 'loading'}

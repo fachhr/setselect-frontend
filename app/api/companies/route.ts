@@ -19,28 +19,36 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Enrich with auth user last_sign_in_at
-    const enriched: CompanyAccount[] = await Promise.all(
-      (companies || []).map(async (company) => {
-        let lastSignInAt: string | null = null;
+    // Look up last_sign_in_at for each company's auth user
+    const signInMap = new Map<string, string | null>();
+    const authLookups = (companies || [])
+      .filter((c) => c.auth_user_id)
+      .map((c) => c.auth_user_id as string);
 
-        if (company.auth_user_id) {
-          const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(
-            company.auth_user_id
-          );
-          lastSignInAt = authUser?.user?.last_sign_in_at ?? null;
+    // Fetch in batches of 10 to respect rate limits
+    const batchSize = 10;
+    for (let i = 0; i < authLookups.length; i += batchSize) {
+      const batch = authLookups.slice(i, i + batchSize);
+      const results = await Promise.all(
+        batch.map((id) => supabaseAdmin.auth.admin.getUserById(id))
+      );
+      for (const { data } of results) {
+        if (data?.user) {
+          signInMap.set(data.user.id, data.user.last_sign_in_at ?? null);
         }
+      }
+    }
 
-        return {
-          id: company.id,
-          company_name: company.company_name,
-          contact_email: company.contact_email,
-          invited_by: company.invited_by,
-          invited_at: company.invited_at,
-          last_sign_in_at: lastSignInAt,
-        };
-      })
-    );
+    const enriched: CompanyAccount[] = (companies || []).map((company) => ({
+      id: company.id,
+      company_name: company.company_name,
+      contact_email: company.contact_email,
+      invited_by: company.invited_by,
+      invited_at: company.invited_at,
+      last_sign_in_at: company.auth_user_id
+        ? signInMap.get(company.auth_user_id) ?? null
+        : null,
+    }));
 
     return NextResponse.json({ companies: enriched });
   } catch (error) {
