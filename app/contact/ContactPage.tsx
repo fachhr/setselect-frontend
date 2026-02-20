@@ -1,37 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Send, Mail, MessageSquare } from 'lucide-react';
-import { Button, Input, TextArea } from '@/components/ui';
+import { ArrowLeft, Mail } from 'lucide-react';
 
 
 const ContactPage: React.FC = () => {
     const router = useRouter();
-    const [submitted, setSubmitted] = useState(false);
-    const [formData, setFormData] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setSubmitted(true);
-    };
-
-    if (submitted) {
-        return (
-            <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
-                <div className="glass-panel max-w-2xl mx-auto pt-12 pb-24 px-4 text-center rounded-2xl">
-                    <div className="w-16 h-16 bg-[var(--gold)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <Send className="w-8 h-8 text-[var(--bg-root)]" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">Message Sent</h2>
-                    <p className="text-[var(--text-secondary)] mb-8 text-lg">
-                        Thank you for reaching out. Our team typically responds within 24 hours.
-                    </p>
-                    <Button onClick={() => router.push('/')} icon={ArrowLeft}>Back to Home</Button>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="max-w-7xl mx-auto animate-in slide-in-from-bottom-4 duration-500">
@@ -61,68 +36,26 @@ const ContactPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Main Contact Content - No Shadow Card */}
-            <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <div className="glass-panel rounded-2xl overflow-hidden p-8 md:p-10">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        {/* Contact Info */}
-                        <div className="md:col-span-1 space-y-8">
-                            <div>
-                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-3">Email</h3>
-                                <a href="mailto:hello@setberry.com" className="text-[var(--text-secondary)] hover:text-[var(--gold)] flex items-center gap-2 transition-colors">
-                                    <Mail className="w-4 h-4" /> hello@setberry.com
-                                </a>
-                            </div>
+            {/* Main Contact Content */}
+            <div className="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                <div className="glass-panel rounded-2xl overflow-hidden p-8 md:p-10 space-y-8">
+                    <div>
+                        <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-3">Email</h3>
+                        <a href="mailto:hello@setberry.com" className="text-[var(--text-secondary)] hover:text-[var(--gold)] flex items-center gap-2 transition-colors">
+                            <Mail className="w-4 h-4" /> hello@setberry.com
+                        </a>
+                    </div>
 
-                            <div className="p-4 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
-                                <h4 className="font-medium text-[var(--text-primary)] mb-1">For Companies</h4>
-                                <p className="text-xs text-[var(--text-tertiary)] mb-3">Looking to hire instantly? Skip the queue.</p>
-                                <a href="mailto:hello@setberry.com" className="text-xs font-bold text-[var(--gold)] hover:underline">Email Sales Team →</a>
-                            </div>
-                        </div>
-
-                        {/* Contact Form */}
-                        <div className="md:col-span-2">
-                            <form onSubmit={handleSubmit} className="space-y-5">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                    <Input
-                                        label="Name" id="contactName" required
-                                        value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    />
-                                    <Input
-                                        label="Email" id="contactEmail" type="email" required
-                                        value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                    />
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label htmlFor="subject" className="block text-sm font-medium text-[var(--text-secondary)]">Subject</label>
-                                    <select
-                                        id="subject"
-                                        className="input-base block w-full rounded-lg p-3 text-sm"
-                                        value={formData.subject}
-                                        onChange={e => setFormData({ ...formData, subject: e.target.value })}
-                                    >
-                                        <option>General Inquiry</option>
-                                        <option>I&apos;m a Company Hiring</option>
-                                        <option>I&apos;m a Candidate</option>
-                                        <option>Partnership</option>
-                                    </select>
-                                </div>
-
-                                <TextArea
-                                    label="Message" id="message" required
-                                    placeholder="How can we help you?"
-                                    value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })}
-                                />
-
-                                <Button type="submit" className="w-full" icon={MessageSquare}>
-                                    Send Message
-                                </Button>
-                            </form>
-                        </div>
+                    <div className="p-4 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
+                        <h4 className="font-medium text-[var(--text-primary)] mb-1">For Companies</h4>
+                        <p className="text-xs text-[var(--text-tertiary)] mb-3">Looking to hire instantly? Skip the queue.</p>
+                        <a href="mailto:hello@setberry.com" className="text-xs font-bold text-[var(--gold)] hover:underline">Email Sales Team →</a>
                     </div>
                 </div>
+
+                {/* TODO: Re-enable contact form once Resend API key is configured.
+                    The form component and /api/contact route are ready — just
+                    uncomment this block and restore the grid layout + imports. */}
             </div>
         </div>
     );
