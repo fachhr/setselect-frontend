@@ -205,8 +205,8 @@ function LockedOverlay() {
     };
 
     return (
-        <div className="fixed inset-0 md:absolute z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px] overflow-y-auto md:overflow-visible">
-            <div className="md:sticky md:top-24 flex justify-center px-3 sm:px-4 pt-6 sm:pt-8 pb-4 sm:pb-8">
+        <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px] overflow-y-auto">
+            <div className="sticky top-24 flex justify-center px-3 sm:px-4 pt-6 sm:pt-8 pb-4 sm:pb-8">
                 <div className="max-w-4xl w-full animate-in fade-in zoom-in-95 duration-500 flex flex-col md:flex-row gap-3 md:gap-4">
 
                     {/* COMPANY SIDE */}
@@ -1207,7 +1207,7 @@ export default function HomeContent() {
                     )}
 
                     {/* RESULTS */}
-                    <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
+                    <main className={`flex-1 transition-all duration-300 relative min-h-[600px]${user ? ' overflow-hidden' : ''}`}>
                         {!user && !isAuthLoading && <LockedOverlay />}
                         {(isLoading && !!user) || isAuthLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
