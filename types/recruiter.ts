@@ -73,3 +73,12 @@ export interface RecruiterStats {
   placed: number;
   newThisWeek: number;
 }
+
+export interface CompanyAccount {
+  id: string;
+  company_name: string;
+  contact_email: string;
+  invited_by: string | null;
+  invited_at: string;
+  last_sign_in_at: string | null;
+}

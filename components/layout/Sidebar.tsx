@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, LogOut, X, Layers, ChevronsLeft, ChevronsRight, UserPlus } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, X, Layers, ChevronsLeft, ChevronsRight, Building2 } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/candidates', label: 'Candidates', icon: Users },
-  { href: '/companies/invite', label: 'Invite Company', icon: UserPlus },
+  { href: '/companies', label: 'Companies', icon: Building2 },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -66,7 +66,7 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: SidebarP
         {/* Navigation */}
         <nav className={`flex-1 p-4 space-y-1 transition-all duration-200 ${collapsed ? 'px-2' : ''}`}>
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
