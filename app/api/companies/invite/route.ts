@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const redirectTo = `${process.env.FRONTEND_URL || 'https://setselect.io'}/auth/invite-callback`;
+    const redirectTo = `${process.env.FRONTEND_URL || 'https://www.setselect.io'}/auth/invite-callback`;
 
     // Check if company already exists with this email
     const { data: existing } = await supabaseAdmin
