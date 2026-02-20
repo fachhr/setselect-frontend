@@ -50,6 +50,7 @@ export default function CompaniesPage() {
   }, []);
 
   const handleRegenerate = async (company: CompanyAccount) => {
+    if (regeneratingId) return; // Prevent double-click
     setRegeneratingId(company.id);
     setRegeneratedLink(null);
     setRegenerateError(null);
@@ -72,6 +73,8 @@ export default function CompaniesPage() {
       }
       if (data.actionLink) {
         setRegeneratedLink({ id: company.id, link: data.actionLink });
+      } else {
+        setRegenerateError(data.warning || 'Link generated but could not be retrieved');
       }
     } catch {
       setRegenerateError('Connection error');

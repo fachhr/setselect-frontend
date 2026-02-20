@@ -20,7 +20,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
   const [copied, setCopied] = useState(false);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Reset form when dialog opens
+  // Reset form and lock body scroll when dialog opens
   useEffect(() => {
     if (open) {
       setCompanyName('');
@@ -30,7 +30,11 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
       setMessage('');
       setActionLink('');
       setCopied(false);
+      document.body.style.overflow = 'hidden';
     }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [open]);
 
   // Escape key handler
