@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Send, Mail, MessageSquare } from 'lucide-react';
 import { Button, Input, TextArea } from '@/components/ui';
-import { COMPANY } from '@/lib/legal/constants';
+
 
 const ContactPage: React.FC = () => {
     const router = useRouter();
@@ -72,16 +72,6 @@ const ContactPage: React.FC = () => {
                                 <a href="mailto:hello@setberry.com" className="text-[var(--text-secondary)] hover:text-[var(--gold)] flex items-center gap-2 transition-colors">
                                     <Mail className="w-4 h-4" /> hello@setberry.com
                                 </a>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-3">Office</h3>
-                                <p className="text-[var(--text-secondary)] leading-relaxed text-sm">
-                                    {COMPANY.tradingAs}<br />
-                                    {COMPANY.address.street}<br />
-                                    {COMPANY.address.postalCode} {COMPANY.address.city}<br />
-                                    {COMPANY.address.country}
-                                </p>
                             </div>
 
                             <div className="p-4 bg-[var(--bg-surface-2)] rounded-lg border border-[var(--border-subtle)]">
