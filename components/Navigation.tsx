@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, X, ArrowRight, Layers, LogOut, User } from 'lucide-react';
+import { Menu, X, ArrowRight, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
 import { useZenMode } from '@/contexts/ZenModeContext';
@@ -49,10 +49,6 @@ export function Navigation() {
                   Talent Pool
                 </Link>
                 <div className="h-4 w-px bg-[var(--border-strong)]"></div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)]">
-                  <User className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
-                  <span className="text-xs text-[var(--text-secondary)] max-w-[160px] truncate">{user.email}</span>
-                </div>
                 <Button variant="outline" icon={LogOut} onClick={signOut}>
                   Logout
                 </Button>
@@ -103,11 +99,7 @@ export function Navigation() {
               >
                 Talent Pool
               </Link>
-              <div className="border-t border-[var(--border-subtle)] pt-4 mt-2 space-y-3">
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-[var(--text-tertiary)]" />
-                  <span className="text-sm text-[var(--text-secondary)] truncate">{user.email}</span>
-                </div>
+              <div className="border-t border-[var(--border-subtle)] pt-4 mt-2">
                 <Button variant="outline" icon={LogOut} className="w-full" onClick={() => { signOut(); setIsMobileMenuOpen(false); }}>
                   Logout
                 </Button>
