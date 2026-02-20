@@ -202,7 +202,7 @@ Company access uses **Supabase Auth** with magic link (passwordless) login. Sess
 1. **Admin invites company** via `POST /api/admin/invite-company` (protected by `x-admin-key` header)
 2. This creates an `auth.users` entry + `company_accounts` row + sends magic link email
 3. Company clicks magic link → `/auth/callback` exchanges code for session cookie
-4. Middleware (`middleware.ts`) refreshes session on every request and redirects unauthenticated users to `/login`
+4. Middleware (`middleware.ts`) refreshes session on every request and redirects unauthenticated users to `/` (homepage overlay)
 5. API routes use `getCompanyFromRequest()` to validate session + resolve company identity
 
 ### Key Files
@@ -224,7 +224,7 @@ Company access uses **Supabase Auth** with magic link (passwordless) login. Sess
 | `intro_requests` | Introduction requests with status tracking |
 
 ### Public Paths (no auth required)
-`/login`, `/auth/callback`, `/join`, `/contact`, `/terms`, `/privacy`, `/impressum`, `/cookies`
+`/auth/callback`, `/join`, `/contact`, `/terms`, `/privacy`, `/impressum`, `/cookies`
 
 ### Admin Operations (V1 — No Admin UI)
 - **Invite company**: `curl -X POST /api/admin/invite-company -H "x-admin-key: $ADMIN_API_KEY" -d '{"email":"...","companyName":"..."}'`

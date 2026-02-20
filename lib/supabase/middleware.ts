@@ -35,7 +35,6 @@ export async function updateSession(request: NextRequest) {
   // Public paths that don't require authentication
   const publicPaths = [
     '/',
-    '/login',
     '/auth/callback',
     '/auth/invite-callback',
     '/join',
@@ -58,15 +57,15 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Redirect unauthenticated users to login (except public paths)
-  if (!user && !isPublicPath) {
+  // Redirect /login to homepage (consolidated)
+  if (pathname === '/login') {
     const url = request.nextUrl.clone();
-    url.pathname = '/login';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from login page
-  if (user && pathname === '/login') {
+  // Redirect unauthenticated users to homepage (except public paths)
+  if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
     url.pathname = '/';
     return NextResponse.redirect(url);

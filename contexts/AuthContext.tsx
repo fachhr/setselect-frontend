@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
     setUser(null);
-    router.push('/login');
+    router.push('/');
   };
 
   return (

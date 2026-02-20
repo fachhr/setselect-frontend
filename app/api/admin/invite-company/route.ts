@@ -15,7 +15,7 @@ async function sendMagicLinkEmail(email: string, actionLink: string, companyName
       `Click the link below to sign in:`,
       actionLink,
       ``,
-      `This link expires in 24 hours. If it has expired, you can request a new one at ${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/login`,
+      `This link expires in 24 hours. If it has expired, you can request a new one at ${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/`,
       ``,
       `— The SetSelect Team`,
     ].join('\n'),
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
           console.error('Failed to send magic link email:', emailError);
           return NextResponse.json({
             success: true,
-            warning: 'Account created but invitation email failed. User can request a new link at /login.',
+            warning: 'Account created but invitation email failed. User can request a new link at /.',
           });
         }
 
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
       console.error('Failed to generate magic link:', linkError);
       return NextResponse.json({
         success: true,
-        warning: 'Account created but magic link generation failed. User can request a new link at /login.',
+        warning: 'Account created but magic link generation failed. User can request a new link at /.',
       });
     }
 
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
       console.error('Failed to send magic link email:', emailError);
       return NextResponse.json({
         success: true,
-        warning: 'Account created but invitation email failed. User can request a new link at /login.',
+        warning: 'Account created but invitation email failed. User can request a new link at /.',
       });
     }
 
