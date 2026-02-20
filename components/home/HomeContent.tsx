@@ -193,7 +193,11 @@ function LockedOverlay() {
 
             if (error) {
                 setStatus('error');
-                setErrorMessage(error.message);
+                if (error.message.toLowerCase().includes('signups not allowed')) {
+                    setErrorMessage('This email is not registered. Only invited companies can sign in.');
+                } else {
+                    setErrorMessage(error.message);
+                }
                 return;
             }
 
