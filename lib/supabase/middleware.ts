@@ -34,6 +34,7 @@ export async function updateSession(request: NextRequest) {
 
   // Public paths that don't require authentication
   const publicPaths = [
+    '/',
     '/login',
     '/auth/callback',
     '/auth/invite-callback',
@@ -46,7 +47,7 @@ export async function updateSession(request: NextRequest) {
   ];
 
   const isPublicPath = publicPaths.some(
-    (path) => pathname === path || pathname.startsWith(path + '/')
+    (path) => pathname === path || (path !== '/' && pathname.startsWith(path + '/'))
   );
   const isApiRoute = pathname.startsWith('/api/');
   const isStaticAsset =

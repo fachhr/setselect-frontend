@@ -22,7 +22,8 @@ import {
     Maximize2,
     Minimize2,
     ArrowUpDown,
-    Layers
+    Layers,
+    Lock
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS } from '@/lib/formOptions';
 import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
@@ -31,8 +32,11 @@ import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
 import { IntroRequestModal } from './IntroRequestModal';
 import { useZenMode } from '@/contexts/ZenModeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useShortlists } from '@/hooks/useShortlists';
 import { useIntroRequests } from '@/hooks/useIntroRequests';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { getPlaceholderCandidates } from './placeholderCandidates';
 
 // Multi-Select Filter Component for Table View
 interface MultiSelectFilterProps {
@@ -160,8 +164,32 @@ interface ApiCandidate {
     previous_roles?: { role: string; duration: string }[] | null;
 }
 
+function LockedOverlay() {
+    return (
+        <div className="absolute inset-0 z-30 flex items-start justify-center backdrop-blur-md bg-[var(--bg-root)]/60">
+            <div className="sticky top-1/3 glass-panel rounded-2xl p-8 sm:p-10 max-w-md w-full mx-4 text-center shadow-2xl border border-[var(--border-strong)]">
+                <div className="w-14 h-14 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-5">
+                    <Lock className="w-6 h-6 text-[var(--text-tertiary)]" />
+                </div>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Restricted Access</h2>
+                <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
+                    Sign in to access the full talent pool, shortlist candidates, and request introductions.
+                </p>
+                <a
+                    href="/login"
+                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)] hover:opacity-90 transition-opacity"
+                >
+                    Sign In
+                </a>
+            </div>
+        </div>
+    );
+}
+
 export default function HomeContent() {
     const { isZenMode, toggleZenMode } = useZenMode();
+    const { user } = useAuth();
+    const isMobile = useMediaQuery('(max-width: 767px)');
     const [candidates, setCandidates] = useState<Candidate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTags, setSearchTags] = useState<string[]>([]);
@@ -583,8 +611,11 @@ export default function HomeContent() {
     }, [filteredCandidates, viewMode, sortConfig]);
 
     const displayCandidates = useMemo(() => {
+        if (!user) {
+            return getPlaceholderCandidates(viewMode, isMobile);
+        }
         return viewMode === 'table' ? sortedCandidates : filteredCandidates;
-    }, [viewMode, sortedCandidates, filteredCandidates]);
+    }, [user, viewMode, sortedCandidates, filteredCandidates, isMobile]);
 
     return (
         <div
@@ -1025,7 +1056,8 @@ export default function HomeContent() {
 
                     {/* RESULTS */}
                     <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
-                        {isLoading ? (
+                        {!user && <LockedOverlay />}
+                        {isLoading && !!user ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
                                     <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
