@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/email';
 
 async function sendMagicLinkEmail(email: string, actionLink: string, companyName: string) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  await resend.emails.send({
+  await sendEmail({
     from: 'SetSelect <noreply@setberry.com>',
     to: email,
     subject: `You've been invited to SetSelect`,
@@ -70,7 +69,7 @@ export async function POST(request: NextRequest) {
             type: 'magiclink',
             email,
             options: {
-              redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/auth/callback`,
+              redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/auth/invite-callback`,
             },
           });
 
@@ -147,7 +146,7 @@ export async function POST(request: NextRequest) {
         type: 'magiclink',
         email,
         options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/auth/callback`,
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/auth/invite-callback`,
         },
       });
 

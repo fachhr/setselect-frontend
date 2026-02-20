@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
     try {
-        const resend = new Resend(process.env.RESEND_API_KEY);
         const { email } = await request.json();
 
         if (!email || !email.includes('@')) {
@@ -13,7 +12,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        await resend.emails.send({
+        await sendEmail({
             from: 'SetSelect <noreply@setberry.com>',
             to: 'hello@setberry.com',
             replyTo: email,

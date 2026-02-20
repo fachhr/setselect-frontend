@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getCompanyFromRequest } from '@/lib/auth/getCompanyFromRequest';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/email';
 
 export async function GET() {
   const company = await getCompanyFromRequest();
@@ -69,8 +69,7 @@ export async function POST(request: NextRequest) {
 
   // Send admin notification email (fire-and-forget)
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
+    await sendEmail({
       from: 'SetSelect <noreply@setberry.com>',
       to: 'hello@setberry.com',
       replyTo: company.contactEmail,

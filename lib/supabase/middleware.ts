@@ -36,6 +36,7 @@ export async function updateSession(request: NextRequest) {
   const publicPaths = [
     '/login',
     '/auth/callback',
+    '/auth/invite-callback',
     '/join',
     '/contact',
     '/terms',
