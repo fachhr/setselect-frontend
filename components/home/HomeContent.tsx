@@ -27,7 +27,8 @@ import {
     Mail,
     AlertCircle,
     ArrowRight,
-    CheckCircle
+    CheckCircle,
+    User
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS } from '@/lib/formOptions';
 import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
@@ -193,7 +194,7 @@ function LockedOverlay() {
             if (error) {
                 setStatus('error');
                 if (error.message.toLowerCase().includes('signups not allowed')) {
-                    setErrorMessage('This email is not registered. Only invited companies can sign in.');
+                    setErrorMessage('This email isn\'t registered yet.');
                 } else {
                     setErrorMessage(error.message);
                 }
@@ -210,84 +211,130 @@ function LockedOverlay() {
     return (
         <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
             <div className="sticky top-24 flex justify-center px-4 pt-8">
-                <div className="glass-panel rounded-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in-95 duration-300">
-                    <div className="w-12 h-12 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
-                        <Building2 className="w-5 h-5 text-[var(--secondary)]" />
-                    </div>
-                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">Access Talent Pool</h3>
-                    <p className="text-xs text-[var(--text-tertiary)] mb-2">For Employers & Recruiters</p>
-                    <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
-                        Sign in to browse candidates, build shortlists, and request introductions.
-                    </p>
-
-                    {status === 'sent' ? (
-                        <div className="animate-in fade-in duration-500">
-                            <div className="w-12 h-12 bg-[var(--success-dim)] rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle className="w-6 h-6 text-[var(--success)]" />
-                            </div>
-                            <p className="text-sm text-[var(--text-secondary)] mb-1">
-                                We sent a magic link to <strong className="text-[var(--text-primary)]">{email}</strong>.
-                            </p>
-                            <p className="text-sm text-[var(--text-secondary)] mb-4">Click the link in your email to sign in.</p>
-                            <button
-                                onClick={() => { setStatus('idle'); setEmail(''); }}
-                                className="text-xs text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors"
-                            >
-                                Use a different email
-                            </button>
+                <div className="glass-panel rounded-2xl max-w-4xl w-full animate-in fade-in zoom-in-95 duration-300 flex flex-col md:flex-row overflow-hidden">
+                    {/* Left Panel — Company Access */}
+                    <div className="flex-1 p-8 text-center">
+                        <div className="w-12 h-12 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
+                            <Building2 className="w-5 h-5 text-[var(--secondary)]" />
                         </div>
-                    ) : (
-                        <form onSubmit={handleSubmit} className="space-y-3">
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@company.com"
-                                    required
-                                    className="input-base block w-full rounded-lg p-3 pl-10 text-sm placeholder-[var(--text-tertiary)]"
-                                />
-                            </div>
+                        <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">Access Talent Pool</h3>
+                        <p className="text-xs text-[var(--text-tertiary)] mb-2">For Employers &amp; Recruiters</p>
+                        <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
+                            Sign in to browse candidates, build shortlists, and request introductions.
+                        </p>
 
-                            {status === 'error' && (
-                                <div className="flex items-center gap-2 text-sm text-[var(--error)]">
-                                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                                    <span>{errorMessage}</span>
+                        {status === 'sent' ? (
+                            <div className="animate-in fade-in duration-500">
+                                <div className="w-12 h-12 bg-[var(--success-dim)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <CheckCircle className="w-6 h-6 text-[var(--success)]" />
                                 </div>
-                            )}
+                                <p className="text-sm text-[var(--text-secondary)] mb-1">
+                                    We sent a magic link to <strong className="text-[var(--text-primary)]">{email}</strong>.
+                                </p>
+                                <p className="text-sm text-[var(--text-secondary)] mb-4">Click the link in your email to sign in.</p>
+                                <button
+                                    onClick={() => { setStatus('idle'); setEmail(''); }}
+                                    className="text-xs text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors"
+                                >
+                                    Use a different email
+                                </button>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleSubmit} className="space-y-3">
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="you@company.com"
+                                        required
+                                        className="input-base block w-full rounded-lg p-3 pl-10 text-sm placeholder-[var(--text-tertiary)]"
+                                    />
+                                </div>
 
-                            <button
-                                type="submit"
-                                disabled={status === 'loading' || !email}
-                                className="btn-gold w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {status === 'loading' ? (
-                                    <span className="inline-flex items-center">
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                        </svg>
-                                        Sending...
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center">
-                                        Send Magic Link
-                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                    </span>
+                                {status === 'error' && (
+                                    <div className="animate-in fade-in duration-300 rounded-lg bg-[var(--error-dim)] border border-[var(--error-border)] px-4 py-3">
+                                        <div className="flex items-start gap-2.5">
+                                            <AlertCircle className="w-4 h-4 text-[var(--error)] mt-0.5 flex-shrink-0" />
+                                            <div className="text-left">
+                                                <p className="text-sm text-[var(--text-primary)] font-medium">{errorMessage}</p>
+                                                {errorMessage.includes('not registered') && (
+                                                    <p className="text-xs text-[var(--text-secondary)] mt-1">
+                                                        Need access?{' '}
+                                                        <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors underline underline-offset-2">
+                                                            Request an invitation
+                                                        </a>
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
-                            </button>
 
-                            <p className="text-xs text-[var(--text-tertiary)] pt-1">
-                                Access is by invitation only.
-                                <br />
-                                Need access?{' '}
-                                <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors">
-                                    Contact us
-                                </a>
-                            </p>
-                        </form>
-                    )}
+                                <button
+                                    type="submit"
+                                    disabled={status === 'loading' || !email}
+                                    className="btn-gold w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {status === 'loading' ? (
+                                        <span className="inline-flex items-center">
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                            </svg>
+                                            Sending...
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center">
+                                            Send Magic Link
+                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        </span>
+                                    )}
+                                </button>
+
+                                <p className="text-xs text-[var(--text-tertiary)] pt-1">
+                                    Access is by invitation only.
+                                    <br />
+                                    Need access?{' '}
+                                    <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors">
+                                        Contact us
+                                    </a>
+                                </p>
+                            </form>
+                        )}
+                    </div>
+
+                    {/* Divider */}
+                    <div className="hidden md:block w-px bg-[var(--border-subtle)]" />
+                    <div className="md:hidden h-px bg-[var(--border-subtle)] mx-8" />
+
+                    {/* Right Panel — Talent Join */}
+                    <div className="flex-1 p-8 text-center bg-[var(--bg-surface-2)] rounded-b-2xl md:rounded-bl-none md:rounded-r-2xl">
+                        <div className="w-12 h-12 rounded-full bg-[var(--bg-root)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
+                            <User className="w-5 h-5 text-[var(--secondary)]" />
+                        </div>
+                        <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">Join the Pool</h3>
+                        <p className="text-xs text-[var(--text-tertiary)] mb-2">For Professionals</p>
+                        <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
+                            Get discovered by top employers in the energy and commodities sector.
+                        </p>
+
+                        <div className="space-y-3 mb-6 text-left max-w-xs mx-auto">
+                            <div className="flex items-start gap-2.5">
+                                <Check className="w-4 h-4 text-[var(--success)] mt-0.5 flex-shrink-0" />
+                                <p className="text-sm text-[var(--text-secondary)]">Get seen by leading energy & commodities employers in Switzerland</p>
+                            </div>
+                            <div className="flex items-start gap-2.5">
+                                <Check className="w-4 h-4 text-[var(--success)] mt-0.5 flex-shrink-0" />
+                                <p className="text-sm text-[var(--text-secondary)]">Our recruiter actively matches your profile to the right opportunities</p>
+                            </div>
+                        </div>
+
+                        <Button variant="primary" className="w-full h-12 text-sm font-medium" icon={ArrowRight} href="/join">
+                            Join the Pool
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -755,12 +802,27 @@ export default function HomeContent() {
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
                             Browse pre‑screened and selected talent. Within just a few clicks, get contact information of the candidates you like.
                         </p>
+                        <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+                            <Button
+                                variant="secondary"
+                                className="h-12 px-8 text-base"
+                                icon={Search}
+                                onClick={() => {
+                                    document.getElementById('dashboard-section')?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                            >
+                                Browse Candidates
+                            </Button>
+                            <Button variant="primary" className="h-12 px-8 text-base" icon={ArrowRight} href="/join">
+                                Join as Candidate
+                            </Button>
+                        </div>
                     </div>
                 </div>
             )}
 
             {/* DASHBOARD CONTENT AREA */}
-            <div className={`w-full transition-all duration-300 ${isZenMode
+            <div id="dashboard-section" className={`w-full transition-all duration-300 ${isZenMode
                     ? 'px-4 sm:px-6 lg:px-8 py-8'
                     : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'
                 }`}>
