@@ -78,7 +78,7 @@ export function Sidebar({ open, onClose, collapsed, onToggleCollapse }: SidebarP
                 } ${
                   isActive
                     ? 'bg-[var(--secondary-dim)] text-[var(--secondary)] border border-[var(--border-subtle)]'
-                    : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)]'
+                    : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)] border border-transparent'
                 }`}
               >
                 <item.icon size={18} className="shrink-0" />
