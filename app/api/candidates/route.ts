@@ -159,7 +159,9 @@ export async function GET(request: NextRequest) {
         functional_expertise: row.functional_expertise,
         languages: Array.isArray(row.languages)
           ? row.languages.map((l: unknown) =>
-              typeof l === 'string' ? l : `${(l as Record<string, string>).language} · ${(l as Record<string, string>).proficiency}`
+              typeof l === 'string'
+                ? { language: l }
+                : { language: (l as Record<string, string>).language, proficiency: (l as Record<string, string>).proficiency || undefined }
             )
           : null,
         work_eligibility: row.work_eligibility,

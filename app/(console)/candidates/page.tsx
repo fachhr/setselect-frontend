@@ -315,7 +315,7 @@ export default function CandidatesPage() {
       short_summary: formData.short_summary || null,
       notice_period_months: formData.notice_period_months || null,
       functional_expertise: formData.functional_expertise.length > 0 ? formData.functional_expertise : null,
-      languages: formData.languages.length > 0 ? formData.languages.map(l => ({ language: l })) : null,
+      languages: formData.languages.length > 0 ? formData.languages : null,
       years_of_experience: formData.years_of_experience ? Number(formData.years_of_experience) : null,
       salary_min: formData.salary_min ? Number(formData.salary_min) : null,
       salary_max: formData.salary_max ? Number(formData.salary_max) : null,

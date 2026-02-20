@@ -7,6 +7,11 @@ export interface RecruiterNote {
   created_at: string;
 }
 
+export interface LanguageEntry {
+  language: string;
+  proficiency?: string;
+}
+
 export interface RecruiterCandidateView {
   // From user_profiles
   profile_id: string;
@@ -30,7 +35,7 @@ export interface RecruiterCandidateView {
   professional_experience: Record<string, unknown>[] | null;
   technical_skills: Record<string, unknown>[] | null;
   functional_expertise: string[] | null;
-  languages: string[] | null;
+  languages: LanguageEntry[] | null;
   work_eligibility: string | null;
   notice_period_months: string;
   highlight: string | null;
@@ -59,7 +64,7 @@ export interface ProfileEditData {
   work_eligibility: string;
   short_summary: string;
   functional_expertise: string[];
-  languages: string[];
+  languages: LanguageEntry[];
 }
 
 export interface RecruiterStats {

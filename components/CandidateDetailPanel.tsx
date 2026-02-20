@@ -28,7 +28,7 @@ import {
   formatCantons,
   formatEntryDate,
 } from '@/lib/helpers';
-import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData, LanguageEntry } from '@/types/recruiter';
 
 const ALL_STATUSES: RecruiterStatus[] = [
   'new',
@@ -646,9 +646,21 @@ export function CandidateDetailPanel({
               <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Languages</h4>
               <input
                 type="text"
-                value={formData.languages.join(', ')}
-                onChange={(e) => updateField('languages', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
-                placeholder="e.g. English, German, French"
+                value={formData.languages.map(l => l.proficiency ? `${l.language} (${l.proficiency})` : l.language).join(', ')}
+                onChange={(e) => {
+                  const entries: LanguageEntry[] = e.target.value
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean)
+                    .map((s) => {
+                      const match = s.match(/^(.+?)\s*\((.+?)\)\s*$/);
+                      return match
+                        ? { language: match[1].trim(), proficiency: match[2].trim() }
+                        : { language: s };
+                    });
+                  updateField('languages', entries);
+                }}
+                placeholder="e.g. English (Fluent), German (Intermediate), French"
                 className={inputClass}
               />
             </div>
@@ -662,7 +674,7 @@ export function CandidateDetailPanel({
                       key={i}
                       className="px-2.5 py-1 text-xs bg-[var(--primary-dim)] text-[var(--secondary)] rounded-md border border-transparent hover:border-[var(--secondary)] transition-colors cursor-default"
                     >
-                      {typeof lang === 'string' ? lang : String(lang)}
+                      {lang.language}{lang.proficiency ? ` · ${lang.proficiency}` : ''}
                     </span>
                   ))}
                 </div>
