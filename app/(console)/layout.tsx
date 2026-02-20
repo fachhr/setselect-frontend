@@ -9,6 +9,7 @@ import { ToastContainer } from '@/components/ui/Toast';
 const pageTitles: Record<string, string> = {
   '/': 'Dashboard',
   '/candidates': 'Candidates',
+  '/companies/invite': 'Invite Company',
   '/settings': 'Settings',
 };
 

@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, LogOut, X, Layers, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, X, Layers, ChevronsLeft, ChevronsRight, UserPlus } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/candidates', label: 'Candidates', icon: Users },
+  { href: '/companies/invite', label: 'Invite Company', icon: UserPlus },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
