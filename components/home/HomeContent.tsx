@@ -209,8 +209,8 @@ function LockedOverlay() {
     };
 
     return (
-        <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px] overflow-y-auto">
-            <div className="sticky top-24 flex justify-center px-3 sm:px-4 pt-6 sm:pt-8 pb-4 sm:pb-8">
+        <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
+            <div className="flex justify-center px-3 sm:px-4 pt-6 sm:pt-8 pb-4 sm:pb-8">
                 <div className="max-w-4xl w-full animate-in fade-in zoom-in-95 duration-500 flex flex-col md:flex-row gap-3 md:gap-4">
 
                     {/* COMPANY SIDE */}
@@ -265,7 +265,7 @@ function LockedOverlay() {
                                     </div>
 
                                     {status === 'error' && (
-                                        <div className="text-[var(--error)] text-xs flex items-center gap-1.5 bg-[var(--bg-surface-2)] p-2.5 rounded-lg border border-[var(--border-subtle)]">
+                                        <div className="text-[var(--error)] text-xs flex items-center gap-2.5 bg-[var(--bg-surface-2)] p-2.5 rounded-lg border border-[var(--border-subtle)]">
                                             <AlertCircle className="w-4 h-4 flex-shrink-0" />
                                             <span>{errorMessage}</span>
                                         </div>
@@ -1211,7 +1211,7 @@ export default function HomeContent() {
                     )}
 
                     {/* RESULTS */}
-                    <main className={`flex-1 transition-all duration-300 relative min-h-[600px]${user ? ' overflow-hidden' : ''}`}>
+                    <main className={`flex-1 transition-all duration-300 relative min-h-[900px]${user ? ' overflow-hidden' : ''}`}>
                         {!user && !isAuthLoading && <LockedOverlay />}
                         {(isLoading && !!user) || isAuthLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
