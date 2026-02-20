@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, X, ArrowRight, Layers, LogOut } from 'lucide-react';
+import { Menu, X, ArrowRight, Layers, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
 import { useZenMode } from '@/contexts/ZenModeContext';
@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isZenMode } = useZenMode();
-  const { user, signOut } = useAuth();
+  const { user, isLoading, signOut } = useAuth();
 
   // Hide navigation in Zen Mode
   if (isZenMode) {
@@ -40,25 +40,37 @@ export function Navigation() {
             >
               Setberry
             </a>
-            <Link
-              href="/"
-              className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              Access Talent
-            </Link>
-            <div className="h-4 w-px bg-[var(--border-strong)]"></div>
-            <Button variant="primary" icon={ArrowRight} href="/join">
-              Join the List
-            </Button>
-            {user && (
-              <button
-                onClick={signOut}
-                className="flex items-center gap-1.5 text-sm font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
-                title="Sign out"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            )}
+            {!isLoading && (user ? (
+              <>
+                <Link
+                  href="/"
+                  className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  Talent Pool
+                </Link>
+                <div className="h-4 w-px bg-[var(--border-strong)]"></div>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)]">
+                  <User className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
+                  <span className="text-xs text-[var(--text-secondary)] max-w-[160px] truncate">{user.email}</span>
+                </div>
+                <Button variant="outline" icon={LogOut} onClick={signOut}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/"
+                  className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  Access Talent
+                </Link>
+                <div className="h-4 w-px bg-[var(--border-strong)]"></div>
+                <Button variant="primary" icon={ArrowRight} href="/join">
+                  Join the Pool
+                </Button>
+              </>
+            ))}
           </div>
 
           {/* Mobile Menu Button */}
@@ -82,25 +94,39 @@ export function Navigation() {
           >
             Setberry
           </a>
-          <Link
-            href="/"
-            className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Access Talent
-          </Link>
-          <Button className="w-full" href="/join" onClick={() => setIsMobileMenuOpen(false)}>
-            Join the List
-          </Button>
-          {user && (
-            <button
-              onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-              className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            >
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </button>
-          )}
+          {!isLoading && (user ? (
+            <>
+              <Link
+                href="/"
+                className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Talent Pool
+              </Link>
+              <div className="border-t border-[var(--border-subtle)] pt-4 mt-2 space-y-3">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-[var(--text-tertiary)]" />
+                  <span className="text-sm text-[var(--text-secondary)] truncate">{user.email}</span>
+                </div>
+                <Button variant="outline" icon={LogOut} className="w-full" onClick={() => { signOut(); setIsMobileMenuOpen(false); }}>
+                  Logout
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/"
+                className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Access Talent
+              </Link>
+              <Button className="w-full" href="/join" onClick={() => setIsMobileMenuOpen(false)}>
+                Join the Pool
+              </Button>
+            </>
+          ))}
         </div>
       )}
     </nav>
