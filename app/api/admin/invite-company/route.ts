@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
             type: 'magiclink',
             email,
             options: {
-              redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/auth/invite-callback`,
+              redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/invite-callback`,
             },
           });
 
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
         type: 'magiclink',
         email,
         options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/auth/invite-callback`,
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/invite-callback`,
         },
       });
 
