@@ -274,6 +274,8 @@ function LockedOverlay() {
                             </button>
 
                             <p className="text-xs text-[var(--text-tertiary)] pt-1">
+                                Only invited companies can sign in.
+                                <br />
                                 Need access?{' '}
                                 <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors">
                                     Contact us
