@@ -23,7 +23,11 @@ import {
     Minimize2,
     ArrowUpDown,
     Layers,
-    Lock
+    Lock,
+    Mail,
+    AlertCircle,
+    ArrowRight,
+    CheckCircle
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS } from '@/lib/formOptions';
 import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
@@ -36,6 +40,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useShortlists } from '@/hooks/useShortlists';
 import { useIntroRequests } from '@/hooks/useIntroRequests';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
 import { getPlaceholderCandidates } from './placeholderCandidates';
 
 // Multi-Select Filter Component for Table View
@@ -165,22 +170,118 @@ interface ApiCandidate {
 }
 
 function LockedOverlay() {
+    const [email, setEmail] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !email.includes('@')) return;
+
+        setStatus('loading');
+        setErrorMessage('');
+
+        try {
+            const supabase = createSupabaseBrowserClient();
+            const { error } = await supabase.auth.signInWithOtp({
+                email,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                },
+            });
+
+            if (error) {
+                setStatus('error');
+                setErrorMessage(error.message);
+                return;
+            }
+
+            setStatus('sent');
+        } catch {
+            setStatus('error');
+            setErrorMessage('Something went wrong. Please try again.');
+        }
+    };
+
     return (
-        <div className="absolute inset-0 z-30 flex items-start justify-center backdrop-blur-md bg-[var(--bg-root)]/60">
-            <div className="sticky top-1/3 glass-panel rounded-2xl p-8 sm:p-10 max-w-md w-full mx-4 text-center shadow-2xl border border-[var(--border-strong)]">
-                <div className="w-14 h-14 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-5">
-                    <Lock className="w-6 h-6 text-[var(--text-tertiary)]" />
+        <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
+            <div className="sticky top-24 flex justify-center px-4 pt-8">
+                <div className="glass-panel rounded-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in-95 duration-300">
+                    <div className="w-12 h-12 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
+                        <Lock className="w-5 h-5 text-[var(--text-secondary)]" />
+                    </div>
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">Restricted Access</h3>
+                    <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
+                        Sign in to access the full talent pool, shortlist candidates, and request introductions.
+                    </p>
+
+                    {status === 'sent' ? (
+                        <div className="animate-in fade-in duration-500">
+                            <div className="w-12 h-12 bg-[var(--success-dim)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle className="w-6 h-6 text-[var(--success)]" />
+                            </div>
+                            <p className="text-sm text-[var(--text-secondary)] mb-1">
+                                We sent a magic link to <strong className="text-[var(--text-primary)]">{email}</strong>.
+                            </p>
+                            <p className="text-sm text-[var(--text-secondary)] mb-4">Click the link in your email to sign in.</p>
+                            <button
+                                onClick={() => { setStatus('idle'); setEmail(''); }}
+                                className="text-xs text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors"
+                            >
+                                Use a different email
+                            </button>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-3">
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="you@company.com"
+                                    required
+                                    className="input-base block w-full rounded-lg p-3 pl-10 text-sm placeholder-[var(--text-tertiary)]"
+                                />
+                            </div>
+
+                            {status === 'error' && (
+                                <div className="flex items-center gap-2 text-sm text-[var(--error)]">
+                                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                                    <span>{errorMessage}</span>
+                                </div>
+                            )}
+
+                            <button
+                                type="submit"
+                                disabled={status === 'loading' || !email}
+                                className="btn-gold w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {status === 'loading' ? (
+                                    <span className="inline-flex items-center">
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                        </svg>
+                                        Sending...
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center">
+                                        Send Magic Link
+                                        <ArrowRight className="w-4 h-4 ml-2" />
+                                    </span>
+                                )}
+                            </button>
+
+                            <p className="text-xs text-[var(--text-tertiary)] pt-1">
+                                Need access?{' '}
+                                <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors">
+                                    Contact us
+                                </a>
+                            </p>
+                        </form>
+                    )}
                 </div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Restricted Access</h2>
-                <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
-                    Sign in to access the full talent pool, shortlist candidates, and request introductions.
-                </p>
-                <a
-                    href="/login"
-                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)] hover:opacity-90 transition-opacity"
-                >
-                    Sign In
-                </a>
             </div>
         </div>
     );
@@ -188,7 +289,7 @@ function LockedOverlay() {
 
 export default function HomeContent() {
     const { isZenMode, toggleZenMode } = useZenMode();
-    const { user } = useAuth();
+    const { user, isLoading: isAuthLoading } = useAuth();
     const isMobile = useMediaQuery('(max-width: 767px)');
     const [candidates, setCandidates] = useState<Candidate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -272,8 +373,13 @@ export default function HomeContent() {
         return '-';
     };
 
-    // Fetch candidates from API on mount
+    // Fetch candidates from API when authenticated
     useEffect(() => {
+        if (!user) {
+            setIsLoading(false);
+            return;
+        }
+
         async function fetchCandidates() {
             try {
                 setIsLoading(true);
@@ -319,7 +425,7 @@ export default function HomeContent() {
         }
 
         fetchCandidates();
-    }, []);
+    }, [user]);
 
     // Escape special regex characters in user input
     const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1056,8 +1162,8 @@ export default function HomeContent() {
 
                     {/* RESULTS */}
                     <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
-                        {!user && <LockedOverlay />}
-                        {isLoading && !!user ? (
+                        {!user && !isAuthLoading && <LockedOverlay />}
+                        {(isLoading && !!user) || isAuthLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
                                     <Search className="w-5 h-5 text-[var(--text-tertiary)]" />
