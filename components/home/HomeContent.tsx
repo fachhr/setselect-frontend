@@ -186,7 +186,7 @@ function LockedOverlay() {
             const { error } = await supabase.auth.signInWithOtp({
                 email,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/callback`,
                 },
             });
 
