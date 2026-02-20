@@ -316,8 +316,8 @@ export default function HomeContent() {
         direction: 'asc'
     });
     // Server-persisted shortlists and intro requests
-    const { shortlistedIds: favorites, toggleShortlist } = useShortlists();
-    const { getRequestStatus, submitRequest } = useIntroRequests();
+    const { shortlistedIds: favorites, toggleShortlist } = useShortlists(!!user);
+    const { getRequestStatus, submitRequest } = useIntroRequests(!!user);
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);

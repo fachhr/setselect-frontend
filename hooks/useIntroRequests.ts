@@ -10,11 +10,15 @@ interface IntroRequest {
   created_at: string;
 }
 
-export function useIntroRequests() {
+export function useIntroRequests(enabled = true) {
   const [introRequests, setIntroRequests] = useState<IntroRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!enabled) {
+      setIsLoading(false);
+      return;
+    }
     async function fetchIntroRequests() {
       try {
         const res = await fetch('/api/intro-requests');
@@ -28,7 +32,7 @@ export function useIntroRequests() {
       }
     }
     fetchIntroRequests();
-  }, []);
+  }, [enabled]);
 
   const getRequestStatus = useCallback(
     (talentId: string): IntroRequest['status'] | null => {

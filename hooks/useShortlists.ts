@@ -2,11 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-export function useShortlists() {
+export function useShortlists(enabled = true) {
   const [shortlistedIds, setShortlistedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!enabled) {
+      setIsLoading(false);
+      return;
+    }
     async function fetchShortlists() {
       try {
         const res = await fetch('/api/shortlists');
@@ -20,7 +24,7 @@ export function useShortlists() {
       }
     }
     fetchShortlists();
-  }, []);
+  }, [enabled]);
 
   const toggleShortlist = useCallback(async (talentId: string) => {
     const isCurrentlyShortlisted = shortlistedIds.includes(talentId);
