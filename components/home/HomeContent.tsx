@@ -23,7 +23,7 @@ import {
     Minimize2,
     ArrowUpDown,
     Layers,
-    Lock,
+    Building2,
     Mail,
     AlertCircle,
     ArrowRight,
@@ -212,11 +212,12 @@ function LockedOverlay() {
             <div className="sticky top-24 flex justify-center px-4 pt-8">
                 <div className="glass-panel rounded-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in-95 duration-300">
                     <div className="w-12 h-12 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
-                        <Lock className="w-5 h-5 text-[var(--text-secondary)]" />
+                        <Building2 className="w-5 h-5 text-[var(--secondary)]" />
                     </div>
-                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">Restricted Access</h3>
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">Access Talent Pool</h3>
+                    <p className="text-xs text-[var(--text-tertiary)] mb-2">For Employers & Recruiters</p>
                     <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
-                        Sign in to access the full talent pool, shortlist candidates, and request introductions.
+                        Sign in to browse candidates, build shortlists, and request introductions.
                     </p>
 
                     {status === 'sent' ? (
@@ -278,7 +279,7 @@ function LockedOverlay() {
                             </button>
 
                             <p className="text-xs text-[var(--text-tertiary)] pt-1">
-                                Only invited companies can sign in.
+                                Access is by invitation only.
                                 <br />
                                 Need access?{' '}
                                 <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors">
