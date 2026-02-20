@@ -23,13 +23,12 @@ import {
     Minimize2,
     ArrowUpDown,
     Layers,
+    Lock,
     Mail,
     AlertCircle,
-    CheckCircle,
-    Building2,
-    User
+    ArrowRight,
+    CheckCircle
 } from 'lucide-react';
-import Link from 'next/link';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS } from '@/lib/formOptions';
 import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
 import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
@@ -210,127 +209,84 @@ function LockedOverlay() {
 
     return (
         <div className="absolute inset-0 z-30 bg-gradient-to-b from-[var(--bg-root)]/40 via-[var(--bg-root)]/75 to-[var(--bg-root)]/98 backdrop-blur-[2px]">
-            <div className="flex justify-center px-3 sm:px-4 pt-6 sm:pt-8 pb-4 sm:pb-8">
-                <div className="max-w-4xl w-full animate-in fade-in zoom-in-95 duration-500 flex flex-col md:flex-row gap-3 md:gap-4">
+            <div className="sticky top-24 flex justify-center px-4 pt-8">
+                <div className="glass-panel rounded-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in-95 duration-300">
+                    <div className="w-12 h-12 rounded-full bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] flex items-center justify-center mx-auto mb-4">
+                        <Lock className="w-5 h-5 text-[var(--text-secondary)]" />
+                    </div>
+                    <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">Restricted Access</h3>
+                    <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
+                        Sign in to access the full talent pool, shortlist candidates, and request introductions.
+                    </p>
 
-                    {/* COMPANY SIDE */}
-                    <div className="flex-1 p-6 sm:p-8 md:p-10 bg-[var(--bg-surface-1)] rounded-2xl border border-[var(--border-subtle)] shadow-lg md:shadow-2xl flex flex-col">
-                        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--bg-surface-2)] rounded-xl flex items-center justify-center flex-shrink-0">
-                                <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--secondary)]" />
+                    {status === 'sent' ? (
+                        <div className="animate-in fade-in duration-500">
+                            <div className="w-12 h-12 bg-[var(--success-dim)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle className="w-6 h-6 text-[var(--success)]" />
                             </div>
-                            <div>
-                                <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">Access Talent Pool</h3>
-                                <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-0.5">For Employers &amp; Recruiters</p>
-                            </div>
+                            <p className="text-sm text-[var(--text-secondary)] mb-1">
+                                We sent a magic link to <strong className="text-[var(--text-primary)]">{email}</strong>.
+                            </p>
+                            <p className="text-sm text-[var(--text-secondary)] mb-4">Click the link in your email to sign in.</p>
+                            <button
+                                onClick={() => { setStatus('idle'); setEmail(''); }}
+                                className="text-xs text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors"
+                            >
+                                Use a different email
+                            </button>
                         </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-3">
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="you@company.com"
+                                    required
+                                    className="input-base block w-full rounded-lg p-3 pl-10 text-sm placeholder-[var(--text-tertiary)]"
+                                />
+                            </div>
 
-                        {status === 'sent' ? (
-                            <div className="animate-in fade-in duration-500">
-                                <div className="w-12 h-12 bg-[var(--success-dim)] rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <CheckCircle className="w-6 h-6 text-[var(--success)]" />
+                            {status === 'error' && (
+                                <div className="flex items-center gap-2 text-sm text-[var(--error)]">
+                                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                                    <span>{errorMessage}</span>
                                 </div>
-                                <p className="text-sm text-[var(--text-secondary)] mb-1 text-center">
-                                    We sent a magic link to <strong className="text-[var(--text-primary)]">{email}</strong>.
-                                </p>
-                                <p className="text-sm text-[var(--text-secondary)] mb-4 text-center">Click the link in your email to sign in.</p>
-                                <button
-                                    onClick={() => { setStatus('idle'); setEmail(''); }}
-                                    className="text-xs text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors block mx-auto"
-                                >
-                                    Use a different email
-                                </button>
-                            </div>
-                        ) : (
-                            <>
-                                <p className="text-sm text-[var(--text-secondary)] my-auto leading-relaxed text-center">
-                                    Only invited companies can sign in.{' '}
-                                    Need access?{' '}
-                                    <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] font-bold transition-colors">
-                                        Contact us
-                                    </a>
-                                </p>
+                            )}
 
-                                <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-                                    <div className="relative">
-                                        <input
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="you@company.com"
-                                            required
-                                            className="input-base block w-full pl-9 pr-3 py-2.5 rounded-lg text-sm placeholder-[var(--text-tertiary)]"
-                                        />
-                                        <Mail className="w-4 h-4 text-[var(--text-tertiary)] absolute left-3 top-3" />
-                                    </div>
+                            <button
+                                type="submit"
+                                disabled={status === 'loading' || !email}
+                                className="btn-gold w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {status === 'loading' ? (
+                                    <span className="inline-flex items-center">
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                        </svg>
+                                        Sending...
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center">
+                                        Send Magic Link
+                                        <ArrowRight className="w-4 h-4 ml-2" />
+                                    </span>
+                                )}
+                            </button>
 
-                                    {status === 'error' && (
-                                        <div className="text-[var(--error)] text-xs flex items-center gap-2.5 bg-[var(--bg-surface-2)] p-2.5 rounded-lg border border-[var(--border-subtle)]">
-                                            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                                            <span>{errorMessage}</span>
-                                        </div>
-                                    )}
-
-                                    <button
-                                        type="submit"
-                                        disabled={status === 'loading' || !email}
-                                        className="btn-gold w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {status === 'loading' ? (
-                                            <span className="inline-flex items-center">
-                                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                                </svg>
-                                                Sending...
-                                            </span>
-                                        ) : (
-                                            'Send Magic Link'
-                                        )}
-                                    </button>
-                                </form>
-                            </>
-                        )}
-                    </div>
-
-                    {/* TALENT SIDE */}
-                    <div className="flex-1 p-6 sm:p-8 md:p-10 bg-[var(--bg-surface-1)] rounded-2xl border border-[var(--border-subtle)] shadow-lg md:shadow-2xl flex flex-col">
-                        <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--bg-surface-2)] rounded-xl flex items-center justify-center flex-shrink-0">
-                                <User className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--secondary)]" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">Join the Pool</h3>
-                                <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-0.5">For Professionals</p>
-                            </div>
-                        </div>
-
-                        <p className="text-sm text-[var(--text-secondary)] mb-4 sm:mb-6 leading-relaxed">
-                            Get discovered by top employers. Upload your CV and let opportunities come to you.
-                        </p>
-
-                        <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8">
-                            {[
-                                'Direct access to hiring managers',
-                                'Zero cost, always free',
-                            ].map((item) => (
-                                <li key={item} className="flex items-start gap-3">
-                                    <div className="mt-0.5 bg-[var(--bg-surface-2)] p-1 rounded-full shadow-sm border border-[var(--border-subtle)]">
-                                        <CheckCircle className="w-3.5 h-3.5 text-[var(--success)]" />
-                                    </div>
-                                    <span className="text-sm text-[var(--text-secondary)]">{item}</span>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <Link
-                            href="/join"
-                            className="mt-auto btn-gold w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md"
-                        >
-                            Join the Pool
-                        </Link>
-                    </div>
-
+                            <p className="text-xs text-[var(--text-tertiary)] pt-1">
+                                Only invited companies can sign in.
+                                <br />
+                                Need access?{' '}
+                                <a href="/contact" className="text-[var(--secondary)] hover:text-[var(--highlight)] transition-colors">
+                                    Contact us
+                                </a>
+                            </p>
+                        </form>
+                    )}
                 </div>
             </div>
         </div>
@@ -1211,7 +1167,7 @@ export default function HomeContent() {
                     )}
 
                     {/* RESULTS */}
-                    <main className={`flex-1 transition-all duration-300 relative min-h-[900px]${user ? ' overflow-hidden' : ''}`}>
+                    <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
                         {!user && !isAuthLoading && <LockedOverlay />}
                         {(isLoading && !!user) || isAuthLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
