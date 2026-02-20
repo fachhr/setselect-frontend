@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, X, ArrowRight, ArrowLeft, Layers, LogOut } from 'lucide-react';
+import { Menu, X, ArrowRight, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
 import { useZenMode } from '@/contexts/ZenModeContext';
@@ -38,7 +38,6 @@ export function Navigation() {
               href="https://setberry.com/home/"
               className="nav-link flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
               Setberry
             </a>
             <Link
@@ -81,7 +80,6 @@ export function Navigation() {
             href="https://setberry.com/home/"
             className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           >
-            <ArrowLeft className="w-4 h-4" />
             Setberry
           </a>
           <Link
