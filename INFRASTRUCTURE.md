@@ -163,7 +163,7 @@ The Supabase Free plan includes **no built-in backups**. Automated daily backups
 | File / Directory | Contents |
 |------------------|----------|
 | `schema.sql` | All tables, indexes, RLS policies, triggers (including `sync_parsed_cv_data_to_profile()`) |
-| `data.sql` | Full data dump of all tables (`user_profiles`, `talent_profiles`, `cv_parsing_jobs`, `company_access_log`) |
+| `data.sql` | Full data dump of all tables (`user_profiles`, `talent_profiles`, `cv_parsing_jobs`) |
 | `cvs/` | All CV files from the `talent-pool-cvs` Supabase Storage bucket, organised by profile subfolder |
 
 **Connection**: Uses the Supabase session-mode pooler (`aws-1-eu-central-2.pooler.supabase.com:5432`) since the direct DB host is IPv6-only and GitHub Actions runners lack IPv6 support.
