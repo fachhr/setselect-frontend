@@ -488,6 +488,8 @@ export const DEGREE_TYPE_OPTIONS = [
   { value: "MBA", label: "MBA (Master of Business Administration)" },
   // Doctoral
   { value: "PhD", label: "PhD (Doctorate)" },
+  // Professional Certificates
+  { value: "Certificate", label: "Certificate / Professional Certificate" },
   // Swiss-Specific Certifications
   { value: "CAS", label: "CAS (Certificate Advanced Studies)" },
   { value: "DAS", label: "DAS (Diploma Advanced Studies)" },
@@ -518,7 +520,8 @@ export const LANGUAGE_PROFICIENCY_OPTIONS = [
   { value: "Beginner", label: "Beginner (A1-A2)" },
   { value: "Intermediate", label: "Intermediate (B1-B2)" },
   { value: "Advanced", label: "Advanced (C1)" },
-  { value: "Fluent", label: "Fluent/Native (C2)" },
+  { value: "Fluent", label: "Fluent (C2)" },
+  { value: "Native", label: "Native" },
 ];
 
 export const SKILL_PROFICIENCY_OPTIONS = [
