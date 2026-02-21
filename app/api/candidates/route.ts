@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
           ? row.languages.map((l: unknown) =>
               typeof l === 'string'
                 ? { language: l }
-                : { language: (l as Record<string, string>).language, proficiency: (l as Record<string, string>).proficiency || undefined }
+                : { language: (l as Record<string, string>).language, proficiency: (() => { const p = (l as Record<string, string>).proficiency; return (p && p !== 'undefined' && p !== 'null') ? p : undefined; })() }
             )
           : null,
         work_eligibility: row.work_eligibility,

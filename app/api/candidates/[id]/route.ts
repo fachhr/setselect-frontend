@@ -47,6 +47,8 @@ const TALENT_PROFILE_FIELDS = new Set([
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const VALID_PROFICIENCIES = ['Beginner', 'Intermediate', 'Advanced', 'Fluent', 'Native'];
+
 function validateProfileFields(fields: Record<string, unknown>): string | null {
   if ('contact_first_name' in fields && (!fields.contact_first_name || typeof fields.contact_first_name !== 'string')) {
     return 'First name is required';
@@ -68,6 +70,19 @@ function validateProfileFields(fields: Record<string, unknown>): string | null {
   for (const key of ['desired_locations', 'functional_expertise', 'languages'] as const) {
     if (key in fields && fields[key] !== null) {
       if (!Array.isArray(fields[key])) return `${key} must be an array or null`;
+    }
+  }
+  if ('languages' in fields && Array.isArray(fields.languages)) {
+    for (let i = 0; i < (fields.languages as unknown[]).length; i++) {
+      const entry = (fields.languages as unknown[])[i] as Record<string, unknown>;
+      if (!entry.language || typeof entry.language !== 'string' || !entry.language.trim()) {
+        return `languages[${i}]: language name is required`;
+      }
+      if (entry.proficiency !== undefined && entry.proficiency !== null) {
+        if (typeof entry.proficiency !== 'string' || !VALID_PROFICIENCIES.includes(entry.proficiency)) {
+          return `languages[${i}]: proficiency must be one of ${VALID_PROFICIENCIES.join(', ')}`;
+        }
+      }
     }
   }
   return null;
