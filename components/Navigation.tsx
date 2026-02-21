@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, ArrowRight, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
@@ -38,6 +39,7 @@ export function Navigation() {
               href="https://setberry.com/home/"
               className="nav-link flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
+              <Image src="/setberry-logo.svg" alt="Setberry" width={10} height={10} className="inline-block" style={{ filter: 'brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(170deg) brightness(1.8)', opacity: 1 }} />
               Setberry
             </a>
             {!isLoading && (user ? (
@@ -88,6 +90,7 @@ export function Navigation() {
             href="https://setberry.com/home/"
             className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           >
+            <Image src="/setberry-logo.svg" alt="Setberry" width={10} height={10} className="inline-block" style={{ filter: 'brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(170deg) brightness(1.8)', opacity: 1 }} />
             Setberry
           </a>
           {!isLoading && (user ? (
