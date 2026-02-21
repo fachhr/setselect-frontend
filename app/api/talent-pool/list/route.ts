@@ -213,7 +213,14 @@ export async function GET(req: NextRequest) {
         highlight: profile.highlight || null,
         education: educationStr,
         work_eligibility: profile.work_eligibility || null,
-        languages: (profile.languages || []).map((l: { language: string; proficiency?: string }) => l.language).filter(Boolean),
+        languages: (profile.languages || [])
+          .filter((l: { language: string; proficiency?: string }) => {
+            const p = l.proficiency;
+            // Keep if proficiency is work-usable (B1+) or not specified (legacy data)
+            return !p || ['Intermediate', 'Advanced', 'Fluent', 'Native'].includes(p);
+          })
+          .map((l: { language: string; proficiency?: string }) => l.language)
+          .filter(Boolean),
         functional_expertise: profile.functional_expertise || [],
         desired_roles: profile.desired_roles || null,
         profile_bio: profile.profile_bio || null,
