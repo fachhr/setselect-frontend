@@ -19,7 +19,7 @@ function parseHashError(hash: string): ErrorInfo | null {
     return {
       title: 'Link Expired',
       message:
-        'This invite link has expired. You can request a new sign-in link from the homepage.',
+        'This invite link has expired. Invite links are valid for 24 hours. You can request a new sign-in link from the homepage.',
     };
   }
 
