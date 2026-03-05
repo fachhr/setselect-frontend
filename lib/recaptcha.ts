@@ -66,14 +66,6 @@ export async function verifyRecaptchaToken(
 
     const data: RecaptchaVerifyResponse = await response.json();
 
-    // Log for monitoring (score distribution analysis)
-    console.log('[reCAPTCHA] Verification result:', {
-      success: data.success,
-      score: data.score,
-      action: data.action,
-      expectedAction,
-    });
-
     // Check if verification was successful
     if (!data.success) {
       console.error('[reCAPTCHA] Verification failed:', data['error-codes']);

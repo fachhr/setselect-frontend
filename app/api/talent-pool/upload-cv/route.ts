@@ -56,14 +56,6 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Debug logging
-    console.log('[Upload] Attempting upload:', {
-      bucket: 'talent-pool-cvs',
-      fileName,
-      fileSize: buffer.length,
-      contentType: file.type
-    });
-
     // Upload to Supabase Storage using admin client
     const { data, error } = await supabaseAdmin.storage
       .from('talent-pool-cvs')

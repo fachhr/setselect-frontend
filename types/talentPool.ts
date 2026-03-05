@@ -114,7 +114,7 @@ export interface ProfileSubmitResponse {
 export interface ApiError {
   success: false;
   error: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export type ApiResponse<T> = T | ApiError;

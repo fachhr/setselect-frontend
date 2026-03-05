@@ -53,9 +53,6 @@ const ContactPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* TODO: Re-enable contact form once Resend API key is configured.
-                    The form component and /api/contact route are ready — just
-                    uncomment this block and restore the grid layout + imports. */}
             </div>
         </div>
     );

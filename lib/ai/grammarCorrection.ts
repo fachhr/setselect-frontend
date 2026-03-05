@@ -63,14 +63,6 @@ export async function correctGrammar(fields: GrammarFields): Promise<GrammarFiel
 
     const corrected = JSON.parse(content) as Record<string, string | string[]>;
 
-    // Log corrections
-    for (const [key, original] of Object.entries(payload)) {
-      const fixed = corrected[key];
-      if (fixed !== undefined && JSON.stringify(fixed) !== JSON.stringify(original)) {
-        console.log(`[Grammar] ${key}: ${JSON.stringify(original)} → ${JSON.stringify(fixed)}`);
-      }
-    }
-
     // Only keep keys we sent — ignore any extras OpenAI may have added
     const filtered: Record<string, string | string[]> = {};
     for (const key of Object.keys(payload)) {
