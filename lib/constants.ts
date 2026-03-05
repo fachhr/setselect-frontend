@@ -25,4 +25,11 @@ export const STATUS_OPTIONS = [
   { value: 'rejected', label: 'Rejected' },
 ] as const;
 
+export const EXPERIENCE_OPTIONS = [
+  { value: '0-2', label: '0–2 yrs' },
+  { value: '3-5', label: '3–5 yrs' },
+  { value: '6-10', label: '6–10 yrs' },
+  { value: '10+', label: '10+ yrs' },
+] as const;
+
 export const LANGUAGE_OPTIONS = ['English', 'German', 'French', 'Italian'] as const;

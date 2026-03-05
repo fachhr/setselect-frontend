@@ -4,7 +4,7 @@ import { Copy, FileText, Edit2, Mail, Phone, ArrowUp, ArrowDown } from 'lucide-r
 import { StatusBadge } from '@/components/StatusBadge';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { formatTalentId, formatEntryDate, formatCantons } from '@/lib/helpers';
-import { STATUS_OPTIONS } from '@/lib/constants';
+import { STATUS_OPTIONS, EXPERIENCE_OPTIONS } from '@/lib/constants';
 import { toast } from '@/components/ui/Toast';
 import type { RecruiterCandidateView } from '@/types/recruiter';
 
@@ -13,6 +13,7 @@ export interface TableFilters {
   name: string;
   contact: string;
   location: string[];
+  experience: string[];
   status: string[];
   owner: string;
   added: string;
@@ -73,6 +74,7 @@ const COLUMNS: ColumnDef[] = [
   { key: 'name', label: 'Name & Role', sortable: true, filterType: 'text', filterKey: 'name', responsive: '' },
   { key: 'contact', label: 'Contact', sortable: false, filterType: 'text', filterKey: 'contact', responsive: 'hidden md:table-cell' },
   { key: 'location', label: 'Location', sortable: true, filterType: 'multi-select', filterKey: 'location', responsive: 'hidden lg:table-cell' },
+  { key: 'experience', label: 'Experience', sortable: true, filterType: 'multi-select', filterKey: 'experience', responsive: 'hidden lg:table-cell' },
   { key: 'status', label: 'Status', sortable: true, filterType: 'multi-select', filterKey: 'status', responsive: '' },
   { key: 'owner', label: 'Owner', sortable: true, filterType: 'text', filterKey: 'owner', responsive: 'hidden lg:table-cell' },
   { key: 'added', label: 'Added', sortable: true, filterType: 'text', filterKey: 'added', responsive: 'hidden sm:table-cell' },
@@ -82,6 +84,7 @@ const COLUMNS: ColumnDef[] = [
 function getMultiSelectOptions(col: ColumnDef, locationOptions: { value: string; label: string }[]) {
   switch (col.filterKey) {
     case 'location': return locationOptions;
+    case 'experience': return [...EXPERIENCE_OPTIONS];
     case 'status': return [...STATUS_OPTIONS];
     default: return [];
   }
@@ -220,6 +223,13 @@ export function CandidateTable({
                 <td className="px-4 py-3 sm:px-6 sm:py-4 hidden lg:table-cell">
                   <span className="text-xs text-[var(--text-tertiary)]">
                     {formatCantons(c.desired_locations)}
+                  </span>
+                </td>
+
+                {/* Experience */}
+                <td className="px-4 py-3 sm:px-6 sm:py-4 hidden lg:table-cell">
+                  <span className="text-xs text-[var(--text-tertiary)]">
+                    {c.years_of_experience != null ? `${c.years_of_experience} yrs` : '—'}
                   </span>
                 </td>
 

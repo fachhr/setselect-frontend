@@ -15,6 +15,7 @@ const EMPTY_FILTERS: TableFilters = {
   name: '',
   contact: '',
   location: [],
+  experience: [],
   status: [],
   owner: '',
   added: '',
@@ -105,6 +106,21 @@ export default function CandidatesPage() {
         )) return false;
       }
 
+      // Multi-select: Experience
+      if (tableFilters.experience.length > 0) {
+        const yoe = c.years_of_experience ?? 0;
+        const inRange = tableFilters.experience.some((range) => {
+          switch (range) {
+            case '0-2': return yoe >= 0 && yoe <= 2;
+            case '3-5': return yoe >= 3 && yoe <= 5;
+            case '6-10': return yoe >= 6 && yoe <= 10;
+            case '10+': return yoe > 10;
+            default: return false;
+          }
+        });
+        if (!inRange) return false;
+      }
+
       // Multi-select: Status
       if (tableFilters.status.length > 0) {
         if (!tableFilters.status.includes(c.status)) return false;
@@ -151,6 +167,10 @@ export default function CandidatesPage() {
         case 'status':
           aVal = a.status;
           bVal = b.status;
+          break;
+        case 'experience':
+          aVal = a.years_of_experience ?? null;
+          bVal = b.years_of_experience ?? null;
           break;
         case 'owner':
           aVal = (a.owner || '').toLowerCase();
