@@ -674,7 +674,7 @@ export function CandidateDetailPanel({
                       key={i}
                       className="px-2.5 py-1 text-xs bg-[var(--primary-dim)] text-[var(--secondary)] rounded-md border border-transparent hover:border-[var(--secondary)] transition-colors cursor-default"
                     >
-                      {lang.language}{(lang.proficiency && lang.proficiency !== 'undefined') ? ` · ${lang.proficiency}` : ''}
+                      {lang.language}{(lang.proficiency && lang.proficiency !== 'undefined' && lang.proficiency !== 'null') ? ` · ${lang.proficiency}` : ''}
                     </span>
                   ))}
                 </div>

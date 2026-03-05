@@ -158,11 +158,15 @@ export async function GET(request: NextRequest) {
         technical_skills: row.technical_skills,
         functional_expertise: row.functional_expertise,
         languages: Array.isArray(row.languages)
-          ? row.languages.map((l: unknown) =>
-              typeof l === 'string'
-                ? { language: l }
-                : { language: (l as Record<string, string>).language, proficiency: (() => { const p = (l as Record<string, string>).proficiency; return (p && p !== 'undefined' && p !== 'null') ? p : undefined; })() }
-            )
+          ? row.languages.map((l: unknown) => {
+              if (typeof l === 'string') return { language: l };
+              const rec = l as Record<string, string>;
+              const p = rec.proficiency;
+              return {
+                language: rec.language,
+                proficiency: (p && p !== 'undefined' && p !== 'null') ? p : undefined,
+              };
+            })
           : null,
         work_eligibility: row.work_eligibility,
         notice_period_months: row.notice_period_months || '',

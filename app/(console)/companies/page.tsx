@@ -90,7 +90,7 @@ export default function CompaniesPage() {
       clearTimeout(copyTimerRef.current);
       copyTimerRef.current = setTimeout(() => setCopiedId(null), 2000);
     } catch {
-      // Fallback: select the input text for manual copy
+      // Clipboard API unavailable (e.g. insecure context); silently ignore
     }
   };
 
