@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, ChevronDown, Plus } from 'lucide-react';
+import { Search, ChevronDown, Plus, Heart, Users } from 'lucide-react';
 import type { RecruiterStatus } from '@/types/recruiter';
 
 const statusOptions: { value: string; label: string }[] = [
@@ -19,12 +19,58 @@ interface SearchBarProps {
   status: RecruiterStatus | '';
   onStatusChange: (value: RecruiterStatus | '') => void;
   onAddCandidate?: () => void;
+  favoritesOnly?: boolean;
+  onToggleFavoritesFilter?: () => void;
+  shortlistCount?: number;
+  totalCount?: number;
 }
 
-export function SearchBar({ search, onSearchChange, status, onStatusChange, onAddCandidate }: SearchBarProps) {
+export function SearchBar({
+  search,
+  onSearchChange,
+  status,
+  onStatusChange,
+  onAddCandidate,
+  favoritesOnly = false,
+  onToggleFavoritesFilter,
+  shortlistCount = 0,
+  totalCount = 0,
+}: SearchBarProps) {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
+        {/* View toggle: All Candidates / Shortlisted */}
+        {onToggleFavoritesFilter && (
+          <div className="flex rounded-lg border border-[var(--border-strong)] overflow-hidden shrink-0">
+            <button
+              onClick={favoritesOnly ? onToggleFavoritesFilter : undefined}
+              className={`flex items-center gap-1.5 px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
+                !favoritesOnly
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-3)]'
+              }`}
+              aria-label="Show all candidates"
+            >
+              <Users size={14} />
+              <span className="hidden sm:inline">All</span>
+              <span className="tabular-nums text-[11px] opacity-80">({totalCount})</span>
+            </button>
+            <button
+              onClick={!favoritesOnly ? onToggleFavoritesFilter : undefined}
+              className={`flex items-center gap-1.5 px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer border-l border-[var(--border-strong)] ${
+                favoritesOnly
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-3)]'
+              }`}
+              aria-label="Show shortlisted candidates only"
+            >
+              <Heart size={13} fill={favoritesOnly ? 'currentColor' : 'none'} />
+              <span className="hidden sm:inline">Shortlisted</span>
+              <span className="tabular-nums text-[11px] opacity-80">({shortlistCount})</span>
+            </button>
+          </div>
+        )}
+
         <div className="relative">
           <Search
             size={16}

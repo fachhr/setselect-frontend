@@ -3,6 +3,7 @@
 import { Copy, FileText, Edit2, Mail, Phone, ArrowUp, ArrowDown } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
+import { FavoriteButton } from '@/components/FavoriteButton';
 import { formatTalentId, formatEntryDate, formatCantons } from '@/lib/helpers';
 import { STATUS_OPTIONS, EXPERIENCE_OPTIONS } from '@/lib/constants';
 import { toast } from '@/components/ui/Toast';
@@ -28,6 +29,7 @@ interface CandidateTableProps {
   candidates: RecruiterCandidateView[];
   onSelect: (candidate: RecruiterCandidateView) => void;
   onDownloadCv: (profileId: string) => void;
+  onToggleFavorite: (profileId: string) => void;
   sortConfig: SortConfig | null;
   onSort: (key: string) => void;
   filters: TableFilters;
@@ -38,6 +40,8 @@ interface CandidateTableProps {
   filteredCount: number;
   onPageChange: (page: number) => void;
   locationOptions: { value: string; label: string }[];
+  favoritesOnly: boolean;
+  onToggleFavoritesFilter: () => void;
 }
 
 function copyToClipboard(text: string, label: string) {
@@ -94,6 +98,7 @@ export function CandidateTable({
   candidates,
   onSelect,
   onDownloadCv,
+  onToggleFavorite,
   sortConfig,
   onSort,
   filters,
@@ -104,6 +109,8 @@ export function CandidateTable({
   filteredCount,
   onPageChange,
   locationOptions,
+  favoritesOnly,
+  onToggleFavoritesFilter,
 }: CandidateTableProps) {
   if (candidates.length === 0 && filteredCount === 0 && total === 0) {
     return (
@@ -255,6 +262,10 @@ export function CandidateTable({
                 {/* Actions */}
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
                   <div className="flex items-center gap-1">
+                    <FavoriteButton
+                      isFavorite={c.is_favorite}
+                      onToggle={() => onToggleFavorite(c.profile_id)}
+                    />
                     {c.cv_storage_path && (
                       <button
                         onClick={(e) => {
@@ -287,9 +298,11 @@ export function CandidateTable({
 
       {/* Footer */}
       <div className="border-t border-[var(--border-strong)] bg-[var(--bg-surface-2)] px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between">
-        <span className="text-xs text-[var(--text-muted)]">
-          Showing {filteredCount} of {total} candidates
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-[var(--text-muted)]">
+            Showing {filteredCount} of {total} candidates
+          </span>
+        </div>
         {totalPages > 1 && (
           <div className="flex gap-2">
             <button

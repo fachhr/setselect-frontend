@@ -8,7 +8,7 @@ import type { TableFilters, SortConfig } from '@/components/CandidateTable';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
 
 import { toast } from '@/components/ui/Toast';
-import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData, CandidateSubmission, SubmissionStatus, SubmissionCompany } from '@/types/recruiter';
 
 const EMPTY_FILTERS: TableFilters = {
   talent_id: '',
@@ -32,6 +32,9 @@ export default function CandidatesPage() {
   const [statusFilter, setStatusFilter] = useState<RecruiterStatus | ''>('');
   const [selected, setSelected] = useState<RecruiterCandidateView | null>(null);
   const [loading, setLoading] = useState(true);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [submissions, setSubmissions] = useState<CandidateSubmission[]>([]);
+  const [companies, setCompanies] = useState<SubmissionCompany[]>([]);
 
   const fetchCandidates = useCallback(async () => {
     setLoading(true);
@@ -58,6 +61,26 @@ export default function CandidatesPage() {
     fetchCandidates();
   }, [fetchCandidates]);
 
+  // Fetch submission companies (separate from platform-access companies)
+  useEffect(() => {
+    fetch('/api/submission-companies')
+      .then((res) => res.json())
+      .then((data) => setCompanies(data.companies ?? []))
+      .catch(() => {/* non-blocking */});
+  }, []);
+
+  // Fetch submissions when a candidate is selected
+  useEffect(() => {
+    if (!selected) {
+      setSubmissions([]);
+      return;
+    }
+    fetch(`/api/submissions?profile_id=${selected.profile_id}`)
+      .then((res) => res.json())
+      .then((data) => setSubmissions(data.submissions ?? []))
+      .catch(() => setSubmissions([]));
+  }, [selected?.profile_id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Debounce search
   const [searchInput, setSearchInput] = useState('');
   useEffect(() => {
@@ -78,6 +101,9 @@ export default function CandidatesPage() {
   // Stage 1: Filter
   const filteredCandidates = useMemo(() => {
     return allCandidates.filter((c) => {
+      // Favorites filter
+      if (favoritesOnly && !c.is_favorite) return false;
+
       // Text filters
       if (tableFilters.talent_id) {
         const formatted = formatTalentId(c.talent_id);
@@ -139,7 +165,7 @@ export default function CandidatesPage() {
 
       return true;
     });
-  }, [allCandidates, tableFilters]);
+  }, [allCandidates, tableFilters, favoritesOnly]);
 
   // Stage 2: Sort
   const sortedCandidates = useMemo(() => {
@@ -238,6 +264,89 @@ export default function CandidatesPage() {
     },
     []
   );
+
+  const handleCreateSubmission = async (companyId: string, submittedBy: string, notes: string) => {
+    if (!selected) return;
+    try {
+      const res = await fetch('/api/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile_id: selected.profile_id,
+          company_id: companyId,
+          submitted_by: submittedBy || null,
+          notes: notes || null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        toast('error', data.error || 'Failed to create submission');
+        throw new Error('Create failed');
+      }
+      const data = await res.json();
+      setSubmissions((prev) => [data.submission, ...prev]);
+      toast('success', 'Submission recorded');
+    } catch {
+      // error already toasted above if API error
+    }
+  };
+
+  const handleUpdateSubmission = async (submissionId: string, status: SubmissionStatus) => {
+    // Optimistic update
+    setSubmissions((prev) =>
+      prev.map((s) => (s.id === submissionId ? { ...s, status } : s))
+    );
+    try {
+      const res = await fetch(`/api/submissions/${submissionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error();
+      toast('success', 'Submission updated');
+    } catch {
+      // Revert — refetch
+      if (selected) {
+        fetch(`/api/submissions?profile_id=${selected.profile_id}`)
+          .then((res) => res.json())
+          .then((data) => setSubmissions(data.submissions ?? []));
+      }
+      toast('error', 'Failed to update submission');
+    }
+  };
+
+  const handleDeleteSubmission = async (submissionId: string) => {
+    try {
+      const res = await fetch(`/api/submissions/${submissionId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      setSubmissions((prev) => prev.filter((s) => s.id !== submissionId));
+      toast('success', 'Submission removed');
+    } catch {
+      toast('error', 'Failed to remove submission');
+    }
+  };
+
+  const handleToggleFavorite = async (profileId: string) => {
+    const candidate = allCandidates.find((c) => c.profile_id === profileId);
+    if (!candidate) return;
+    const newValue = !candidate.is_favorite;
+
+    // Optimistic update
+    updateCandidateLocally(profileId, (c) => ({ ...c, is_favorite: newValue }));
+
+    try {
+      const res = await fetch(`/api/candidates/${profileId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_favorite: newValue }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      // Revert on failure
+      updateCandidateLocally(profileId, (c) => ({ ...c, is_favorite: !newValue }));
+      toast('error', 'Failed to update favorite');
+    }
+  };
 
   const handleUpdateStatus = async (profileId: string, status: RecruiterStatus) => {
     try {
@@ -396,6 +505,10 @@ export default function CandidatesPage() {
         onSearchChange={setSearchInput}
         status={statusFilter}
         onStatusChange={handleStatusFilterChange}
+        favoritesOnly={favoritesOnly}
+        onToggleFavoritesFilter={() => setFavoritesOnly((prev) => !prev)}
+        shortlistCount={allCandidates.filter((c) => c.is_favorite).length}
+        totalCount={allCandidates.length}
       />
 
       {loading ? (
@@ -407,6 +520,7 @@ export default function CandidatesPage() {
           candidates={paginatedCandidates}
           onSelect={setSelected}
           onDownloadCv={handleDownloadCv}
+          onToggleFavorite={handleToggleFavorite}
           sortConfig={sortConfig}
           onSort={handleSort}
           filters={tableFilters}
@@ -417,6 +531,8 @@ export default function CandidatesPage() {
           filteredCount={sortedCandidates.length}
           onPageChange={setPage}
           locationOptions={locationOptions}
+          favoritesOnly={favoritesOnly}
+          onToggleFavoritesFilter={() => setFavoritesOnly((prev) => !prev)}
         />
       )}
 
@@ -431,6 +547,13 @@ export default function CandidatesPage() {
           onDownloadCv={handleDownloadCv}
           onDelete={handleDeleteCandidate}
           onUpdateProfile={handleUpdateProfile}
+          onToggleFavorite={handleToggleFavorite}
+          submissions={submissions}
+          companies={companies}
+          onCreateSubmission={handleCreateSubmission}
+          onUpdateSubmission={handleUpdateSubmission}
+          onDeleteSubmission={handleDeleteSubmission}
+          onCompanyAdded={(company) => setCompanies((prev) => [...prev, company].sort((a, b) => a.name.localeCompare(b.name)))}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import type { RecruiterStatus } from '@/types/recruiter';
+import type { RecruiterStatus, StatusChangeEntry, ActivityEntry } from '@/types/recruiter';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -111,13 +111,48 @@ export async function PATCH(
       if (!VALID_STATUSES.includes(body.status)) {
         return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
       }
-      recruiterUpdates.status = body.status;
+
+      // Read current status and notes to auto-log the change
+      const { data: currentRow, error: fetchErr } = await supabaseAdmin
+        .from('recruiter_candidates')
+        .select('status, notes')
+        .eq('profile_id', id)
+        .single();
+
+      if (fetchErr) {
+        console.error('Failed to fetch current status:', fetchErr);
+        return NextResponse.json({ error: fetchErr.message }, { status: 500 });
+      }
+
+      const currentStatus = currentRow?.status as RecruiterStatus | undefined;
+      const newStatus = body.status as RecruiterStatus;
+
+      recruiterUpdates.status = newStatus;
       recruiterUpdates.status_changed_at = new Date().toISOString();
       hasRecruiterUpdates = true;
+
+      // Only log if status is actually changing
+      if (currentStatus && currentStatus !== newStatus) {
+        const existingNotes: ActivityEntry[] = currentRow?.notes || [];
+        const statusEntry: StatusChangeEntry = {
+          type: 'status_change',
+          id: crypto.randomUUID(),
+          from: currentStatus,
+          to: newStatus,
+          author: 'System',
+          created_at: new Date().toISOString(),
+        };
+        recruiterUpdates.notes = [statusEntry, ...existingNotes];
+      }
     }
 
     if (body.owner !== undefined) {
       recruiterUpdates.owner = body.owner;
+      hasRecruiterUpdates = true;
+    }
+
+    if (body.is_favorite !== undefined) {
+      recruiterUpdates.is_favorite = !!body.is_favorite;
       hasRecruiterUpdates = true;
     }
 

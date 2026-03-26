@@ -99,7 +99,8 @@ export async function GET(request: NextRequest) {
           status,
           owner,
           notes,
-          status_changed_at
+          status_changed_at,
+          is_favorite
         )
       `,
         { count: 'exact' }
@@ -177,6 +178,7 @@ export async function GET(request: NextRequest) {
         owner: rc?.owner || null,
         notes: rc?.notes || [],
         status_changed_at: rc?.status_changed_at || row.created_at,
+        is_favorite: rc?.is_favorite ?? false,
       };
     });
 

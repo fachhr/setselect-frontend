@@ -27,7 +27,8 @@ export async function POST(
     }
 
     const notes: RecruiterNote[] = current?.notes || [];
-    const newNote: RecruiterNote = {
+    const newNote: RecruiterNote & { type: 'note' } = {
+      type: 'note',
       id: crypto.randomUUID(),
       text: text.trim(),
       author: author || 'Recruiter',

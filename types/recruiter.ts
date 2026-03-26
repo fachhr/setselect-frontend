@@ -7,6 +7,48 @@ export interface RecruiterNote {
   created_at: string;
 }
 
+// --- Activity Feed types (discriminated union) ---
+
+interface ActivityEntryBase {
+  id: string;
+  author: string;
+  created_at: string;
+}
+
+export interface NoteEntry extends ActivityEntryBase {
+  type: 'note';
+  text: string;
+}
+
+export interface StatusChangeEntry extends ActivityEntryBase {
+  type: 'status_change';
+  from: RecruiterStatus;
+  to: RecruiterStatus;
+  comment?: string;
+}
+
+export interface SubmissionCreatedEntry extends ActivityEntryBase {
+  type: 'submission_created';
+  company_name: string;
+  submission_id: string;
+}
+
+export interface SubmissionUpdateEntry extends ActivityEntryBase {
+  type: 'submission_update';
+  company_name: string;
+  submission_id: string;
+  from: SubmissionStatus;
+  to: SubmissionStatus;
+}
+
+export type ActivityEntry = NoteEntry | StatusChangeEntry | SubmissionCreatedEntry | SubmissionUpdateEntry;
+
+/** Normalize legacy RecruiterNote (no type field) into ActivityEntry */
+export function toActivityEntry(raw: RecruiterNote | ActivityEntry): ActivityEntry {
+  if ('type' in raw) return raw as ActivityEntry;
+  return { ...raw, type: 'note' as const };
+}
+
 export interface LanguageEntry {
   language: string;
   proficiency?: string;
@@ -44,8 +86,9 @@ export interface RecruiterCandidateView {
   // From recruiter_candidates
   status: RecruiterStatus;
   owner: string | null;
-  notes: RecruiterNote[];
+  notes: (RecruiterNote | ActivityEntry)[];
   status_changed_at: string;
+  is_favorite: boolean;
 }
 
 export interface ProfileEditData {
@@ -74,6 +117,20 @@ export interface RecruiterStats {
   newThisWeek: number;
 }
 
+export type SubmissionStatus = 'submitted' | 'interviewing' | 'rejected' | 'placed';
+
+export interface CandidateSubmission {
+  id: string;
+  profile_id: string;
+  company_id: string;
+  company_name: string;
+  submitted_by: string | null;
+  status: SubmissionStatus;
+  notes: string | null;
+  submitted_at: string;
+  updated_at: string;
+}
+
 export interface CompanyAccount {
   id: string;
   company_name: string;
@@ -81,4 +138,10 @@ export interface CompanyAccount {
   invited_by: string | null;
   invited_at: string;
   last_sign_in_at: string | null;
+}
+
+export interface SubmissionCompany {
+  id: string;
+  name: string;
+  created_at: string;
 }
