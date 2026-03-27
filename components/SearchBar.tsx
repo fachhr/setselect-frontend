@@ -147,9 +147,9 @@ export function SearchBar({
             fontWeight: 500,
             borderRadius: '6px',
             cursor: 'pointer',
-            border: `1px solid ${staleOnly ? 'var(--error-border)' : 'var(--border-strong)'}`,
-            background: staleOnly ? 'var(--error-dim)' : 'var(--bg-surface-2)',
-            color: staleOnly ? 'var(--error)' : 'var(--text-tertiary)',
+            border: `1px solid ${staleOnly ? 'var(--stale-border)' : 'var(--border-strong)'}`,
+            background: staleOnly ? 'var(--stale-dim)' : 'var(--bg-surface-2)',
+            color: staleOnly ? 'var(--stale)' : 'var(--text-tertiary)',
           }}
         >
           <AlertTriangle size={12} />

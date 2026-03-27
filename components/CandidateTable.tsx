@@ -26,7 +26,7 @@ function relativeActivityTime(dateStr: string | undefined): { text: string; colo
   if (days === 0) return { text: 'Today', colorClass: 'text-[var(--success)]' };
   if (days === 1) return { text: 'Yesterday', colorClass: 'text-[var(--success)]' };
   if (days <= 5) return { text: `${days}d ago`, colorClass: 'text-[var(--text-tertiary)]' };
-  return { text: `${days}d ago`, colorClass: 'text-[var(--error)] font-medium' };
+  return { text: `${days}d ago`, colorClass: 'text-[var(--stale)] font-medium' };
 }
 
 export interface TableFilters {
@@ -397,7 +397,7 @@ export function CandidateTable({
               <tr
                 key={c.profile_id}
                 className={`group hover:bg-[var(--bg-surface-2)] transition-all duration-150 cursor-pointer ${
-                  isStaleRed ? 'bg-[var(--error-dim)] hover:bg-[rgba(239,68,68,0.08)]' : ''
+                  ''
                 }`}
                 onClick={() => onSelect(c)}
               >
@@ -414,7 +414,7 @@ export function CandidateTable({
                     {isStale && (
                       <span
                         className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle"
-                        style={{ background: isStaleRed ? 'var(--error)' : 'var(--status-follow-up)' }}
+                        style={{ background: 'var(--stale)' }}
                       />
                     )}
                     {c.contact_first_name} {c.contact_last_name}

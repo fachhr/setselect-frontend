@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-type BadgeVariant = 'default' | 'blue' | 'purple' | 'gold' | 'success' | 'warning' | 'error';
+type BadgeVariant = 'default' | 'blue' | 'purple' | 'gold' | 'success' | 'warning' | 'error' | 'muted';
 
 const variantClasses: Record<BadgeVariant, string> = {
   default: 'bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)]',
@@ -10,6 +10,7 @@ const variantClasses: Record<BadgeVariant, string> = {
   success: 'bg-[var(--badge-success-bg)] text-[var(--badge-success-text)] border border-[var(--success-border)]',
   warning: 'bg-[var(--badge-warning-bg)] text-[var(--badge-warning-text)] border border-[var(--warning-border)]',
   error: 'bg-[var(--error-dim)] text-[var(--error)] border border-[var(--error-border)]',
+  muted: 'bg-[var(--badge-muted-bg)] text-[var(--badge-muted-text)] border border-[var(--badge-muted-border)]',
 };
 
 interface BadgeProps {

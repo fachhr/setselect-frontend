@@ -115,7 +115,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                       onClick={() => onSelect(c)}
                       className={`w-full text-left bg-[var(--bg-surface-2)] border rounded-lg px-3 py-2.5 cursor-pointer transition-all hover:border-[var(--border-hover)] hover:-translate-y-px hover:shadow-md ${
                         isStaleRed && !isTerminal
-                          ? 'border-l-[3px] border-l-[var(--error)] border-t-[var(--border-subtle)] border-r-[var(--border-subtle)] border-b-[var(--border-subtle)]'
+                          ? 'border-l-[3px] border-l-[var(--stale)] border-t-[var(--border-subtle)] border-r-[var(--border-subtle)] border-b-[var(--border-subtle)]'
                           : 'border-[var(--border-subtle)]'
                       }`}
                     >
@@ -123,7 +123,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                         {isStaleAmber && !isTerminal && (
                           <span
                             className="inline-block w-1.5 h-1.5 rounded-full mr-1 align-middle"
-                            style={{ background: isStaleRed ? 'var(--error)' : 'var(--status-follow-up)' }}
+                            style={{ background: 'var(--stale)' }}
                           />
                         )}
                         {c.contact_first_name} {c.contact_last_name}
@@ -141,7 +141,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                       </div>
                       {!isTerminal && (
                         <div className={`text-[9px] mt-1 ${
-                          isStaleRed ? 'text-[var(--error)] font-medium' : isStaleAmber ? 'text-[var(--status-follow-up)]' : 'text-[var(--text-muted)]'
+                          isStaleRed ? 'text-[var(--stale)] font-medium' : isStaleAmber ? 'text-[var(--stale)]' : 'text-[var(--text-muted)]'
                         }`}>
                           {isStaleAmber && '⚠ '}
                           {daysInStage}d in stage
