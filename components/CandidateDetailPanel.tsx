@@ -255,7 +255,7 @@ export function CandidateDetailPanel({
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Status</div>
                 <select value={c.status} onChange={(e) => onUpdateStatus(c.profile_id, e.target.value as RecruiterStatus)}
-                  style={{ fontSize: '10px', fontWeight: 600, padding: '2px 10px', borderRadius: '10px', border: 'none', cursor: 'pointer', background: PILL_BG[c.status], color: PILL_TEXT[c.status] }}>
+                  style={{ fontSize: '10px', fontWeight: 600, padding: '2px 18px 2px 10px', borderRadius: '10px', border: 'none', cursor: 'pointer', WebkitAppearance: 'none', appearance: 'none', background: PILL_BG[c.status], color: PILL_TEXT[c.status], backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(PILL_TEXT[c.status])}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}>
                   {ALL_STATUSES.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                 </select>
               </div>

@@ -169,7 +169,7 @@ export function CandidateTable({
             {/* Filter row */}
             <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-surface-2)]">
               {COLUMNS.map((col) => (
-                <th key={col.key} className={`px-4 py-2 sm:px-6 ${col.responsive}`}>
+                <th key={col.key} className={`px-3 py-2 ${col.responsive}`}>
                   {col.filterType === 'text' && col.filterKey ? (
                     <input
                       type="text"
@@ -308,10 +308,13 @@ export function CandidateTable({
                         e.stopPropagation();
                         onStatusChange(c.profile_id, e.target.value as RecruiterStatus);
                       }}
-                      className="text-[10px] font-semibold px-2.5 py-1 rounded-full border-none cursor-pointer"
+                      className="text-[10px] font-semibold pl-2.5 pr-5 py-1 rounded-full border-none cursor-pointer appearance-none bg-no-repeat"
                       style={{
                         background: STATUS_PILL_CONFIG[c.status].bg,
                         color: STATUS_PILL_CONFIG[c.status].text,
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(STATUS_PILL_CONFIG[c.status].text)}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 6px center',
                       }}
                     >
                       {(['new', 'screening', 'interviewing', 'offer', 'placed', 'rejected'] as RecruiterStatus[]).map(s => (
