@@ -1,13 +1,14 @@
 'use client';
 
-import { Copy, FileText, Edit2, Mail, Phone, ArrowUp, ArrowDown, Send } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Copy, FileText, Mail, Phone, ArrowUp, ArrowDown, Send, Plus, Loader2 } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { FavoriteButton } from '@/components/FavoriteButton';
 import { formatTalentId, formatCantons } from '@/lib/helpers';
 import { STATUS_OPTIONS, EXPERIENCE_OPTIONS, STATUS_PILL_COLORS } from '@/lib/constants';
 import { toast } from '@/components/ui/Toast';
-import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission, SubmissionCompany } from '@/types/recruiter';
 
 const STALE_AMBER_DAYS = 5;
 const STALE_RED_DAYS = 7;
@@ -51,6 +52,9 @@ interface CandidateTableProps {
   onToggleFavorite: (profileId: string) => void;
   onStatusChange?: (profileId: string, status: RecruiterStatus) => void;
   allSubmissions?: CandidateSubmission[];
+  companies: SubmissionCompany[];
+  onCreateSubmission: (profileId: string, companyId: string, submittedBy: string, notes: string) => Promise<void>;
+  onCompanyAdded?: (company: SubmissionCompany) => void;
   sortConfig: SortConfig | null;
   onSort: (key: string) => void;
   filters: TableFilters;
@@ -83,6 +87,193 @@ function SortIcon({ columnKey, sortConfig }: SortIconProps) {
       : <ArrowDown size={12} className="text-[var(--secondary)]" />;
   }
   return <ArrowUp size={12} className="opacity-0 group-hover/th:opacity-30 transition-opacity" />;
+}
+
+/* ── Quick Submit Button (popover for submitting candidate to company) ── */
+
+interface QuickSubmitButtonProps {
+  candidate: RecruiterCandidateView;
+  companies: SubmissionCompany[];
+  submissions: CandidateSubmission[];
+  onCreateSubmission: (profileId: string, companyId: string, submittedBy: string, notes: string) => Promise<void>;
+  onCompanyAdded?: (company: SubmissionCompany) => void;
+}
+
+function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmission, onCompanyAdded }: QuickSubmitButtonProps) {
+  const [open, setOpen] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState('');
+  const [submittedBy, setSubmittedBy] = useState('');
+  const [notes, setNotes] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [newCompanyName, setNewCompanyName] = useState('');
+  const [addingCompany, setAddingCompany] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  const submittedCompanyIds = new Set(submissions.map((s) => s.company_id));
+  const availableCompanies = companies.filter((c) => !submittedCompanyIds.has(c.id));
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open]);
+
+  const handleOpen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSubmittedBy(candidate.owner || '');
+    setSelectedCompanyId('');
+    setNotes('');
+    setNewCompanyName('');
+    setOpen(true);
+  };
+
+  const handleAddCompany = async () => {
+    const name = newCompanyName.trim();
+    if (!name) return;
+    setAddingCompany(true);
+    try {
+      const res = await fetch('/api/submission-companies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        toast('error', data.error || 'Failed to add company');
+        return;
+      }
+      const { company } = await res.json();
+      onCompanyAdded?.(company);
+      setSelectedCompanyId(company.id);
+      setNewCompanyName('');
+      toast('success', `Added ${company.name}`);
+    } catch {
+      toast('error', 'Failed to add company');
+    } finally {
+      setAddingCompany(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCompanyId) return;
+    setSubmitting(true);
+    try {
+      await onCreateSubmission(candidate.profile_id, selectedCompanyId, submittedBy.trim(), notes.trim());
+      setOpen(false);
+      const companyName = companies.find((c) => c.id === selectedCompanyId)?.name || 'company';
+      toast('success', `Submitted ${candidate.contact_first_name} to ${companyName}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="relative" ref={popoverRef}>
+      <button
+        onClick={handleOpen}
+        className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--primary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)]"
+        title="Submit to company"
+      >
+        <Send size={15} />
+      </button>
+
+      {open && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="absolute right-0 top-full mt-1 z-50 w-72 rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface-1)] shadow-lg"
+        >
+          <form onSubmit={handleSubmit} className="p-3 space-y-2.5">
+            <div className="text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)] mb-1">
+              Submit {candidate.contact_first_name} to company
+            </div>
+
+            {/* Company select */}
+            <div>
+              <select
+                value={selectedCompanyId}
+                onChange={(e) => setSelectedCompanyId(e.target.value)}
+                className="input-base w-full px-2.5 py-1.5 rounded-md text-xs cursor-pointer"
+                required
+              >
+                <option value="">Select company...</option>
+                {availableCompanies.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <input
+                  type="text"
+                  value={newCompanyName}
+                  onChange={(e) => setNewCompanyName(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCompany(); } }}
+                  placeholder="Or add new..."
+                  className="input-base flex-1 px-2.5 py-1.5 rounded-md text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCompany}
+                  disabled={!newCompanyName.trim() || addingCompany}
+                  className="disabled:opacity-40 text-[10px] px-2 py-1 rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer"
+                >
+                  <Plus size={11} className="inline mr-0.5" />{addingCompany ? '...' : 'Add'}
+                </button>
+              </div>
+            </div>
+
+            {/* Submitted by */}
+            <div>
+              <label className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)] font-semibold block mb-1">Submitted by</label>
+              <input
+                type="text"
+                value={submittedBy}
+                onChange={(e) => setSubmittedBy(e.target.value)}
+                placeholder="Recruiter name..."
+                className="input-base w-full px-2.5 py-1.5 rounded-md text-xs"
+              />
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)] font-semibold block mb-1">Notes (optional)</label>
+              <input
+                type="text"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="e.g. VP Finance role"
+                className="input-base w-full px-2.5 py-1.5 rounded-md text-xs"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 pt-1">
+              <button
+                type="submit"
+                disabled={!selectedCompanyId || submitting}
+                className="disabled:opacity-50 flex items-center gap-1.5 text-[11px] font-medium px-3 py-1.5 rounded-md cursor-pointer"
+                style={{ background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: 'var(--text-primary)' }}
+              >
+                {submitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                {submitting ? 'Submitting...' : 'Submit'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="text-[11px] px-2 py-1.5 text-[var(--text-secondary)] cursor-pointer bg-transparent border-none"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  );
 }
 
 interface ColumnDef {
@@ -123,6 +314,9 @@ export function CandidateTable({
   onToggleFavorite,
   onStatusChange,
   allSubmissions = [],
+  companies,
+  onCreateSubmission,
+  onCompanyAdded,
   sortConfig,
   onSort,
   filters,
@@ -364,26 +558,13 @@ export function CandidateTable({
                         <FileText size={15} />
                       </button>
                     )}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelect(c);
-                      }}
-                      className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)]"
-                      title="Edit"
-                    >
-                      <Edit2 size={15} />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelect(c);
-                      }}
-                      className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--primary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)] opacity-0 group-hover:opacity-100"
-                      title="Submit to company"
-                    >
-                      <Send size={15} />
-                    </button>
+                    <QuickSubmitButton
+                      candidate={c}
+                      companies={companies}
+                      submissions={allSubmissions.filter((s) => s.profile_id === c.profile_id)}
+                      onCreateSubmission={onCreateSubmission}
+                      onCompanyAdded={onCompanyAdded}
+                    />
                   </div>
                 </td>
               </tr>

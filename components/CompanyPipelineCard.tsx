@@ -56,7 +56,7 @@ export function CompanyPipelineCard({ company }: CompanyPipelineCardProps) {
   const total = submissions.length;
 
   return (
-    <div className="glass-panel rounded-[10px] p-4 space-y-3">
+    <div className="glass-panel rounded-lg p-4 space-y-3">
       {/* Company heading */}
       <h3
         className="font-semibold text-[var(--text-primary)]"

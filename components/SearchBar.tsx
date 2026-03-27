@@ -43,7 +43,7 @@ export function SearchBar({
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       {/* All / Shortlisted toggle */}
       {onToggleFavoritesFilter && (
-        <div style={{ display: 'flex', gap: '2px', background: '#111827', borderRadius: '6px', padding: '3px' }}>
+        <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-2)', borderRadius: '6px', padding: '3px' }}>
           <button
             onClick={favoritesOnly ? onToggleFavoritesFilter : undefined}
             style={{
@@ -53,8 +53,8 @@ export function SearchBar({
               borderRadius: '4px',
               cursor: 'pointer',
               border: 'none',
-              background: !favoritesOnly ? '#1e293b' : 'transparent',
-              color: !favoritesOnly ? '#f1f5f9' : '#475569',
+              background: !favoritesOnly ? 'var(--bg-surface-3)' : 'transparent',
+              color: !favoritesOnly ? 'var(--text-primary)' : 'var(--text-tertiary)',
             }}
           >
             All <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({totalCount})</span>
@@ -68,8 +68,8 @@ export function SearchBar({
               borderRadius: '4px',
               cursor: 'pointer',
               border: 'none',
-              background: favoritesOnly ? '#1e293b' : 'transparent',
-              color: favoritesOnly ? '#f1f5f9' : '#475569',
+              background: favoritesOnly ? 'var(--bg-surface-3)' : 'transparent',
+              color: favoritesOnly ? 'var(--text-primary)' : 'var(--text-tertiary)',
             }}
           >
             ★ Shortlisted <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({shortlistCount})</span>
@@ -81,7 +81,7 @@ export function SearchBar({
       <div style={{ position: 'relative' }}>
         <Search
           size={14}
-          style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#475569' }}
+          style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }}
         />
         <input
           type="text"
@@ -92,10 +92,10 @@ export function SearchBar({
             width: '200px',
             padding: '6px 12px 6px 30px',
             fontSize: '11px',
-            background: '#111827',
-            border: '1px solid #1e293b',
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-strong)',
             borderRadius: '6px',
-            color: '#e2e8f0',
+            color: 'var(--text-primary)',
             outline: 'none',
           }}
         />
@@ -110,10 +110,10 @@ export function SearchBar({
             appearance: 'none',
             padding: '6px 28px 6px 12px',
             fontSize: '11px',
-            background: '#111827',
-            border: '1px solid #1e293b',
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-strong)',
             borderRadius: '6px',
-            color: '#e2e8f0',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
             outline: 'none',
           }}
@@ -124,7 +124,7 @@ export function SearchBar({
         </select>
         <ChevronDown
           size={12}
-          style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: '#475569', pointerEvents: 'none' }}
+          style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }}
         />
       </div>
 
@@ -141,9 +141,9 @@ export function SearchBar({
             fontWeight: 500,
             borderRadius: '6px',
             cursor: 'pointer',
-            border: `1px solid ${staleOnly ? 'rgba(220,38,38,0.25)' : '#1e293b'}`,
-            background: staleOnly ? 'rgba(220,38,38,0.12)' : 'transparent',
-            color: '#f87171',
+            border: `1px solid ${staleOnly ? 'var(--error-border)' : 'var(--border-strong)'}`,
+            background: staleOnly ? 'var(--error-dim)' : 'transparent',
+            color: 'var(--error)',
           }}
         >
           <AlertTriangle size={12} />

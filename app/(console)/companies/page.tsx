@@ -120,13 +120,13 @@ export default function CompaniesPage() {
     <div className="space-y-6 animate-in fade-in">
       {/* Header with view toggle and Invite button */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', gap: '2px', background: '#111827', borderRadius: '6px', padding: '3px' }}>
+        <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-2)', borderRadius: '6px', padding: '3px' }}>
           <button
             onClick={() => setCompanyView('board')}
             style={{
               padding: '5px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: 'none',
-              background: companyView === 'board' ? '#1e293b' : 'transparent',
-              color: companyView === 'board' ? '#f1f5f9' : '#475569',
+              background: companyView === 'board' ? 'var(--bg-surface-3)' : 'transparent',
+              color: companyView === 'board' ? 'var(--text-primary)' : 'var(--text-tertiary)',
             }}
           >
             Submissions Pipeline
@@ -135,8 +135,8 @@ export default function CompaniesPage() {
             onClick={() => setCompanyView('table')}
             style={{
               padding: '5px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: 'none',
-              background: companyView === 'table' ? '#1e293b' : 'transparent',
-              color: companyView === 'table' ? '#f1f5f9' : '#475569',
+              background: companyView === 'table' ? 'var(--bg-surface-3)' : 'transparent',
+              color: companyView === 'table' ? 'var(--text-primary)' : 'var(--text-tertiary)',
             }}
           >
             Portal Access
@@ -144,7 +144,7 @@ export default function CompaniesPage() {
         </div>
         <button
           onClick={() => setInviteOpen(true)}
-          style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', border: '1px solid #1e293b', background: '#111827', color: '#cbd5e1', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+          style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', border: '1px solid var(--border-strong)', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
         >
           <Plus size={14} />
           {companyView === 'board' ? 'Add Company' : 'Invite Company'}
@@ -159,7 +159,7 @@ export default function CompaniesPage() {
               <div className="animate-spin rounded-full h-8 w-8 border-2 border-[var(--primary)] border-t-transparent" />
             </div>
           ) : pipelineData.length === 0 ? (
-            <div className="glass-panel rounded-[10px] p-12 text-center">
+            <div className="glass-panel rounded-lg p-12 text-center">
               <p className="text-[var(--text-muted)]">No submissions yet. Submit candidates from the Talent Pool.</p>
             </div>
           ) : (
@@ -196,7 +196,7 @@ export default function CompaniesPage() {
 
       {companyView === 'table' && !fetchError && companies.length === 0 ? (
         /* Empty state */
-        <div className="glass-panel rounded-[10px] p-12 text-center">
+        <div className="glass-panel rounded-lg p-12 text-center">
           <Building2 size={48} className="mx-auto mb-4 text-[var(--text-muted)]" />
           <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">
             No companies yet
@@ -206,7 +206,7 @@ export default function CompaniesPage() {
           </p>
           <button
             onClick={() => setInviteOpen(true)}
-            style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', background: '#1e40af', border: '1px solid #2563eb', color: '#fff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: '#fff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
             <Plus size={16} />
             Invite Company
@@ -214,7 +214,7 @@ export default function CompaniesPage() {
         </div>
       ) : companyView === 'table' && companies.length > 0 ? (
         /* Company table */
-        <div className="glass-panel rounded-[10px] overflow-hidden">
+        <div className="glass-panel rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -243,19 +243,19 @@ export default function CompaniesPage() {
                 {companies.map((company) => (
                   <tr
                     key={company.id}
-                    style={{ borderBottom: '1px solid #1e293b' }}
-                    className="hover:bg-[#111827] transition-colors duration-150"
+                    style={{ borderBottom: '1px solid var(--border-strong)' }}
+                    className="hover:bg-[var(--bg-surface-2)] transition-colors duration-150"
                   >
-                    <td style={{ padding: '10px 12px', fontSize: '12px', fontWeight: 500, color: '#f1f5f9' }}>
+                    <td style={{ padding: '10px 12px', fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>
                       {company.company_name}
                     </td>
-                    <td style={{ padding: '10px 12px', fontSize: '12px', color: '#cbd5e1' }}>
+                    <td style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-primary)' }}>
                       {company.contact_email}
                     </td>
-                    <td style={{ padding: '10px 12px', fontSize: '12px', color: '#475569' }} className="hidden sm:table-cell">
+                    <td style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-tertiary)' }} className="hidden sm:table-cell">
                       {company.invited_by || '—'}
                     </td>
-                    <td style={{ padding: '10px 12px', fontSize: '12px', color: '#475569' }} className="hidden md:table-cell">
+                    <td style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-tertiary)' }} className="hidden md:table-cell">
                       {formatEntryDate(company.invited_at)}
                     </td>
                     <td style={{ padding: '10px 12px' }}>
@@ -277,15 +277,15 @@ export default function CompaniesPage() {
                             type="text"
                             value={regeneratedLink.link}
                             readOnly
-                            style={{ width: '160px', padding: '4px 8px', fontSize: '10px', fontFamily: 'monospace', background: '#111827', border: '1px solid #1e293b', borderRadius: '4px', color: '#94a3b8', outline: 'none' }}
+                            style={{ width: '160px', padding: '4px 8px', fontSize: '10px', fontFamily: 'monospace', background: 'var(--bg-surface-2)', border: '1px solid var(--border-strong)', borderRadius: '4px', color: 'var(--text-secondary)', outline: 'none' }}
                           />
                           <button
                             onClick={() => handleCopyLink(company.id, regeneratedLink.link)}
-                            style={{ padding: '4px 6px', borderRadius: '4px', background: '#111827', border: '1px solid #1e293b', color: '#cbd5e1', cursor: 'pointer' }}
+                            style={{ padding: '4px 6px', borderRadius: '4px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)', cursor: 'pointer' }}
                             title="Copy link"
                           >
                             {copiedId === company.id ? (
-                              <Check size={12} style={{ color: '#10b981' }} />
+                              <Check size={12} style={{ color: 'var(--success)' }} />
                             ) : (
                               <Copy size={12} />
                             )}
@@ -295,7 +295,7 @@ export default function CompaniesPage() {
                         <button
                           onClick={() => handleRegenerate(company)}
                           disabled={regeneratingId === company.id}
-                          style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 10px', fontSize: '11px', borderRadius: '6px', background: '#111827', border: '1px solid #1e293b', color: '#cbd5e1', cursor: 'pointer', opacity: regeneratingId === company.id ? 0.5 : 1 }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 10px', fontSize: '11px', borderRadius: '6px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)', cursor: 'pointer', opacity: regeneratingId === company.id ? 0.5 : 1 }}
                           title="Regenerate magic link"
                         >
                           <RefreshCw

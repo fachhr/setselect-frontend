@@ -80,7 +80,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
         return (
           <div
             key={stage.key}
-            className="flex-1 min-w-[200px] bg-[var(--bg-nested)] rounded-[10px] p-2.5 min-h-[300px]"
+            className="flex-1 min-w-[200px] bg-[var(--bg-nested)] rounded-lg p-2.5 min-h-[300px]"
           >
             {/* Column header */}
             <div className="flex items-center justify-between px-1.5 py-1.5 mb-2">
@@ -171,7 +171,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                 {overflow > 0 && (
                   <button
                     onClick={() => toggleColumn(stage.key)}
-                    style={{ width: '100%', textAlign: 'center', padding: '6px 0', fontSize: '10px', color: '#475569', cursor: 'pointer', background: 'transparent', border: 'none' }}
+                    style={{ width: '100%', textAlign: 'center', padding: '6px 0', fontSize: '10px', color: 'var(--text-tertiary)', cursor: 'pointer', background: 'transparent', border: 'none' }}
                     className="hover:text-[var(--text-secondary)]"
                   >
                     {isExpanded ? 'Show less' : `+${overflow} more`}

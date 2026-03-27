@@ -313,14 +313,13 @@ function CandidatesContent() {
     []
   );
 
-  const handleCreateSubmission = async (companyId: string, submittedBy: string, notes: string) => {
-    if (!selected) return;
+  const handleCreateSubmission = async (profileId: string, companyId: string, submittedBy: string, notes: string) => {
     try {
       const res = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          profile_id: selected.profile_id,
+          profile_id: profileId,
           company_id: companyId,
           submitted_by: submittedBy || null,
           notes: notes || null,
@@ -333,9 +332,10 @@ function CandidatesContent() {
       }
       const data = await res.json();
       setSubmissions((prev) => [data.submission, ...prev]);
+      setAllSubmissions((prev) => [data.submission, ...prev]);
       // Add timeline entry locally so it shows immediately
       const sub = data.submission;
-      updateCandidateLocally(selected.profile_id, (c) => ({
+      updateCandidateLocally(profileId, (c) => ({
         ...c,
         notes: [{
           type: 'submission_created' as const,
@@ -620,6 +620,9 @@ function CandidatesContent() {
           onToggleFavorite={handleToggleFavorite}
           onStatusChange={handleUpdateStatus}
           allSubmissions={allSubmissions}
+          companies={companies}
+          onCreateSubmission={handleCreateSubmission}
+          onCompanyAdded={(company) => setCompanies((prev) => [...prev, company].sort((a, b) => a.name.localeCompare(b.name)))}
           sortConfig={sortConfig}
           onSort={handleSort}
           filters={tableFilters}
@@ -649,7 +652,7 @@ function CandidatesContent() {
           onToggleFavorite={handleToggleFavorite}
           submissions={submissions}
           companies={companies}
-          onCreateSubmission={handleCreateSubmission}
+          onCreateSubmission={(companyId, submittedBy, notes) => handleCreateSubmission(selected.profile_id, companyId, submittedBy, notes)}
           onUpdateSubmission={handleUpdateSubmission}
           onDeleteSubmission={handleDeleteSubmission}
           onCompanyAdded={(company) => setCompanies((prev) => [...prev, company].sort((a, b) => a.name.localeCompare(b.name)))}

@@ -42,7 +42,7 @@ export function ConfirmDialog({
       />
 
       {/* Dialog */}
-      <div className="relative glass-panel rounded-[10px] border border-[var(--border-subtle)] p-6 w-full max-w-sm mx-4">
+      <div className="relative glass-panel rounded-lg border border-[var(--border-subtle)] p-6 w-full max-w-sm mx-4">
         <h3 className="text-base font-bold text-[var(--text-primary)]">{title}</h3>
         <p className="mt-2 text-sm text-[var(--text-secondary)] leading-relaxed">{message}</p>
 

@@ -107,7 +107,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
         role="dialog"
         aria-modal="true"
         aria-labelledby="invite-company-title"
-        className="relative w-full max-w-lg mx-4 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-[10px] p-6 animate-in fade-in zoom-in-95 duration-150"
+        className="relative w-full max-w-lg mx-4 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-6 animate-in fade-in zoom-in-95 duration-150"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
