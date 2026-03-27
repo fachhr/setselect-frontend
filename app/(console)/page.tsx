@@ -102,9 +102,9 @@ function activityText(entry: ActivityEntry & { candidate_name: string }): { main
 
 function PipelineSkeleton() {
   return (
-    <div className="flex gap-[2px] rounded-lg overflow-hidden">
+    <div className="grid grid-cols-3 sm:grid-cols-5 gap-[2px] rounded-lg overflow-hidden">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex-1 bg-[var(--bg-surface-1)] p-4 animate-pulse">
+        <div key={i} className="bg-[var(--bg-surface-1)] p-3 sm:p-4 animate-pulse">
           <div className="h-3 w-16 bg-[var(--bg-surface-3)] rounded mb-2" />
           <div className="h-7 w-10 bg-[var(--bg-surface-3)] rounded" />
         </div>
@@ -211,15 +211,12 @@ export default function CommandCenterPage() {
       {loading ? (
         <PipelineSkeleton />
       ) : data ? (
-        <div className="flex gap-[2px] rounded-lg overflow-hidden">
-          {STAGES.map((stage, i) => (
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-[2px] rounded-lg overflow-hidden">
+          {STAGES.map((stage) => (
             <button
               key={stage.key}
               onClick={() => router.push(`/candidates?status=${stage.key}`)}
-              className="flex-1 bg-[var(--bg-surface-2)] p-4 relative cursor-pointer transition-colors hover:bg-[var(--bg-surface-hover)] text-left"
-              style={{
-                borderRadius: i === 0 ? '10px 0 0 10px' : i === STAGES.length - 1 ? '0 10px 10px 0' : '0',
-              }}
+              className="bg-[var(--bg-surface-2)] p-3 sm:p-4 relative cursor-pointer transition-colors hover:bg-[var(--bg-surface-hover)] text-left"
             >
               <div
                 className="text-[10px] uppercase tracking-[1.2px] font-semibold mb-1"

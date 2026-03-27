@@ -51,7 +51,7 @@ function dotColor(entry: ActivityEntry): string {
 
 const deleteBtn = (id: string, onDelete: (id: string) => Promise<void>) => (
   <button onClick={() => onDelete(id)}
-    className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-0.5 ml-auto"
+    className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity cursor-pointer p-0.5 ml-auto"
     style={{ color: 'var(--text-tertiary)' }}
     onMouseEnter={(e) => { (e.target as HTMLElement).style.color = 'var(--error)'; }}
     onMouseLeave={(e) => { (e.target as HTMLElement).style.color = 'var(--text-tertiary)'; }}
@@ -264,7 +264,7 @@ export function CandidatePipeline({
                 </select>
                 <button
                   onClick={() => setDeleteTarget(s.id)}
-                  className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-[var(--error)] transition-all cursor-pointer p-1"
+                  className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-[var(--text-muted)] hover:text-[var(--error)] transition-all cursor-pointer p-1"
                   aria-label={`Remove submission to ${s.company_name}`}
                 >
                   <Trash2 size={12} />

@@ -40,7 +40,12 @@ export function SearchBar({
   totalCount = 0,
 }: SearchBarProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    /*
+     * "contents" makes this div invisible to layout on mobile,
+     * so children flow into the parent flex-wrap alongside ViewToggle.
+     * On sm+, it becomes a normal flex container.
+     */
+    <div className="contents sm:flex sm:flex-wrap sm:items-center sm:gap-2">
       {/* All / Shortlisted toggle */}
       {onToggleFavoritesFilter && (
         <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-2)', borderRadius: '6px', padding: '3px' }}>
@@ -74,13 +79,14 @@ export function SearchBar({
             }}
           >
             <Star size={10} fill="currentColor" />
-            Shortlisted <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({shortlistCount})</span>
+            <span className="hidden sm:inline">Shortlisted</span>
+            <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({shortlistCount})</span>
           </button>
         </div>
       )}
 
-      {/* Search */}
-      <div className="relative w-full sm:w-auto order-last sm:order-none">
+      {/* Search — full width row on mobile, inline on desktop */}
+      <div className="relative w-full sm:w-[200px] order-last sm:order-none">
         <Search
           size={14}
           style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }}
@@ -134,10 +140,8 @@ export function SearchBar({
       {onToggleStaleFilter && (
         <button
           onClick={onToggleStaleFilter}
+          className="flex items-center gap-1.5"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
             padding: '6px 12px',
             fontSize: '11px',
             fontWeight: 500,
@@ -149,7 +153,7 @@ export function SearchBar({
           }}
         >
           <AlertTriangle size={12} />
-          Stale Only
+          <span className="hidden sm:inline">Stale Only</span>
         </button>
       )}
     </div>

@@ -198,11 +198,11 @@ export function CandidateDetailPanel({
 
       {/* Dossier card — matches mockup .dossier exactly */}
       <div
-        className="relative w-full max-w-[720px] flex flex-col animate-in slide-in-from-right m-3 overflow-hidden"
-        style={{ background: 'var(--bg-surface-1)', border: '1px solid var(--border-strong)', borderRadius: '8px' }}
+        className="relative w-full max-w-[720px] flex flex-col animate-in slide-in-from-right m-0 sm:m-3 rounded-none sm:rounded-lg overflow-hidden"
+        style={{ background: 'var(--bg-surface-1)', border: '1px solid var(--border-strong)' }}
       >
         {/* ── Header ── */}
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-strong)' }} className="flex items-start justify-between gap-4">
+        <div style={{ borderBottom: '1px solid var(--border-strong)' }} className="flex items-start justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5">
           <div>
             <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
               {c.contact_first_name} {c.contact_last_name}
@@ -246,11 +246,11 @@ export function CandidateDetailPanel({
         </div>
 
         {/* ── Body: grid 280px | 1fr ── */}
-        <div className="flex-1 overflow-y-auto modal-scroll" style={{ display: 'grid', gridTemplateColumns: isEditing ? '1fr' : '280px 1fr' }}>
+        <div className={`flex-1 overflow-y-auto modal-scroll grid ${isEditing ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-[280px_1fr]'}`}>
 
           {/* ── Sidebar ── */}
           {!isEditing && (
-            <div style={{ borderRight: '1px solid var(--border-strong)', padding: '16px 20px' }}>
+            <div className="border-b sm:border-b-0 sm:border-r border-[var(--border-strong)] px-4 py-4 sm:px-5 sm:py-4">
               {/* Status */}
               <div style={{ marginBottom: '16px' }}>
                 <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Status</div>
@@ -349,7 +349,7 @@ export function CandidateDetailPanel({
           )}
 
           {/* ── Main ── */}
-          <div style={{ padding: '16px 20px' }}>
+          <div className="px-4 py-4 sm:px-5 sm:py-4">
             {isEditing ? (
               /* Edit mode — full form */
               <div>

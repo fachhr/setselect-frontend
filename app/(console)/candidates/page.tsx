@@ -586,7 +586,7 @@ function CandidatesContent() {
 
   return (
     <div className="space-y-4 sm:space-y-6 animate-in fade-in">
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+      <div className="flex flex-wrap items-center gap-2 sm:justify-between sm:gap-4">
         <ViewToggle value={viewMode} onChange={handleViewChange} />
         <SearchBar
           search={searchInput}
