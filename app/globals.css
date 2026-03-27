@@ -7,54 +7,68 @@
 
 @layer base {
   :root {
-    /* --- SLATE & SIGNAL (matched to approved mockup) --- */
+    /* --- SLATE & SIGNAL (per design spec) --- */
 
-    /* Backgrounds — deep, near-black foundation */
-    --bg-root: #050510;
-    --bg-surface-1: #0d1117;
-    --bg-surface-2: #111827;
-    --bg-surface-3: #1e293b;
-    --bg-nested: #0a0f1a;
-    --bg-surface-hover: #1a2332;
+    /* Backgrounds — steel-grey foundation, lightness increases with elevation */
+    --bg-root: #0c0d10;
+    --bg-nested: #111318;
+    --bg-surface-1: #16181e;
+    --bg-surface-2: #1b1d24;
+    --bg-surface-3: #22252d;
+    --bg-surface-hover: #282b34;
 
-    /* Primary Accent (Blue-500) */
-    --primary: #3b82f6;
-    --primary-hover: #60a5fa;
-    --primary-dim: rgba(59, 130, 246, 0.15);
+    /* Primary Accent (Indigo) */
+    --primary: #6366f1;
+    --primary-hover: #818cf8;
+    --primary-dim: rgba(99, 102, 241, 0.15);
 
     /* Secondary (merged with primary) */
-    --secondary: #3b82f6;
-    --secondary-dim: rgba(59, 130, 246, 0.10);
+    --secondary: #6366f1;
+    --secondary-dim: rgba(99, 102, 241, 0.10);
 
     /* Typography */
-    --text-primary: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --text-tertiary: #94a3b8;
-    --text-accent: #60a5fa;
-    --text-muted: #475569;
+    --text-primary: #eef0f4;
+    --text-secondary: #9198ab;
+    --text-tertiary: #6b7084;
+    --text-accent: #818cf8;
+    --text-muted: #4e5468;
 
     /* Borders */
-    --border-subtle: #1e293b;
-    --border-strong: #1e293b;
-    --border-hover: #334155;
+    --border-subtle: #22252d;
+    --border-strong: #2e313a;
+    --border-hover: #383b45;
 
     /* Status */
-    --error: #dc2626;
-    --error-dim: rgba(220, 38, 38, 0.12);
-    --error-border: rgba(220, 38, 38, 0.25);
-    --success: #10b981;
-    --success-border: rgba(16, 185, 129, 0.25);
-    --warning: #fbbf24;
-    --warning-border: rgba(251, 191, 36, 0.25);
+    --error: #ef4444;
+    --error-dim: rgba(239, 68, 68, 0.12);
+    --error-border: rgba(239, 68, 68, 0.25);
+    --success: #22c55e;
+    --success-border: rgba(34, 197, 94, 0.25);
+    --warning: #f97316;
+    --warning-border: rgba(249, 115, 22, 0.25);
 
     /* Pipeline Status */
-    --status-new: #3b82f6;
-    --status-screening: #8b5cf6;
+    --status-new: #818cf8;
+    --status-screening: #a78bfa;
     --status-interviewing: #f59e0b;
-    --status-offer: #f97316;
-    --status-placed: #10b981;
-    --status-rejected: #dc2626;
-    --status-follow-up: #f59e0b;
+    --status-offer: #fb923c;
+    --status-placed: #22c55e;
+    --status-rejected: #ef4444;
+    --status-follow-up: #f97316;
+
+    /* Badge Variants */
+    --badge-blue-bg: #1e3a5f;
+    --badge-blue-text: #93c5fd;
+    --badge-blue-border: rgba(59, 130, 246, 0.30);
+    --badge-purple-bg: #2d1f5e;
+    --badge-purple-text: #c4b5fd;
+    --badge-purple-border: rgba(139, 92, 246, 0.30);
+    --badge-gold-bg: #3d2f0a;
+    --badge-gold-text: #fcd34d;
+    --badge-success-bg: #064e3b;
+    --badge-success-text: #6ee7b7;
+    --badge-warning-bg: #3d1f0a;
+    --badge-warning-text: #fdba74;
 
     /* Shadows (minimal) */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -143,7 +157,7 @@
 
   .btn-gold {
     background: var(--primary);
-    color: #FFFFFF;
+    color: var(--text-primary);
     font-weight: 600;
     transition: background-color 0.15s ease, transform 0.15s ease;
   }

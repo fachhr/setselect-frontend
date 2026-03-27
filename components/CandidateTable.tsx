@@ -137,14 +137,14 @@ export function CandidateTable({
 }: CandidateTableProps) {
   if (candidates.length === 0 && filteredCount === 0 && total === 0) {
     return (
-      <div className="glass-panel rounded-[10px] p-12 text-center">
+      <div className="glass-panel rounded-lg p-12 text-center">
         <p className="text-[var(--text-muted)]">No candidates found</p>
       </div>
     );
   }
 
   return (
-    <div className="glass-panel rounded-[10px] overflow-hidden">
+    <div className="glass-panel rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -203,7 +203,7 @@ export function CandidateTable({
               <tr
                 key={c.profile_id}
                 className={`group hover:bg-[var(--bg-surface-2)] transition-all duration-150 cursor-pointer ${
-                  isStaleRed ? 'bg-[rgba(220,38,38,0.04)] hover:bg-[rgba(220,38,38,0.08)]' : ''
+                  isStaleRed ? 'bg-[var(--error-dim)] hover:bg-[rgba(239,68,68,0.08)]' : ''
                 }`}
                 onClick={() => onSelect(c)}
               >

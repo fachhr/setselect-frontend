@@ -115,7 +115,7 @@ function PipelineSkeleton() {
 
 function PanelSkeleton() {
   return (
-    <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-[10px] p-[18px] animate-pulse">
+    <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-[18px] animate-pulse">
       <div className="h-4 w-32 bg-[var(--bg-surface-3)] rounded mb-4" />
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="h-12 bg-[var(--bg-surface-2)] rounded mb-2" />
@@ -181,7 +181,7 @@ export default function CommandCenterPage() {
   attentionItems.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 
   const severityColor = { critical: 'var(--error)', warning: 'var(--status-follow-up)', info: 'var(--primary)' };
-  const severityTextColor = { critical: '#f87171', warning: '#fbbf24', info: '#60a5fa' };
+  const severityTextColor = { critical: 'var(--error)', warning: 'var(--status-follow-up)', info: 'var(--text-accent)' };
 
   // Meta lines for pipeline stages
   function stageMeta(key: RecruiterStatus): string {
@@ -211,7 +211,7 @@ export default function CommandCenterPage() {
       {loading ? (
         <PipelineSkeleton />
       ) : data ? (
-        <div className="flex gap-[2px] rounded-[10px] overflow-hidden">
+        <div className="flex gap-[2px] rounded-lg overflow-hidden">
           {STAGES.map((stage, i) => (
             <button
               key={stage.key}
@@ -248,13 +248,13 @@ export default function CommandCenterPage() {
         {loading ? (
           <PanelSkeleton />
         ) : (
-          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-[10px] p-[18px]">
+          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-[18px]">
             <div className="flex items-center justify-between mb-3.5">
               <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
                 Needs Attention
               </h2>
               {attentionItems.length > 0 && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#7f1d1d] text-[#fca5a5]">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--error-dim)] text-[var(--error)]">
                   {attentionItems.length}
                 </span>
               )}
@@ -270,7 +270,7 @@ export default function CommandCenterPage() {
                   <button
                     key={item.id}
                     onClick={() => router.push(`/candidates?highlight=${item.profileId}`)}
-                    className="w-full text-left p-2.5 rounded-r-md bg-[var(--bg-nested)] transition-colors hover:bg-[var(--bg-surface-2)] cursor-pointer"
+                    className="w-full text-left p-2.5 rounded-r-md bg-[var(--bg-surface-2)] transition-colors hover:bg-[var(--bg-surface-hover)] cursor-pointer"
                     style={{ borderLeft: `3px solid ${severityColor[item.severity]}` }}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -300,7 +300,7 @@ export default function CommandCenterPage() {
         {loading ? (
           <PanelSkeleton />
         ) : (
-          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-[10px] p-[18px]">
+          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-[18px]">
             <div className="flex items-center justify-between mb-3.5">
               <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
                 Activity Feed
