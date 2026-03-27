@@ -128,7 +128,7 @@ export function CompanyPipelineCard({ company }: CompanyPipelineCardProps) {
                 style={{ backgroundColor: STATUS_COLORS[submission.status] }}
               />
               {/* Candidate name */}
-              <span className="text-[var(--text-primary)] truncate max-w-[120px]">
+              <span className="text-[var(--text-primary)] truncate max-w-[160px] sm:max-w-[120px]">
                 {submission.candidate_name}
               </span>
               {/* Status label */}

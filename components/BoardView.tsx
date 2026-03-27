@@ -70,7 +70,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
   const rejectedCount = candidates.filter(c => c.status === 'rejected').length;
 
   return (
-    <div className="flex gap-2.5 overflow-x-auto pb-2">
+    <div className="flex flex-col sm:flex-row gap-2.5 sm:overflow-x-auto pb-2">
       {STAGES.map((stage) => {
         const stageCandidates = grouped.get(stage.key) || [];
         const isExpanded = expandedColumns.has(stage.key);
@@ -80,7 +80,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
         return (
           <div
             key={stage.key}
-            className="flex-1 min-w-[200px] bg-[var(--bg-nested)] rounded-lg p-2.5 min-h-[300px]"
+            className="flex-none sm:flex-1 sm:min-w-[200px] bg-[var(--bg-nested)] rounded-lg p-2.5 sm:min-h-[300px]"
           >
             {/* Column header */}
             <div className="flex items-center justify-between px-1.5 py-1.5 mb-2">
@@ -185,7 +185,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
 
       {/* Collapsed Rejected column */}
       {rejectedCount > 0 && (
-        <div className="min-w-[80px] bg-[var(--bg-surface-2)] rounded-lg p-2.5 flex flex-col items-center justify-center">
+        <div className="sm:min-w-[80px] bg-[var(--bg-surface-2)] rounded-lg p-2.5 flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-0">
           <span className="text-[11px] font-semibold uppercase tracking-[1px] text-[var(--status-rejected)]">
             Rejected
           </span>

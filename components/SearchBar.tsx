@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, ChevronDown, AlertTriangle } from 'lucide-react';
+import { Search, ChevronDown, AlertTriangle, Star } from 'lucide-react';
 import type { RecruiterStatus } from '@/types/recruiter';
 
 const statusOptions: { value: string; label: string }[] = [
@@ -40,7 +40,7 @@ export function SearchBar({
   totalCount = 0,
 }: SearchBarProps) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="flex flex-wrap items-center gap-2">
       {/* All / Shortlisted toggle */}
       {onToggleFavoritesFilter && (
         <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-2)', borderRadius: '6px', padding: '3px' }}>
@@ -61,6 +61,7 @@ export function SearchBar({
           </button>
           <button
             onClick={!favoritesOnly ? onToggleFavoritesFilter : undefined}
+            className="flex items-center gap-1"
             style={{
               padding: '5px 12px',
               fontSize: '11px',
@@ -72,13 +73,14 @@ export function SearchBar({
               color: favoritesOnly ? 'var(--text-primary)' : 'var(--text-tertiary)',
             }}
           >
-            ★ Shortlisted <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({shortlistCount})</span>
+            <Star size={10} fill="currentColor" />
+            Shortlisted <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({shortlistCount})</span>
           </button>
         </div>
       )}
 
       {/* Search */}
-      <div style={{ position: 'relative' }}>
+      <div className="relative w-full sm:w-auto order-last sm:order-none">
         <Search
           size={14}
           style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }}
@@ -88,8 +90,8 @@ export function SearchBar({
           placeholder="Search candidates..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full sm:w-[200px]"
           style={{
-            width: '200px',
             padding: '6px 12px 6px 30px',
             fontSize: '11px',
             background: 'var(--bg-surface-2)',
@@ -136,14 +138,14 @@ export function SearchBar({
             display: 'flex',
             alignItems: 'center',
             gap: '5px',
-            padding: '5px 12px',
+            padding: '6px 12px',
             fontSize: '11px',
             fontWeight: 500,
             borderRadius: '6px',
             cursor: 'pointer',
             border: `1px solid ${staleOnly ? 'var(--error-border)' : 'var(--border-strong)'}`,
-            background: staleOnly ? 'var(--error-dim)' : 'transparent',
-            color: 'var(--error)',
+            background: staleOnly ? 'var(--error-dim)' : 'var(--bg-surface-2)',
+            color: staleOnly ? 'var(--error)' : 'var(--text-tertiary)',
           }}
         >
           <AlertTriangle size={12} />

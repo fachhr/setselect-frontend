@@ -119,7 +119,7 @@ export default function CompaniesPage() {
   return (
     <div className="space-y-6 animate-in fade-in">
       {/* Header with view toggle and Invite button */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
         <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-2)', borderRadius: '6px', padding: '3px' }}>
           <button
             onClick={() => setCompanyView('board')}

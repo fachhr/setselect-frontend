@@ -186,7 +186,7 @@ function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmissi
       {open && (
         <div
           onClick={(e) => e.stopPropagation()}
-          className="absolute right-0 top-full mt-1 z-50 w-72 rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface-1)] shadow-lg"
+          className="absolute right-0 top-full mt-1 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface-1)] shadow-lg"
         >
           <form onSubmit={handleSubmit} className="p-3 space-y-2.5">
             <div className="text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)] mb-1">
