@@ -174,6 +174,7 @@ export async function PATCH(
     // Update recruiter_candidates if needed
     if (hasRecruiterUpdates) {
       recruiterUpdates.updated_at = new Date().toISOString();
+      recruiterUpdates.last_activity_at = new Date().toISOString();
       const { error } = await supabaseAdmin
         .from('recruiter_candidates')
         .update(recruiterUpdates)

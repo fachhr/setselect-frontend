@@ -4,11 +4,11 @@ type BadgeVariant = 'default' | 'blue' | 'purple' | 'gold' | 'success' | 'warnin
 
 const variantClasses: Record<BadgeVariant, string> = {
   default: 'bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border-subtle)]',
-  blue: 'bg-[var(--highlight-dim)] text-[var(--secondary)] border border-[rgba(144,224,239,0.30)]',
-  purple: 'bg-[var(--secondary-dim)] text-[var(--highlight)] border border-[rgba(0,180,216,0.30)]',
-  gold: 'bg-[var(--warning-dim)] text-[var(--warning)] border border-[var(--warning-border)]',
-  success: 'bg-[var(--success-dim)] text-[var(--success)] border border-[var(--success-border)]',
-  warning: 'bg-[var(--warning-dim)] text-[var(--warning)] border border-[var(--warning-border)]',
+  blue: 'bg-[#1e3a5f] text-[#93c5fd] border border-[rgba(59,130,246,0.30)]',
+  purple: 'bg-[#2d1f5e] text-[#c4b5fd] border border-[rgba(139,92,246,0.30)]',
+  gold: 'bg-[#3d2f0a] text-[#fcd34d] border border-[var(--warning-border)]',
+  success: 'bg-[#064e3b] text-[#6ee7b7] border border-[var(--success-border)]',
+  warning: 'bg-[#3d1f0a] text-[#fdba74] border border-[var(--warning-border)]',
   error: 'bg-[var(--error-dim)] text-[var(--error)] border border-[var(--error-border)]',
 };
 

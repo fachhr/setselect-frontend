@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { Suspense, useEffect, useState, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SearchBar } from '@/components/SearchBar';
 import { CandidateTable } from '@/components/CandidateTable';
 import { CandidateDetailPanel } from '@/components/CandidateDetailPanel';
+import { BoardView } from '@/components/BoardView';
+import { ViewToggle } from '@/components/ui/ViewToggle';
 import type { TableFilters, SortConfig } from '@/components/CandidateTable';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
 
@@ -24,6 +27,14 @@ const EMPTY_FILTERS: TableFilters = {
 const ITEMS_PER_PAGE = 20;
 
 export default function CandidatesPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-32"><div className="animate-spin rounded-full h-8 w-8 border-2 border-[var(--primary)] border-t-transparent" /></div>}>
+      <CandidatesContent />
+    </Suspense>
+  );
+}
+
+function CandidatesContent() {
   const [allCandidates, setAllCandidates] = useState<RecruiterCandidateView[]>([]);
   const [tableFilters, setTableFilters] = useState<TableFilters>({ ...EMPTY_FILTERS });
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
@@ -33,8 +44,17 @@ export default function CandidatesPage() {
   const [selected, setSelected] = useState<RecruiterCandidateView | null>(null);
   const [loading, setLoading] = useState(true);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [staleOnly, setStaleOnly] = useState(false);
   const [submissions, setSubmissions] = useState<CandidateSubmission[]>([]);
+  const [allSubmissions, setAllSubmissions] = useState<CandidateSubmission[]>([]);
   const [companies, setCompanies] = useState<SubmissionCompany[]>([]);
+  const [viewMode, setViewMode] = useState<'board' | 'table'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('talentPoolView') as 'board' | 'table') || 'table';
+    }
+    return 'table';
+  });
+  const searchParams = useSearchParams();
 
   const fetchCandidates = useCallback(async () => {
     setLoading(true);
@@ -60,6 +80,26 @@ export default function CandidatesPage() {
   useEffect(() => {
     fetchCandidates();
   }, [fetchCandidates]);
+
+  // Handle URL params (e.g., from Command Center pipeline click)
+  useEffect(() => {
+    const statusParam = searchParams.get('status') as RecruiterStatus | null;
+    if (statusParam) setStatusFilter(statusParam);
+  }, [searchParams]);
+
+  // Persist view mode
+  const handleViewChange = (view: 'board' | 'table') => {
+    setViewMode(view);
+    localStorage.setItem('talentPoolView', view);
+  };
+
+  // Fetch all submissions for board view dots
+  useEffect(() => {
+    fetch('/api/submissions')
+      .then((res) => res.json())
+      .then((data) => setAllSubmissions(data.submissions ?? []))
+      .catch(() => {/* non-blocking */});
+  }, []);
 
   // Fetch submission companies (separate from platform-access companies)
   useEffect(() => {
@@ -103,6 +143,14 @@ export default function CandidatesPage() {
     return allCandidates.filter((c) => {
       // Favorites filter
       if (favoritesOnly && !c.is_favorite) return false;
+
+      // Stale filter
+      if (staleOnly) {
+        const activityDate = c.last_activity_at || c.status_changed_at;
+        const days = Math.floor((Date.now() - new Date(activityDate).getTime()) / (1000 * 60 * 60 * 24));
+        const isTerminal = c.status === 'placed' || c.status === 'rejected';
+        if (isTerminal || days < 5) return false;
+      }
 
       // Text filters
       if (tableFilters.talent_id) {
@@ -165,7 +213,7 @@ export default function CandidatesPage() {
 
       return true;
     });
-  }, [allCandidates, tableFilters, favoritesOnly]);
+  }, [allCandidates, tableFilters, favoritesOnly, staleOnly]);
 
   // Stage 2: Sort
   const sortedCandidates = useMemo(() => {
@@ -285,6 +333,19 @@ export default function CandidatesPage() {
       }
       const data = await res.json();
       setSubmissions((prev) => [data.submission, ...prev]);
+      // Add timeline entry locally so it shows immediately
+      const sub = data.submission;
+      updateCandidateLocally(selected.profile_id, (c) => ({
+        ...c,
+        notes: [{
+          type: 'submission_created' as const,
+          id: crypto.randomUUID(),
+          company_name: sub.company_name,
+          submission_id: sub.id,
+          author: submittedBy || 'System',
+          created_at: new Date().toISOString(),
+        }, ...c.notes],
+      }));
       toast('success', 'Submission recorded');
     } catch {
       // error already toasted above if API error
@@ -292,6 +353,7 @@ export default function CandidatesPage() {
   };
 
   const handleUpdateSubmission = async (submissionId: string, status: SubmissionStatus) => {
+    const oldSubmission = submissions.find(s => s.id === submissionId);
     // Optimistic update
     setSubmissions((prev) =>
       prev.map((s) => (s.id === submissionId ? { ...s, status } : s))
@@ -303,6 +365,22 @@ export default function CandidatesPage() {
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error();
+      // Add timeline entry locally
+      if (oldSubmission && selected) {
+        updateCandidateLocally(selected.profile_id, (c) => ({
+          ...c,
+          notes: [{
+            type: 'submission_update' as const,
+            id: crypto.randomUUID(),
+            company_name: oldSubmission.company_name,
+            submission_id: submissionId,
+            from: oldSubmission.status,
+            to: status,
+            author: 'System',
+            created_at: new Date().toISOString(),
+          }, ...c.notes],
+        }));
+      }
       toast('success', 'Submission updated');
     } catch {
       // Revert — refetch
@@ -318,8 +396,16 @@ export default function CandidatesPage() {
   const handleDeleteSubmission = async (submissionId: string) => {
     try {
       const res = await fetch(`/api/submissions/${submissionId}`, { method: 'DELETE' });
+      const data = await res.json();
       if (!res.ok) throw new Error();
       setSubmissions((prev) => prev.filter((s) => s.id !== submissionId));
+      // Also remove related timeline entries from candidate's local notes
+      if (data.profile_id) {
+        updateCandidateLocally(data.profile_id, (c) => ({
+          ...c,
+          notes: c.notes.filter((n) => !('submission_id' in n) || (n as { submission_id?: string }).submission_id !== submissionId),
+        }));
+      }
       toast('success', 'Submission removed');
     } catch {
       toast('error', 'Failed to remove submission');
@@ -500,27 +586,40 @@ export default function CandidatesPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6 animate-in fade-in">
-      <SearchBar
-        search={searchInput}
-        onSearchChange={setSearchInput}
-        status={statusFilter}
-        onStatusChange={handleStatusFilterChange}
-        favoritesOnly={favoritesOnly}
-        onToggleFavoritesFilter={() => setFavoritesOnly((prev) => !prev)}
-        shortlistCount={allCandidates.filter((c) => c.is_favorite).length}
-        totalCount={allCandidates.length}
-      />
+      <div className="flex items-center justify-between gap-4">
+        <ViewToggle value={viewMode} onChange={handleViewChange} />
+        <SearchBar
+          search={searchInput}
+          onSearchChange={setSearchInput}
+          status={statusFilter}
+          onStatusChange={handleStatusFilterChange}
+          favoritesOnly={favoritesOnly}
+          onToggleFavoritesFilter={() => setFavoritesOnly((prev) => !prev)}
+          staleOnly={staleOnly}
+          onToggleStaleFilter={() => setStaleOnly((prev) => !prev)}
+          shortlistCount={allCandidates.filter((c) => c.is_favorite).length}
+          totalCount={allCandidates.length}
+        />
+      </div>
 
       {loading ? (
         <div className="flex items-center justify-center h-32">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-[var(--primary)] border-t-transparent" />
         </div>
+      ) : viewMode === 'board' ? (
+        <BoardView
+          candidates={filteredCandidates}
+          submissions={allSubmissions}
+          onSelect={setSelected}
+        />
       ) : (
         <CandidateTable
           candidates={paginatedCandidates}
           onSelect={setSelected}
           onDownloadCv={handleDownloadCv}
           onToggleFavorite={handleToggleFavorite}
+          onStatusChange={handleUpdateStatus}
+          allSubmissions={allSubmissions}
           sortConfig={sortConfig}
           onSort={handleSort}
           filters={tableFilters}

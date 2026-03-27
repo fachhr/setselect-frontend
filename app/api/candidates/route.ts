@@ -179,6 +179,7 @@ export async function GET(request: NextRequest) {
         notes: rc?.notes || [],
         status_changed_at: rc?.status_changed_at || row.created_at,
         is_favorite: rc?.is_favorite ?? false,
+        last_activity_at: rc?.status_changed_at || row.created_at,
       };
     });
 

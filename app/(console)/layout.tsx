@@ -1,42 +1,166 @@
 'use client';
 
-import { useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { TopBar } from '@/components/layout/TopBar';
+import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Layers, LogOut, Menu, X } from 'lucide-react';
 import { ToastContainer } from '@/components/ui/Toast';
 
-const pageTitles: Record<string, string> = {
-  '/': 'Dashboard',
-  '/candidates': 'Candidates',
-  '/companies': 'Companies',
-  '/settings': 'Settings',
-};
+interface NavTab {
+  href: string;
+  label: string;
+  countKey?: 'candidates' | 'companies';
+}
+
+const NAV_TABS: NavTab[] = [
+  { href: '/', label: 'Command Center' },
+  { href: '/candidates', label: 'Talent Pool', countKey: 'candidates' },
+  { href: '/companies', label: 'Companies', countKey: 'companies' },
+  { href: '/settings', label: 'Settings' },
+];
 
 export default function ConsoleLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const pathname = usePathname();
-  const title = pageTitles[pathname]
-    || Object.entries(pageTitles).find(([path]) => path !== '/' && pathname.startsWith(path))?.[1]
-    || 'Console';
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [counts, setCounts] = useState<{ candidates: number; companies: number }>({
+    candidates: 0,
+    companies: 0,
+  });
+
+  // Fetch counts for nav badges
+  useEffect(() => {
+    fetch('/api/candidates?limit=0&page=1')
+      .then(r => r.json())
+      .then(data => setCounts(prev => ({ ...prev, candidates: data.candidates?.length ?? 0 })))
+      .catch(() => {});
+    fetch('/api/submission-companies')
+      .then(r => r.json())
+      .then(data => setCounts(prev => ({ ...prev, companies: data.companies?.length ?? 0 })))
+      .catch(() => {});
+  }, []);
+
+  const handleSignOut = async () => {
+    await fetch('/api/auth', { method: 'DELETE' });
+    router.push('/login');
+  };
 
   return (
-    <div className="flex font-sans">
-      <Sidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
-      />
-      <div className={`flex-1 flex flex-col h-screen overflow-hidden transition-[margin] duration-200 ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}`}>
-        <TopBar title={title} onMenuToggle={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-auto p-4 sm:p-8">{children}</main>
-      </div>
+    <div className="flex flex-col h-screen font-sans">
+      {/* Top Navigation Bar */}
+      <header className="border-b border-[var(--border-subtle)] bg-[var(--bg-nested)]">
+        <div className="flex items-center justify-between px-6">
+          {/* Logo + Nav Tabs */}
+          <div className="flex items-center gap-6">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 py-3 shrink-0">
+              <div className="w-7 h-7 bg-[var(--primary)] rounded-md flex items-center justify-center">
+                <Layers className="w-4 h-4 text-white" strokeWidth={2.5} />
+              </div>
+              <span className="font-[family-name:var(--font-title)] font-bold text-sm text-[var(--text-primary)] hidden sm:inline">
+                Set<span className="font-light text-[var(--text-secondary)]">Select</span>
+              </span>
+            </Link>
+
+            {/* Desktop Nav Tabs */}
+            <nav className="hidden md:flex gap-1">
+              {NAV_TABS.map((tab) => {
+                const isActive = tab.href === '/'
+                  ? pathname === '/'
+                  : pathname.startsWith(tab.href);
+                return (
+                  <Link
+                    key={tab.href}
+                    href={tab.href}
+                    className={`px-5 py-2.5 text-xs font-medium rounded-md transition-colors ${
+                      isActive
+                        ? 'text-[var(--text-primary)] bg-[var(--bg-surface-3)]'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)]'
+                    }`}
+                    style={{ letterSpacing: '0.3px' }}
+                  >
+                    {tab.label}
+                    {tab.countKey && counts[tab.countKey] > 0 && (
+                      <span className={`ml-1.5 text-[10px] px-1.5 py-px rounded-lg ${
+                        isActive
+                          ? 'bg-[var(--border-hover)] text-[var(--text-primary)]'
+                          : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
+                      }`}>
+                        {counts[tab.countKey]}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Right side: sign out + mobile menu */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleSignOut}
+              className="hidden md:flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-tertiary)] transition-colors cursor-pointer px-2 py-1.5 rounded-md hover:bg-[var(--bg-surface-2)]"
+            >
+              <LogOut size={14} />
+              <span className="hidden lg:inline">Sign Out</span>
+            </button>
+
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-[var(--text-tertiary)] hover:text-[var(--text-primary)] cursor-pointer p-1"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile dropdown nav */}
+        {mobileMenuOpen && (
+          <nav className="md:hidden border-t border-[var(--border-subtle)] px-4 py-2 space-y-1">
+            {NAV_TABS.map((tab) => {
+              const isActive = tab.href === '/'
+                ? pathname === '/'
+                : pathname.startsWith(tab.href);
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block px-3 py-2 text-sm rounded-md ${
+                    isActive
+                      ? 'text-[var(--text-primary)] bg-[var(--bg-surface-3)]'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-tertiary)]'
+                  }`}
+                >
+                  {tab.label}
+                  {tab.countKey && counts[tab.countKey] > 0 && (
+                    <span className="ml-2 text-[10px] bg-[var(--bg-surface-3)] px-1.5 py-px rounded-md text-[var(--text-tertiary)]">
+                      {counts[tab.countKey]}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+            <button
+              onClick={handleSignOut}
+              className="w-full text-left px-3 py-2 text-sm text-[var(--error)] hover:bg-[var(--error-dim)] rounded-md cursor-pointer"
+            >
+              Sign Out
+            </button>
+          </nav>
+        )}
+      </header>
+
+      {/* Main Content — full width */}
+      <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+        {children}
+      </main>
+
       <ToastContainer />
     </div>
   );

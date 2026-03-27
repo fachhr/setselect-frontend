@@ -1,17 +1,3 @@
-export function formatSalary(min: number | null | undefined, max: number | null | undefined): string {
-  if (!min && !max) return 'Negotiable';
-
-  const formatAmount = (amount: number): string => {
-    if (amount >= 1000) return `${Math.round(amount / 1000)}K`;
-    return amount.toString();
-  };
-
-  if (min && max) return `CHF ${formatAmount(min)} - ${formatAmount(max)}`;
-  if (min) return `CHF ${formatAmount(min)}+`;
-  if (max) return `Up to CHF ${formatAmount(max)}`;
-  return 'Negotiable';
-}
-
 export function formatTalentId(id: string | null | undefined): string {
   if (!id) return 'N/A';
   const numMatch = id.match(/\d+/);
@@ -42,15 +28,6 @@ export function formatEntryDate(dateString: string | null | undefined, relative:
     day: 'numeric',
     year: 'numeric',
   });
-}
-
-export function formatYearsExperience(years: number | string | null | undefined): string {
-  if (years === null || years === undefined) return 'Not specified';
-  const yearsNum = typeof years === 'string' ? parseFloat(years) : years;
-  if (isNaN(yearsNum)) return 'Not specified';
-  if (yearsNum === 1) return '1 year';
-  if (yearsNum % 1 !== 0) return `${yearsNum.toFixed(1)} years`;
-  return `${yearsNum} years`;
 }
 
 export function formatCantons(cantons: string[] | null | undefined, maxDisplay: number = 3): string {

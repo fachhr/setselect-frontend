@@ -2,15 +2,13 @@
 
 import { useState } from 'react';
 import { Send, Trash2, Building2, Plus, ArrowRight } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { toast } from '@/components/ui/Toast';
 import { formatEntryDate } from '@/lib/helpers';
+import { STATUS_PILL_COLORS } from '@/lib/constants';
 import { toActivityEntry } from '@/types/recruiter';
 import type {
   RecruiterCandidateView,
-  RecruiterNote,
   ActivityEntry,
   CandidateSubmission,
   SubmissionStatus,
@@ -23,13 +21,6 @@ const SUBMISSION_STATUSES: { value: SubmissionStatus; label: string }[] = [
   { value: 'rejected', label: 'Rejected' },
   { value: 'placed', label: 'Placed' },
 ];
-
-const statusVariant: Record<SubmissionStatus, 'blue' | 'gold' | 'error' | 'success'> = {
-  submitted: 'blue',
-  interviewing: 'gold',
-  rejected: 'error',
-  placed: 'success',
-};
 
 interface CandidatePipelineProps {
   candidate: RecruiterCandidateView;
@@ -45,21 +36,29 @@ interface CandidatePipelineProps {
 
 function dotColor(entry: ActivityEntry): string {
   switch (entry.type) {
-    case 'note':
-      return 'bg-[var(--text-muted)]';
-    case 'status_change':
-      return 'bg-[var(--primary)]';
-    case 'submission_created':
-      return 'bg-emerald-500';
+    case 'note': return '#475569';
+    case 'status_change': return '#3b82f6';
+    case 'submission_created': return '#10b981';
     case 'submission_update': {
       const to = entry.to;
-      if (to === 'placed') return 'bg-emerald-500';
-      if (to === 'rejected') return 'bg-red-500';
-      if (to === 'interviewing') return 'bg-[var(--primary)]';
-      return 'bg-[var(--text-muted)]';
+      if (to === 'placed') return '#10b981';
+      if (to === 'rejected') return '#dc2626';
+      if (to === 'interviewing') return '#f59e0b';
+      return '#475569';
     }
   }
 }
+
+const deleteBtn = (id: string, onDelete: (id: string) => Promise<void>) => (
+  <button onClick={() => onDelete(id)}
+    className="opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-0.5 ml-auto"
+    style={{ color: '#475569' }}
+    onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#dc2626'; }}
+    onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#475569'; }}
+    aria-label="Delete entry">
+    <Trash2 size={11} />
+  </button>
+);
 
 function renderEntry(
   entry: ActivityEntry,
@@ -67,67 +66,65 @@ function renderEntry(
 ) {
   const date = formatEntryDate(entry.created_at, true);
   const author = entry.author;
+  const metaStyle = { fontSize: '10px', color: '#475569', marginTop: '1px' };
 
   switch (entry.type) {
     case 'note':
       return (
         <div>
-          <p className="text-sm text-[var(--text-primary)]">{entry.text}</p>
-          <div className="flex items-center gap-2 mt-0.5 text-xs text-[var(--text-muted)]">
+          <p style={{ fontSize: '12px', color: '#cbd5e1' }}>{entry.text}</p>
+          <div className="flex items-center gap-2" style={metaStyle}>
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
-            <button
-              onClick={() => onDeleteNote(entry.id)}
-              className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-[var(--error)] transition-all cursor-pointer p-0.5 ml-auto"
-              aria-label="Delete note"
-            >
-              <Trash2 size={12} />
-            </button>
+            {deleteBtn(entry.id, onDeleteNote)}
           </div>
         </div>
       );
     case 'status_change':
       return (
         <div>
-          <p className="text-sm text-[var(--text-primary)] flex items-center gap-1 flex-wrap">
+          <p style={{ fontSize: '12px', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
             <span>Status:</span>
-            <span className="capitalize">{entry.from}</span>
-            <ArrowRight size={12} className="text-[var(--text-muted)]" />
-            <span className="capitalize font-medium">{entry.to}</span>
+            <span style={{ textTransform: 'capitalize' }}>{entry.from}</span>
+            <ArrowRight size={11} style={{ color: '#475569' }} />
+            <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{entry.to}</span>
           </p>
           {entry.comment && (
-            <p className="text-xs text-[var(--text-tertiary)] mt-0.5 italic">&ldquo;{entry.comment}&rdquo;</p>
+            <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px', fontStyle: 'italic' }}>&ldquo;{entry.comment}&rdquo;</p>
           )}
-          <div className="flex items-center gap-2 mt-0.5 text-xs text-[var(--text-muted)]">
+          <div className="flex items-center gap-2" style={metaStyle}>
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
+            {deleteBtn(entry.id, onDeleteNote)}
           </div>
         </div>
       );
     case 'submission_created':
       return (
         <div>
-          <p className="text-sm text-[var(--text-primary)]">
-            Submitted to <span className="font-medium">{entry.company_name}</span>
+          <p style={{ fontSize: '12px', color: '#cbd5e1' }}>
+            Submitted to <span style={{ fontWeight: 500 }}>{entry.company_name}</span>
           </p>
-          <div className="flex items-center gap-2 mt-0.5 text-xs text-[var(--text-muted)]">
+          <div className="flex items-center gap-2" style={metaStyle}>
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
+            {deleteBtn(entry.id, onDeleteNote)}
           </div>
         </div>
       );
     case 'submission_update':
       return (
         <div>
-          <p className="text-sm text-[var(--text-primary)] flex items-center gap-1 flex-wrap">
-            <span className="font-medium">{entry.company_name}:</span>
-            <span className="capitalize">{entry.from}</span>
-            <ArrowRight size={12} className="text-[var(--text-muted)]" />
-            <span className="capitalize font-medium">{entry.to}</span>
+          <p style={{ fontSize: '12px', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: 500 }}>{entry.company_name}:</span>
+            <span style={{ textTransform: 'capitalize' }}>{entry.from}</span>
+            <ArrowRight size={11} style={{ color: '#475569' }} />
+            <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{entry.to}</span>
           </p>
-          <div className="flex items-center gap-2 mt-0.5 text-xs text-[var(--text-muted)]">
+          <div className="flex items-center gap-2" style={metaStyle}>
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
+            {deleteBtn(entry.id, onDeleteNote)}
           </div>
         </div>
       );
@@ -232,42 +229,46 @@ export function CandidatePipeline({
   return (
     <div className="space-y-4">
       {/* Section header */}
-      <div className="flex items-center justify-between">
-        <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Pipeline &amp; Activity</h4>
-      </div>
+      {(
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Pipeline &amp; Activity</h4>
+        </div>
+      )}
 
       {/* Active submissions */}
       {submissions.length > 0 && (
         <div className="space-y-2">
           {submissions.map((s) => (
-            <div key={s.id} className="bg-[var(--bg-surface-2)] rounded-lg p-3 border border-[var(--border-subtle)] group">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm font-medium text-[var(--text-primary)]">{s.company_name}</span>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-[var(--text-muted)]">
-                    <span>{formatEntryDate(s.submitted_at, true)}</span>
-                    {s.submitted_by && <><span>&bull;</span><span>by {s.submitted_by}</span></>}
-                  </div>
+            <div key={s.id} className="flex items-center justify-between px-3 py-2.5 bg-[var(--bg-nested)] border border-[var(--border-subtle)] rounded-lg group">
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-medium text-[var(--text-primary)]">{s.company_name}</div>
+                <div className="text-[10px] text-[var(--text-muted)] mt-0.5">
+                  Submitted {formatEntryDate(s.submitted_at, true)}
+                  {s.submitted_by && <> &bull; by {s.submitted_by}</>}
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <select
-                    value={s.status}
-                    onChange={(e) => onUpdateSubmission(s.id, e.target.value as SubmissionStatus)}
-                    className="input-base text-xs px-2 py-1 rounded-md cursor-pointer"
-                    aria-label={`Update status for ${s.company_name}`}
-                  >
-                    {SUBMISSION_STATUSES.map((st) => (
-                      <option key={st.value} value={st.value}>{st.label}</option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => setDeleteTarget(s.id)}
-                    className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-[var(--error)] transition-all cursor-pointer p-1"
-                    aria-label={`Remove submission to ${s.company_name}`}
-                  >
-                    <Trash2 size={12} />
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <select
+                  value={s.status}
+                  onChange={(e) => onUpdateSubmission(s.id, e.target.value as SubmissionStatus)}
+                  className="text-[10px] font-semibold px-2 py-0.5 rounded cursor-pointer border-none"
+                  style={{
+                    background: STATUS_PILL_COLORS[s.status]?.bg,
+                    color: STATUS_PILL_COLORS[s.status]?.text,
+                  }}
+                  aria-label={`Update status for ${s.company_name}`}
+                >
+                  {SUBMISSION_STATUSES.map((st) => (
+                    <option key={st.value} value={st.value}>{st.label}</option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => setDeleteTarget(s.id)}
+                  className="opacity-0 group-hover:opacity-100 text-[var(--text-muted)] hover:text-[var(--error)] transition-all cursor-pointer p-1"
+                  aria-label={`Remove submission to ${s.company_name}`}
+                >
+                  <Trash2 size={12} />
+                </button>
               </div>
             </div>
           ))}
@@ -275,14 +276,14 @@ export function CandidatePipeline({
       )}
 
       {/* Submit to company button / form */}
-      {showForm ? (
-        <form onSubmit={handleSubmit} className="bg-[var(--bg-surface-2)] rounded-lg p-3 border border-[var(--border-subtle)] space-y-3">
+      {(showForm ? (
+        <form onSubmit={handleSubmit} style={{ background: '#0a0f1a', border: '1px solid #1e293b', borderRadius: '8px', padding: '12px' }} className="space-y-2.5">
           <div>
-            <label className="text-xs text-[var(--text-muted)] uppercase tracking-wider block mb-1">Company</label>
+            <label style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: '#475569', fontWeight: 600, marginBottom: '4px', display: 'block' }}>Company</label>
             <select
               value={selectedCompanyId}
               onChange={(e) => setSelectedCompanyId(e.target.value)}
-              className="input-base w-full px-3 py-2 rounded-lg text-sm cursor-pointer"
+              className="input-base w-full px-2.5 py-1.5 rounded-md text-xs cursor-pointer"
               required
             >
               <option value="">Select company...</option>
@@ -296,49 +297,51 @@ export function CandidatePipeline({
                 value={newCompanyName}
                 onChange={(e) => setNewCompanyName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCompany(); } }}
-                placeholder="New company name..."
-                className="input-base flex-1 px-2 py-1 rounded text-xs"
+                placeholder="Or add new company..."
+                className="input-base flex-1 px-2.5 py-1.5 rounded-md text-xs"
               />
               <button
                 type="button"
                 onClick={handleAddCompany}
                 disabled={!newCompanyName.trim() || addingCompany}
-                className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--primary)] border border-[var(--border-subtle)] hover:border-[var(--primary)] transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '6px', border: '1px solid #1e293b', background: '#111827', color: '#cbd5e1', cursor: 'pointer' }}
+                className="disabled:opacity-40"
               >
-                <Plus size={11} />
-                Add
+                <Plus size={11} className="inline mr-0.5" />Add
               </button>
             </div>
           </div>
           <div>
-            <label className="text-xs text-[var(--text-muted)] uppercase tracking-wider block mb-1">Submitted by</label>
+            <label style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: '#475569', fontWeight: 600, marginBottom: '4px', display: 'block' }}>Submitted by</label>
             <input
               type="text"
               value={submittedBy}
               onChange={(e) => setSubmittedBy(e.target.value)}
               placeholder="Recruiter name..."
-              className="input-base w-full px-3 py-2 rounded-lg text-sm"
+              className="input-base w-full px-2.5 py-1.5 rounded-md text-xs"
             />
           </div>
           <div>
-            <label className="text-xs text-[var(--text-muted)] uppercase tracking-wider block mb-1">Notes (optional)</label>
+            <label style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: '#475569', fontWeight: 600, marginBottom: '4px', display: 'block' }}>Notes (optional)</label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. VP Finance role, Zurich office"
-              className="input-base w-full px-3 py-2 rounded-lg text-sm"
+              className="input-base w-full px-2.5 py-1.5 rounded-md text-xs"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <Button type="submit" variant="primary" disabled={!selectedCompanyId || submitting} className="text-sm px-4">
-              <Send size={14} />
-              Submit
-            </Button>
+          <div className="flex items-center gap-2 pt-1">
+            <button type="submit" disabled={!selectedCompanyId || submitting}
+              style={{ fontSize: '11px', fontWeight: 500, padding: '5px 14px', borderRadius: '6px', background: '#1e40af', border: '1px solid #2563eb', color: '#fff', cursor: 'pointer' }}
+              className="disabled:opacity-50 flex items-center gap-1.5">
+              <Send size={12} />
+              {submitting ? 'Submitting...' : 'Submit'}
+            </button>
             <button
               type="button"
               onClick={() => { setShowForm(false); setSelectedCompanyId(''); setNotes(''); }}
-              className="text-sm px-3 py-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+              style={{ fontSize: '11px', padding: '5px 12px', color: '#94a3b8', cursor: 'pointer', background: 'transparent', border: 'none' }}
             >
               Cancel
             </button>
@@ -347,12 +350,12 @@ export function CandidatePipeline({
       ) : (
         <button
           onClick={() => { setSubmittedBy(candidate.owner || ''); setShowForm(true); }}
-          className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors cursor-pointer px-1 py-1"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 500, padding: '6px 14px', borderRadius: '6px', background: '#1e40af', border: '1px solid #2563eb', color: '#fff', cursor: 'pointer' }}
         >
           <Building2 size={12} />
           Submit to Company
         </button>
-      )}
+      ))}
 
       {/* Add note form */}
       <form onSubmit={handleAddNote} className="flex gap-2 mb-3">
@@ -361,25 +364,22 @@ export function CandidatePipeline({
           value={noteText}
           onChange={(e) => setNoteText(e.target.value)}
           placeholder="Add a note..."
-          className="input-base flex-1 px-3 py-1.5 rounded-lg text-sm"
+          className="input-base flex-1 px-2.5 py-1.5 rounded-md text-xs"
         />
-        <Button type="submit" variant="primary" disabled={!noteText.trim() || addingNote} className="px-3">
-          <Send size={14} />
-        </Button>
+        <button type="submit" disabled={!noteText.trim() || addingNote}
+          style={{ padding: '5px 12px', borderRadius: '6px', background: '#1e40af', border: '1px solid #2563eb', color: '#fff', cursor: 'pointer' }}
+          className="disabled:opacity-50">
+          <Send size={12} />
+        </button>
       </form>
 
-      {/* Activity feed */}
+      {/* Activity timeline */}
       {entries.length > 0 && (
-        <div className="space-y-0">
+        <div style={{ borderLeft: '2px solid #1e293b', paddingLeft: '14px' }}>
           {entries.map((entry) => (
-            <div key={entry.id} className="flex gap-3 py-2 group">
-              <div className="flex flex-col items-center">
-                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${dotColor(entry)}`} />
-                <div className="w-px flex-1 bg-[var(--border-subtle)]" />
-              </div>
-              <div className="flex-1 min-w-0 pb-2">
-                {renderEntry(entry, onDeleteNote)}
-              </div>
+            <div key={entry.id} className="group" style={{ marginBottom: '14px', position: 'relative' }}>
+              <div style={{ position: 'absolute', left: '-19px', top: '3px', width: '8px', height: '8px', borderRadius: '50%', background: dotColor(entry) }} />
+              {renderEntry(entry, onDeleteNote)}
             </div>
           ))}
         </div>

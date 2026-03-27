@@ -1,13 +1,32 @@
 'use client';
 
-import { Copy, FileText, Edit2, Mail, Phone, ArrowUp, ArrowDown } from 'lucide-react';
+import { Copy, FileText, Edit2, Mail, Phone, ArrowUp, ArrowDown, Send } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { FavoriteButton } from '@/components/FavoriteButton';
-import { formatTalentId, formatEntryDate, formatCantons } from '@/lib/helpers';
-import { STATUS_OPTIONS, EXPERIENCE_OPTIONS } from '@/lib/constants';
+import { formatTalentId, formatCantons } from '@/lib/helpers';
+import { STATUS_OPTIONS, EXPERIENCE_OPTIONS, STATUS_PILL_COLORS } from '@/lib/constants';
 import { toast } from '@/components/ui/Toast';
-import type { RecruiterCandidateView } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission } from '@/types/recruiter';
+
+const STALE_AMBER_DAYS = 5;
+const STALE_RED_DAYS = 7;
+const TERMINAL_STATUSES: RecruiterStatus[] = ['placed', 'rejected'];
+
+const STATUS_PILL_CONFIG = STATUS_PILL_COLORS;
+
+function daysSince(dateStr: string): number {
+  return Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function relativeActivityTime(dateStr: string | undefined): { text: string; colorClass: string } {
+  if (!dateStr) return { text: '—', colorClass: 'text-[var(--text-muted)]' };
+  const days = daysSince(dateStr);
+  if (days === 0) return { text: 'Today', colorClass: 'text-[var(--success)]' };
+  if (days === 1) return { text: 'Yesterday', colorClass: 'text-[var(--success)]' };
+  if (days <= 5) return { text: `${days}d ago`, colorClass: 'text-[var(--text-tertiary)]' };
+  return { text: `${days}d ago`, colorClass: 'text-[var(--error)] font-medium' };
+}
 
 export interface TableFilters {
   talent_id: string;
@@ -30,6 +49,8 @@ interface CandidateTableProps {
   onSelect: (candidate: RecruiterCandidateView) => void;
   onDownloadCv: (profileId: string) => void;
   onToggleFavorite: (profileId: string) => void;
+  onStatusChange?: (profileId: string, status: RecruiterStatus) => void;
+  allSubmissions?: CandidateSubmission[];
   sortConfig: SortConfig | null;
   onSort: (key: string) => void;
   filters: TableFilters;
@@ -79,9 +100,10 @@ const COLUMNS: ColumnDef[] = [
   { key: 'contact', label: 'Contact', sortable: false, filterType: 'text', filterKey: 'contact', responsive: 'hidden md:table-cell' },
   { key: 'location', label: 'Location', sortable: true, filterType: 'multi-select', filterKey: 'location', responsive: 'hidden lg:table-cell' },
   { key: 'experience', label: 'Experience', sortable: true, filterType: 'multi-select', filterKey: 'experience', responsive: 'hidden lg:table-cell' },
+  { key: 'submissions', label: 'Submissions', sortable: false, filterType: 'none', responsive: 'hidden lg:table-cell' },
   { key: 'status', label: 'Status', sortable: true, filterType: 'multi-select', filterKey: 'status', responsive: '' },
   { key: 'owner', label: 'Owner', sortable: true, filterType: 'text', filterKey: 'owner', responsive: 'hidden lg:table-cell' },
-  { key: 'added', label: 'Added', sortable: true, filterType: 'text', filterKey: 'added', responsive: 'hidden sm:table-cell' },
+  { key: 'last_activity', label: 'Last Activity', sortable: true, filterType: 'none', responsive: 'hidden sm:table-cell' },
   { key: 'actions', label: 'Actions', sortable: false, filterType: 'none', responsive: '' },
 ];
 
@@ -99,6 +121,8 @@ export function CandidateTable({
   onSelect,
   onDownloadCv,
   onToggleFavorite,
+  onStatusChange,
+  allSubmissions = [],
   sortConfig,
   onSort,
   filters,
@@ -109,19 +133,18 @@ export function CandidateTable({
   filteredCount,
   onPageChange,
   locationOptions,
-  favoritesOnly,
-  onToggleFavoritesFilter,
+  // favoritesOnly and onToggleFavoritesFilter are passed for interface compat but unused in table body
 }: CandidateTableProps) {
   if (candidates.length === 0 && filteredCount === 0 && total === 0) {
     return (
-      <div className="glass-panel rounded-xl p-12 text-center">
+      <div className="glass-panel rounded-[10px] p-12 text-center">
         <p className="text-[var(--text-muted)]">No candidates found</p>
       </div>
     );
   }
 
   return (
-    <div className="glass-panel rounded-xl overflow-hidden">
+    <div className="glass-panel rounded-[10px] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -130,7 +153,7 @@ export function CandidateTable({
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
-                  className={`text-left px-4 py-3 sm:px-6 sm:py-4 text-xs font-bold text-[var(--text-tertiary)] uppercase tracking-wider ${col.responsive} ${
+                  className={`text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px] ${col.responsive} ${
                     col.sortable ? 'cursor-pointer select-none group/th hover:text-[var(--text-secondary)] transition-colors' : ''
                   }`}
                   onClick={col.sortable ? () => onSort(col.key) : undefined}
@@ -145,7 +168,7 @@ export function CandidateTable({
 
             {/* Filter row */}
             <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-surface-2)]">
-              {COLUMNS.map((col, i) => (
+              {COLUMNS.map((col) => (
                 <th key={col.key} className={`px-4 py-2 sm:px-6 ${col.responsive}`}>
                   {col.filterType === 'text' && col.filterKey ? (
                     <input
@@ -170,22 +193,36 @@ export function CandidateTable({
           </thead>
 
           <tbody className="divide-y divide-[var(--border-subtle)]">
-            {candidates.map((c) => (
+            {candidates.map((c) => {
+              const activityDate = c.last_activity_at || c.status_changed_at;
+              const daysStale = daysSince(activityDate);
+              const isStale = daysStale >= STALE_AMBER_DAYS && !TERMINAL_STATUSES.includes(c.status);
+              const isStaleRed = daysStale >= STALE_RED_DAYS && !TERMINAL_STATUSES.includes(c.status);
+
+              return (
               <tr
                 key={c.profile_id}
-                className="group hover:bg-[var(--bg-surface-2)] transition-all duration-200 cursor-pointer"
+                className={`group hover:bg-[var(--bg-surface-2)] transition-all duration-150 cursor-pointer ${
+                  isStaleRed ? 'bg-[rgba(220,38,38,0.04)] hover:bg-[rgba(220,38,38,0.08)]' : ''
+                }`}
                 onClick={() => onSelect(c)}
               >
                 {/* Ref ID */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 whitespace-nowrap hidden sm:table-cell">
+                <td className="px-3 py-2.5 whitespace-nowrap hidden sm:table-cell">
                   <span className="font-mono text-xs font-medium bg-[var(--bg-surface-2)] px-2 py-1 rounded text-[var(--text-accent)]">
                     {formatTalentId(c.talent_id)}
                   </span>
                 </td>
 
                 {/* Name & Role */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <div className="text-sm font-bold text-[var(--text-primary)]">
+                <td className="px-3 py-2.5">
+                  <div className="text-xs font-medium text-[var(--text-primary)]">
+                    {isStale && (
+                      <span
+                        className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle"
+                        style={{ background: isStaleRed ? 'var(--error)' : 'var(--status-follow-up)' }}
+                      />
+                    )}
                     {c.contact_first_name} {c.contact_last_name}
                   </div>
                   {c.desired_roles && (
@@ -197,7 +234,7 @@ export function CandidateTable({
                 </td>
 
                 {/* Contact */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 hidden md:table-cell">
+                <td className="px-3 py-2.5 hidden md:table-cell">
                   <div className="space-y-0.5">
                     <button
                       onClick={(e) => {
@@ -227,40 +264,86 @@ export function CandidateTable({
                 </td>
 
                 {/* Location */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 hidden lg:table-cell">
+                <td className="px-3 py-2.5 hidden lg:table-cell">
                   <span className="text-xs text-[var(--text-tertiary)]">
                     {formatCantons(c.desired_locations)}
                   </span>
                 </td>
 
                 {/* Experience */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 hidden lg:table-cell">
+                <td className="px-3 py-2.5 hidden lg:table-cell">
                   <span className="text-xs text-[var(--text-tertiary)]">
                     {c.years_of_experience != null ? `${c.years_of_experience} yrs` : '—'}
                   </span>
                 </td>
 
+                {/* Submissions */}
+                <td className="px-3 py-2.5 hidden lg:table-cell">
+                  {(() => {
+                    const subs = allSubmissions.filter(s => s.profile_id === c.profile_id);
+                    if (subs.length === 0) return <span className="text-[var(--text-muted)] text-[11px]">—</span>;
+                    return (
+                      <span className="inline-flex items-center gap-1 text-[11px]">
+                        {subs.map(s => (
+                          <span
+                            key={s.id}
+                            className="w-1.5 h-1.5 rounded-full inline-block"
+                            style={{ background: s.status === 'submitted' ? 'var(--status-new)' : s.status === 'interviewing' ? 'var(--status-interviewing)' : s.status === 'placed' ? 'var(--status-placed)' : 'var(--text-muted)' }}
+                            title={`${s.company_name} — ${s.status}`}
+                          />
+                        ))}
+                        <span className="text-[var(--text-tertiary)] ml-0.5">{subs.length}</span>
+                      </span>
+                    );
+                  })()}
+                </td>
+
                 {/* Status */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <StatusBadge status={c.status} />
+                <td className="px-3 py-2.5">
+                  {onStatusChange ? (
+                    <select
+                      value={c.status}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        onStatusChange(c.profile_id, e.target.value as RecruiterStatus);
+                      }}
+                      className="text-[10px] font-semibold px-2.5 py-1 rounded-full border-none cursor-pointer"
+                      style={{
+                        background: STATUS_PILL_CONFIG[c.status].bg,
+                        color: STATUS_PILL_CONFIG[c.status].text,
+                      }}
+                    >
+                      {(['new', 'screening', 'interviewing', 'offer', 'placed', 'rejected'] as RecruiterStatus[]).map(s => (
+                        <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <StatusBadge status={c.status} />
+                  )}
                 </td>
 
                 {/* Owner */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 hidden lg:table-cell">
+                <td className="px-3 py-2.5 hidden lg:table-cell">
                   <span className="text-xs text-[var(--text-tertiary)]">
                     {c.owner || '—'}
                   </span>
                 </td>
 
-                {/* Added */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4 hidden sm:table-cell">
-                  <span className="text-xs text-[var(--text-muted)]">
-                    {formatEntryDate(c.profile_created_at, true)}
-                  </span>
+                {/* Last Activity */}
+                <td className="px-3 py-2.5 hidden sm:table-cell">
+                  {(() => {
+                    const activity = relativeActivityTime(c.last_activity_at || c.status_changed_at);
+                    return (
+                      <span className={`text-xs ${activity.colorClass}`}>
+                        {activity.text}
+                      </span>
+                    );
+                  })()}
                 </td>
 
                 {/* Actions */}
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className="px-3 py-2.5">
                   <div className="flex items-center gap-1">
                     <FavoriteButton
                       isFavorite={c.is_favorite}
@@ -272,7 +355,7 @@ export function CandidateTable({
                           e.stopPropagation();
                           onDownloadCv(c.profile_id);
                         }}
-                        className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-200 cursor-pointer border border-[var(--border-subtle)]"
+                        className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)]"
                         title="Download CV"
                       >
                         <FileText size={15} />
@@ -283,21 +366,32 @@ export function CandidateTable({
                         e.stopPropagation();
                         onSelect(c);
                       }}
-                      className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-200 cursor-pointer border border-[var(--border-subtle)]"
+                      className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)]"
                       title="Edit"
                     >
                       <Edit2 size={15} />
                     </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelect(c);
+                      }}
+                      className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--primary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)] opacity-0 group-hover:opacity-100"
+                      title="Submit to company"
+                    >
+                      <Send size={15} />
+                    </button>
                   </div>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>
 
       {/* Footer */}
-      <div className="border-t border-[var(--border-strong)] bg-[var(--bg-surface-2)] px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between">
+      <div className="border-t border-[var(--border-strong)] bg-[var(--bg-surface-2)] px-3 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-xs text-[var(--text-muted)]">
             Showing {filteredCount} of {total} candidates

@@ -36,9 +36,10 @@ export async function POST(
     };
     notes.unshift(newNote);
 
+    const now = new Date().toISOString();
     const { error: updateError } = await supabaseAdmin
       .from('recruiter_candidates')
-      .update({ notes, updated_at: new Date().toISOString() })
+      .update({ notes, updated_at: now, last_activity_at: now })
       .eq('profile_id', id);
 
     if (updateError) {
@@ -80,9 +81,10 @@ export async function DELETE(
       (n: RecruiterNote) => n.id !== noteId
     );
 
+    const now = new Date().toISOString();
     const { error: updateError } = await supabaseAdmin
       .from('recruiter_candidates')
-      .update({ notes, updated_at: new Date().toISOString() })
+      .update({ notes, updated_at: now, last_activity_at: now })
       .eq('profile_id', id);
 
     if (updateError) {
