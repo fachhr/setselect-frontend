@@ -120,12 +120,6 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                       }`}
                     >
                       <div className="text-xs font-semibold text-[var(--text-primary)] truncate">
-                        {isStaleAmber && !isTerminal && (
-                          <span
-                            className="inline-block w-1.5 h-1.5 rounded-full mr-1 align-middle"
-                            style={{ background: 'var(--stale)' }}
-                          />
-                        )}
                         {c.contact_first_name} {c.contact_last_name}
                       </div>
                       <div className="text-[10px] text-[var(--text-tertiary)] truncate mt-0.5">

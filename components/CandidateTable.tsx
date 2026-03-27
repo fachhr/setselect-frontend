@@ -411,12 +411,6 @@ export function CandidateTable({
                 {/* Name & Role */}
                 <td className="px-3 py-2.5">
                   <div className="text-xs font-medium text-[var(--text-primary)]">
-                    {isStale && (
-                      <span
-                        className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle"
-                        style={{ background: 'var(--stale)' }}
-                      />
-                    )}
                     {c.contact_first_name} {c.contact_last_name}
                   </div>
                   {c.desired_roles && (
