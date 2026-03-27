@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import type { RecruiterStatus, ActivityEntry } from '@/types/recruiter';
 
 // --- Types ---
@@ -130,6 +130,7 @@ export default function CommandCenterPage() {
   const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [attentionExpanded, setAttentionExpanded] = useState(false);
 
   const fetchData = useCallback(() => {
     fetch('/api/dashboard')
@@ -179,6 +180,12 @@ export default function CommandCenterPage() {
   // Sort: critical first, then warning, then info
   const severityOrder = { critical: 0, warning: 1, info: 2 };
   attentionItems.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+
+  const MAX_ATTENTION_VISIBLE = 5;
+  const visibleAttentionItems = attentionExpanded
+    ? attentionItems
+    : attentionItems.slice(0, MAX_ATTENTION_VISIBLE);
+  const attentionOverflow = attentionItems.length - MAX_ATTENTION_VISIBLE;
 
   const severityColor = { critical: 'var(--error)', warning: 'var(--status-follow-up)', info: 'var(--primary)' };
   const severityTextColor = { critical: 'var(--error)', warning: 'var(--status-follow-up)', info: 'var(--text-accent)' };
@@ -263,7 +270,7 @@ export default function CommandCenterPage() {
               </div>
             ) : (
               <div className="space-y-1.5">
-                {attentionItems.map((item) => (
+                {visibleAttentionItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => router.push(`/candidates?highlight=${item.profileId}`)}
@@ -288,6 +295,18 @@ export default function CommandCenterPage() {
                     </div>
                   </button>
                 ))}
+                {attentionOverflow > 0 && (
+                  <button
+                    onClick={() => setAttentionExpanded(prev => !prev)}
+                    className="w-full flex items-center justify-center gap-1.5 pt-2.5 pb-1 text-[11px] font-medium text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer"
+                  >
+                    {attentionExpanded ? (
+                      <>Show less <ChevronUp className="w-3.5 h-3.5" /></>
+                    ) : (
+                      <>Show all {attentionItems.length} <ChevronDown className="w-3.5 h-3.5" /></>
+                    )}
+                  </button>
+                )}
               </div>
             )}
           </div>
