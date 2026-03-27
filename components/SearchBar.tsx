@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, ChevronDown, Plus, Heart, Users } from 'lucide-react';
+import { Search, ChevronDown, AlertTriangle, Star } from 'lucide-react';
 import type { RecruiterStatus } from '@/types/recruiter';
 
 const statusOptions: { value: string; label: string }[] = [
@@ -21,6 +21,8 @@ interface SearchBarProps {
   onAddCandidate?: () => void;
   favoritesOnly?: boolean;
   onToggleFavoritesFilter?: () => void;
+  staleOnly?: boolean;
+  onToggleStaleFilter?: () => void;
   shortlistCount?: number;
   totalCount?: number;
 }
@@ -30,85 +32,128 @@ export function SearchBar({
   onSearchChange,
   status,
   onStatusChange,
-  onAddCandidate,
   favoritesOnly = false,
   onToggleFavoritesFilter,
+  staleOnly = false,
+  onToggleStaleFilter,
   shortlistCount = 0,
   totalCount = 0,
 }: SearchBarProps) {
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
-        {/* View toggle: All Candidates / Shortlisted */}
-        {onToggleFavoritesFilter && (
-          <div className="flex rounded-lg border border-[var(--border-strong)] overflow-hidden shrink-0">
-            <button
-              onClick={favoritesOnly ? onToggleFavoritesFilter : undefined}
-              className={`flex items-center gap-1.5 px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
-                !favoritesOnly
-                  ? 'bg-[var(--primary)] text-white'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-3)]'
-              }`}
-              aria-label="Show all candidates"
-            >
-              <Users size={14} />
-              <span className="hidden sm:inline">All</span>
-              <span className="tabular-nums text-[11px] opacity-80">({totalCount})</span>
-            </button>
-            <button
-              onClick={!favoritesOnly ? onToggleFavoritesFilter : undefined}
-              className={`flex items-center gap-1.5 px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer border-l border-[var(--border-strong)] ${
-                favoritesOnly
-                  ? 'bg-[var(--primary)] text-white'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-3)]'
-              }`}
-              aria-label="Show shortlisted candidates only"
-            >
-              <Heart size={13} fill={favoritesOnly ? 'currentColor' : 'none'} />
-              <span className="hidden sm:inline">Shortlisted</span>
-              <span className="tabular-nums text-[11px] opacity-80">({shortlistCount})</span>
-            </button>
-          </div>
-        )}
-
-        <div className="relative">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
-          />
-          <input
-            type="text"
-            placeholder="Search by name, email, role, ref ID, phone..."
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="input-base w-full sm:w-80 pl-10 pr-4 py-1.5 sm:py-2 rounded-lg text-sm"
-          />
-        </div>
-        <div className="relative">
-          <select
-            value={status}
-            onChange={(e) => onStatusChange(e.target.value as RecruiterStatus | '')}
-            className="input-base appearance-none w-full sm:w-auto pl-4 pr-10 py-1.5 sm:py-2 rounded-lg text-sm sm:min-w-[160px] cursor-pointer"
+    /*
+     * "contents" makes this div invisible to layout on mobile,
+     * so children flow into the parent flex-wrap alongside ViewToggle.
+     * On sm+, it becomes a normal flex container.
+     */
+    <div className="contents sm:flex sm:flex-wrap sm:items-center sm:gap-2">
+      {/* All / Shortlisted toggle */}
+      {onToggleFavoritesFilter && (
+        <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-2)', borderRadius: '6px', padding: '3px' }}>
+          <button
+            onClick={favoritesOnly ? onToggleFavoritesFilter : undefined}
+            style={{
+              padding: '5px 12px',
+              fontSize: '11px',
+              fontWeight: 500,
+              borderRadius: '4px',
+              cursor: 'pointer',
+              border: 'none',
+              background: !favoritesOnly ? 'var(--bg-surface-3)' : 'transparent',
+              color: !favoritesOnly ? 'var(--text-primary)' : 'var(--text-tertiary)',
+            }}
           >
-            {statusOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            size={14}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none"
-          />
+            All <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({totalCount})</span>
+          </button>
+          <button
+            onClick={!favoritesOnly ? onToggleFavoritesFilter : undefined}
+            className="flex items-center gap-1"
+            style={{
+              padding: '5px 12px',
+              fontSize: '11px',
+              fontWeight: 500,
+              borderRadius: '4px',
+              cursor: 'pointer',
+              border: 'none',
+              background: favoritesOnly ? 'var(--bg-surface-3)' : 'transparent',
+              color: favoritesOnly ? 'var(--text-primary)' : 'var(--text-tertiary)',
+            }}
+          >
+            <Star size={10} fill="currentColor" />
+            <span className="hidden sm:inline">Shortlisted</span>
+            <span style={{ fontSize: '10px', opacity: 0.7, marginLeft: '2px' }}>({shortlistCount})</span>
+          </button>
         </div>
+      )}
+
+      {/* Search — full width row on mobile, inline on desktop */}
+      <div className="relative w-full sm:w-[200px] order-last sm:order-none">
+        <Search
+          size={14}
+          style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }}
+        />
+        <input
+          type="text"
+          placeholder="Search candidates..."
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full sm:w-[200px]"
+          style={{
+            padding: '6px 12px 6px 30px',
+            fontSize: '11px',
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-strong)',
+            borderRadius: '6px',
+            color: 'var(--text-primary)',
+            outline: 'none',
+          }}
+        />
       </div>
-      {onAddCandidate && (
-        <button
-          onClick={onAddCandidate}
-          className="btn-gold flex items-center gap-2 px-4 py-2 rounded-lg text-sm whitespace-nowrap cursor-pointer"
+
+      {/* Status filter */}
+      <div style={{ position: 'relative' }}>
+        <select
+          value={status}
+          onChange={(e) => onStatusChange(e.target.value as RecruiterStatus | '')}
+          style={{
+            appearance: 'none',
+            padding: '6px 28px 6px 12px',
+            fontSize: '11px',
+            background: 'var(--bg-surface-2)',
+            border: '1px solid var(--border-strong)',
+            borderRadius: '6px',
+            color: 'var(--text-primary)',
+            cursor: 'pointer',
+            outline: 'none',
+          }}
         >
-          <Plus size={16} />
-          Add Candidate
+          {statusOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+        <ChevronDown
+          size={12}
+          style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', pointerEvents: 'none' }}
+        />
+      </div>
+
+      {/* Stale Only */}
+      {onToggleStaleFilter && (
+        <button
+          onClick={onToggleStaleFilter}
+          className="flex items-center gap-1.5"
+          style={{
+            padding: '6px 12px',
+            fontSize: '11px',
+            fontWeight: 500,
+            borderRadius: '6px',
+            cursor: 'pointer',
+            border: `1px solid ${staleOnly ? 'var(--stale-border)' : 'var(--border-strong)'}`,
+            background: staleOnly ? 'var(--stale-dim)' : 'var(--bg-surface-2)',
+            color: staleOnly ? 'var(--stale)' : 'var(--text-tertiary)',
+          }}
+        >
+          <AlertTriangle size={12} />
+          <span className="hidden sm:inline">Stale Only</span>
         </button>
       )}
     </div>

@@ -99,9 +99,10 @@ export async function PATCH(
           created_at: new Date().toISOString(),
         };
 
+        const now = new Date().toISOString();
         await supabaseAdmin
           .from('recruiter_candidates')
-          .update({ notes: [activityEntry, ...existingNotes], updated_at: new Date().toISOString() })
+          .update({ notes: [activityEntry, ...existingNotes], updated_at: now, last_activity_at: now })
           .eq('profile_id', submissionProfileId);
       } catch (noteErr) {
         console.warn('Failed to log submission status change activity (non-blocking):', noteErr);
@@ -126,6 +127,19 @@ export async function DELETE(
   }
 
   try {
+    // Fetch submission to get profile_id before deleting
+    const { data: submission, error: fetchErr } = await supabaseAdmin
+      .from('candidate_submissions')
+      .select('profile_id')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr) {
+      console.error('Submission fetch error:', fetchErr);
+      return NextResponse.json({ error: fetchErr.message }, { status: 500 });
+    }
+
+    // Delete the submission
     const { error } = await supabaseAdmin
       .from('candidate_submissions')
       .delete()
@@ -136,7 +150,32 @@ export async function DELETE(
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    // Clean up related timeline entries from candidate's notes JSONB
+    if (submission?.profile_id) {
+      try {
+        const { data: candidate } = await supabaseAdmin
+          .from('recruiter_candidates')
+          .select('notes')
+          .eq('profile_id', submission.profile_id)
+          .single();
+
+        if (candidate?.notes) {
+          const filtered = (candidate.notes as { submission_id?: string }[]).filter(
+            (entry) => entry.submission_id !== id
+          );
+          if (filtered.length !== (candidate.notes as unknown[]).length) {
+            await supabaseAdmin
+              .from('recruiter_candidates')
+              .update({ notes: filtered, updated_at: new Date().toISOString() })
+              .eq('profile_id', submission.profile_id);
+          }
+        }
+      } catch (cleanupErr) {
+        console.warn('Timeline cleanup failed (non-blocking):', cleanupErr);
+      }
+    }
+
+    return NextResponse.json({ success: true, profile_id: submission?.profile_id });
   } catch (err) {
     console.error('Submission DELETE error:', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

@@ -3,19 +3,13 @@ import { supabaseAdmin } from '@/lib/supabase';
 import type { CandidateSubmission, SubmissionStatus, SubmissionCreatedEntry, ActivityEntry } from '@/types/recruiter';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const VALID_STATUSES: SubmissionStatus[] = ['submitted', 'interviewing', 'rejected', 'placed'];
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const profileId = searchParams.get('profile_id');
   const companyId = searchParams.get('company_id');
 
-  if (!profileId && !companyId) {
-    return NextResponse.json(
-      { error: 'Either profile_id or company_id query parameter is required' },
-      { status: 400 }
-    );
-  }
+  // Allow fetching all submissions (no filter) for board view
 
   try {
     let query = supabaseAdmin
@@ -146,9 +140,10 @@ export async function POST(request: NextRequest) {
         created_at: new Date().toISOString(),
       };
 
+      const now = new Date().toISOString();
       await supabaseAdmin
         .from('recruiter_candidates')
-        .update({ notes: [activityEntry, ...existingNotes], updated_at: new Date().toISOString() })
+        .update({ notes: [activityEntry, ...existingNotes], updated_at: now, last_activity_at: now })
         .eq('profile_id', profile_id);
     } catch (noteErr) {
       console.warn('Failed to log submission creation activity (non-blocking):', noteErr);

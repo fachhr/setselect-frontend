@@ -37,12 +37,12 @@ export function ConfirmDialog({
     <div className="fixed inset-0 z-[70] flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[var(--bg-root)]/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-[var(--bg-root)]/70"
         onClick={loading ? undefined : onCancel}
       />
 
       {/* Dialog */}
-      <div className="relative glass-panel rounded-xl border border-[var(--border-subtle)] shadow-2xl p-6 w-full max-w-sm mx-4">
+      <div className="relative glass-panel rounded-lg border border-[var(--border-subtle)] p-6 w-full max-w-sm mx-4">
         <h3 className="text-base font-bold text-[var(--text-primary)]">{title}</h3>
         <p className="mt-2 text-sm text-[var(--text-secondary)] leading-relaxed">{message}</p>
 

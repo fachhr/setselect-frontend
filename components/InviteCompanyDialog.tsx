@@ -22,19 +22,15 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
 
   // Reset form and lock body scroll when dialog opens
   useEffect(() => {
-    if (open) {
-      setCompanyName('');
-      setEmail('');
-      setInvitedBy('');
-      setStatus('idle');
-      setMessage('');
-      setActionLink('');
-      setCopied(false);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
+    if (!open) {
       document.body.style.overflow = '';
-    };
+      return;
+    }
+    // Reset all form fields — intentional sync setState on mount
+    const reset = () => { setCompanyName(''); setEmail(''); setInvitedBy(''); setStatus('idle'); setMessage(''); setActionLink(''); setCopied(false); };
+    reset();
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
   }, [open]);
 
   // Escape key handler
@@ -102,7 +98,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-[var(--bg-root)]/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-[var(--bg-root)]/70"
         onClick={status === 'loading' ? undefined : onClose}
       />
 
@@ -111,7 +107,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
         role="dialog"
         aria-modal="true"
         aria-labelledby="invite-company-title"
-        className="relative w-full max-w-lg mx-4 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-lg mx-4 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-6 animate-in fade-in zoom-in-95 duration-150"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -217,7 +213,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
               <button
                 type="button"
                 onClick={onClose}
-                className="btn-gold w-full py-3 rounded-lg text-sm shadow-lg cursor-pointer"
+                className="btn-gold w-full py-3 rounded-lg text-sm cursor-pointer"
               >
                 Done
               </button>
@@ -225,7 +221,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
               <button
                 type="submit"
                 disabled={!companyName || !email || status === 'loading'}
-                className="btn-gold w-full py-3 rounded-lg text-sm shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                className="btn-gold w-full py-3 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
               >
                 <Send size={14} />
                 {status === 'loading' ? 'Generating...' : 'Generate Invite Link'}

@@ -89,6 +89,7 @@ export interface RecruiterCandidateView {
   notes: (RecruiterNote | ActivityEntry)[];
   status_changed_at: string;
   is_favorite: boolean;
+  last_activity_at?: string;
 }
 
 export interface ProfileEditData {

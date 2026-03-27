@@ -93,7 +93,7 @@ export function MultiSelectFilter({ options, selected, onChange, placeholder = '
         <div
           ref={dropdownRef}
           style={dropdownStyle}
-          className="bg-[var(--bg-surface-1)] border border-[var(--border-strong)] rounded-lg shadow-xl max-h-60 overflow-y-auto"
+          className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg max-h-60 overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {options.map((opt) => {
