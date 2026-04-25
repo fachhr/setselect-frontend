@@ -270,7 +270,6 @@ export async function scrapeSource(source: JobSource): Promise<ScrapeResult> {
           .update({
             last_seen_at: new Date().toISOString(),
             removed_at: null,
-            ...(job.description && { description: job.description }),
             ...(job.seniority && { seniority: job.seniority }),
           })
           .eq('id', existing.id);
@@ -282,7 +281,7 @@ export async function scrapeSource(source: JobSource): Promise<ScrapeResult> {
           title: job.title,
           url: job.url,
           location: job.location,
-          description: job.description,
+          description: null,
           seniority: job.seniority,
           status: 'new',
         });
@@ -353,19 +352,28 @@ export async function enrichNewJobDescriptions(
   const start = Date.now();
   let enriched = 0;
 
-  const { data: jobs } = await supabaseAdmin
+  const { data: jobs, error: queryError } = await supabaseAdmin
     .from('job_listings')
     .select('id, url, description')
     .eq('source_id', sourceId)
     .is('removed_at', null)
-    .or('description.is.null,description.eq.');
+    .is('description', null);
 
+  if (queryError) {
+    console.error('[enrich] query failed:', queryError.message);
+    return 0;
+  }
   if (!jobs || jobs.length === 0) return 0;
+
+  console.log(`[enrich] ${jobs.length} job(s) to enrich for source ${sourceId}`);
 
   const resolvedMode = fetchMode === 'auto' ? 'direct' : fetchMode;
 
   for (const job of jobs) {
-    if (Date.now() - start > timeBudgetMs) break;
+    if (Date.now() - start > timeBudgetMs) {
+      console.log(`[enrich] time budget exceeded, enriched ${enriched}/${jobs.length}`);
+      break;
+    }
 
     try {
       let markdown: string | null = null;
@@ -373,18 +381,21 @@ export async function enrichNewJobDescriptions(
       if (resolvedMode !== 'jina') {
         try {
           markdown = await directFetch(job.url);
-        } catch {
-          // Direct failed — will try Jina below
+        } catch (e) {
+          console.log(`[enrich] direct fetch failed for ${job.url}: ${e instanceof Error ? e.message : 'unknown'}`);
         }
       }
 
       if (!markdown || markdown.length < 500) {
         try {
           markdown = await jinaFetch(job.url);
-        } catch {
+        } catch (e) {
+          console.log(`[enrich] jina fetch failed for ${job.url}: ${e instanceof Error ? e.message : 'unknown'}`);
           if (!markdown) continue;
         }
       }
+
+      console.log(`[enrich] fetched ${markdown.length} chars for ${job.url}`);
 
       const client = getAnthropicClient();
       const response = await client.messages.create({
@@ -407,9 +418,12 @@ export async function enrichNewJobDescriptions(
           .update({ description: text.text })
           .eq('id', job.id);
         enriched++;
+        console.log(`[enrich] enriched job ${job.id}`);
+      } else {
+        console.log(`[enrich] no description found for ${job.url}`);
       }
-    } catch {
-      // Skip failed enrichments silently — not critical
+    } catch (e) {
+      console.error(`[enrich] failed for ${job.url}:`, e instanceof Error ? e.message : e);
     }
   }
 
