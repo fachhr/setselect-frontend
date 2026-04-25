@@ -33,3 +33,29 @@ export const STATUS_PILL_COLORS: Record<string, { bg: string; text: string }> = 
   rejected:      { bg: '#1a1020', text: '#94a3b8' },
   submitted:     { bg: '#1e3a5f', text: '#93c5fd' },
 };
+
+// --- Job Scraping constants ---
+
+export const TARGET_COUNTRY_OPTIONS = [
+  'Switzerland',
+  'Bulgaria',
+  'United Kingdom',
+] as const;
+
+export const DEFAULT_TARGET_COUNTRIES = ['Switzerland', 'Bulgaria', 'United Kingdom'] as const;
+
+export const JOB_STATUS_OPTIONS = [
+  { value: 'new', label: 'New' },
+  { value: 'evaluating', label: 'Evaluating' },
+  { value: 'pursuing', label: 'Pursuing' },
+  { value: 'passed', label: 'Passed' },
+] as const;
+
+export const JOB_SENIORITY_OPTIONS = [
+  { value: 'junior', label: 'Junior' },
+  { value: 'mid', label: 'Mid' },
+  { value: 'senior', label: 'Senior' },
+  { value: 'executive', label: 'Executive' },
+  { value: 'c-suite', label: 'C-Suite' },
+] as const;
+

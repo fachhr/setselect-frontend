@@ -146,3 +146,58 @@ export interface SubmissionCompany {
   name: string;
   created_at: string;
 }
+
+// --- Job Scraping types ---
+
+export type JobListingStatus = 'new' | 'evaluating' | 'pursuing' | 'passed';
+export type JobSeniority = 'junior' | 'mid' | 'senior' | 'executive' | 'c-suite';
+export type FetchMode = 'auto' | 'direct' | 'jina';
+
+export interface JobSource {
+  id: string;
+  company_name: string;
+  career_url: string;
+  fetch_mode: FetchMode;
+  target_countries: string[];
+  is_active: boolean;
+  last_scraped_at: string | null;
+  last_error: string | null;
+  created_at: string;
+}
+
+export interface JobListing {
+  id: string;
+  source_id: string;
+  company_name: string;
+  external_id: string;
+  title: string;
+  url: string;
+  location: string | null;
+  description: string | null;
+  seniority: JobSeniority | null;
+  status: JobListingStatus;
+  first_seen_at: string;
+  last_seen_at: string;
+  removed_at: string | null;
+  created_at: string;
+}
+
+export interface JobStats {
+  total: number;
+  new_count: number;
+  pursuing_count: number;
+  sources_count: number;
+  last_scrape_at: string | null;
+}
+
+export interface ScrapeResult {
+  source_id: string;
+  company_name: string;
+  new_listings: number;
+  updated: number;
+  removed: number;
+  total_found: number;
+  country_filtered: number;
+  fetch_mode_used: FetchMode;
+  error: string | null;
+}

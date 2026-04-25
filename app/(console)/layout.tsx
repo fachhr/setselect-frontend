@@ -9,13 +9,14 @@ import { ToastContainer } from '@/components/ui/Toast';
 interface NavTab {
   href: string;
   label: string;
-  countKey?: 'candidates' | 'companies';
+  countKey?: 'candidates' | 'companies' | 'newJobs';
 }
 
 const NAV_TABS: NavTab[] = [
   { href: '/', label: 'Command Center' },
   { href: '/candidates', label: 'Talent Pool', countKey: 'candidates' },
   { href: '/companies', label: 'Companies', countKey: 'companies' },
+  { href: '/jobs', label: 'Jobs', countKey: 'newJobs' },
   { href: '/settings', label: 'Settings' },
 ];
 
@@ -27,9 +28,10 @@ export default function ConsoleLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [counts, setCounts] = useState<{ candidates: number; companies: number }>({
+  const [counts, setCounts] = useState<{ candidates: number; companies: number; newJobs: number }>({
     candidates: 0,
     companies: 0,
+    newJobs: 0,
   });
 
   // Fetch counts for nav badges
@@ -41,6 +43,10 @@ export default function ConsoleLayout({
     fetch('/api/submission-companies')
       .then(r => r.json())
       .then(data => setCounts(prev => ({ ...prev, companies: data.companies?.length ?? 0 })))
+      .catch(() => {});
+    fetch('/api/jobs/count')
+      .then(r => r.json())
+      .then(data => setCounts(prev => ({ ...prev, newJobs: data.new_count ?? 0 })))
       .catch(() => {});
   }, []);
 
@@ -86,9 +92,11 @@ export default function ConsoleLayout({
                     {tab.label}
                     {tab.countKey && counts[tab.countKey] > 0 && (
                       <span className={`ml-1.5 text-[10px] px-1.5 py-px rounded-lg ${
-                        isActive
-                          ? 'bg-[var(--border-hover)] text-[var(--text-primary)]'
-                          : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
+                        tab.countKey === 'newJobs'
+                          ? 'bg-[var(--primary)] text-white'
+                          : isActive
+                            ? 'bg-[var(--border-hover)] text-[var(--text-primary)]'
+                            : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
                       }`}>
                         {counts[tab.countKey]}
                       </span>
@@ -139,7 +147,11 @@ export default function ConsoleLayout({
                 >
                   {tab.label}
                   {tab.countKey && counts[tab.countKey] > 0 && (
-                    <span className="ml-2 text-[10px] bg-[var(--bg-surface-3)] px-1.5 py-px rounded-md text-[var(--text-tertiary)]">
+                    <span className={`ml-2 text-[10px] px-1.5 py-px rounded-md ${
+                      tab.countKey === 'newJobs'
+                        ? 'bg-[var(--primary)] text-white'
+                        : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
+                    }`}>
                       {counts[tab.countKey]}
                     </span>
                   )}

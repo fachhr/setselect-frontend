@@ -32,6 +32,7 @@ interface DashboardResponse {
     active_submissions_count: number;
     active_submissions_companies: number;
   };
+  new_jobs_count: number;
 }
 
 const TERMINAL_STATUSES: RecruiterStatus[] = ['placed', 'rejected'];
@@ -44,7 +45,7 @@ function daysSince(dateStr: string): number {
 export async function GET() {
   try {
     // Parallel queries for all dashboard data
-    const [candidatesResult, submissionsResult] = await Promise.all([
+    const [candidatesResult, submissionsResult, newJobsResult] = await Promise.all([
       supabaseAdmin
         .from('recruiter_candidates')
         .select(`
@@ -72,6 +73,11 @@ export async function GET() {
             contact_last_name
           )
         `),
+      supabaseAdmin
+        .from('job_listings')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'new')
+        .is('removed_at', null),
     ]);
 
     if (candidatesResult.error) {
@@ -204,6 +210,7 @@ export async function GET() {
         active_submissions_count: activeSubmissions.length,
         active_submissions_companies: activeCompanies.size,
       },
+      new_jobs_count: newJobsResult.count ?? 0,
     };
 
     return NextResponse.json(response);

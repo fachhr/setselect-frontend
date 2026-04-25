@@ -35,6 +35,7 @@ interface DashboardData {
     active_submissions_count: number;
     active_submissions_companies: number;
   };
+  new_jobs_count: number;
 }
 
 // --- Pipeline Stage Config ---
@@ -142,7 +143,7 @@ export default function CommandCenterPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   // Build "Needs Attention" items
-  const attentionItems: { id: string; severity: 'critical' | 'warning' | 'info'; label: string; name: string; detail: string; profileId: string }[] = [];
+  const attentionItems: { id: string; severity: 'critical' | 'warning' | 'info'; label: string; name: string; detail: string; profileId: string; href?: string }[] = [];
 
   if (data) {
     for (const c of data.stale_candidates) {
@@ -173,6 +174,17 @@ export default function CommandCenterPage() {
         name: `${data.unreviewed_new.length} new candidate${data.unreviewed_new.length > 1 ? 's' : ''} unreviewed`,
         detail: data.unreviewed_new.map(c => c.name).join(', '),
         profileId: data.unreviewed_new[0].profile_id,
+      });
+    }
+    if (data.new_jobs_count > 0) {
+      attentionItems.push({
+        id: 'new-jobs',
+        severity: 'info',
+        label: 'NEW JOBS',
+        name: `${data.new_jobs_count} new job listing${data.new_jobs_count > 1 ? 's' : ''} detected`,
+        detail: 'Review new openings from watched career pages',
+        profileId: '',
+        href: '/jobs?status=new',
       });
     }
   }
@@ -273,7 +285,7 @@ export default function CommandCenterPage() {
                 {visibleAttentionItems.map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => router.push(`/candidates?highlight=${item.profileId}`)}
+                    onClick={() => router.push(item.href || `/candidates?highlight=${item.profileId}`)}
                     className="w-full text-left p-2.5 rounded-r-md bg-[var(--bg-surface-2)] transition-colors hover:bg-[var(--bg-surface-hover)] cursor-pointer"
                     style={{ borderLeft: `3px solid ${severityColor[item.severity]}` }}
                   >
