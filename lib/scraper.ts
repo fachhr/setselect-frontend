@@ -368,10 +368,23 @@ export async function enrichNewJobDescriptions(
     if (Date.now() - start > timeBudgetMs) break;
 
     try {
-      const markdown =
-        resolvedMode === 'jina'
-          ? await jinaFetch(job.url)
-          : await directFetch(job.url);
+      let markdown: string | null = null;
+
+      if (resolvedMode !== 'jina') {
+        try {
+          markdown = await directFetch(job.url);
+        } catch {
+          // Direct failed — will try Jina below
+        }
+      }
+
+      if (!markdown || markdown.length < 500) {
+        try {
+          markdown = await jinaFetch(job.url);
+        } catch {
+          if (!markdown) continue;
+        }
+      }
 
       const client = getAnthropicClient();
       const response = await client.messages.create({
