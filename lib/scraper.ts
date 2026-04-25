@@ -443,7 +443,7 @@ export async function scrapeAllSources(): Promise<ScrapeResult[]> {
 
     // Description enrichment with remaining time
     const remaining = MAX_SCRAPE_DURATION_MS - (Date.now() - start);
-    if (remaining > 5_000 && result.new_listings > 0) {
+    if (remaining > 5_000) {
       await enrichNewJobDescriptions(source.id, source.fetch_mode, Math.min(remaining - 3_000, 10_000));
     }
 

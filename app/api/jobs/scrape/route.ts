@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
-import { scrapeSource, scrapeAllSources } from '@/lib/scraper';
+import { scrapeSource, scrapeAllSources, enrichNewJobDescriptions } from '@/lib/scraper';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { JobSource } from '@/types/recruiter';
 
@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await scrapeSource(data as JobSource);
+    await enrichNewJobDescriptions(data.id, data.fetch_mode, 30_000);
     return NextResponse.json({ results: [result] });
   }
 
