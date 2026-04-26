@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
   // Pagination
   const from = (page - 1) * limit;
   query = query
+    .order('date_posted', { ascending: false, nullsFirst: false })
     .order('first_seen_at', { ascending: false })
     .range(from, from + limit - 1);
 
