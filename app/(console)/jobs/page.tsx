@@ -230,23 +230,14 @@ export default function JobsPage() {
             <div className="relative w-full sm:w-[200px]">
               <Search
                 size={14}
-                style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]"
               />
               <input
                 type="text"
                 placeholder="Search jobs..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full"
-                style={{
-                  padding: '6px 12px 6px 30px',
-                  fontSize: '11px',
-                  background: 'var(--bg-surface-2)',
-                  border: '1px solid var(--border-strong)',
-                  borderRadius: '6px',
-                  color: 'var(--text-primary)',
-                  outline: 'none',
-                }}
+                className="input-base w-full pl-[30px] pr-3 py-1.5 text-[11px] rounded-md"
               />
             </div>
 
@@ -257,12 +248,11 @@ export default function JobsPage() {
                   key={opt.value}
                   onClick={() => toggleFilter(statusFilter, opt.value, setStatusFilter)}
                   aria-pressed={statusFilter.includes(opt.value)}
-                  className={`font-medium rounded-md border transition-colors cursor-pointer ${
+                  className={`px-2.5 py-[5px] text-[10px] font-medium rounded-md border transition-colors cursor-pointer ${
                     statusFilter.includes(opt.value)
                       ? 'bg-[var(--primary)] text-white border-transparent'
                       : 'bg-[var(--bg-surface-2)] text-[var(--text-muted)] border-[var(--border-subtle)] hover:text-[var(--text-tertiary)]'
                   }`}
-                  style={{ padding: '5px 10px', fontSize: '10px' }}
                 >
                   {opt.label}
                 </button>
@@ -279,12 +269,11 @@ export default function JobsPage() {
                   key={opt.value}
                   onClick={() => toggleFilter(seniorityFilter, opt.value, setSeniorityFilter)}
                   aria-pressed={seniorityFilter.includes(opt.value)}
-                  className={`font-medium rounded-md border transition-colors cursor-pointer ${
+                  className={`px-2.5 py-[5px] text-[10px] font-medium rounded-md border transition-colors cursor-pointer ${
                     seniorityFilter.includes(opt.value)
                       ? 'bg-[var(--primary)] text-white border-transparent'
                       : 'bg-[var(--bg-surface-2)] text-[var(--text-muted)] border-[var(--border-subtle)] hover:text-[var(--text-tertiary)]'
                   }`}
-                  style={{ padding: '5px 10px', fontSize: '10px' }}
                 >
                   {opt.label}
                 </button>
@@ -297,17 +286,7 @@ export default function JobsPage() {
                 <select
                   value={sourceFilter}
                   onChange={(e) => setSourceFilter(e.target.value)}
-                  style={{
-                    appearance: 'none',
-                    padding: '6px 28px 6px 12px',
-                    fontSize: '11px',
-                    background: 'var(--bg-surface-2)',
-                    border: '1px solid var(--border-strong)',
-                    borderRadius: '6px',
-                    color: 'var(--text-primary)',
-                    cursor: 'pointer',
-                    outline: 'none',
-                  }}
+                  className="input-base appearance-none pl-3 pr-7 py-1.5 text-[11px] rounded-md cursor-pointer"
                 >
                   <option value="">All companies</option>
                   {sources.map((s) => (
@@ -324,15 +303,11 @@ export default function JobsPage() {
             {/* Include closed toggle */}
             <button
               onClick={() => setIncludeRemoved(!includeRemoved)}
-              className="flex items-center gap-1.5 font-medium rounded-md cursor-pointer transition-colors"
-              style={{
-                padding: '5px 12px',
-                fontSize: '11px',
-                borderRadius: '6px',
-                border: '1px solid var(--border-strong)',
-                background: includeRemoved ? 'var(--bg-surface-3)' : 'var(--bg-surface-2)',
-                color: includeRemoved ? 'var(--text-secondary)' : 'var(--text-tertiary)',
-              }}
+              className={`flex items-center gap-1.5 font-medium px-3 py-[5px] text-[11px] rounded-md border border-[var(--border-strong)] cursor-pointer transition-colors ${
+                includeRemoved
+                  ? 'bg-[var(--bg-surface-3)] text-[var(--text-secondary)]'
+                  : 'bg-[var(--bg-surface-2)] text-[var(--text-tertiary)]'
+              }`}
             >
               <Eye size={12} />
               Closed roles
@@ -387,26 +362,26 @@ export default function JobsPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] disabled:opacity-50 cursor-pointer px-2 py-1"
+                className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
               >
-                ‹ Prev
+                Previous
               </button>
-              <span className="text-xs text-[var(--text-tertiary)]">
+              <span className="px-2 py-1 text-xs text-[var(--text-muted)]">
                 {page} / {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] disabled:opacity-50 cursor-pointer px-2 py-1"
+                className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
               >
-                Next ›
+                Next
               </button>
             </div>
           )}
 
           {/* Stats footer */}
           {stats && (
-            <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)] pt-1">
+            <div className="flex items-center justify-between text-xs text-[var(--text-muted)] border-t border-[var(--border-subtle)] pt-2.5 mt-1">
               <span>
                 {stats.total} total · {stats.new_count} new · {stats.pursuing_count} pursuing · {stats.sources_count} source(s)
               </span>

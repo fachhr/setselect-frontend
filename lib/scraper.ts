@@ -21,6 +21,8 @@ function isValidDatePosted(dateStr: string | null | undefined): string | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null;
   const parsed = new Date(dateStr + 'T00:00:00Z');
   if (isNaN(parsed.getTime())) return null;
+  // Reject dates that silently roll over (e.g. Feb 30 → Mar 2)
+  if (parsed.toISOString().slice(0, 10) !== dateStr) return null;
   const now = new Date();
   const oneYearAgo = new Date(now);
   oneYearAgo.setFullYear(now.getFullYear() - 1);

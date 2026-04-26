@@ -176,6 +176,7 @@ export interface JobListing {
   description: string | null;
   seniority: JobSeniority | null;
   status: JobListingStatus;
+  date_posted: string | null;
   first_seen_at: string;
   last_seen_at: string;
   removed_at: string | null;

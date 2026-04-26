@@ -48,7 +48,7 @@ const STATUS_ACTIONS: { status: JobListingStatus; label: string }[] = [
 
 export function JobCard({ listing, onStatusChange }: JobCardProps) {
   const [descExpanded, setDescExpanded] = useState(false);
-  const urgency = urgencyLabel(listing.first_seen_at);
+  const urgency = urgencyLabel(listing.date_posted || listing.first_seen_at);
   const isRemoved = !!listing.removed_at;
 
   const borderColor = listing.status === 'new'
@@ -141,10 +141,10 @@ export function JobCard({ listing, onStatusChange }: JobCardProps) {
             key={action.status}
             onClick={() => onStatusChange(listing.id, action.status)}
             disabled={listing.status === action.status}
-            className={`text-xs px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+            className={`text-xs px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${
               listing.status === action.status
-                ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] font-medium'
-                : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]'
+                ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] font-medium border-[var(--border-strong)]'
+                : 'text-[var(--text-muted)] border-[var(--border-subtle)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] hover:border-[var(--border-strong)]'
             }`}
           >
             {action.label}

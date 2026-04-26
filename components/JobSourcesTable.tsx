@@ -170,7 +170,7 @@ export function JobSourcesTable({
 
   function CountryChips({ countries, onToggle }: { countries: string[]; onToggle?: (country: string) => void }) {
     return (
-      <div className="flex items-center gap-1 flex-wrap">
+      <>
         {countries.map((c) => (
           <span
             key={c}
@@ -188,7 +188,7 @@ export function JobSourcesTable({
             )}
           </span>
         ))}
-      </div>
+      </>
     );
   }
 
@@ -200,36 +200,36 @@ export function JobSourcesTable({
     const available = TARGET_COUNTRY_OPTIONS.filter((c) => !currentCountries.includes(c));
     if (available.length === 0) return null;
 
-    return (
-      <div className="flex items-center gap-1 flex-wrap mt-1">
-        {editingCountries === sourceId ? (
-          <>
-            {available.map((c) => (
-              <button
-                key={c}
-                onClick={() => onToggle(c)}
-                className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-[var(--bg-surface-2)] text-[var(--text-muted)] border border-dashed border-[var(--border-subtle)] hover:border-[var(--primary)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer"
-              >
-                + {c}
-              </button>
-            ))}
+    if (editingCountries === sourceId) {
+      return (
+        <>
+          {available.map((c) => (
             <button
-              onClick={() => setEditingCountries(null)}
-              className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer ml-1"
+              key={c}
+              onClick={() => onToggle(c)}
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-[var(--bg-surface-2)] text-[var(--text-muted)] border border-dashed border-[var(--border-subtle)] hover:border-[var(--primary)] hover:text-[var(--text-secondary)] transition-colors cursor-pointer"
             >
-              done
+              + {c}
             </button>
-          </>
-        ) : (
+          ))}
           <button
-            onClick={() => setEditingCountries(sourceId)}
-            className="p-0.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
-            title="Add country"
+            onClick={() => setEditingCountries(null)}
+            className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text-secondary)] cursor-pointer ml-1"
           >
-            <Plus className="w-3 h-3" />
+            done
           </button>
-        )}
-      </div>
+        </>
+      );
+    }
+
+    return (
+      <button
+        onClick={() => setEditingCountries(sourceId)}
+        className="p-0.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
+        title="Add country"
+      >
+        <Plus className="w-3 h-3" />
+      </button>
     );
   }
 
@@ -270,7 +270,7 @@ export function JobSourcesTable({
                     </div>
 
                     {/* Country chips */}
-                    <div className="flex items-center gap-1.5 mt-1.5">
+                    <div className="flex items-center gap-1 flex-wrap mt-1.5">
                       <CountryChips
                         countries={source.target_countries || ['Switzerland']}
                         onToggle={(c) => handleCountryToggle(source, c)}
@@ -346,14 +346,14 @@ export function JobSourcesTable({
             placeholder="Company name"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="input-base flex-1 text-xs"
+            className="input-base flex-1 px-3 py-2 rounded-md text-xs"
           />
           <input
             type="url"
             placeholder="https://example.com/careers"
             value={careerUrl}
             onChange={(e) => setCareerUrl(e.target.value)}
-            className="input-base flex-[2] text-xs"
+            className="input-base flex-[2] px-3 py-2 rounded-md text-xs"
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
           />
           <button

@@ -42,7 +42,7 @@ export const TARGET_COUNTRY_OPTIONS = [
   'United Kingdom',
 ] as const;
 
-export const DEFAULT_TARGET_COUNTRIES = ['Switzerland', 'Bulgaria', 'United Kingdom'] as const;
+export const DEFAULT_TARGET_COUNTRIES = ['Switzerland'] as const;
 
 export const JOB_STATUS_OPTIONS = [
   { value: 'new', label: 'New' },
