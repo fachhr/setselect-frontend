@@ -1,60 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
-import { scrapeSource, scrapeAllSources, enrichNewJobDescriptions } from '@/lib/scraper';
-import { supabaseAdmin } from '@/lib/supabase';
-import type { JobSource } from '@/types/recruiter';
 
-export const maxDuration = 120;
+export const maxDuration = 300;
 
-function isCronAuth(request: NextRequest): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return false;
-  return request.headers.get('authorization') === `Bearer ${secret}`;
-}
-
-// GET: Vercel Cron entry point (cron sends GET requests)
-export async function GET(request: NextRequest) {
-  if (!isCronAuth(request)) {
+export async function POST(request: NextRequest) {
+  const token = await getSessionToken();
+  if (!token || !(await validateSessionToken(token))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const results = await scrapeAllSources();
-  return NextResponse.json({ results });
-}
-
-// POST: Manual trigger from console UI or single-source test scrape
-export async function POST(request: NextRequest) {
-  if (!isCronAuth(request)) {
-    const token = await getSessionToken();
-    if (!token || !(await validateSessionToken(token))) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  const scraperUrl = process.env.SCRAPER_URL;
+  const scraperSecret = process.env.SCRAPER_SECRET;
+  if (!scraperUrl || !scraperSecret) {
+    return NextResponse.json({ error: 'Scraper not configured' }, { status: 500 });
   }
 
-  let sourceId: string | null = null;
+  let body: string | undefined;
   try {
-    const body = await request.json();
-    sourceId = body.source_id || null;
+    body = JSON.stringify(await request.json());
   } catch {
     // No body — scrape all
   }
 
-  if (sourceId) {
-    const { data, error } = await supabaseAdmin
-      .from('job_sources')
-      .select('*')
-      .eq('id', sourceId)
-      .single();
+  const res = await fetch(`${scraperUrl}/scrape`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${scraperSecret}`,
+    },
+    body,
+  });
 
-    if (error || !data) {
-      return NextResponse.json({ error: 'Source not found' }, { status: 404 });
-    }
-
-    const result = await scrapeSource(data as JobSource);
-    await enrichNewJobDescriptions(data.id, data.fetch_mode, 30_000);
-    return NextResponse.json({ results: [result] });
-  }
-
-  const results = await scrapeAllSources();
-  return NextResponse.json({ results });
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
 }
