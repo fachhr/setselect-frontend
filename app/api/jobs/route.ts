@@ -73,8 +73,15 @@ export async function GET(request: NextRequest) {
     return { ...rest, company_name: source?.company_name ?? '' };
   });
 
-  // Stats
-  const [newCountResult, pursuingCountResult, sourcesCountResult] = await Promise.all([
+  // Stats — counts must NOT reflect the active filters; they describe the
+  // dataset as a whole. Pagination, on the other hand, uses the filtered count.
+  const totalQuery = supabaseAdmin
+    .from('job_listings')
+    .select('id', { count: 'exact', head: true });
+  if (!includeRemoved) totalQuery.is('removed_at', null);
+
+  const [totalResult, newCountResult, pursuingCountResult, sourcesCountResult] = await Promise.all([
+    totalQuery,
     supabaseAdmin
       .from('job_listings')
       .select('id', { count: 'exact', head: true })
@@ -98,12 +105,12 @@ export async function GET(request: NextRequest) {
     .limit(1)
     .maybeSingle();
 
-  const total = count ?? 0;
+  const filteredCount = count ?? 0;
 
   return NextResponse.json({
     listings,
     stats: {
-      total,
+      total: totalResult.count ?? 0,
       new_count: newCountResult.count ?? 0,
       pursuing_count: pursuingCountResult.count ?? 0,
       sources_count: sourcesCountResult.count ?? 0,
@@ -112,8 +119,8 @@ export async function GET(request: NextRequest) {
     pagination: {
       page,
       limit,
-      total,
-      totalPages: Math.ceil(total / limit),
+      total: filteredCount,
+      totalPages: Math.ceil(filteredCount / limit),
     },
   });
 }
