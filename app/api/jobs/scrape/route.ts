@@ -14,6 +14,12 @@ export async function POST(request: NextRequest) {
   if (!scraperUrl || !scraperSecret) {
     return NextResponse.json({ error: 'Scraper not configured' }, { status: 500 });
   }
+  if (!/^https?:\/\//.test(scraperUrl)) {
+    return NextResponse.json(
+      { error: `SCRAPER_URL must include protocol (got "${scraperUrl}")` },
+      { status: 500 },
+    );
+  }
 
   let body: string | undefined;
   try {
@@ -22,15 +28,34 @@ export async function POST(request: NextRequest) {
     // No body — scrape all
   }
 
-  const res = await fetch(`${scraperUrl}/scrape`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${scraperSecret}`,
-    },
-    body,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${scraperUrl}/scrape`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${scraperSecret}`,
+      },
+      body,
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json(
+      { error: `Scraper unreachable: ${msg}` },
+      { status: 502 },
+    );
+  }
 
-  const data = await res.json();
+  let data: unknown;
+  try {
+    data = await res.json();
+  } catch {
+    const text = await res.text().catch(() => '');
+    return NextResponse.json(
+      { error: `Scraper returned non-JSON (status ${res.status})`, body: text.slice(0, 500) },
+      { status: 502 },
+    );
+  }
+
   return NextResponse.json(data, { status: res.status });
 }
