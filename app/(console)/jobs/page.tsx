@@ -193,9 +193,11 @@ export default function JobsPage() {
               }`}
             >
               {v === 'listings' ? 'Job Listings' : 'Watched Sites'}
-              {v === 'listings' && stats && stats.new_count > 0 && (
-                <span className="ml-1.5 text-[10px] px-1.5 py-px rounded-lg bg-[var(--primary)] text-white">
-                  {stats.new_count}
+              {/* Tab badges = inventory size (matches design convention). Attention
+                  signals for untriaged jobs live on the "New" filter pill instead. */}
+              {v === 'listings' && stats && (
+                <span className="ml-1.5 text-[10px] px-1.5 py-px rounded-lg bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]">
+                  {stats.total}
                 </span>
               )}
               {v === 'sources' && (
