@@ -53,14 +53,13 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Pagination + ordering. Sort by when WE first saw the job (so newly
-  // discovered jobs always bubble to the top, even when the upstream API
-  // doesn't expose a post date — e.g. SmartRecruiters' "spontaneous
-  // application" catch-all entries). Then by date_posted as tiebreaker.
+  // Pagination + ordering. Strict by-date: most recently posted first.
+  // Jobs without an upstream post date (NULL) go last — the display layer
+  // surfaces "no post date" honestly so the user isn't surprised.
   const from = (page - 1) * limit;
   query = query
-    .order('first_seen_at', { ascending: false })
     .order('date_posted', { ascending: false, nullsFirst: false })
+    .order('first_seen_at', { ascending: false })
     .range(from, from + limit - 1);
 
   const { data, error, count } = await query;
