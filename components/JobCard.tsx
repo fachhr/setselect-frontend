@@ -27,17 +27,40 @@ interface JobCardProps {
   onStatusChange: (id: string, status: JobListingStatus) => void;
 }
 
-function urgencyLabel(firstSeenAt: string): { text: string; detail: string; className: string } {
-  const date = new Date(firstSeenAt);
-  const days = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
-  const shortDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+// Two distinct facts: when the company posted the role (date_posted, can be
+// NULL if upstream doesn't expose it) and when we first saw it
+// (first_seen_at, always set). Don't conflate — that produces lies like
+// "JUST POSTED today" for an undated perpetual entry we just happened to
+// discover today.
+function urgencyLabel(
+  datePosted: string | null,
+  firstSeenAt: string,
+): { text: string; detail: string; className: string } {
+  if (datePosted) {
+    const date = new Date(datePosted);
+    const days = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+    const shortDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    if (days <= 0) return { text: 'JUST POSTED', detail: 'today', className: 'text-[var(--success)]' };
+    if (days === 1) return { text: 'JUST POSTED', detail: 'yesterday', className: 'text-[var(--success)]' };
+    if (days === 2) return { text: 'JUST POSTED', detail: '2d ago', className: 'text-[var(--success)]' };
+    if (days < 14) return { text: `${days}d ago`, detail: shortDate, className: 'text-[var(--text-muted)]' };
+    const weeks = Math.floor(days / 7);
+    return { text: `${weeks}w+`, detail: shortDate, className: 'text-[var(--text-muted)] opacity-60' };
+  }
 
-  if (days === 0) return { text: 'JUST POSTED', detail: 'today', className: 'text-[var(--success)]' };
-  if (days === 1) return { text: 'JUST POSTED', detail: 'yesterday', className: 'text-[var(--success)]' };
-  if (days === 2) return { text: 'JUST POSTED', detail: '2d ago', className: 'text-[var(--success)]' };
-  if (days < 14) return { text: `${days}d ago`, detail: shortDate, className: 'text-[var(--text-muted)]' };
-  const weeks = Math.floor(days / 7);
-  return { text: `${weeks}w+`, detail: shortDate, className: 'text-[var(--text-muted)] opacity-60' };
+  // Upstream gave us no post date. Show discovery-time instead, clearly
+  // labelled so it's not mistaken for a post date.
+  const seen = new Date(firstSeenAt);
+  const seenDays = Math.floor((Date.now() - seen.getTime()) / (1000 * 60 * 60 * 24));
+  const seenShort = seen.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const detail = seenDays <= 0
+    ? 'today'
+    : seenDays === 1
+      ? 'yesterday'
+      : seenDays < 14
+        ? `${seenDays}d ago`
+        : seenShort;
+  return { text: 'NO POST DATE', detail: `seen ${detail}`, className: 'text-[var(--text-muted)] opacity-60' };
 }
 
 const STATUS_ACTIONS: { status: JobListingStatus; label: string }[] = [
@@ -48,7 +71,7 @@ const STATUS_ACTIONS: { status: JobListingStatus; label: string }[] = [
 
 export function JobCard({ listing, onStatusChange }: JobCardProps) {
   const [descExpanded, setDescExpanded] = useState(false);
-  const urgency = urgencyLabel(listing.date_posted || listing.first_seen_at);
+  const urgency = urgencyLabel(listing.date_posted, listing.first_seen_at);
   const isRemoved = !!listing.removed_at;
 
   const borderColor = listing.status === 'new'
