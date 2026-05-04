@@ -9,14 +9,14 @@ import { ToastContainer } from '@/components/ui/Toast';
 interface NavTab {
   href: string;
   label: string;
-  countKey?: 'candidates' | 'companies' | 'newJobs';
+  countKey?: 'candidates' | 'companies' | 'jobs';
 }
 
 const NAV_TABS: NavTab[] = [
   { href: '/', label: 'Command Center' },
   { href: '/candidates', label: 'Talent Pool', countKey: 'candidates' },
   { href: '/companies', label: 'Companies', countKey: 'companies' },
-  { href: '/jobs', label: 'Jobs', countKey: 'newJobs' },
+  { href: '/jobs', label: 'Jobs', countKey: 'jobs' },
   { href: '/settings', label: 'Settings' },
 ];
 
@@ -28,13 +28,15 @@ export default function ConsoleLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [counts, setCounts] = useState<{ candidates: number; companies: number; newJobs: number }>({
+  const [counts, setCounts] = useState<{ candidates: number; companies: number; jobs: number }>({
     candidates: 0,
     companies: 0,
-    newJobs: 0,
+    jobs: 0,
   });
 
-  // Fetch counts for nav badges
+  // Nav badges = inventory size, consistent across tabs. Untriaged-attention
+  // signals live on the page itself (status pills, stats line) — not at the
+  // nav level where they'd compete with totals from sibling tabs.
   useEffect(() => {
     fetch('/api/candidates?limit=0&page=1')
       .then(r => r.json())
@@ -46,7 +48,7 @@ export default function ConsoleLayout({
       .catch(() => {});
     fetch('/api/jobs/count')
       .then(r => r.json())
-      .then(data => setCounts(prev => ({ ...prev, newJobs: data.new_count ?? 0 })))
+      .then(data => setCounts(prev => ({ ...prev, jobs: data.total ?? 0 })))
       .catch(() => {});
   }, []);
 
@@ -92,11 +94,9 @@ export default function ConsoleLayout({
                     {tab.label}
                     {tab.countKey && counts[tab.countKey] > 0 && (
                       <span className={`ml-1.5 text-[10px] px-1.5 py-px rounded-lg ${
-                        tab.countKey === 'newJobs'
-                          ? 'bg-[var(--primary)] text-white'
-                          : isActive
-                            ? 'bg-[var(--border-hover)] text-[var(--text-primary)]'
-                            : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
+                        isActive
+                          ? 'bg-[var(--border-hover)] text-[var(--text-primary)]'
+                          : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
                       }`}>
                         {counts[tab.countKey]}
                       </span>
@@ -147,11 +147,7 @@ export default function ConsoleLayout({
                 >
                   {tab.label}
                   {tab.countKey && counts[tab.countKey] > 0 && (
-                    <span className={`ml-2 text-[10px] px-1.5 py-px rounded-md ${
-                      tab.countKey === 'newJobs'
-                        ? 'bg-[var(--primary)] text-white'
-                        : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
-                    }`}>
+                    <span className="ml-2 text-[10px] px-1.5 py-px rounded-md bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]">
                       {counts[tab.countKey]}
                     </span>
                   )}
