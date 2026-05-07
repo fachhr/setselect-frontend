@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, ArrowRight, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { NotificationBell } from '@/components/NotificationBell';
 import { useState } from 'react';
 import { useZenMode } from '@/contexts/ZenModeContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -51,7 +50,6 @@ export function Navigation() {
                 >
                   Talent Pool
                 </Link>
-                <NotificationBell />
                 <div className="h-4 w-px bg-[var(--border-strong)]"></div>
                 <Button variant="outline" icon={LogOut} onClick={signOut}>
                   Logout
