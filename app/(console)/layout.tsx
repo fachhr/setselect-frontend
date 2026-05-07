@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Layers, LogOut, Menu, X } from 'lucide-react';
 import { ToastContainer } from '@/components/ui/Toast';
+import { NotificationBell } from '@/components/NotificationBell';
 
 interface NavTab {
   href: string;
@@ -107,8 +108,9 @@ export default function ConsoleLayout({
             </nav>
           </div>
 
-          {/* Right side: sign out + mobile menu */}
+          {/* Right side: notifications + sign out + mobile menu */}
           <div className="flex items-center gap-3">
+            <NotificationBell />
             <button
               onClick={handleSignOut}
               className="hidden md:flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-tertiary)] transition-colors cursor-pointer px-2 py-1.5 rounded-md hover:bg-[var(--bg-surface-2)]"
