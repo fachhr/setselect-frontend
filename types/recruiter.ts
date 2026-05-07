@@ -162,6 +162,8 @@ export interface JobSource {
   is_active: boolean;
   last_scraped_at: string | null;
   last_error: string | null;
+  coverage_status: 'tracked' | 'limited_support';
+  coverage_note: string | null;
   created_at: string;
 }
 

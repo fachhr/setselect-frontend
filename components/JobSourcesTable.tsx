@@ -250,13 +250,22 @@ export function JobSourcesTable({
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-medium text-[var(--text-primary)]">
                         {source.company_name}
                       </span>
                       {source.fetch_mode !== 'auto' && (
                         <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-[var(--bg-surface-3)] text-[var(--text-tertiary)] border border-[var(--border-subtle)]">
                           {source.fetch_mode}
+                        </span>
+                      )}
+                      {source.coverage_status === 'limited_support' && (
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-[var(--status-follow-up-dim,rgba(202,138,4,0.12))] text-[var(--status-follow-up,#ca8a04)] border border-[var(--status-follow-up,#ca8a04)]/30"
+                          title={source.coverage_note ?? 'Scraping for this site is incomplete'}
+                        >
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          Limited support
                         </span>
                       )}
                       {!source.is_active && (
@@ -268,6 +277,11 @@ export function JobSourcesTable({
                     <div className="text-[11px] text-[var(--text-tertiary)] mt-0.5 truncate">
                       {source.career_url}
                     </div>
+                    {source.coverage_status === 'limited_support' && source.coverage_note && (
+                      <p className="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">
+                        {source.coverage_note}
+                      </p>
+                    )}
 
                     {/* Country chips */}
                     <div className="flex items-center gap-1 flex-wrap mt-1.5">
