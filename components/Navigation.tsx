@@ -51,6 +51,12 @@ export function Navigation() {
                 >
                   Talent Pool
                 </Link>
+                <Link
+                  href="/sources"
+                  className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  Sources
+                </Link>
                 <NotificationBell />
                 <div className="h-4 w-px bg-[var(--border-strong)]"></div>
                 <Button variant="outline" icon={LogOut} onClick={signOut}>
@@ -103,6 +109,13 @@ export function Navigation() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Talent Pool
+              </Link>
+              <Link
+                href="/sources"
+                className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Sources
               </Link>
               <div className="border-t border-[var(--border-subtle)] pt-4 mt-2">
                 <Button variant="outline" icon={LogOut} className="w-full" onClick={() => { signOut(); setIsMobileMenuOpen(false); }}>
