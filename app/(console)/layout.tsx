@@ -85,12 +85,11 @@ export default function ConsoleLayout({
                   <Link
                     key={tab.href}
                     href={tab.href}
-                    className={`px-5 py-2.5 text-xs font-medium rounded-md transition-colors ${
+                    className={`px-5 py-2.5 text-xs font-medium rounded-md transition-colors tracking-[0.3px] ${
                       isActive
                         ? 'text-[var(--text-primary)] bg-[var(--bg-surface-3)]'
                         : 'text-[var(--text-muted)] hover:text-[var(--text-tertiary)] hover:bg-[var(--bg-surface-2)]'
                     }`}
-                    style={{ letterSpacing: '0.3px' }}
                   >
                     {tab.label}
                     {tab.countKey && counts[tab.countKey] > 0 && (

@@ -5,6 +5,8 @@ import { Plus, RefreshCw, Copy, Check, Building2, AlertCircle } from 'lucide-rea
 import { InviteCompanyDialog } from '@/components/InviteCompanyDialog';
 import { CompanyPipelineCard } from '@/components/CompanyPipelineCard';
 import type { CompanyPipelineData } from '@/components/CompanyPipelineCard';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { formatEntryDate } from '@/lib/helpers';
 import type { CompanyAccount } from '@/types/recruiter';
 
@@ -17,7 +19,6 @@ export default function CompaniesPage() {
   const [pipelineData, setPipelineData] = useState<CompanyPipelineData[]>([]);
   const [pipelineLoading, setPipelineLoading] = useState(true);
 
-  // Regenerate link state per company
   const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
   const [regeneratedLink, setRegeneratedLink] = useState<{ id: string; link: string } | null>(null);
   const [regenerateError, setRegenerateError] = useState<string | null>(null);
@@ -48,23 +49,21 @@ export default function CompaniesPage() {
     fetchCompanies();
   }, [fetchCompanies]);
 
-  // Fetch pipeline data
   useEffect(() => {
     setPipelineLoading(true);
     fetch('/api/companies/pipeline')
       .then(res => res.json())
       .then(data => setPipelineData(data.companies ?? []))
-      .catch(() => {/* non-blocking */})
+      .catch(() => {})
       .finally(() => setPipelineLoading(false));
   }, []);
 
-  // Cleanup copy timer on unmount
   useEffect(() => {
     return () => clearTimeout(copyTimerRef.current);
   }, []);
 
   const handleRegenerate = async (company: CompanyAccount) => {
-    if (regeneratingId) return; // Prevent double-click
+    if (regeneratingId) return;
     setRegeneratingId(company.id);
     setRegeneratedLink(null);
     setRegenerateError(null);
@@ -104,7 +103,7 @@ export default function CompaniesPage() {
       clearTimeout(copyTimerRef.current);
       copyTimerRef.current = setTimeout(() => setCopiedId(null), 2000);
     } catch {
-      // Clipboard API unavailable (e.g. insecure context); silently ignore
+      // Clipboard API unavailable
     }
   };
 
@@ -117,41 +116,30 @@ export default function CompaniesPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in">
-      {/* Header with view toggle and Invite button */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-        <div style={{ display: 'flex', gap: '2px', background: 'var(--bg-surface-2)', borderRadius: '6px', padding: '3px' }}>
-          <button
-            onClick={() => setCompanyView('board')}
-            style={{
-              padding: '5px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: 'none',
-              background: companyView === 'board' ? 'var(--bg-surface-3)' : 'transparent',
-              color: companyView === 'board' ? 'var(--text-primary)' : 'var(--text-tertiary)',
-            }}
-          >
-            Submissions Pipeline
-          </button>
-          <button
-            onClick={() => setCompanyView('table')}
-            style={{
-              padding: '5px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '4px', cursor: 'pointer', border: 'none',
-              background: companyView === 'table' ? 'var(--bg-surface-3)' : 'transparent',
-              color: companyView === 'table' ? 'var(--text-primary)' : 'var(--text-tertiary)',
-            }}
-          >
-            Portal Access
-          </button>
-        </div>
-        <button
-          onClick={() => setInviteOpen(true)}
-          style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', border: '1px solid var(--border-strong)', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-        >
-          <Plus size={14} />
-          {companyView === 'board' ? 'Add Company' : 'Invite Company'}
-        </button>
-      </div>
+    <div className="space-y-5 animate-in fade-in">
+      <PageHeader
+        title="Companies"
+        actions={
+          <>
+            <SegmentedControl
+              options={[
+                { value: 'board', label: 'Submissions Pipeline' },
+                { value: 'table', label: 'Portal Access' },
+              ]}
+              value={companyView}
+              onChange={setCompanyView}
+            />
+            <button
+              onClick={() => setInviteOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors"
+            >
+              <Plus size={14} />
+              {companyView === 'board' ? 'Add Company' : 'Invite Company'}
+            </button>
+          </>
+        }
+      />
 
-      {/* Pipeline View */}
       {companyView === 'board' && (
         <div className="space-y-3">
           {pipelineLoading ? (
@@ -170,9 +158,8 @@ export default function CompaniesPage() {
         </div>
       )}
 
-      {/* Portal Access View */}
       {companyView === 'table' && fetchError && (
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-[var(--error)]/10 border border-[var(--error)]/20">
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-[var(--error-dim)] border border-[var(--error-border)]">
           <AlertCircle size={16} className="text-[var(--error)] mt-0.5 shrink-0" />
           <div>
             <p className="text-sm text-[var(--error)]">{fetchError}</p>
@@ -186,16 +173,14 @@ export default function CompaniesPage() {
         </div>
       )}
 
-      {/* Regenerate error (portal access view only) */}
       {companyView === 'table' && regenerateError && (
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--error)]/10 border border-[var(--error)]/20">
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--error-dim)] border border-[var(--error-border)]">
           <AlertCircle size={16} className="text-[var(--error)] mt-0.5 shrink-0" />
           <p className="text-sm text-[var(--error)]">{regenerateError}</p>
         </div>
       )}
 
       {companyView === 'table' && !fetchError && companies.length === 0 ? (
-        /* Empty state */
         <div className="glass-panel rounded-lg p-12 text-center">
           <Building2 size={48} className="mx-auto mb-4 text-[var(--text-muted)]" />
           <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">
@@ -206,14 +191,13 @@ export default function CompaniesPage() {
           </p>
           <button
             onClick={() => setInviteOpen(true)}
-            style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: '#fff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium rounded-md bg-[var(--primary)] border border-[var(--primary-hover)] text-white cursor-pointer hover:bg-[var(--primary-hover)] transition-colors"
           >
             <Plus size={16} />
             Invite Company
           </button>
         </div>
       ) : companyView === 'table' && companies.length > 0 ? (
-        /* Company table */
         <div className="glass-panel rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -243,49 +227,45 @@ export default function CompaniesPage() {
                 {companies.map((company) => (
                   <tr
                     key={company.id}
-                    style={{ borderBottom: '1px solid var(--border-strong)' }}
-                    className="hover:bg-[var(--bg-surface-2)] transition-colors duration-150"
+                    className="border-b border-[var(--border-strong)] hover:bg-[var(--bg-surface-2)] transition-colors duration-150"
                   >
-                    <td style={{ padding: '10px 12px', fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>
+                    <td className="px-3 py-2.5 text-xs font-medium text-[var(--text-primary)]">
                       {company.company_name}
                     </td>
-                    <td style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-primary)' }}>
+                    <td className="px-3 py-2.5 text-xs text-[var(--text-primary)]">
                       {company.contact_email}
                     </td>
-                    <td style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-tertiary)' }} className="hidden sm:table-cell">
+                    <td className="px-3 py-2.5 text-xs text-[var(--text-tertiary)] hidden sm:table-cell">
                       {company.invited_by || '—'}
                     </td>
-                    <td style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-tertiary)' }} className="hidden md:table-cell">
+                    <td className="px-3 py-2.5 text-xs text-[var(--text-tertiary)] hidden md:table-cell">
                       {formatEntryDate(company.invited_at)}
                     </td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <span style={{
-                        fontSize: '10px',
-                        fontWeight: 600,
-                        padding: '2px 8px',
-                        borderRadius: '4px',
-                        background: company.last_sign_in_at ? '#064e3b' : '#3d1f0a',
-                        color: company.last_sign_in_at ? '#6ee7b7' : '#fdba74',
-                      }}>
+                    <td className="px-3 py-2.5">
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+                        company.last_sign_in_at
+                          ? 'bg-[var(--badge-success-bg)] text-[var(--badge-success-text)]'
+                          : 'bg-[var(--badge-warning-bg)] text-[var(--badge-warning-text)]'
+                      }`}>
                         {company.last_sign_in_at ? 'Active' : 'Pending'}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 12px' }}>
+                    <td className="px-3 py-2.5">
                       {regeneratedLink?.id === company.id ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div className="flex items-center gap-1.5">
                           <input
                             type="text"
                             value={regeneratedLink.link}
                             readOnly
-                            style={{ width: '160px', padding: '4px 8px', fontSize: '10px', fontFamily: 'monospace', background: 'var(--bg-surface-2)', border: '1px solid var(--border-strong)', borderRadius: '4px', color: 'var(--text-secondary)', outline: 'none' }}
+                            className="w-[160px] px-2 py-1 text-[10px] font-mono bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded text-[var(--text-secondary)] outline-none"
                           />
                           <button
                             onClick={() => handleCopyLink(company.id, regeneratedLink.link)}
-                            style={{ padding: '4px 6px', borderRadius: '4px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)', cursor: 'pointer' }}
+                            className="p-1 rounded bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-primary)] cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors"
                             title="Copy link"
                           >
                             {copiedId === company.id ? (
-                              <Check size={12} style={{ color: 'var(--success)' }} />
+                              <Check size={12} className="text-[var(--success)]" />
                             ) : (
                               <Copy size={12} />
                             )}
@@ -295,7 +275,7 @@ export default function CompaniesPage() {
                         <button
                           onClick={() => handleRegenerate(company)}
                           disabled={regeneratingId === company.id}
-                          style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 10px', fontSize: '11px', borderRadius: '6px', background: 'var(--bg-surface-2)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)', cursor: 'pointer', opacity: regeneratingId === company.id ? 0.5 : 1 }}
+                          className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] rounded-md bg-[var(--bg-surface-2)] border border-[var(--border-strong)] text-[var(--text-primary)] cursor-pointer disabled:opacity-50 hover:bg-[var(--bg-surface-3)] transition-colors"
                           title="Regenerate magic link"
                         >
                           <RefreshCw
@@ -314,7 +294,6 @@ export default function CompaniesPage() {
         </div>
       ) : null}
 
-      {/* Invite dialog */}
       <InviteCompanyDialog
         open={inviteOpen}
         onClose={() => setInviteOpen(false)}

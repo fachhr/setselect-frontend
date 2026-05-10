@@ -51,10 +51,7 @@ function dotColor(entry: ActivityEntry): string {
 
 const deleteBtn = (id: string, onDelete: (id: string) => Promise<void>) => (
   <button onClick={() => onDelete(id)}
-    className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity cursor-pointer p-0.5 ml-auto"
-    style={{ color: 'var(--text-tertiary)' }}
-    onMouseEnter={(e) => { (e.target as HTMLElement).style.color = 'var(--error)'; }}
-    onMouseLeave={(e) => { (e.target as HTMLElement).style.color = 'var(--text-tertiary)'; }}
+    className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity cursor-pointer p-0.5 ml-auto text-[var(--text-tertiary)] hover:text-[var(--error)]"
     aria-label="Delete entry">
     <Trash2 size={11} />
   </button>
@@ -66,14 +63,13 @@ function renderEntry(
 ) {
   const date = formatEntryDate(entry.created_at, true);
   const author = entry.author;
-  const metaStyle = { fontSize: '10px', color: 'var(--text-tertiary)', marginTop: '1px' };
 
   switch (entry.type) {
     case 'note':
       return (
         <div>
-          <p style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{entry.text}</p>
-          <div className="flex items-center gap-2" style={metaStyle}>
+          <p className="text-xs text-[var(--text-primary)]">{entry.text}</p>
+          <div className="flex items-center gap-2 text-[10px] text-[var(--text-tertiary)] mt-px">
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
             {deleteBtn(entry.id, onDeleteNote)}
@@ -83,16 +79,16 @@ function renderEntry(
     case 'status_change':
       return (
         <div>
-          <p style={{ fontSize: '12px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+          <p className="text-xs text-[var(--text-primary)] flex items-center gap-1 flex-wrap">
             <span>Status:</span>
-            <span style={{ textTransform: 'capitalize' }}>{entry.from}</span>
-            <ArrowRight size={11} style={{ color: 'var(--text-tertiary)' }} />
-            <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{entry.to}</span>
+            <span className="capitalize">{entry.from}</span>
+            <ArrowRight size={11} className="text-[var(--text-tertiary)]" />
+            <span className="capitalize font-medium">{entry.to}</span>
           </p>
           {entry.comment && (
-            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', fontStyle: 'italic' }}>&ldquo;{entry.comment}&rdquo;</p>
+            <p className="text-[11px] text-[var(--text-secondary)] mt-0.5 italic">&ldquo;{entry.comment}&rdquo;</p>
           )}
-          <div className="flex items-center gap-2" style={metaStyle}>
+          <div className="flex items-center gap-2 text-[10px] text-[var(--text-tertiary)] mt-px">
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
             {deleteBtn(entry.id, onDeleteNote)}
@@ -102,10 +98,10 @@ function renderEntry(
     case 'submission_created':
       return (
         <div>
-          <p style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
-            Submitted to <span style={{ fontWeight: 500 }}>{entry.company_name}</span>
+          <p className="text-xs text-[var(--text-primary)]">
+            Submitted to <span className="font-medium">{entry.company_name}</span>
           </p>
-          <div className="flex items-center gap-2" style={metaStyle}>
+          <div className="flex items-center gap-2 text-[10px] text-[var(--text-tertiary)] mt-px">
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
             {deleteBtn(entry.id, onDeleteNote)}
@@ -115,13 +111,13 @@ function renderEntry(
     case 'submission_update':
       return (
         <div>
-          <p style={{ fontSize: '12px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
-            <span style={{ fontWeight: 500 }}>{entry.company_name}:</span>
-            <span style={{ textTransform: 'capitalize' }}>{entry.from}</span>
-            <ArrowRight size={11} style={{ color: 'var(--text-tertiary)' }} />
-            <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{entry.to}</span>
+          <p className="text-xs text-[var(--text-primary)] flex items-center gap-1 flex-wrap">
+            <span className="font-medium">{entry.company_name}:</span>
+            <span className="capitalize">{entry.from}</span>
+            <ArrowRight size={11} className="text-[var(--text-tertiary)]" />
+            <span className="capitalize font-medium">{entry.to}</span>
           </p>
-          <div className="flex items-center gap-2" style={metaStyle}>
+          <div className="flex items-center gap-2 text-[10px] text-[var(--text-tertiary)] mt-px">
             <span>{date}</span>
             {author && <><span>&bull;</span><span>{author}</span></>}
             {deleteBtn(entry.id, onDeleteNote)}
@@ -277,9 +273,9 @@ export function CandidatePipeline({
 
       {/* Submit to company button / form */}
       {(showForm ? (
-        <form onSubmit={handleSubmit} style={{ background: 'var(--bg-nested)', border: '1px solid var(--border-strong)', borderRadius: '8px', padding: '12px' }} className="space-y-2.5">
+        <form onSubmit={handleSubmit} className="bg-[var(--bg-nested)] border border-[var(--border-strong)] rounded-lg p-3 space-y-2.5">
           <div>
-            <label style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px', display: 'block' }}>Company</label>
+            <label className="block text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Company</label>
             <select
               value={selectedCompanyId}
               onChange={(e) => setSelectedCompanyId(e.target.value)}
@@ -304,15 +300,14 @@ export function CandidatePipeline({
                 type="button"
                 onClick={handleAddCompany}
                 disabled={!newCompanyName.trim() || addingCompany}
-                style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '6px', border: '1px solid var(--border-strong)', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', cursor: 'pointer' }}
-                className="disabled:opacity-40"
+                className="text-[10px] px-2.5 py-1 rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer disabled:opacity-40"
               >
                 <Plus size={11} className="inline mr-0.5" />Add
               </button>
             </div>
           </div>
           <div>
-            <label style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px', display: 'block' }}>Submitted by</label>
+            <label className="block text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Submitted by</label>
             <input
               type="text"
               value={submittedBy}
@@ -322,7 +317,7 @@ export function CandidatePipeline({
             />
           </div>
           <div>
-            <label style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px', display: 'block' }}>Notes (optional)</label>
+            <label className="block text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Notes (optional)</label>
             <input
               type="text"
               value={notes}
@@ -333,15 +328,14 @@ export function CandidatePipeline({
           </div>
           <div className="flex items-center gap-2 pt-1">
             <button type="submit" disabled={!selectedCompanyId || submitting}
-              style={{ fontSize: '11px', fontWeight: 500, padding: '5px 14px', borderRadius: '6px', background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: 'var(--text-primary)', cursor: 'pointer' }}
-              className="disabled:opacity-50 flex items-center gap-1.5">
+              className="px-3.5 py-[5px] text-[11px] font-medium rounded-md bg-[var(--primary)] border border-[var(--primary-hover)] text-[var(--text-primary)] cursor-pointer disabled:opacity-50 flex items-center gap-1.5">
               <Send size={12} />
               {submitting ? 'Submitting...' : 'Submit'}
             </button>
             <button
               type="button"
               onClick={() => { setShowForm(false); setSelectedCompanyId(''); setNotes(''); }}
-              style={{ fontSize: '11px', padding: '5px 12px', color: 'var(--text-secondary)', cursor: 'pointer', background: 'transparent', border: 'none' }}
+              className="text-[11px] px-3 py-[5px] text-[var(--text-secondary)] cursor-pointer bg-transparent border-none"
             >
               Cancel
             </button>
@@ -350,7 +344,7 @@ export function CandidatePipeline({
       ) : (
         <button
           onClick={() => { setSubmittedBy(candidate.owner || ''); setShowForm(true); }}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 500, padding: '6px 14px', borderRadius: '6px', background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: 'var(--text-primary)', cursor: 'pointer' }}
+          className="inline-flex items-center gap-1.5 text-[11px] font-medium px-3.5 py-1.5 rounded-md bg-[var(--primary)] border border-[var(--primary-hover)] text-[var(--text-primary)] cursor-pointer"
         >
           <Building2 size={12} />
           Submit to Company
@@ -367,18 +361,17 @@ export function CandidatePipeline({
           className="input-base flex-1 px-2.5 py-1.5 rounded-md text-xs"
         />
         <button type="submit" disabled={!noteText.trim() || addingNote}
-          style={{ padding: '5px 12px', borderRadius: '6px', background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: 'var(--text-primary)', cursor: 'pointer' }}
-          className="disabled:opacity-50">
+          className="px-3 py-[5px] rounded-md bg-[var(--primary)] border border-[var(--primary-hover)] text-[var(--text-primary)] cursor-pointer disabled:opacity-50">
           <Send size={12} />
         </button>
       </form>
 
       {/* Activity timeline */}
       {entries.length > 0 && (
-        <div style={{ borderLeft: '2px solid var(--border-strong)', paddingLeft: '14px' }}>
+        <div className="border-l-2 border-[var(--border-strong)] pl-3.5">
           {entries.map((entry) => (
-            <div key={entry.id} className="group" style={{ marginBottom: '14px', position: 'relative' }}>
-              <div style={{ position: 'absolute', left: '-19px', top: '3px', width: '8px', height: '8px', borderRadius: '50%', background: dotColor(entry) }} />
+            <div key={entry.id} className="group mb-3.5 relative">
+              <div className="absolute -left-[19px] top-[3px] w-2 h-2 rounded-full" style={{ background: dotColor(entry) }} />
               {renderEntry(entry, onDeleteNote)}
             </div>
           ))}

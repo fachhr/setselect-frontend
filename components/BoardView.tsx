@@ -137,7 +137,6 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                         <div className={`text-[9px] mt-1 ${
                           isStaleRed ? 'text-[var(--stale)] font-medium' : isStaleAmber ? 'text-[var(--stale)]' : 'text-[var(--text-muted)]'
                         }`}>
-                          {isStaleAmber && '⚠ '}
                           {daysInStage}d in stage
                         </div>
                       )}
@@ -165,8 +164,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                 {overflow > 0 && (
                   <button
                     onClick={() => toggleColumn(stage.key)}
-                    style={{ width: '100%', textAlign: 'center', padding: '6px 0', fontSize: '10px', color: 'var(--text-tertiary)', cursor: 'pointer', background: 'transparent', border: 'none' }}
-                    className="hover:text-[var(--text-secondary)]"
+                    className="w-full text-center py-1.5 text-[10px] text-[var(--text-tertiary)] cursor-pointer bg-transparent border-none hover:text-[var(--text-secondary)] transition-colors"
                   >
                     {isExpanded ? 'Show less' : `+${overflow} more`}
                   </button>

@@ -7,6 +7,9 @@ import { JOB_STATUS_OPTIONS, JOB_SENIORITY_OPTIONS } from '@/lib/constants';
 import { JobCard } from '@/components/JobCard';
 import { JobSourcesTable } from '@/components/JobSourcesTable';
 import { toast } from '@/components/ui/Toast';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { Pagination } from '@/components/ui/Pagination';
 
 type View = 'listings' | 'sources';
 
@@ -160,7 +163,7 @@ export default function JobsPage() {
   // --- Skeletons ---
   if (loading) {
     return (
-      <div className="space-y-4 animate-in fade-in">
+      <div className="space-y-5 animate-in fade-in">
         <div className="flex items-center justify-between">
           <div className="h-8 w-48 bg-[var(--bg-surface-3)] rounded animate-pulse" />
           <div className="h-8 w-28 bg-[var(--bg-surface-3)] rounded animate-pulse" />
@@ -177,52 +180,35 @@ export default function JobsPage() {
   }
 
   return (
-    <div className="space-y-4 animate-in fade-in">
+    <div className="space-y-5 animate-in fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        {/* View toggle */}
-        <div className="flex items-center gap-1 bg-[var(--bg-surface-2)] rounded-lg p-0.5">
-          {(['listings', 'sources'] as View[]).map((v) => (
+      <PageHeader
+        title="Jobs"
+        actions={
+          <>
+            <SegmentedControl
+              options={[
+                { value: 'listings', label: 'Job Listings', count: stats?.total },
+                { value: 'sources', label: 'Watched Sites', count: sources.length },
+              ]}
+              value={view}
+              onChange={setView}
+            />
             <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`px-4 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer ${
-                view === v
-                  ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)]'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-tertiary)]'
-              }`}
+              onClick={handleScrapeNow}
+              disabled={scraping || sources.length === 0}
+              className="flex items-center gap-1.5 text-[11px] font-medium px-3.5 py-2 rounded-md bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-3)] hover:text-[var(--text-primary)] transition-colors cursor-pointer disabled:opacity-50"
             >
-              {v === 'listings' ? 'Job Listings' : 'Watched Sites'}
-              {/* Tab badges = inventory size (matches design convention). Attention
-                  signals for untriaged jobs live on the "New" filter pill instead. */}
-              {v === 'listings' && stats && (
-                <span className="ml-1.5 text-[10px] px-1.5 py-px rounded-lg bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]">
-                  {stats.total}
-                </span>
+              {scraping ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="w-3.5 h-3.5" />
               )}
-              {v === 'sources' && (
-                <span className="ml-1.5 text-[10px] px-1.5 py-px rounded-lg bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]">
-                  {sources.length}
-                </span>
-              )}
+              {scraping ? 'Scraping...' : 'Scrape Now'}
             </button>
-          ))}
-        </div>
-
-        {/* Scrape Now */}
-        <button
-          onClick={handleScrapeNow}
-          disabled={scraping || sources.length === 0}
-          className="flex items-center gap-1.5 text-xs font-medium px-3.5 py-2 rounded-md bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-3)] hover:text-[var(--text-primary)] transition-colors cursor-pointer disabled:opacity-50"
-        >
-          {scraping ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <RefreshCw className="w-3.5 h-3.5" />
-          )}
-          {scraping ? 'Scraping...' : 'Scrape Now'}
-        </button>
-      </div>
+          </>
+        }
+      />
 
       {/* Listings view */}
       {view === 'listings' && (
@@ -359,27 +345,7 @@ export default function JobsPage() {
           )}
 
           {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 pt-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-              <span className="px-2 py-1 text-xs text-[var(--text-muted)]">
-                {page} / {totalPages}
-              </span>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-                className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
           {/* Stats footer */}
           {stats && (

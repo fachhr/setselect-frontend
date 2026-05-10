@@ -6,9 +6,14 @@ import { SearchBar } from '@/components/SearchBar';
 import { CandidateTable } from '@/components/CandidateTable';
 import { CandidateDetailPanel } from '@/components/CandidateDetailPanel';
 import { BoardView } from '@/components/BoardView';
-import { ViewToggle } from '@/components/ui/ViewToggle';
+import { FilterPanel, EMPTY_ADVANCED_FILTERS, countActiveFilters } from '@/components/FilterPanel';
+import type { AdvancedFilters } from '@/components/FilterPanel';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { LayoutGrid, List } from 'lucide-react';
 import type { TableFilters, SortConfig } from '@/components/CandidateTable';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
+import { deepSearchCandidate, scoreCandidate } from '@/lib/search';
 import { SubmitCandidateButton } from '@/components/SubmitCandidateButton';
 import { toast } from '@/components/ui/Toast';
 import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData, CandidateSubmission, SubmissionStatus, SubmissionCompany } from '@/types/recruiter';
@@ -60,6 +65,8 @@ function CandidatesContent() {
     }
     return 'table';
   });
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({ ...EMPTY_ADVANCED_FILTERS });
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const searchParams = useSearchParams();
 
   const handleMarketChange = (newMarket: 'CH' | 'BG') => {
@@ -71,7 +78,6 @@ function CandidatesContent() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (search) params.set('search', search);
       if (statusFilter) params.set('status', statusFilter);
       params.set('market', market);
       params.set('page', '1');
@@ -87,7 +93,7 @@ function CandidatesContent() {
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter, market]);
+  }, [statusFilter, market]);
 
   useEffect(() => {
     fetchCandidates();
@@ -150,9 +156,12 @@ function CandidatesContent() {
 
   // --- Three-stage useMemo pipeline ---
 
-  // Stage 1: Filter
+  // Stage 1: Filter (search + table filters + advanced filters)
   const filteredCandidates = useMemo(() => {
     return allCandidates.filter((c) => {
+      // Deep search (covers all fields including JSON arrays)
+      if (search && !deepSearchCandidate(c, search)) return false;
+
       // Favorites filter
       if (favoritesOnly && !c.is_favorite) return false;
 
@@ -164,7 +173,50 @@ function CandidatesContent() {
         if (isTerminal || days < 5) return false;
       }
 
-      // Text filters
+      // --- Advanced filters ---
+
+      if (advancedFilters.skills.length > 0) {
+        const candidateSkills = [
+          ...(c.functional_expertise || []),
+          ...(c.technical_skills || []).map(ts => {
+            const obj = ts as Record<string, unknown>;
+            return (obj.name || obj.skill || '') as string;
+          }).filter(Boolean),
+        ].map(s => s.toLowerCase());
+        if (!advancedFilters.skills.some(skill => candidateSkills.some(cs => cs.includes(skill.toLowerCase())))) return false;
+      }
+
+      if (advancedFilters.languages.length > 0) {
+        const candidateLangs = (c.languages || []).map(l => l.language.toLowerCase());
+        if (!advancedFilters.languages.some(lang => candidateLangs.includes(lang.toLowerCase()))) return false;
+      }
+
+      if (advancedFilters.salaryMin) {
+        const min = parseInt(advancedFilters.salaryMin);
+        if (!isNaN(min) && c.salary_max != null && c.salary_max < min) return false;
+      }
+
+      if (advancedFilters.salaryMax) {
+        const max = parseInt(advancedFilters.salaryMax);
+        if (!isNaN(max) && c.salary_min != null && c.salary_min > max) return false;
+      }
+
+      if (advancedFilters.noticePeriod.length > 0) {
+        const months = parseInt(c.notice_period_months) || 0;
+        const matches = advancedFilters.noticePeriod.some(range => {
+          if (range === '0') return months === 0;
+          if (range === '3+') return months >= 3;
+          return months === parseInt(range);
+        });
+        if (!matches) return false;
+      }
+
+      if (advancedFilters.workEligibility.length > 0) {
+        if (!c.work_eligibility || !advancedFilters.workEligibility.includes(c.work_eligibility)) return false;
+      }
+
+      // --- Table column filters ---
+
       if (tableFilters.talent_id) {
         const formatted = formatTalentId(c.talent_id);
         if (!formatted.toLowerCase().includes(tableFilters.talent_id.toLowerCase()) &&
@@ -185,14 +237,12 @@ function CandidatesContent() {
         if (!contactStr.includes(tableFilters.contact.toLowerCase())) return false;
       }
 
-      // Multi-select: Location
       if (tableFilters.location.length > 0) {
         if (!c.desired_locations || !c.desired_locations.some((loc) =>
           tableFilters.location.includes(loc)
         )) return false;
       }
 
-      // Multi-select: Experience
       if (tableFilters.experience.length > 0) {
         const yoe = c.years_of_experience ?? 0;
         const inRange = tableFilters.experience.some((range) => {
@@ -207,17 +257,14 @@ function CandidatesContent() {
         if (!inRange) return false;
       }
 
-      // Multi-select: Status
       if (tableFilters.status.length > 0) {
         if (!tableFilters.status.includes(c.status)) return false;
       }
 
-      // Text: Owner
       if (tableFilters.owner) {
         if (!(c.owner?.toLowerCase().includes(tableFilters.owner.toLowerCase()))) return false;
       }
 
-      // Text: Added
       if (tableFilters.added) {
         const formatted = formatEntryDate(c.profile_created_at, true);
         if (!formatted.toLowerCase().includes(tableFilters.added.toLowerCase())) return false;
@@ -225,10 +272,16 @@ function CandidatesContent() {
 
       return true;
     });
-  }, [allCandidates, tableFilters, favoritesOnly, staleOnly]);
+  }, [allCandidates, search, tableFilters, advancedFilters, favoritesOnly, staleOnly]);
 
-  // Stage 2: Sort
+  // Stage 2: Sort (relevance-first when searching without explicit sort)
   const sortedCandidates = useMemo(() => {
+    if (!sortConfig && search.trim()) {
+      return [...filteredCandidates].sort((a, b) =>
+        scoreCandidate(b, search) - scoreCandidate(a, search)
+      );
+    }
+
     if (!sortConfig) return filteredCandidates;
 
     const { key, direction } = sortConfig;
@@ -284,7 +337,7 @@ function CandidatesContent() {
 
       return direction === 'desc' ? -cmp : cmp;
     });
-  }, [filteredCandidates, sortConfig]);
+  }, [filteredCandidates, sortConfig, search]);
 
   // Stage 3: Paginate
   const totalPages = Math.ceil(sortedCandidates.length / ITEMS_PER_PAGE);
@@ -301,6 +354,29 @@ function CandidatesContent() {
     });
     return Array.from(set).sort().map((loc) => ({ value: loc, label: loc }));
   }, [allCandidates]);
+
+  const skillOptions = useMemo(() => {
+    const set = new Set<string>();
+    allCandidates.forEach(c => {
+      c.functional_expertise?.forEach(s => set.add(s));
+      c.technical_skills?.forEach(ts => {
+        const obj = ts as Record<string, unknown>;
+        const name = (obj.name || obj.skill || '') as string;
+        if (name) set.add(name);
+      });
+    });
+    return Array.from(set).sort().map(s => ({ value: s, label: s }));
+  }, [allCandidates]);
+
+  const languageOptions = useMemo(() => {
+    const set = new Set<string>();
+    allCandidates.forEach(c => {
+      c.languages?.forEach(l => { if (l.language) set.add(l.language); });
+    });
+    return Array.from(set).sort().map(l => ({ value: l, label: l }));
+  }, [allCandidates]);
+
+  const activeFilterCount = countActiveFilters(advancedFilters);
 
   // --- Handlers ---
   const handleSort = (key: string) => {
@@ -597,38 +673,63 @@ function CandidatesContent() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 animate-in fade-in">
-      <div className="flex flex-wrap items-center gap-2 sm:justify-between sm:gap-4">
-        {/* Market Switcher */}
-        <div className="flex items-center rounded-lg border border-[var(--border-subtle)] overflow-hidden text-xs font-medium">
-          <button
-            onClick={() => handleMarketChange('CH')}
-            className={`px-3 py-1.5 transition-colors ${market === 'CH' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-surface-1)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]'}`}
-          >
-            CH
-          </button>
-          <button
-            onClick={() => handleMarketChange('BG')}
-            className={`px-3 py-1.5 transition-colors ${market === 'BG' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-surface-1)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]'}`}
-          >
-            BG
-          </button>
-        </div>
-        <SubmitCandidateButton />
-        <ViewToggle value={viewMode} onChange={handleViewChange} />
-        <SearchBar
-          search={searchInput}
-          onSearchChange={setSearchInput}
-          status={statusFilter}
-          onStatusChange={handleStatusFilterChange}
-          favoritesOnly={favoritesOnly}
-          onToggleFavoritesFilter={() => setFavoritesOnly((prev) => !prev)}
-          staleOnly={staleOnly}
-          onToggleStaleFilter={() => setStaleOnly((prev) => !prev)}
-          shortlistCount={allCandidates.filter((c) => c.is_favorite).length}
-          totalCount={allCandidates.length}
+    <div className="space-y-5 animate-in fade-in">
+      <PageHeader
+        title="Talent Pool"
+        actions={
+          <>
+            {/* Market Switcher */}
+            <SegmentedControl
+              options={[
+                { value: 'CH', label: 'CH' },
+                { value: 'BG', label: 'BG' },
+              ]}
+              value={market}
+              onChange={handleMarketChange}
+            />
+            <SubmitCandidateButton />
+            <SegmentedControl
+              options={[
+                { value: 'board', label: 'Board', icon: <LayoutGrid size={12} /> },
+                { value: 'table', label: 'Table', icon: <List size={12} /> },
+              ]}
+              value={viewMode}
+              onChange={handleViewChange}
+            />
+            <SearchBar
+              search={searchInput}
+              onSearchChange={setSearchInput}
+              status={statusFilter}
+              onStatusChange={handleStatusFilterChange}
+              favoritesOnly={favoritesOnly}
+              onToggleFavoritesFilter={() => setFavoritesOnly((prev) => !prev)}
+              staleOnly={staleOnly}
+              onToggleStaleFilter={() => setStaleOnly((prev) => !prev)}
+              shortlistCount={allCandidates.filter((c) => c.is_favorite).length}
+              totalCount={allCandidates.length}
+              filtersOpen={filtersOpen}
+              onToggleFilters={() => setFiltersOpen(prev => !prev)}
+              activeFilterCount={activeFilterCount}
+            />
+          </>
+        }
+      />
+
+      {filtersOpen && (
+        <FilterPanel
+          filters={advancedFilters}
+          onChange={(f) => { setAdvancedFilters(f); setPage(1); }}
+          skillOptions={skillOptions}
+          languageOptions={languageOptions}
+          market={market}
+          search={search}
+          onApplySavedSearch={(s, f) => {
+            setSearchInput(s);
+            setAdvancedFilters(f);
+            setPage(1);
+          }}
         />
-      </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center h-32">
@@ -663,6 +764,7 @@ function CandidatesContent() {
           locationOptions={locationOptions}
           favoritesOnly={favoritesOnly}
           onToggleFavoritesFilter={() => setFavoritesOnly((prev) => !prev)}
+          searchQuery={search}
         />
       )}
 

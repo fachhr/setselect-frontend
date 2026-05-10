@@ -58,15 +58,12 @@ export function CompanyPipelineCard({ company }: CompanyPipelineCardProps) {
   return (
     <div className="glass-panel rounded-lg p-4 space-y-3">
       {/* Company heading */}
-      <h3
-        className="font-semibold text-[var(--text-primary)]"
-        style={{ fontSize: '15px' }}
-      >
+      <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
         {company_name}
       </h3>
 
       {/* Stats line */}
-      <p className="text-[10px] space-x-3">
+      <p className="text-[11px] space-x-3">
         {counts.submitted > 0 && (
           <span style={{ color: STATUS_COLORS.submitted }}>
             {counts.submitted} submitted
@@ -86,7 +83,7 @@ export function CompanyPipelineCard({ company }: CompanyPipelineCardProps) {
 
       {/* Mini pipeline bar */}
       {total > 0 && (
-        <div className="flex h-1 rounded-sm overflow-hidden gap-[3px]">
+        <div className="flex h-1.5 rounded-sm overflow-hidden gap-[3px]">
           {(['submitted', 'interviewing', 'placed', 'rejected'] as const).map(status => {
             const count = counts[status];
             if (count === 0) return null;

@@ -199,19 +199,18 @@ export function CandidateDetailPanel({
 
       {/* Dossier card — matches mockup .dossier exactly */}
       <div
-        className="relative w-full max-w-[720px] flex flex-col animate-in slide-in-from-right m-0 sm:m-3 rounded-none sm:rounded-lg overflow-hidden"
-        style={{ background: 'var(--bg-surface-1)', border: '1px solid var(--border-strong)' }}
+        className="relative w-full max-w-[720px] flex flex-col animate-in slide-in-from-right m-0 sm:m-3 rounded-none sm:rounded-lg overflow-hidden bg-[var(--bg-surface-1)] border border-[var(--border-strong)]"
       >
         {/* ── Header ── */}
-        <div style={{ borderBottom: '1px solid var(--border-strong)' }} className="flex items-start justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5">
+        <div className="flex items-start justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5 border-b border-[var(--border-strong)]">
           <div>
-            <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
+            <div className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
               {c.contact_first_name} {c.contact_last_name}
             </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontFamily: 'monospace', marginTop: '2px' }}>
+            <div className="text-[11px] text-[var(--text-tertiary)] font-mono mt-0.5">
               {formatTalentId(c.talent_id)} &bull; Added {formatEntryDate(c.profile_created_at)}
             </div>
-            <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            <div className="text-[13px] text-[var(--text-secondary)] mt-1">
               {tagline}
             </div>
           </div>
@@ -219,29 +218,28 @@ export function CandidateDetailPanel({
             {isEditing ? (
               <>
                 <button onClick={() => { setFormData(buildFormData(c)); setErrors({}); setIsEditing(false); }} disabled={saving}
-                  style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', border: '1px solid var(--border-strong)', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', cursor: 'pointer' }}>
+                  className="px-3.5 py-1.5 text-[11px] font-medium rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer">
                   Cancel
                 </button>
                 <button onClick={handleSave} disabled={saving}
-                  style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: 'var(--text-primary)', cursor: 'pointer' }}
-                  className="flex items-center gap-1.5">
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium rounded-md bg-[var(--primary)] border border-[var(--primary-hover)] text-[var(--text-primary)] cursor-pointer">
                   {saving && <Loader2 size={12} className="animate-spin" />} Save
                 </button>
               </>
             ) : (
               <>
                 <button onClick={() => onDownloadCv(c.profile_id)}
-                  style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', border: '1px solid var(--border-strong)', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', cursor: 'pointer' }}>
+                  className="px-3.5 py-1.5 text-[11px] font-medium rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer">
                   Download CV
                 </button>
                 <button onClick={() => setIsEditing(true)}
-                  style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 500, borderRadius: '6px', border: '1px solid var(--border-strong)', background: 'var(--bg-surface-2)', color: 'var(--text-primary)', cursor: 'pointer' }}>
+                  className="px-3.5 py-1.5 text-[11px] font-medium rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer">
                   Edit
                 </button>
               </>
             )}
             <button onClick={handleClosePanel} className="ml-1 cursor-pointer p-1.5 rounded-full hover:bg-[var(--bg-surface-3)]">
-              <X size={18} style={{ color: 'var(--text-tertiary)' }} />
+              <X size={18} className="text-[var(--text-tertiary)]" />
             </button>
           </div>
         </div>
@@ -253,40 +251,41 @@ export function CandidateDetailPanel({
           {!isEditing && (
             <div className="border-b sm:border-b-0 sm:border-r border-[var(--border-strong)] px-4 py-4 sm:px-5 sm:py-4">
               {/* Status */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Status</div>
+              <div className="mb-4">
+                <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Status</div>
                 <select value={c.status} onChange={(e) => onUpdateStatus(c.profile_id, e.target.value as RecruiterStatus)}
-                  style={{ fontSize: '10px', fontWeight: 600, padding: '2px 18px 2px 10px', borderRadius: '10px', border: 'none', cursor: 'pointer', WebkitAppearance: 'none', appearance: 'none', background: PILL_BG[c.status], color: PILL_TEXT[c.status], backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(PILL_TEXT[c.status])}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}>
+                  className="text-[10px] font-semibold rounded-[10px] border-none cursor-pointer appearance-none"
+                  style={{ padding: '2px 18px 2px 10px', background: PILL_BG[c.status], color: PILL_TEXT[c.status], backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(PILL_TEXT[c.status])}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}>
                   {ALL_STATUSES.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                 </select>
               </div>
               {/* Owner */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Owner</div>
+              <div className="mb-4">
+                <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Owner</div>
                 <input type="text" value={ownerInput} onChange={(e) => setOwnerInput(e.target.value)} onBlur={handleOwnerBlur} placeholder="Unassigned"
-                  style={{ fontSize: '12px', color: 'var(--text-primary)', background: 'transparent', border: 'none', outline: 'none', padding: 0, width: '100%' }} />
+                  className="text-xs text-[var(--text-primary)] bg-transparent border-none outline-none p-0 w-full" />
               </div>
               {/* Contact */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Contact</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-accent)' }}>{c.email}</div>
-                {c.phoneNumber && <div style={{ fontSize: '12px', color: 'var(--text-primary)', marginTop: '2px' }}>{c.country_code} {c.phoneNumber}</div>}
-                {c.linkedinUrl && <a href={c.linkedinUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '11px', color: 'var(--text-accent)', marginTop: '2px', display: 'block' }}>LinkedIn ↗</a>}
+              <div className="mb-4">
+                <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Contact</div>
+                <div className="text-xs text-[var(--text-accent)]">{c.email}</div>
+                {c.phoneNumber && <div className="text-xs text-[var(--text-primary)] mt-0.5">{c.country_code} {c.phoneNumber}</div>}
+                {c.linkedinUrl && <a href={c.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[var(--text-accent)] mt-0.5 block">LinkedIn ↗</a>}
               </div>
               {/* Location */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Location</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{c.desired_locations?.join(', ') || '—'}</div>
+              <div className="mb-4">
+                <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Location</div>
+                <div className="text-xs text-[var(--text-primary)]">{c.desired_locations?.join(', ') || '—'}</div>
               </div>
               {/* Experience */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Experience</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{c.years_of_experience ? `${c.years_of_experience} years` : '—'}</div>
+              <div className="mb-4">
+                <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Experience</div>
+                <div className="text-xs text-[var(--text-primary)]">{c.years_of_experience ? `${c.years_of_experience} years` : '—'}</div>
               </div>
               {/* Salary */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Target Salary</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
+              <div className="mb-4">
+                <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Target Salary</div>
+                <div className="text-xs text-[var(--text-primary)]">
                   {c.salary_min || c.salary_max
                     ? `${getMarketConfig(c.market).currency.code} ${c.salary_min ? `${Math.round(c.salary_min / 1000)}k` : '?'} – ${c.salary_max ? `${Math.round(c.salary_max / 1000)}k` : '?'}`
                     : '—'}
@@ -294,22 +293,22 @@ export function CandidateDetailPanel({
               </div>
               {/* Desired Roles */}
               {c.desired_roles && (
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Desired Roles</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginTop: '2px' }}>
+                <div className="mb-4">
+                  <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Desired Roles</div>
+                  <div className="flex flex-wrap gap-[3px] mt-0.5">
                     {c.desired_roles.split(',').map((r, i) => (
-                      <span key={i} style={{ fontSize: '10px', padding: '1px 8px', borderRadius: '4px', background: 'var(--bg-surface-3)', color: 'var(--text-secondary)' }}>{r.trim()}</span>
+                      <span key={i} className="text-[10px] px-2 py-px rounded bg-[var(--bg-surface-3)] text-[var(--text-secondary)]">{r.trim()}</span>
                     ))}
                   </div>
                 </div>
               )}
               {/* Languages */}
               {c.languages && c.languages.length > 0 && (
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Languages</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginTop: '2px' }}>
+                <div className="mb-4">
+                  <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Languages</div>
+                  <div className="flex flex-wrap gap-[3px] mt-0.5">
                     {c.languages.map((l, i) => (
-                      <span key={i} style={{ fontSize: '10px', padding: '1px 8px', borderRadius: '4px', background: 'var(--bg-surface-3)', color: 'var(--text-secondary)' }}>
+                      <span key={i} className="text-[10px] px-2 py-px rounded bg-[var(--bg-surface-3)] text-[var(--text-secondary)]">
                         {l.language}{l.proficiency ? ` (${l.proficiency})` : ''}
                       </span>
                     ))}
@@ -318,32 +317,32 @@ export function CandidateDetailPanel({
               )}
               {/* Functional Expertise */}
               {c.functional_expertise && c.functional_expertise.length > 0 && (
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Expertise</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginTop: '2px' }}>
+                <div className="mb-4">
+                  <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Expertise</div>
+                  <div className="flex flex-wrap gap-[3px] mt-0.5">
                     {c.functional_expertise.map((skill, i) => (
-                      <span key={i} style={{ fontSize: '10px', padding: '1px 8px', borderRadius: '4px', background: 'var(--bg-surface-3)', color: 'var(--text-secondary)' }}>{skill}</span>
+                      <span key={i} className="text-[10px] px-2 py-px rounded bg-[var(--bg-surface-3)] text-[var(--text-secondary)]">{skill}</span>
                     ))}
                   </div>
                 </div>
               )}
               {/* Work Eligibility */}
               {c.work_eligibility && (
-                <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Work Eligibility</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{getWorkEligibilityLabel(c.work_eligibility)}</div>
+                <div className="mb-4">
+                  <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Work Eligibility</div>
+                  <div className="text-xs text-[var(--text-primary)]">{getWorkEligibilityLabel(c.work_eligibility)}</div>
                 </div>
               )}
               {/* Notice Period */}
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Notice Period</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{c.notice_period_months ? `${c.notice_period_months} months` : '—'}</div>
+              <div className="mb-4">
+                <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Notice Period</div>
+                <div className="text-xs text-[var(--text-primary)]">{c.notice_period_months ? `${c.notice_period_months} months` : '—'}</div>
               </div>
               {/* Summary */}
               {c.short_summary && (
                 <div>
-                  <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Summary</div>
-                  <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{c.short_summary}</p>
+                  <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Summary</div>
+                  <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">{c.short_summary}</p>
                 </div>
               )}
             </div>
@@ -361,10 +360,9 @@ export function CandidateDetailPanel({
                   errors={errors}
                   onUpdateField={updateField}
                 />
-                <div style={{ paddingTop: '16px', marginTop: '16px', borderTop: '1px solid var(--border-strong)' }}>
+                <div className="pt-4 mt-4 border-t border-[var(--border-strong)]">
                   <button onClick={() => setShowDeleteConfirm(true)}
-                    className="flex items-center gap-2 cursor-pointer"
-                    style={{ fontSize: '13px', color: 'var(--error)', padding: '6px 12px', borderRadius: '8px', background: 'transparent', border: 'none' }}>
+                    className="flex items-center gap-2 cursor-pointer text-[13px] text-[var(--error)] px-3 py-1.5 rounded-lg bg-transparent border-none">
                     <Trash2 size={14} /> Delete Profile
                   </button>
                 </div>
@@ -373,14 +371,14 @@ export function CandidateDetailPanel({
               /* View mode — single unified view, no tabs */
               <div>
                 {/* Executive Summary */}
-                <div style={{ background: 'var(--bg-nested)', border: '1px solid var(--border-strong)', borderRadius: '8px', padding: '14px 16px', marginBottom: '16px', fontSize: '12px', lineHeight: 1.7, color: 'var(--text-secondary)' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Executive Summary</strong>
+                <div className="bg-[var(--bg-nested)] border border-[var(--border-strong)] rounded-lg px-4 py-3.5 mb-4 text-xs leading-relaxed text-[var(--text-secondary)]">
+                  <strong className="text-[var(--text-primary)]">Executive Summary</strong>
                   {' — '}
                   {c.contact_first_name} {c.contact_last_name} is a {c.years_of_experience || 0}-year {c.desired_roles || 'professional'} based in {c.desired_locations?.[0] || 'unspecified location'}.
                   {' '}{activeSubs.length > 0
                     ? `Currently ${activeSubs.map(s => `${s.status} at ${s.company_name}`).join(', ')}.`
                     : 'No active submissions.'}
-                  {noteSnippet && <> <em style={{ color: 'var(--text-tertiary)' }}>&ldquo;{noteSnippet}&rdquo;</em></>}
+                  {noteSnippet && <> <em className="text-[var(--text-tertiary)]">&ldquo;{noteSnippet}&rdquo;</em></>}
                 </div>
 
                 {/* Submissions + Submit form + Notes + Timeline — all in one */}

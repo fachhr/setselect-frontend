@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Copy, FileText, Mail, Phone, ArrowUp, ArrowDown, Send, Plus, Loader2 } from 'lucide-react';
 import { StatusBadge } from '@/components/StatusBadge';
 import { MultiSelectFilter } from '@/components/MultiSelectFilter';
 import { FavoriteButton } from '@/components/FavoriteButton';
 import { formatTalentId, formatCantons } from '@/lib/helpers';
+import { buildHighlightRegex } from '@/lib/search';
 import { STATUS_OPTIONS, EXPERIENCE_OPTIONS, STATUS_PILL_COLORS } from '@/lib/constants';
+import { Pagination } from '@/components/ui/Pagination';
 import { toast } from '@/components/ui/Toast';
 import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission, SubmissionCompany } from '@/types/recruiter';
 
@@ -67,6 +69,21 @@ interface CandidateTableProps {
   locationOptions: { value: string; label: string }[];
   favoritesOnly: boolean;
   onToggleFavoritesFilter: () => void;
+  searchQuery?: string;
+}
+
+function HighlightText({ text, regex }: { text: string; regex: RegExp | null }) {
+  if (!regex || !text) return <>{text}</>;
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part)
+          ? <mark key={i} className="bg-[var(--secondary-dim)] text-[var(--secondary)] rounded-sm px-0.5">{part}</mark>
+          : part
+      )}
+    </>
+  );
 }
 
 function copyToClipboard(text: string, label: string) {
@@ -255,8 +272,7 @@ function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmissi
               <button
                 type="submit"
                 disabled={!selectedCompanyId || submitting}
-                className="disabled:opacity-50 flex items-center gap-1.5 text-[11px] font-medium px-3 py-1.5 rounded-md cursor-pointer"
-                style={{ background: 'var(--primary)', border: '1px solid var(--primary-hover)', color: 'var(--text-primary)' }}
+                className="disabled:opacity-50 flex items-center gap-1.5 text-[11px] font-medium px-3 py-1.5 rounded-md cursor-pointer bg-[var(--primary)] border border-[var(--primary-hover)] text-[var(--text-primary)]"
               >
                 {submitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                 {submitting ? 'Submitting...' : 'Submit'}
@@ -328,7 +344,10 @@ export function CandidateTable({
   onPageChange,
   locationOptions,
   // favoritesOnly and onToggleFavoritesFilter are passed for interface compat but unused in table body
+  searchQuery,
 }: CandidateTableProps) {
+  const highlightRegex = useMemo(() => buildHighlightRegex(searchQuery || ''), [searchQuery]);
+
   if (candidates.length === 0 && filteredCount === 0 && total === 0) {
     return (
       <div className="glass-panel rounded-lg p-12 text-center">
@@ -361,7 +380,7 @@ export function CandidateTable({
             </tr>
 
             {/* Filter row */}
-            <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-surface-2)]">
+            <tr className="border-b border-[var(--border-subtle)]">
               {COLUMNS.map((col) => (
                 <th key={col.key} className={`px-3 py-2 ${col.responsive}`}>
                   {col.filterType === 'text' && col.filterKey ? (
@@ -411,10 +430,10 @@ export function CandidateTable({
                 {/* Name & Role */}
                 <td className="px-3 py-2.5">
                   <div className="text-xs font-medium text-[var(--text-primary)]">
-                    {c.contact_first_name} {c.contact_last_name}
+                    <HighlightText text={`${c.contact_first_name} ${c.contact_last_name}`} regex={highlightRegex} />
                   </div>
                   {c.desired_roles && (
-                    <div className="text-xs text-[var(--text-secondary)]">{c.desired_roles}</div>
+                    <div className="text-xs text-[var(--text-secondary)]"><HighlightText text={c.desired_roles} regex={highlightRegex} /></div>
                   )}
                   <span className="font-mono text-[10px] text-[var(--text-muted)] sm:hidden">
                     {formatTalentId(c.talent_id)}
@@ -432,7 +451,7 @@ export function CandidateTable({
                       className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-[var(--secondary)] transition-colors cursor-pointer"
                     >
                       <Mail size={12} className="text-[var(--text-muted)]" />
-                      <span className="text-xs truncate max-w-[160px]">{c.email}</span>
+                      <span className="text-xs truncate max-w-[160px]"><HighlightText text={c.email} regex={highlightRegex} /></span>
                       <Copy size={10} className="opacity-0 group-hover:opacity-100" />
                     </button>
                     {c.phoneNumber && (
@@ -575,27 +594,7 @@ export function CandidateTable({
             Showing {filteredCount} of {total} candidates
           </span>
         </div>
-        {totalPages > 1 && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => onPageChange(page - 1)}
-              disabled={page <= 1}
-              className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <span className="px-2 py-1 text-xs text-[var(--text-muted)]">
-              {page} / {totalPages}
-            </span>
-            <button
-              onClick={() => onPageChange(page + 1)}
-              disabled={page >= totalPages}
-              className="px-3 py-1 border border-[var(--border-strong)] rounded text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
-        )}
+        <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import type { RecruiterStatus, ActivityEntry } from '@/types/recruiter';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // --- Types ---
 
@@ -116,7 +117,7 @@ function PipelineSkeleton() {
 
 function PanelSkeleton() {
   return (
-    <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-[18px] animate-pulse">
+    <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-4 animate-pulse">
       <div className="h-4 w-32 bg-[var(--bg-surface-3)] rounded mb-4" />
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="h-12 bg-[var(--bg-surface-2)] rounded mb-2" />
@@ -225,7 +226,8 @@ export default function CommandCenterPage() {
   }
 
   return (
-    <div className="space-y-4 animate-in fade-in">
+    <div className="space-y-5 animate-in fade-in">
+      <PageHeader title="Command Center" />
       {/* Pipeline Strip */}
       {loading ? (
         <PipelineSkeleton />
@@ -264,9 +266,9 @@ export default function CommandCenterPage() {
         {loading ? (
           <PanelSkeleton />
         ) : (
-          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-[18px]">
+          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+              <h2 className="text-xs font-semibold uppercase tracking-[1px] text-[var(--text-secondary)]">
                 Needs Attention
               </h2>
               {attentionItems.length > 0 && (
@@ -328,9 +330,9 @@ export default function CommandCenterPage() {
         {loading ? (
           <PanelSkeleton />
         ) : (
-          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-[18px]">
+          <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+              <h2 className="text-xs font-semibold uppercase tracking-[1px] text-[var(--text-secondary)]">
                 Activity Feed
               </h2>
               <span className="text-[10px] text-[var(--text-muted)]">Last 48h</span>
