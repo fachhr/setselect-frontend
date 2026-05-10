@@ -24,7 +24,7 @@ export function SegmentedControl<T extends string>({ options, value, onChange }:
           <button
             key={opt.value}
             onClick={() => onChange(opt.value)}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium rounded-md cursor-pointer transition-colors ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium rounded-md cursor-pointer whitespace-nowrap transition-colors ${
               isActive
                 ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)]'
                 : 'text-[var(--text-muted)] hover:text-[var(--text-tertiary)]'

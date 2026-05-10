@@ -156,7 +156,7 @@ export interface SubmissionCompany {
 
 export type JobListingStatus = 'new' | 'evaluating' | 'pursuing' | 'passed';
 export type JobSeniority = 'junior' | 'mid' | 'senior' | 'executive' | 'c-suite';
-export type FetchMode = 'auto' | 'direct' | 'jina';
+export type FetchMode = 'auto' | 'direct' | 'jina' | 'jsonld' | 'anchors';
 
 export interface JobSource {
   id: string;

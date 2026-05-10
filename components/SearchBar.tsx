@@ -47,7 +47,7 @@ export function SearchBar({
   activeFilterCount = 0,
 }: SearchBarProps) {
   return (
-    <div className="contents sm:flex sm:flex-wrap sm:items-center sm:gap-2">
+    <div className="w-full sm:w-auto flex flex-wrap items-center gap-2">
       {onToggleFavoritesFilter && (
         <SegmentedControl
           options={[

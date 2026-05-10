@@ -8,7 +8,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-4">
       <div>
         <h1 className="text-lg font-semibold text-[var(--text-primary)] tracking-tight">
           {title}
