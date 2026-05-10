@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Menu, X, ArrowRight, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useZenMode } from '@/contexts/ZenModeContext';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -12,6 +13,9 @@ export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isZenMode } = useZenMode();
   const { user, isLoading, signOut } = useAuth();
+  const pathname = usePathname();
+  const isBgMarket = pathname.startsWith('/bg') || pathname.startsWith('/join/bg');
+  const joinPath = isBgMarket ? '/join/bg' : '/join';
 
   // Hide navigation in Zen Mode
   if (isZenMode) {
@@ -64,7 +68,7 @@ export function Navigation() {
                   Access Talent
                 </Link>
                 <div className="h-4 w-px bg-[var(--border-strong)]"></div>
-                <Button variant="primary" icon={ArrowRight} href="/join">
+                <Button variant="primary" icon={ArrowRight} href={joinPath}>
                   Join the Pool
                 </Button>
               </>
@@ -117,7 +121,7 @@ export function Navigation() {
               >
                 Access Talent
               </Link>
-              <Button className="w-full" href="/join" onClick={() => setIsMobileMenuOpen(false)}>
+              <Button className="w-full" href={joinPath} onClick={() => setIsMobileMenuOpen(false)}>
                 Join the Pool
               </Button>
             </>
