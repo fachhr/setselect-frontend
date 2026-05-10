@@ -85,7 +85,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
             {/* Column header */}
             <div className="flex items-center justify-between px-1.5 py-1.5 mb-2">
               <span
-                className="text-[11px] font-semibold uppercase tracking-[1px]"
+                className="text-[11px] font-semibold uppercase tracking-[1.2px]"
                 style={{ color: stage.color }}
               >
                 {stage.label}
@@ -178,7 +178,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
       {/* Collapsed Rejected column */}
       {rejectedCount > 0 && (
         <div className="sm:min-w-[80px] bg-[var(--bg-surface-2)] rounded-lg p-2.5 flex flex-row sm:flex-col items-center justify-center gap-2 sm:gap-0">
-          <span className="text-[11px] font-semibold uppercase tracking-[1px] text-[var(--status-rejected)]">
+          <span className="text-[11px] font-semibold uppercase tracking-[1.2px] text-[var(--status-rejected)]">
             Rejected
           </span>
           <span className="text-lg font-extrabold text-[var(--text-secondary)] mt-1">

@@ -164,7 +164,7 @@ export function JobCard({ listing, onStatusChange }: JobCardProps) {
             key={action.status}
             onClick={() => onStatusChange(listing.id, action.status)}
             disabled={listing.status === action.status}
-            className={`text-xs px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${
+            className={`text-[11px] px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${
               listing.status === action.status
                 ? 'bg-[var(--bg-surface-3)] text-[var(--text-primary)] font-medium border-[var(--border-strong)]'
                 : 'text-[var(--text-muted)] border-[var(--border-subtle)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] hover:border-[var(--border-strong)]'

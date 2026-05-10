@@ -58,7 +58,7 @@ export function CompanyPipelineCard({ company }: CompanyPipelineCardProps) {
   return (
     <div className="glass-panel rounded-lg p-4 space-y-3">
       {/* Company heading */}
-      <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
+      <h3 className="text-sm font-semibold text-[var(--text-primary)]">
         {company_name}
       </h3>
 
@@ -130,7 +130,7 @@ export function CompanyPipelineCard({ company }: CompanyPipelineCardProps) {
               </span>
               {/* Status label */}
               <span
-                className="text-[10px] font-medium uppercase tracking-wide"
+                className="text-[10px] font-medium uppercase tracking-[1.2px]"
                 style={{ color: STATUS_COLORS[submission.status] }}
               >
                 {STATUS_LABELS[submission.status]}

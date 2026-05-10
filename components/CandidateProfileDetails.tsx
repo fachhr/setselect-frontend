@@ -31,7 +31,7 @@ export function CandidateProfileDetails({
     return (
       <div className="space-y-4">
         {/* Contact */}
-        <h4 className="text-[11px] font-semibold uppercase tracking-[0.8px] text-[var(--text-tertiary)]">Contact</h4>
+        <h4 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">Contact</h4>
         <div className={sectionClass}>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -67,7 +67,7 @@ export function CandidateProfileDetails({
         </div>
 
         {/* Professional */}
-        <h4 className="text-[11px] font-semibold uppercase tracking-[0.8px] text-[var(--text-tertiary)]">Professional</h4>
+        <h4 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">Professional</h4>
         <div className={sectionClass}>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -113,7 +113,7 @@ export function CandidateProfileDetails({
         </div>
 
         {/* Summary & Expertise */}
-        <h4 className="text-[11px] font-semibold uppercase tracking-[0.8px] text-[var(--text-tertiary)]">Summary & Expertise</h4>
+        <h4 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">Summary & Expertise</h4>
         <div className={sectionClass}>
           <div>
             <label className={labelClass}>Short Summary</label>

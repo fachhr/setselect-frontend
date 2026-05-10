@@ -227,7 +227,7 @@ export function CandidatePipeline({
       {/* Section header */}
       {(
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-bold uppercase tracking-wide text-[var(--text-muted)]">Pipeline &amp; Activity</h4>
+          <h4 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">Pipeline &amp; Activity</h4>
         </div>
       )}
 

@@ -131,7 +131,7 @@ export default function CompaniesPage() {
             />
             <button
               onClick={() => setInviteOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-[11px] font-medium rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 text-[11px] font-medium rounded-md border border-[var(--border-strong)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] cursor-pointer hover:bg-[var(--bg-surface-3)] transition-colors"
             >
               <Plus size={14} />
               {companyView === 'board' ? 'Add Company' : 'Invite Company'}
@@ -203,22 +203,22 @@ export default function CompaniesPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-[var(--border-strong)] bg-[var(--bg-surface-2)]">
-                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px]">
+                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px]">
                     Company
                   </th>
-                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px]">
+                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px]">
                     Contact
                   </th>
-                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px] hidden sm:table-cell">
+                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px] hidden sm:table-cell">
                     Invited By
                   </th>
-                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px] hidden md:table-cell">
+                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px] hidden md:table-cell">
                     Invited
                   </th>
-                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px]">
+                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px]">
                     Status
                   </th>
-                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px]">
+                  <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px]">
                     Actions
                   </th>
                 </tr>

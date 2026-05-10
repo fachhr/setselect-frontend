@@ -351,7 +351,7 @@ export function JobSourcesTable({
 
       {/* Add source form */}
       <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-4">
-        <h3 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)] mb-3">
+        <h3 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-3">
           Add New Source
         </h3>
         <div className="flex flex-col sm:flex-row gap-2.5">
@@ -381,7 +381,7 @@ export function JobSourcesTable({
 
         {/* Country selection for new source */}
         <div className="mt-2.5">
-          <span className="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wide">
+          <span className="text-[9px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px]">
             Target countries
           </span>
           <div className="flex items-center gap-1 flex-wrap mt-1">

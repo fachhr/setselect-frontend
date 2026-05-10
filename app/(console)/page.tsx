@@ -268,7 +268,7 @@ export default function CommandCenterPage() {
         ) : (
           <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
-              <h2 className="text-xs font-semibold uppercase tracking-[1px] text-[var(--text-secondary)]">
+              <h2 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
                 Needs Attention
               </h2>
               {attentionItems.length > 0 && (
@@ -332,7 +332,7 @@ export default function CommandCenterPage() {
         ) : (
           <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
-              <h2 className="text-xs font-semibold uppercase tracking-[1px] text-[var(--text-secondary)]">
+              <h2 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
                 Activity Feed
               </h2>
               <span className="text-[10px] text-[var(--text-muted)]">Last 48h</span>

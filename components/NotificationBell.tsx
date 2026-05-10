@@ -122,7 +122,7 @@ export function NotificationBell() {
           className="absolute right-0 top-full mt-2 w-[380px] max-w-[calc(100vw-2rem)] z-50 bg-[var(--bg-nested)] border border-[var(--border-subtle)] rounded-lg shadow-2xl overflow-hidden"
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+            <span className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
               Notifications
               {unreadCount > 0 && <span className="ml-2 text-[var(--text-muted)] normal-case font-normal">· {unreadCount} unread</span>}
             </span>

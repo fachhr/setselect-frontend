@@ -261,7 +261,7 @@ export default function NewCandidatePage() {
 
         {/* CV Upload */}
         <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-3">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+          <h2 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
             CV / Resume
           </h2>
           {cvFile ? (
@@ -324,7 +324,7 @@ export default function NewCandidatePage() {
 
         {/* Contact Details */}
         <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-4">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+          <h2 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
             Contact Details
           </h2>
           <div className="grid grid-cols-2 gap-3">
@@ -399,7 +399,7 @@ export default function NewCandidatePage() {
 
         {/* Professional Details */}
         <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-4">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+          <h2 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
             Professional Details
           </h2>
           <div className="grid grid-cols-2 gap-3">
@@ -502,7 +502,7 @@ export default function NewCandidatePage() {
 
         {/* Job Preferences */}
         <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-4">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+          <h2 className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
             Job Preferences
           </h2>
 

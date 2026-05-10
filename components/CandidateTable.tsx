@@ -206,7 +206,7 @@ function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmissi
           className="absolute right-0 top-full mt-1 z-50 w-72 max-w-[calc(100vw-2rem)] rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface-1)] shadow-lg"
         >
           <form onSubmit={handleSubmit} className="p-3 space-y-2.5">
-            <div className="text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)] mb-1">
+            <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">
               Submit {candidate.contact_first_name} to company
             </div>
 
@@ -245,7 +245,7 @@ function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmissi
 
             {/* Submitted by */}
             <div>
-              <label className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)] font-semibold block mb-1">Submitted by</label>
+              <label className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] block mb-1">Submitted by</label>
               <input
                 type="text"
                 value={submittedBy}
@@ -257,7 +257,7 @@ function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmissi
 
             {/* Notes */}
             <div>
-              <label className="text-[9px] uppercase tracking-wider text-[var(--text-tertiary)] font-semibold block mb-1">Notes (optional)</label>
+              <label className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] block mb-1">Notes (optional)</label>
               <input
                 type="text"
                 value={notes}
@@ -366,7 +366,7 @@ export function CandidateTable({
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
-                  className={`text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1px] ${col.responsive} ${
+                  className={`text-left px-3 py-2.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[1.2px] ${col.responsive} ${
                     col.sortable ? 'cursor-pointer select-none group/th hover:text-[var(--text-secondary)] transition-colors' : ''
                   }`}
                   onClick={col.sortable ? () => onSort(col.key) : undefined}
