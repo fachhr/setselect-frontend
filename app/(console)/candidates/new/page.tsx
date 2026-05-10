@@ -270,7 +270,7 @@ export default function NewCandidatePage() {
               value={owner}
               onChange={(e) => setOwner(e.target.value)}
               className="px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] w-40"
-              placeholder="e.g. Dominik"
+              placeholder="e.g. Silvia"
             />
           </div>
         </div>
