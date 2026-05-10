@@ -35,6 +35,7 @@ export async function updateSession(request: NextRequest) {
   // Public paths that don't require authentication
   const publicPaths = [
     '/',
+    '/bg',
     '/auth/callback',
     '/auth/invite-callback',
     '/join',

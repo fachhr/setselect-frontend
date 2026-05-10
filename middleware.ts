@@ -1,7 +1,23 @@
 import { updateSession } from '@/lib/supabase/middleware';
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const country = request.geo?.country;
+
+  if (country === 'BG') {
+    if (pathname === '/') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/bg';
+      return NextResponse.redirect(url);
+    }
+    if (pathname === '/join') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/join/bg';
+      return NextResponse.redirect(url);
+    }
+  }
+
   return await updateSession(request);
 }
 
