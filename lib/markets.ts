@@ -7,6 +7,9 @@ export interface MarketConfig {
   workEligibility: { value: string; label: string }[];
   locations: { value: string; label: string }[];
   currency: { code: string; symbol: string };
+  languages: string[];
+  phoneCode: string;
+  salaryRange: { min: number; max: number; step: number };
 }
 
 const CH_CONFIG: MarketConfig = {
@@ -35,6 +38,9 @@ const CH_CONFIG: MarketConfig = {
     { value: 'Global', label: 'Global' },
   ],
   currency: { code: 'CHF', symbol: 'CHF' },
+  languages: ['English', 'German', 'French', 'Italian'],
+  phoneCode: '+41',
+  salaryRange: { min: 60000, max: 500000, step: 10000 },
 };
 
 const BG_CONFIG: MarketConfig = {
@@ -61,6 +67,9 @@ const BG_CONFIG: MarketConfig = {
     { value: 'Remote', label: 'Remote' },
   ],
   currency: { code: 'BGN', symbol: 'лв.' },
+  languages: ['English', 'Bulgarian', 'German', 'Russian'],
+  phoneCode: '+359',
+  salaryRange: { min: 20000, max: 200000, step: 5000 },
 };
 
 const MARKET_CONFIGS: Record<Market, MarketConfig> = { CH: CH_CONFIG, BG: BG_CONFIG };
