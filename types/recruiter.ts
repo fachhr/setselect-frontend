@@ -1,3 +1,7 @@
+import type { Market } from '@/lib/markets';
+
+export type { Market };
+
 export type RecruiterStatus = 'new' | 'screening' | 'interviewing' | 'offer' | 'placed' | 'rejected';
 
 export interface RecruiterNote {
@@ -57,6 +61,7 @@ export interface LanguageEntry {
 export interface RecruiterCandidateView {
   // From user_profiles
   profile_id: string;
+  market: Market;
   talent_id: string | null;
   contact_first_name: string;
   contact_last_name: string;

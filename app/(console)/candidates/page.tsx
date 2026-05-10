@@ -48,6 +48,12 @@ function CandidatesContent() {
   const [submissions, setSubmissions] = useState<CandidateSubmission[]>([]);
   const [allSubmissions, setAllSubmissions] = useState<CandidateSubmission[]>([]);
   const [companies, setCompanies] = useState<SubmissionCompany[]>([]);
+  const [market, setMarket] = useState<'CH' | 'BG'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('talentPoolMarket') as 'CH' | 'BG') || 'CH';
+    }
+    return 'CH';
+  });
   const [viewMode, setViewMode] = useState<'board' | 'table'>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('talentPoolView') as 'board' | 'table') || 'table';
@@ -56,12 +62,18 @@ function CandidatesContent() {
   });
   const searchParams = useSearchParams();
 
+  const handleMarketChange = (newMarket: 'CH' | 'BG') => {
+    setMarket(newMarket);
+    localStorage.setItem('talentPoolMarket', newMarket);
+  };
+
   const fetchCandidates = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set('search', search);
       if (statusFilter) params.set('status', statusFilter);
+      params.set('market', market);
       params.set('page', '1');
       params.set('limit', '0');
 
@@ -75,7 +87,7 @@ function CandidatesContent() {
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter]);
+  }, [search, statusFilter, market]);
 
   useEffect(() => {
     fetchCandidates();
@@ -587,6 +599,21 @@ function CandidatesContent() {
   return (
     <div className="space-y-4 sm:space-y-6 animate-in fade-in">
       <div className="flex flex-wrap items-center gap-2 sm:justify-between sm:gap-4">
+        {/* Market Switcher */}
+        <div className="flex items-center rounded-lg border border-[var(--border-subtle)] overflow-hidden text-xs font-medium">
+          <button
+            onClick={() => handleMarketChange('CH')}
+            className={`px-3 py-1.5 transition-colors ${market === 'CH' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-surface-1)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]'}`}
+          >
+            🇨🇭 CH
+          </button>
+          <button
+            onClick={() => handleMarketChange('BG')}
+            className={`px-3 py-1.5 transition-colors ${market === 'BG' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-surface-1)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]'}`}
+          >
+            🇧🇬 BG
+          </button>
+        </div>
         <ViewToggle value={viewMode} onChange={handleViewChange} />
         <SearchBar
           search={searchInput}

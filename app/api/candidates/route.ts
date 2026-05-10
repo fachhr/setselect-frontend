@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get('search') || '';
   const status = searchParams.get('status') || '';
+  const market = searchParams.get('market') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
   const limitParam = searchParams.get('limit') || '20';
   const limit = parseInt(limitParam, 10);
@@ -69,6 +70,7 @@ export async function GET(request: NextRequest) {
       .select(
         `
         id,
+        market,
         talent_id,
         contact_first_name,
         contact_last_name,
@@ -107,6 +109,11 @@ export async function GET(request: NextRequest) {
       )
       .order('created_at', { ascending: false });
 
+    // Apply market filter
+    if (market === 'CH' || market === 'BG') {
+      query = query.eq('market', market);
+    }
+
     // Apply search filter
     const searchFilter = buildSearchFilter(search);
     if (searchFilter) {
@@ -138,6 +145,7 @@ export async function GET(request: NextRequest) {
 
       return {
         profile_id: row.id,
+        market: row.market || 'CH',
         talent_id: row.talent_id,
         contact_first_name: row.contact_first_name,
         contact_last_name: row.contact_last_name,

@@ -7,6 +7,7 @@ import { CandidateProfileDetails } from '@/components/CandidateProfileDetails';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
 import { STATUS_PILL_COLORS } from '@/lib/constants';
+import { getMarketConfig } from '@/lib/markets';
 import type {
   RecruiterCandidateView,
   RecruiterStatus,
@@ -287,7 +288,7 @@ export function CandidateDetailPanel({
                 <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Target Salary</div>
                 <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
                   {c.salary_min || c.salary_max
-                    ? `CHF ${c.salary_min ? `${Math.round(c.salary_min / 1000)}k` : '?'} – ${c.salary_max ? `${Math.round(c.salary_max / 1000)}k` : '?'}`
+                    ? `${getMarketConfig(c.market).currency.code} ${c.salary_min ? `${Math.round(c.salary_min / 1000)}k` : '?'} – ${c.salary_max ? `${Math.round(c.salary_max / 1000)}k` : '?'}`
                     : '—'}
                 </div>
               </div>
