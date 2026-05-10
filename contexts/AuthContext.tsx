@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +17,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
+  const isBgMarket = pathname.startsWith('/bg') || pathname.startsWith('/join/bg');
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
@@ -42,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
     setUser(null);
-    router.push('/');
+    router.push(isBgMarket ? '/bg' : '/');
   };
 
   return (

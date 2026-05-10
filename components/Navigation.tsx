@@ -15,6 +15,7 @@ export function Navigation() {
   const { user, isLoading, signOut } = useAuth();
   const pathname = usePathname();
   const isBgMarket = pathname.startsWith('/bg') || pathname.startsWith('/join/bg');
+  const homePath = isBgMarket ? '/bg' : '/';
   const joinPath = isBgMarket ? '/join/bg' : '/join';
 
   // Hide navigation in Zen Mode
@@ -27,7 +28,7 @@ export function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href={homePath} className="flex items-center gap-3 group">
             <div className="w-8 h-8 bg-[var(--gold)] rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
               <Layers className="w-5 h-5 text-[var(--bg-root)]" strokeWidth={2.5} />
             </div>
@@ -49,7 +50,7 @@ export function Navigation() {
             {!isLoading && (user ? (
               <>
                 <Link
-                  href="/"
+                  href={homePath}
                   className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   Talent Pool
@@ -62,7 +63,7 @@ export function Navigation() {
             ) : (
               <>
                 <Link
-                  href="/"
+                  href={homePath}
                   className="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   Access Talent
@@ -100,7 +101,7 @@ export function Navigation() {
           {!isLoading && (user ? (
             <>
               <Link
-                href="/"
+                href={homePath}
                 className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -115,7 +116,7 @@ export function Navigation() {
           ) : (
             <>
               <Link
-                href="/"
+                href={homePath}
                 className="block w-full text-left text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

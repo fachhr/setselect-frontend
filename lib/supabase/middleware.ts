@@ -61,14 +61,14 @@ export async function updateSession(request: NextRequest) {
   // Redirect /login to homepage (consolidated)
   if (pathname === '/login') {
     const url = request.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = pathname.startsWith('/bg') ? '/bg' : '/';
     return NextResponse.redirect(url);
   }
 
   // Redirect unauthenticated users to homepage (except public paths)
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = pathname.startsWith('/bg') ? '/bg' : '/';
     return NextResponse.redirect(url);
   }
 

@@ -255,7 +255,7 @@ const JoinForm: React.FC<{ market?: Market }> = ({ market = 'CH' }) => {
                             <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] mt-1.5"></div>We introduce you directly when there&apos;s a strong fit</li>
                         </ul>
                     </div>
-                    <Button onClick={() => router.push('/')} icon={ArrowLeft}>Back to Candidates</Button>
+                    <Button onClick={() => router.push(market === 'BG' ? '/bg' : '/')} icon={ArrowLeft}>Back to Candidates</Button>
                 </div>
             </div>
         );
