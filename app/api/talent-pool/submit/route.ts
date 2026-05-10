@@ -39,7 +39,10 @@ export async function POST(req: NextRequest) {
 
     // Remove cvFile from validation (already uploaded)
     // Extract languages and functional_expertise separately
-    const { cvStoragePath, originalFilename, languages, functional_expertise, other_expertise, ...formData } = body;
+    const { cvStoragePath, originalFilename, languages, functional_expertise, other_expertise, market, ...formData } = body;
+
+    // Market defaults to 'CH' for backward compatibility
+    const resolvedMarket = market === 'BG' ? 'BG' : 'CH';
 
     // Validate form data using server schema (expects cvStoragePath, not File)
     const validationResult = talentPoolServerSchemaRefined.safeParse({
@@ -104,6 +107,9 @@ export async function POST(req: NextRequest) {
         accepted_terms_at: new Date().toISOString(),
         participates_in_talent_pool: true,
 
+        // Market segmentation
+        market: resolvedMarket,
+
         // All other fields are NULL and will be filled by parser
         // (education_history, professional_experience, skills, etc.)
       })
@@ -135,6 +141,7 @@ export async function POST(req: NextRequest) {
         languages: languages ? languages.map((l: string) => ({ language: l })) : null,
         functional_expertise: validatedData.functional_expertise || null,
         other_expertise: validatedData.other_expertise || null,
+        market: resolvedMarket,
         // Parser-populated fields left NULL — filled by trigger + parser
       });
 
@@ -231,7 +238,8 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           jobId: jobData.id,
-          storagePath: cvStoragePath
+          storagePath: cvStoragePath,
+          market: resolvedMarket,
         })
       }).catch(err => {
         console.error('Parser trigger failed:', err);

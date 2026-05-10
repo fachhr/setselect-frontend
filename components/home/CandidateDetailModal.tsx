@@ -22,13 +22,15 @@ interface CandidateDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
     onRequestIntroduction?: (candidateId: string) => void;
+    currencyConfig?: { code: string; locale: string };
 }
 
 export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     candidate,
     isOpen,
     onClose,
-    onRequestIntroduction
+    onRequestIntroduction,
+    currencyConfig = { code: 'CHF', locale: 'de-CH' },
 }) => {
     useEffect(() => {
         if (isOpen) {
@@ -54,9 +56,9 @@ export const CandidateDetailModal: React.FC<CandidateDetailModalProps> = ({
     const formatSalaryRange = (min: number, max: number): string => {
         const formatNum = (n: number) => {
             if (!n) return '';
-            return new Intl.NumberFormat('de-CH', {
+            return new Intl.NumberFormat(currencyConfig.locale, {
                 style: 'currency',
-                currency: 'CHF',
+                currency: currencyConfig.code,
                 maximumSignificantDigits: 3,
             }).format(n);
         };

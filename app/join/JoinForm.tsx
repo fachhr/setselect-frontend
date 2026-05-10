@@ -16,6 +16,7 @@ import { Button, Input, Badge } from '@/components/ui';
 import { WORK_LOCATIONS, NOTICE_PERIOD_OPTIONS, COUNTRY_CODES, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS, type FunctionalExpertise } from '@/lib/formOptions';
 import { talentPoolSchemaRefined, type TalentPoolFormData } from '@/lib/validation/talentPoolSchema';
 import { useRecaptcha } from '@/hooks/useRecaptcha';
+import { getMarketConfig, type Market } from '@/lib/markets';
 
 // Helper for parsing non-JSON error responses
 const safeJsonParse = async (response: Response) => {
@@ -27,7 +28,8 @@ const safeJsonParse = async (response: Response) => {
     }
 };
 
-const JoinForm: React.FC = () => {
+const JoinForm: React.FC<{ market?: Market }> = ({ market = 'CH' }) => {
+    const marketConfig = getMarketConfig(market);
     const router = useRouter();
     const [step, setStep] = useState(1); // 1: CV, 2: Details, 3: Success
     const [isDragging, setIsDragging] = useState(false);
@@ -199,6 +201,7 @@ const JoinForm: React.FC = () => {
                 originalFilename,
                 accepted_terms: data.accepted_terms,
                 recaptchaToken,
+                market,
             };
 
             const submitResponse = await fetch('/api/talent-pool/submit', {
@@ -221,10 +224,16 @@ const JoinForm: React.FC = () => {
         }
     };
 
+    // Market-specific options (derived from config)
+    const activeLocations = marketConfig.locations.map(l => ({ code: l.code, name: l.name }));
+    const activeEligibility = marketConfig.workEligibility;
+    const activeLanguages = marketConfig.languages;
+    const { currency } = marketConfig;
+
     // Helper to format currency for display
     const formatCurrency = (val: string | number) => {
         if (!val) return '';
-        return new Intl.NumberFormat('de-CH', { style: 'currency', currency: 'CHF', maximumSignificantDigits: 3 }).format(Number(val));
+        return new Intl.NumberFormat(currency.locale, { style: 'currency', currency: currency.code, maximumSignificantDigits: 3 }).format(Number(val));
     };
 
     if (step === 3) {
@@ -236,7 +245,7 @@ const JoinForm: React.FC = () => {
                     </div>
                     <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">You&apos;re In</h2>
                     <p className="text-[var(--text-secondary)] mb-8 max-w-md mx-auto text-lg">
-                        Your profile is now with our team. We review every application to match top talent with the right opportunities in Switzerland&apos;s energy & commodities sector.
+                        Your profile is now with our team. We review every application to match top talent with the right opportunities in {marketConfig.joinPage.successBody}.
                     </p>
                     <div className="bg-[var(--bg-surface-2)] rounded-xl p-6 border border-[var(--border-subtle)] max-w-md mx-auto mb-8">
                         <h3 className="font-medium text-[var(--text-primary)] mb-2">What happens next?</h3>
@@ -265,7 +274,7 @@ const JoinForm: React.FC = () => {
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 relative z-10">
                     <div className="text-center">
                         <h1 className="font-title text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight">Join <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">Set</span><span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">Select</span></h1>
-                        <p className="mt-4 text-lg text-[var(--text-secondary)]">Create your profile and connect with top energy & commodities opportunities in Switzerland.</p>
+                        <p className="mt-4 text-lg text-[var(--text-secondary)]">{marketConfig.joinPage.subheading}</p>
                     </div>
                 </div>
             </div>
@@ -495,7 +504,7 @@ const JoinForm: React.FC = () => {
                                     className="block w-full rounded-lg border-[var(--border-strong)] bg-[var(--bg-surface-2)] border p-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--blue)] focus:ring-[var(--blue)]"
                                 >
                                     <option value="">Select your work eligibility...</option>
-                                    {WORK_ELIGIBILITY_OPTIONS.map(opt => (
+                                    {activeEligibility.map(opt => (
                                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                                     ))}
                                 </select>
@@ -545,7 +554,7 @@ const JoinForm: React.FC = () => {
                                 <div className="space-y-3">
                                     {/* Base language checkboxes - inline with labels */}
                                     <div className="flex flex-wrap gap-x-6 gap-y-3">
-                                        {LANGUAGE_OPTIONS.map(lang => (
+                                        {activeLanguages.map(lang => (
                                             <label key={lang} className="flex items-center gap-2 cursor-pointer select-none group">
                                                 <input
                                                     type="checkbox"
@@ -867,7 +876,7 @@ const JoinForm: React.FC = () => {
                             {/* Salary Expectation */}
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                                    Yearly Salary Expectation (CHF)
+                                    Yearly Salary Expectation ({currency.symbol})
                                 </label>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="relative">
@@ -911,7 +920,7 @@ const JoinForm: React.FC = () => {
                             <div>
                                 <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">Preferred Locations (Max 5) <span className="text-[var(--error)]">*</span></label>
                                 <div className="flex flex-wrap gap-2">
-                                    {WORK_LOCATIONS.map(location => (
+                                    {activeLocations.map(location => (
                                         <label
                                             key={location.code}
                                             className={`

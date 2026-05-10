@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     title: "SetSelect - Switzerland's Leading Energy & Commodities Talent Pool",
     description: "Browse pre-screened and selected energy & commodities talent in Switzerland. Find and connect with top professionals within just a few clicks.",
   },
+  alternates: {
+    canonical: "https://setselect.io",
+    languages: { "en-CH": "https://setselect.io", "en-BG": "https://setselect.io/bg" },
+  },
 };
 
 export default function HomePage() {

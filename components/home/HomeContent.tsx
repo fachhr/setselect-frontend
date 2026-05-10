@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { WORK_LOCATIONS, SENIORITY_LEVELS, WORK_ELIGIBILITY_OPTIONS, LANGUAGE_OPTIONS, FUNCTIONAL_EXPERTISE_OPTIONS, TRADING_SUB_OPTIONS } from '@/lib/formOptions';
 import { SIDEBAR_FILTERS } from '@/lib/featureFlags';
+import { getMarketConfig, type Market } from '@/lib/markets';
 import { Badge, Button, Toast, CustomScrollbar } from '@/components/ui';
 import { Candidate } from '@/types/talentPool';
 import { CandidateDetailModal } from './CandidateDetailModal';
@@ -170,7 +171,8 @@ interface ApiCandidate {
     previous_roles?: { role: string; duration: string }[] | null;
 }
 
-function LockedOverlay() {
+function LockedOverlay({ market = 'CH' }: { market?: Market }) {
+    const overlayConfig = getMarketConfig(market);
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
@@ -323,7 +325,7 @@ function LockedOverlay() {
                         <div className="space-y-3 mb-6 text-left max-w-xs mx-auto">
                             <div className="flex items-start gap-2.5">
                                 <Check className="w-4 h-4 text-[var(--success)] mt-0.5 flex-shrink-0" />
-                                <p className="text-sm text-[var(--text-secondary)]">Get seen by leading energy & commodities employers in Switzerland</p>
+                                <p className="text-sm text-[var(--text-secondary)]">{overlayConfig.talentPool.ctaBanner}</p>
                             </div>
                             <div className="flex items-start gap-2.5">
                                 <Check className="w-4 h-4 text-[var(--success)] mt-0.5 flex-shrink-0" />
@@ -331,7 +333,7 @@ function LockedOverlay() {
                             </div>
                         </div>
 
-                        <Button variant="primary" className="w-full h-12 text-sm font-medium" icon={ArrowRight} href="/join">
+                        <Button variant="primary" className="w-full h-12 text-sm font-medium" icon={ArrowRight} href={overlayConfig.joinPath}>
                             Join the Pool
                         </Button>
                     </div>
@@ -341,7 +343,9 @@ function LockedOverlay() {
     );
 }
 
-export default function HomeContent() {
+export default function HomeContent({ market = 'CH' }: { market?: Market }) {
+    const marketConfig = getMarketConfig(market);
+    const { currency } = marketConfig;
     const { isZenMode, toggleZenMode } = useZenMode();
     const { user, isLoading: isAuthLoading } = useAuth();
     const isMobile = useMediaQuery('(max-width: 767px)');
@@ -416,12 +420,12 @@ export default function HomeContent() {
     // Format helpers (defined early for use in filter logic)
     const formatCurrency = (val: number) => {
         const k = Math.round(val / 1000);
-        return `CHF ${k}K`;
+        return `${currency.symbol} ${k}K`;
     };
 
     const formatSalaryRange = (min: number, max: number): string => {
         if (!min && !max) return '-';
-        if (min && max) return `CHF ${Math.round(min / 1000)}K - ${Math.round(max / 1000)}K`;
+        if (min && max) return `${currency.symbol} ${Math.round(min / 1000)}K - ${Math.round(max / 1000)}K`;
         if (min) return `From ${formatCurrency(min)}`;
         if (max) return `Up to ${formatCurrency(max)}`;
         return '-';
@@ -437,7 +441,7 @@ export default function HomeContent() {
         async function fetchCandidates() {
             try {
                 setIsLoading(true);
-                const response = await fetch('/api/talent-pool/list');
+                const response = await fetch(`/api/talent-pool/list?market=${market}`);
                 const result = await response.json();
 
                 if (result.success && result.data.candidates) {
@@ -479,7 +483,7 @@ export default function HomeContent() {
         }
 
         fetchCandidates();
-    }, [user]);
+    }, [user, market]);
 
     // Escape special regex characters in user input
     const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -794,9 +798,9 @@ export default function HomeContent() {
                             <Badge style="gold">Pre-screened &amp; Selected Talent</Badge>
                         </div>
                         <h1 className="font-title mt-6 text-4xl sm:text-6xl font-bold text-[var(--text-primary)] tracking-tight leading-tight">
-                            Switzerland&apos;s Leading{' '}<br className="hidden sm:block" />
+                            {marketConfig.talentPool.heroHeadline}{' '}<br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-[var(--highlight)]">
-                                Energy &amp; Com&shy;modities Talent Pool
+                                {marketConfig.talentPool.heroHighlight}
                             </span>
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
@@ -1179,7 +1183,7 @@ export default function HomeContent() {
                             {SIDEBAR_FILTERS.salary && (
                             <div>
                                 <h3 className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Salary (CHF)
+                                    <DollarSign className="w-3.5 h-3.5 text-[var(--text-tertiary)]" /> Salary ({currency.symbol})
                                 </h3>
                                 <div className="flex items-center gap-2">
                                     <input
@@ -1231,7 +1235,7 @@ export default function HomeContent() {
 
                     {/* RESULTS */}
                     <main className="flex-1 overflow-hidden transition-all duration-300 relative min-h-[600px]">
-                        {!user && !isAuthLoading && <LockedOverlay />}
+                        {!user && !isAuthLoading && <LockedOverlay market={market} />}
                         {(isLoading && !!user) || isAuthLoading ? (
                             <div className="glass-panel rounded-xl p-16 text-center">
                                 <div className="w-12 h-12 bg-[var(--bg-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-[var(--border-subtle)] animate-pulse">
@@ -1749,6 +1753,7 @@ export default function HomeContent() {
             <CandidateDetailModal
                 candidate={selectedCandidate}
                 isOpen={showDetailModal}
+                currencyConfig={currency}
                 onClose={() => {
                     setShowDetailModal(false);
                     setSelectedCandidate(null);

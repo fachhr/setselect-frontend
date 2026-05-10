@@ -8,10 +8,17 @@ import { SelectOption } from '@/types/talentPool';
 // ====================
 export const WORK_LOCATION_CODES = [
   'Basel', 'Bern', 'Geneva', 'Lausanne', 'Lucerne', 'Lugano', 'Zug', 'Zurich',
-  'Switzerland', 'Remote', 'Global', 'Others'
+  'Switzerland', 'Remote', 'Global', 'Others',
+  // Bulgaria
+  'Sofia', 'Plovdiv', 'Varna', 'Burgas', 'Stara Zagora', 'Ruse', 'Pleven', 'Bulgaria',
 ] as const;
 export const WORK_ELIGIBILITY_VALUES = [
-  'swiss_citizen', 'c_permit', 'eu_efta', 'b_permit', 'g_permit', 'requires_sponsorship'
+  // Switzerland
+  'swiss_citizen', 'c_permit', 'eu_efta', 'b_permit', 'g_permit',
+  // Bulgaria
+  'bg_citizen', 'eu_citizen', 'bg_permanent', 'bg_work_permit', 'blue_card',
+  // Shared
+  'requires_sponsorship',
 ] as const;
 export const NOTICE_PERIOD_VALUES = ['0', '1', '2', '3', '4', '5', '6', '-1'] as const;
 

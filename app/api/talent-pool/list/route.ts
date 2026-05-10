@@ -48,8 +48,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
 
     // Parse params
+    const market = searchParams.get('market') || 'CH';
     const seniority = searchParams.get('seniority') as SeniorityLevel | 'all' | null;
-    const cantonsParam = searchParams.get('cantons');
+    const cantonsParam = searchParams.get('cantons') || searchParams.get('locations');
     const salaryMax = searchParams.get('salary_max');
     const languagesParam = searchParams.get('languages');
     const workEligibilityParam = searchParams.get('work_eligibility');
@@ -60,6 +61,9 @@ export async function GET(req: NextRequest) {
 
     // Only show profiles where parsing is complete
     query = query.not('parsing_completed_at', 'is', null);
+
+    // Filter by market
+    query = query.eq('market', market);
 
     // 1. Filter by Cantons / Locations
     if (cantonsParam) {
