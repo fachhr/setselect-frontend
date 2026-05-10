@@ -1,9 +1,10 @@
 import { updateSession } from '@/lib/supabase/middleware';
+import { geolocation } from '@vercel/functions';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const country = request.geo?.country;
+  const { country } = geolocation(request);
 
   if (country === 'BG') {
     if (pathname === '/') {
