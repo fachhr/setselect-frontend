@@ -240,10 +240,10 @@ export async function POST(req: NextRequest) {
           jobId: jobData.id,
           storagePath: cvStoragePath,
           market: resolvedMarket,
-        })
+        }),
+        signal: AbortSignal.timeout(10_000),
       }).catch(err => {
         console.error('Parser trigger failed:', err);
-        // Parsing can be retried via cron or manual trigger
       });
     } else {
       console.warn('Parser service not configured - skipping automatic parsing');

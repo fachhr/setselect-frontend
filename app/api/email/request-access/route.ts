@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 export async function POST(request: NextRequest) {
     try {
         const { email } = await request.json();
@@ -12,6 +16,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const safeEmail = escapeHtml(String(email));
+
         await sendEmail({
             from: 'SetSelect <noreply@setberry.com>',
             to: 'hello@setberry.com',
@@ -21,7 +27,7 @@ export async function POST(request: NextRequest) {
             html: `
                 <h2>New Access Request</h2>
                 <p>A new access request has been submitted for SetSelect.</p>
-                <p><strong>Requester Email:</strong> ${email}</p>
+                <p><strong>Requester Email:</strong> ${safeEmail}</p>
                 <p>Please review and grant access if appropriate.</p>
             `,
         });
