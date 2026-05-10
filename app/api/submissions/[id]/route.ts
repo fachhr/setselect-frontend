@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import type { SubmissionStatus, SubmissionUpdateEntry, ActivityEntry } from '@/types/recruiter';
+import type { SubmissionStatus, SubmissionUpdateEntry } from '@/types/recruiter';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const VALID_STATUSES: SubmissionStatus[] = ['submitted', 'interviewing', 'rejected', 'placed'];
@@ -81,13 +81,6 @@ export async function PATCH(
     const newStatus = body.status as SubmissionStatus | undefined;
     if (oldStatus && newStatus && oldStatus !== newStatus && submissionProfileId) {
       try {
-        const { data: candidateRow } = await supabaseAdmin
-          .from('recruiter_candidates')
-          .select('notes')
-          .eq('profile_id', submissionProfileId)
-          .single();
-
-        const existingNotes: ActivityEntry[] = candidateRow?.notes || [];
         const activityEntry: SubmissionUpdateEntry = {
           type: 'submission_update',
           id: crypto.randomUUID(),
@@ -100,10 +93,11 @@ export async function PATCH(
         };
 
         const now = new Date().toISOString();
-        await supabaseAdmin
-          .from('recruiter_candidates')
-          .update({ notes: [activityEntry, ...existingNotes], updated_at: now, last_activity_at: now })
-          .eq('profile_id', submissionProfileId);
+        await supabaseAdmin.rpc('prepend_note', {
+          p_profile_id: submissionProfileId,
+          p_note: activityEntry,
+          p_now: now,
+        });
       } catch (noteErr) {
         console.warn('Failed to log submission status change activity (non-blocking):', noteErr);
       }
@@ -153,23 +147,11 @@ export async function DELETE(
     // Clean up related timeline entries from candidate's notes JSONB
     if (submission?.profile_id) {
       try {
-        const { data: candidate } = await supabaseAdmin
-          .from('recruiter_candidates')
-          .select('notes')
-          .eq('profile_id', submission.profile_id)
-          .single();
-
-        if (candidate?.notes) {
-          const filtered = (candidate.notes as { submission_id?: string }[]).filter(
-            (entry) => entry.submission_id !== id
-          );
-          if (filtered.length !== (candidate.notes as unknown[]).length) {
-            await supabaseAdmin
-              .from('recruiter_candidates')
-              .update({ notes: filtered, updated_at: new Date().toISOString() })
-              .eq('profile_id', submission.profile_id);
-          }
-        }
+        await supabaseAdmin.rpc('delete_notes_by_submission', {
+          p_profile_id: submission.profile_id,
+          p_submission_id: id,
+          p_now: new Date().toISOString(),
+        });
       } catch (cleanupErr) {
         console.warn('Timeline cleanup failed (non-blocking):', cleanupErr);
       }

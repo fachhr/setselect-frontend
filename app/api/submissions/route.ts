@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import type { CandidateSubmission, SubmissionStatus, SubmissionCreatedEntry, ActivityEntry } from '@/types/recruiter';
+import type { CandidateSubmission, SubmissionStatus, SubmissionCreatedEntry } from '@/types/recruiter';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -124,13 +124,6 @@ export async function POST(request: NextRequest) {
 
     // Best-effort: log submission creation to candidate's activity feed
     try {
-      const { data: candidateRow } = await supabaseAdmin
-        .from('recruiter_candidates')
-        .select('notes')
-        .eq('profile_id', profile_id)
-        .single();
-
-      const existingNotes: ActivityEntry[] = candidateRow?.notes || [];
       const activityEntry: SubmissionCreatedEntry = {
         type: 'submission_created',
         id: crypto.randomUUID(),
@@ -141,10 +134,11 @@ export async function POST(request: NextRequest) {
       };
 
       const now = new Date().toISOString();
-      await supabaseAdmin
-        .from('recruiter_candidates')
-        .update({ notes: [activityEntry, ...existingNotes], updated_at: now, last_activity_at: now })
-        .eq('profile_id', profile_id);
+      await supabaseAdmin.rpc('prepend_note', {
+        p_profile_id: profile_id,
+        p_note: activityEntry,
+        p_now: now,
+      });
     } catch (noteErr) {
       console.warn('Failed to log submission creation activity (non-blocking):', noteErr);
     }
