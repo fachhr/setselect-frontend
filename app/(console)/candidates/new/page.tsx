@@ -241,26 +241,38 @@ export default function NewCandidatePage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Market Toggle */}
-        <div className="flex gap-1 p-1 bg-[var(--bg-surface-2)] rounded-lg w-fit">
-          {(['CH', 'BG'] as const).map((m) => {
-            const mc = getMarketConfig(m);
-            const active = market === m;
-            return (
-              <button
-                key={m}
-                type="button"
-                onClick={() => handleMarketSwitch(m)}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${
-                  active
-                    ? 'bg-[var(--primary)] text-white shadow-sm'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
-                }`}
-              >
-                {mc.code} — {mc.name}
-              </button>
-            );
-          })}
+        {/* Context: Market + Owner */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex gap-1 p-1 bg-[var(--bg-surface-2)] rounded-lg w-fit">
+            {(['CH', 'BG'] as const).map((m) => {
+              const mc = getMarketConfig(m);
+              const active = market === m;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => handleMarketSwitch(m)}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${
+                    active
+                      ? 'bg-[var(--primary)] text-white shadow-sm'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                  }`}
+                >
+                  {mc.code} — {mc.name}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-[11px] font-medium text-[var(--text-muted)] whitespace-nowrap">Owner</label>
+            <input
+              type="text"
+              value={owner}
+              onChange={(e) => setOwner(e.target.value)}
+              className="px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] w-40"
+              placeholder="e.g. Dominik"
+            />
+          </div>
         </div>
 
         {/* CV Upload */}
@@ -370,16 +382,6 @@ export default function NewCandidatePage() {
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
               placeholder="candidate@email.com"
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Owner / Assigned Recruiter</label>
-            <input
-              type="text"
-              value={owner}
-              onChange={(e) => setOwner(e.target.value)}
-              className={inputClass}
-              placeholder="e.g. Dominik"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
