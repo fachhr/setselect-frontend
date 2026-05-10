@@ -122,6 +122,9 @@ export default function NewCandidatePage() {
   const [otherExpertise, setOtherExpertise] = useState('');
   const [highlight, setHighlight] = useState('');
 
+  // Assignment
+  const [owner, setOwner] = useState('');
+
   // Preferences
   const [desiredRoles, setDesiredRoles] = useState('');
   const [noticePeriod, setNoticePeriod] = useState('');
@@ -207,6 +210,7 @@ export default function NewCandidatePage() {
         formData.append('desiredLocations', JSON.stringify(desiredLocations));
       if (salaryMin) formData.append('salaryMin', salaryMin);
       if (salaryMax) formData.append('salaryMax', salaryMax);
+      if (owner) formData.append('owner', owner);
 
       const res = await fetch('/api/candidates/create', { method: 'POST', body: formData });
       const data = await res.json();
@@ -366,6 +370,16 @@ export default function NewCandidatePage() {
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
               placeholder="candidate@email.com"
+            />
+          </div>
+          <div>
+            <label className={labelClass}>Owner / Assigned Recruiter</label>
+            <input
+              type="text"
+              value={owner}
+              onChange={(e) => setOwner(e.target.value)}
+              className={inputClass}
+              placeholder="e.g. Dominik"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">

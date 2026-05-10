@@ -41,6 +41,9 @@ export async function POST(req: NextRequest) {
 
     const resolvedMarket = market === 'BG' ? 'BG' : 'CH';
 
+    // Assignment
+    const owner = formData.get('owner') as string | null;
+
     // Contact fields
     const phone = formData.get('phone') as string | null;
     const phoneCode = formData.get('phoneCode') as string | null;
@@ -171,6 +174,14 @@ export async function POST(req: NextRequest) {
 
     if (talentError) {
       console.error('talent_profiles insert error:', talentError);
+    }
+
+    // Set owner on the auto-created recruiter_candidates row
+    if (owner?.trim()) {
+      await supabaseAdmin
+        .from('recruiter_candidates')
+        .update({ owner: owner.trim() })
+        .eq('profile_id', profile.id);
     }
 
     // Trigger parser if CV was uploaded
