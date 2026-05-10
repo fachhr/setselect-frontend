@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Layers, LogOut, Menu, X } from 'lucide-react';
 import { ToastContainer } from '@/components/ui/Toast';
 import { NotificationBell } from '@/components/NotificationBell';
-import { SubmitCandidateButton } from '@/components/SubmitCandidateButton';
 
 interface NavTab {
   href: string;
@@ -111,7 +110,6 @@ export default function ConsoleLayout({
 
           {/* Right side: add candidate + notifications + sign out + mobile menu */}
           <div className="flex items-center gap-3">
-            <SubmitCandidateButton />
             <NotificationBell />
             <button
               onClick={handleSignOut}

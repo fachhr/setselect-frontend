@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, ChevronDown, ChevronUp, UserPlus } from 'lucide-react';
+import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import type { RecruiterStatus, ActivityEntry } from '@/types/recruiter';
 
 // --- Types ---
@@ -125,13 +125,6 @@ function PanelSkeleton() {
   );
 }
 
-// --- Quick Actions ---
-
-const SUBMIT_LINKS = [
-  { market: 'CH', label: 'Swiss Candidate', desc: 'Add to Swiss talent pool' },
-  { market: 'BG', label: 'Bulgarian Candidate', desc: 'Add to Bulgarian talent pool' },
-] as const;
-
 // --- Main Component ---
 
 export default function CommandCenterPage() {
@@ -233,30 +226,6 @@ export default function CommandCenterPage() {
 
   return (
     <div className="space-y-4 animate-in fade-in">
-      {/* Submit New Candidate */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {SUBMIT_LINKS.map((link) => (
-          <button
-            key={link.market}
-            onClick={() => {
-              localStorage.setItem('talentPoolMarket', link.market);
-              router.push('/candidates/new');
-            }}
-            className="group flex items-center gap-3 bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-4 transition-all hover:border-[var(--primary)] hover:bg-[var(--primary-dim)] cursor-pointer text-left"
-          >
-            <div className="w-9 h-9 rounded-md bg-[var(--primary-dim)] flex items-center justify-center shrink-0 group-hover:bg-[var(--primary)] transition-colors">
-              <UserPlus size={16} className="text-[var(--primary-hover)] group-hover:text-white transition-colors" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium text-[var(--text-primary)]">
-                Submit {link.label}
-              </div>
-              <div className="text-[11px] text-[var(--text-muted)]">{link.desc}</div>
-            </div>
-          </button>
-        ))}
-      </div>
-
       {/* Pipeline Strip */}
       {loading ? (
         <PipelineSkeleton />

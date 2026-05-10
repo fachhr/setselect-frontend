@@ -9,7 +9,7 @@ import { BoardView } from '@/components/BoardView';
 import { ViewToggle } from '@/components/ui/ViewToggle';
 import type { TableFilters, SortConfig } from '@/components/CandidateTable';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
-
+import { SubmitCandidateButton } from '@/components/SubmitCandidateButton';
 import { toast } from '@/components/ui/Toast';
 import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData, CandidateSubmission, SubmissionStatus, SubmissionCompany } from '@/types/recruiter';
 
@@ -614,6 +614,7 @@ function CandidatesContent() {
             BG
           </button>
         </div>
+        <SubmitCandidateButton />
         <ViewToggle value={viewMode} onChange={handleViewChange} />
         <SearchBar
           search={searchInput}
