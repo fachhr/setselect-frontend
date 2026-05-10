@@ -15,18 +15,6 @@ export async function POST(
       return NextResponse.json({ error: 'Note text is required' }, { status: 400 });
     }
 
-    // Get current notes
-    const { data: current, error: fetchError } = await supabaseAdmin
-      .from('recruiter_candidates')
-      .select('notes')
-      .eq('profile_id', id)
-      .single();
-
-    if (fetchError) {
-      return NextResponse.json({ error: fetchError.message }, { status: 500 });
-    }
-
-    const notes: RecruiterNote[] = current?.notes || [];
     const newNote: RecruiterNote & { type: 'note' } = {
       type: 'note',
       id: crypto.randomUUID(),
@@ -34,13 +22,15 @@ export async function POST(
       author: author || 'Recruiter',
       created_at: new Date().toISOString(),
     };
-    notes.unshift(newNote);
 
+    // Atomic prepend — avoids read-modify-write race condition
     const now = new Date().toISOString();
     const { error: updateError } = await supabaseAdmin
-      .from('recruiter_candidates')
-      .update({ notes, updated_at: now, last_activity_at: now })
-      .eq('profile_id', id);
+      .rpc('prepend_note', {
+        p_profile_id: id,
+        p_note: newNote,
+        p_now: now,
+      });
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
@@ -66,26 +56,14 @@ export async function DELETE(
       return NextResponse.json({ error: 'noteId is required' }, { status: 400 });
     }
 
-    // Get current notes
-    const { data: current, error: fetchError } = await supabaseAdmin
-      .from('recruiter_candidates')
-      .select('notes')
-      .eq('profile_id', id)
-      .single();
-
-    if (fetchError) {
-      return NextResponse.json({ error: fetchError.message }, { status: 500 });
-    }
-
-    const notes: RecruiterNote[] = (current?.notes || []).filter(
-      (n: RecruiterNote) => n.id !== noteId
-    );
-
+    // Atomic delete — avoids read-modify-write race condition
     const now = new Date().toISOString();
     const { error: updateError } = await supabaseAdmin
-      .from('recruiter_candidates')
-      .update({ notes, updated_at: now, last_activity_at: now })
-      .eq('profile_id', id);
+      .rpc('delete_note', {
+        p_profile_id: id,
+        p_note_id: noteId,
+        p_now: now,
+      });
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 });
