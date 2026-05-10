@@ -1,11 +1,17 @@
-export const WORK_ELIGIBILITY_OPTIONS = [
-  { value: 'swiss_citizen', label: 'Swiss Citizen' },
-  { value: 'c_permit', label: 'C Permit' },
-  { value: 'eu_efta', label: 'EU/EFTA' },
-  { value: 'b_permit', label: 'B Permit' },
-  { value: 'g_permit', label: 'G Permit' },
-  { value: 'requires_sponsorship', label: 'Requires Sponsorship' },
-] as const;
+import { getMarketConfig, MARKETS, type Market } from './markets';
+
+export const WORK_ELIGIBILITY_OPTIONS = MARKETS.flatMap(
+  m => getMarketConfig(m).workEligibility
+);
+
+export function getWorkEligibilityLabel(value: string): string {
+  const option = WORK_ELIGIBILITY_OPTIONS.find(opt => opt.value === value);
+  return option?.label || value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+export function getWorkEligibilityOptionsForMarket(market: Market) {
+  return getMarketConfig(market).workEligibility;
+}
 
 export const STATUS_OPTIONS = [
   { value: 'new', label: 'New' },

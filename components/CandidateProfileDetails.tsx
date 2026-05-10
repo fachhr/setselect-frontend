@@ -1,6 +1,7 @@
 'use client';
 
-import { WORK_ELIGIBILITY_OPTIONS } from '@/lib/constants';
+import { getWorkEligibilityOptionsForMarket } from '@/lib/constants';
+import { getMarketConfig } from '@/lib/markets';
 import type { RecruiterCandidateView, ProfileEditData, LanguageEntry } from '@/types/recruiter';
 
 interface CandidateProfileDetailsProps {
@@ -17,11 +18,15 @@ const errorClass = 'text-xs text-[var(--error)] mt-0.5';
 const sectionClass = 'bg-[var(--bg-nested)] rounded-lg p-3 sm:p-4 border border-[var(--border-subtle)] space-y-3';
 
 export function CandidateProfileDetails({
+  candidate,
   isEditing,
   formData,
   errors,
   onUpdateField,
 }: CandidateProfileDetailsProps) {
+  const marketConfig = getMarketConfig(candidate.market);
+  const eligibilityOptions = getWorkEligibilityOptionsForMarket(candidate.market);
+  const locationOptions = marketConfig.locations;
   if (isEditing) {
     return (
       <div className="space-y-4">
@@ -100,7 +105,7 @@ export function CandidateProfileDetails({
             <label className={labelClass}>Work Eligibility</label>
             <select className={inputClass} value={formData.work_eligibility} onChange={(e) => onUpdateField('work_eligibility', e.target.value)}>
               <option value="">Select...</option>
-              {WORK_ELIGIBILITY_OPTIONS.map((opt) => (
+              {eligibilityOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>

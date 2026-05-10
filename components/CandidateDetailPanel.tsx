@@ -6,7 +6,7 @@ import { CandidatePipeline } from '@/components/CandidatePipeline';
 import { CandidateProfileDetails } from '@/components/CandidateProfileDetails';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
-import { STATUS_PILL_COLORS } from '@/lib/constants';
+import { STATUS_PILL_COLORS, getWorkEligibilityLabel } from '@/lib/constants';
 import { getMarketConfig } from '@/lib/markets';
 import type {
   RecruiterCandidateView,
@@ -331,7 +331,7 @@ export function CandidateDetailPanel({
               {c.work_eligibility && (
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1.2px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '4px' }}>Work Eligibility</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{c.work_eligibility.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{getWorkEligibilityLabel(c.work_eligibility)}</div>
                 </div>
               )}
               {/* Notice Period */}
