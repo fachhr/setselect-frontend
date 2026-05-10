@@ -817,7 +817,7 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                             >
                                 Browse Candidates
                             </Button>
-                            <Button variant="primary" className="h-12 px-8 text-base" icon={ArrowRight} href="/join">
+                            <Button variant="primary" className="h-12 px-8 text-base" icon={ArrowRight} href={marketConfig.joinPath}>
                                 Join as Candidate
                             </Button>
                         </div>
