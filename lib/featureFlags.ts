@@ -3,7 +3,7 @@
  * without reverting code or touching the database.
  */
 export const MARKET_FLAGS = {
-  bulgaria: false,
+  bulgaria: true,
 } as const;
 
 /**
