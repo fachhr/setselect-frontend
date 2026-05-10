@@ -48,7 +48,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
 
     // Parse params
-    const market = searchParams.get('market') || 'CH';
+    const VALID_MARKETS = ['CH', 'BG'];
+    const marketParam = searchParams.get('market') || 'CH';
+    const market = VALID_MARKETS.includes(marketParam) ? marketParam : 'CH';
     const seniority = searchParams.get('seniority') as SeniorityLevel | 'all' | null;
     const cantonsParam = searchParams.get('cantons') || searchParams.get('locations');
     const salaryMax = searchParams.get('salary_max');

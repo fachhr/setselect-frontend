@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { sendEmail } from '@/lib/email';
 
@@ -24,9 +25,12 @@ async function sendMagicLinkEmail(email: string, actionLink: string, companyName
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify admin API key
+    // Verify admin API key (timing-safe to prevent enumeration)
     const adminKey = request.headers.get('x-admin-key');
-    if (!adminKey || adminKey !== process.env.ADMIN_API_KEY) {
+    const expectedKey = process.env.ADMIN_API_KEY;
+    if (!adminKey || !expectedKey ||
+        adminKey.length !== expectedKey.length ||
+        !timingSafeEqual(Buffer.from(adminKey), Buffer.from(expectedKey))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
