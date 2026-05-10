@@ -208,6 +208,7 @@ export async function POST(req: NextRequest) {
             storagePath: cvStoragePath,
             market: resolvedMarket,
           }),
+          signal: AbortSignal.timeout(10_000),
         }).catch((err) => console.error('Parser trigger failed:', err));
       }
     }
