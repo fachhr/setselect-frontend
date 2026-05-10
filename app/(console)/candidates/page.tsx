@@ -10,7 +10,7 @@ import { FilterPanel, EMPTY_ADVANCED_FILTERS, countActiveFilters } from '@/compo
 import type { AdvancedFilters } from '@/components/FilterPanel';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List, Sparkles } from 'lucide-react';
 import type { TableFilters, SortConfig } from '@/components/CandidateTable';
 import { formatTalentId, formatEntryDate } from '@/lib/helpers';
 import { deepSearchCandidate, scoreCandidate } from '@/lib/search';
@@ -67,6 +67,8 @@ function CandidatesContent() {
   });
   const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({ ...EMPTY_ADVANCED_FILTERS });
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [semanticScores, setSemanticScores] = useState<Map<string, number>>(new Map());
+  const [semanticLoading, setSemanticLoading] = useState(false);
   const searchParams = useSearchParams();
 
   const handleMarketChange = (newMarket: 'CH' | 'BG') => {
@@ -149,6 +151,40 @@ function CandidatesContent() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
+  // Semantic search — fires in parallel with client-side keyword search
+  useEffect(() => {
+    if (!search.trim() || search.trim().length < 2) {
+      setSemanticScores(new Map());
+      return;
+    }
+
+    setSemanticLoading(true);
+    const controller = new AbortController();
+
+    fetch('/api/candidates/semantic-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: search, market }),
+      signal: controller.signal,
+    })
+      .then(res => res.json())
+      .then(data => {
+        const scores = new Map<string, number>();
+        for (const r of data.results || []) {
+          scores.set(r.profileId, r.score);
+        }
+        setSemanticScores(scores);
+      })
+      .catch(err => {
+        if (err.name !== 'AbortError') {
+          console.error('Semantic search failed:', err);
+        }
+      })
+      .finally(() => setSemanticLoading(false));
+
+    return () => controller.abort();
+  }, [search, market]);
+
   const handleStatusFilterChange = (value: RecruiterStatus | '') => {
     setStatusFilter(value);
     setPage(1);
@@ -159,8 +195,12 @@ function CandidatesContent() {
   // Stage 1: Filter (search + table filters + advanced filters)
   const filteredCandidates = useMemo(() => {
     return allCandidates.filter((c) => {
-      // Deep search (covers all fields including JSON arrays)
-      if (search && !deepSearchCandidate(c, search)) return false;
+      // Deep search OR semantic match
+      if (search) {
+        const keywordMatch = deepSearchCandidate(c, search);
+        const semanticMatch = semanticScores.has(c.profile_id);
+        if (!keywordMatch && !semanticMatch) return false;
+      }
 
       // Favorites filter
       if (favoritesOnly && !c.is_favorite) return false;
@@ -272,14 +312,16 @@ function CandidatesContent() {
 
       return true;
     });
-  }, [allCandidates, search, tableFilters, advancedFilters, favoritesOnly, staleOnly]);
+  }, [allCandidates, search, tableFilters, advancedFilters, favoritesOnly, staleOnly, semanticScores]);
 
-  // Stage 2: Sort (relevance-first when searching without explicit sort)
+  // Stage 2: Sort (blended keyword + semantic relevance when searching)
   const sortedCandidates = useMemo(() => {
     if (!sortConfig && search.trim()) {
-      return [...filteredCandidates].sort((a, b) =>
-        scoreCandidate(b, search) - scoreCandidate(a, search)
-      );
+      return [...filteredCandidates].sort((a, b) => {
+        const aScore = scoreCandidate(a, search) + (semanticScores.get(a.profile_id) || 0) * 35;
+        const bScore = scoreCandidate(b, search) + (semanticScores.get(b.profile_id) || 0) * 35;
+        return bScore - aScore;
+      });
     }
 
     if (!sortConfig) return filteredCandidates;
@@ -337,7 +379,7 @@ function CandidatesContent() {
 
       return direction === 'desc' ? -cmp : cmp;
     });
-  }, [filteredCandidates, sortConfig, search]);
+  }, [filteredCandidates, sortConfig, search, semanticScores]);
 
   // Stage 3: Paginate
   const totalPages = Math.ceil(sortedCandidates.length / ITEMS_PER_PAGE);
@@ -714,6 +756,13 @@ function CandidatesContent() {
           </>
         }
       />
+
+      {search.trim().length >= 2 && (semanticLoading || semanticScores.size > 0) && (
+        <div className="flex items-center gap-1.5 text-[10px] text-[var(--text-muted)]">
+          <Sparkles size={10} className={semanticLoading ? 'animate-pulse text-[var(--secondary)]' : 'text-[var(--secondary)]'} />
+          {semanticLoading ? 'Searching by meaning...' : `Smart search active — ${semanticScores.size} semantic matches`}
+        </div>
+      )}
 
       {filtersOpen && (
         <FilterPanel
