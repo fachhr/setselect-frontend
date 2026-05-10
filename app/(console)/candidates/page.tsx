@@ -605,13 +605,13 @@ function CandidatesContent() {
             onClick={() => handleMarketChange('CH')}
             className={`px-3 py-1.5 transition-colors ${market === 'CH' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-surface-1)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]'}`}
           >
-            🇨🇭 CH
+            CH
           </button>
           <button
             onClick={() => handleMarketChange('BG')}
             className={`px-3 py-1.5 transition-colors ${market === 'BG' ? 'bg-[var(--primary)] text-white' : 'bg-[var(--bg-surface-1)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]'}`}
           >
-            🇧🇬 BG
+            BG
           </button>
         </div>
         <ViewToggle value={viewMode} onChange={handleViewChange} />

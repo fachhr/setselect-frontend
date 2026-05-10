@@ -3,7 +3,6 @@ export type Market = 'CH' | 'BG';
 export interface MarketConfig {
   code: Market;
   name: string;
-  flag: string;
   workEligibility: { value: string; label: string }[];
   locations: { value: string; label: string }[];
   currency: { code: string; symbol: string };
@@ -15,7 +14,6 @@ export interface MarketConfig {
 const CH_CONFIG: MarketConfig = {
   code: 'CH',
   name: 'Switzerland',
-  flag: '🇨🇭',
   workEligibility: [
     { value: 'swiss_citizen', label: 'Swiss Citizen' },
     { value: 'c_permit', label: 'C Permit' },
@@ -46,7 +44,6 @@ const CH_CONFIG: MarketConfig = {
 const BG_CONFIG: MarketConfig = {
   code: 'BG',
   name: 'Bulgaria',
-  flag: '🇧🇬',
   workEligibility: [
     { value: 'bg_citizen', label: 'Bulgarian Citizen' },
     { value: 'eu_citizen', label: 'EU Citizen' },

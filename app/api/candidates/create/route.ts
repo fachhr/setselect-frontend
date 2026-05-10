@@ -13,6 +13,15 @@ const MIME_TO_EXT: Record<string, string> = {
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
 };
 
+function parseJsonField<T>(value: string | null): T | null {
+  if (!value) return null;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -32,13 +41,37 @@ export async function POST(req: NextRequest) {
 
     const resolvedMarket = market === 'BG' ? 'BG' : 'CH';
 
-    // Optional fields
+    // Contact fields
     const phone = formData.get('phone') as string | null;
     const phoneCode = formData.get('phoneCode') as string | null;
     const linkedin = formData.get('linkedin') as string | null;
+
+    // Professional fields
     const workEligibility = formData.get('workEligibility') as string | null;
     const yearsExp = formData.get('yearsOfExperience') as string | null;
     const highlight = formData.get('highlight') as string | null;
+    const languages = parseJsonField<string[]>(formData.get('languages') as string | null);
+    const otherLanguage = formData.get('otherLanguage') as string | null;
+    const functionalExpertise = parseJsonField<string[]>(
+      formData.get('functionalExpertise') as string | null,
+    );
+    const otherExpertise = formData.get('otherExpertise') as string | null;
+
+    // Preference fields
+    const desiredRoles = formData.get('desiredRoles') as string | null;
+    const noticePeriod = formData.get('noticePeriod') as string | null;
+    const desiredLocations = parseJsonField<string[]>(
+      formData.get('desiredLocations') as string | null,
+    );
+    const salaryMinRaw = formData.get('salaryMin') as string | null;
+    const salaryMaxRaw = formData.get('salaryMax') as string | null;
+    const salaryMin = salaryMinRaw ? parseInt(salaryMinRaw, 10) : null;
+    const salaryMax = salaryMaxRaw ? parseInt(salaryMaxRaw, 10) : null;
+
+    // Format languages as JSONB array matching frontend format
+    const languagesJsonb = languages
+      ? languages.map((l) => ({ language: l }))
+      : null;
 
     // CV upload
     let cvStoragePath: string | null = null;
@@ -93,6 +126,14 @@ export async function POST(req: NextRequest) {
         years_of_experience: yearsExp ? parseInt(yearsExp, 10) : null,
         work_eligibility: workEligibility || null,
         highlight: highlight?.trim() || null,
+        languages: languagesJsonb,
+        functional_expertise: functionalExpertise || null,
+        other_expertise: otherExpertise?.trim() || null,
+        desired_roles: desiredRoles?.trim() || null,
+        notice_period_months: noticePeriod ? parseInt(noticePeriod, 10) : null,
+        desired_locations: desiredLocations || null,
+        salary_min: salaryMin,
+        salary_max: salaryMax,
         cv_storage_path: cvStoragePath,
         cv_original_filename: cvOriginalFilename,
         market: resolvedMarket,
@@ -117,6 +158,14 @@ export async function POST(req: NextRequest) {
       years_of_experience: yearsExp ? parseInt(yearsExp, 10) : null,
       work_eligibility: workEligibility || null,
       highlight: highlight?.trim() || null,
+      languages: languagesJsonb,
+      functional_expertise: functionalExpertise || null,
+      other_expertise: otherExpertise?.trim() || null,
+      desired_roles: desiredRoles?.trim() || null,
+      notice_period_months: noticePeriod ? parseInt(noticePeriod, 10) : null,
+      desired_locations: desiredLocations || null,
+      salary_min: salaryMin,
+      salary_max: salaryMax,
       market: resolvedMarket,
     });
 

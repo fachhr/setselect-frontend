@@ -128,8 +128,8 @@ function PanelSkeleton() {
 // --- Quick Actions ---
 
 const SUBMIT_LINKS = [
-  { market: 'CH', label: 'Swiss Candidate', flag: '🇨🇭', desc: 'Add to Swiss talent pool' },
-  { market: 'BG', label: 'Bulgarian Candidate', flag: '🇧🇬', desc: 'Add to Bulgarian talent pool' },
+  { market: 'CH', label: 'Swiss Candidate', desc: 'Add to Swiss talent pool' },
+  { market: 'BG', label: 'Bulgarian Candidate', desc: 'Add to Bulgarian talent pool' },
 ] as const;
 
 // --- Main Component ---
@@ -248,9 +248,8 @@ export default function CommandCenterPage() {
               <UserPlus size={16} className="text-[var(--primary-hover)] group-hover:text-white transition-colors" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium text-[var(--text-primary)] flex items-center gap-2">
-                <span>{link.flag}</span>
-                <span>Submit {link.label}</span>
+              <div className="text-sm font-medium text-[var(--text-primary)]">
+                Submit {link.label}
               </div>
               <div className="text-[11px] text-[var(--text-muted)]">{link.desc}</div>
             </div>

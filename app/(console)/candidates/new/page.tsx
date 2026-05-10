@@ -2,8 +2,94 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, X, FileText, ChevronDown, ChevronUp, ArrowLeft, Loader2 } from 'lucide-react';
+import { Upload, X, FileText, ArrowLeft, Loader2, Check } from 'lucide-react';
 import { getMarketConfig, type Market } from '@/lib/markets';
+
+const FUNCTIONAL_EXPERTISE_OPTIONS = [
+  'Analytics',
+  'Communication',
+  'Compliance',
+  'Engineering',
+  'Finance',
+  'HR',
+  'Leadership',
+  'Legal',
+  'Operations',
+  'Quantitative Analysis',
+  'Research',
+  'Risk Management',
+  'Strategy',
+  'Technology',
+  'Trading',
+  'Other',
+];
+
+const TRADING_SUB_OPTIONS = [
+  'Energy Trading',
+  'Gas Trading',
+  'Power Trading',
+  'LNG Trading',
+  'Trading',
+];
+
+const NOTICE_PERIOD_OPTIONS = [
+  { label: 'Immediate', value: '0' },
+  { label: '1 Month', value: '1' },
+  { label: '2 Months', value: '2' },
+  { label: '3 Months', value: '3' },
+  { label: '4 Months', value: '4' },
+  { label: '5 Months', value: '5' },
+  { label: '6 Months', value: '6' },
+  { label: 'Negotiable', value: '-1' },
+];
+
+function MultiSelect({
+  options,
+  selected,
+  onChange,
+  max,
+}: {
+  options: { value: string; label: string }[];
+  selected: string[];
+  onChange: (vals: string[]) => void;
+  max?: number;
+}) {
+  const toggle = (val: string) => {
+    if (selected.includes(val)) {
+      onChange(selected.filter((v) => v !== val));
+    } else if (!max || selected.length < max) {
+      onChange([...selected, val]);
+    }
+  };
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {options.map((opt) => {
+        const active = selected.includes(opt.value);
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => toggle(opt.value)}
+            className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-md border transition-all cursor-pointer ${
+              active
+                ? 'bg-[var(--primary-dim)] border-[var(--primary)] text-[var(--primary-hover)]'
+                : 'bg-[var(--bg-surface-2)] border-[var(--border-subtle)] text-[var(--text-muted)] hover:border-[var(--text-muted)]'
+            }`}
+          >
+            {active && <Check size={12} />}
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+const inputClass =
+  'w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]';
+
+const labelClass = 'block text-[11px] font-medium text-[var(--text-muted)] mb-1';
 
 export default function NewCandidatePage() {
   const router = useRouter();
@@ -15,17 +101,35 @@ export default function NewCandidatePage() {
     }
     return 'CH';
   });
+
+  // Contact
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [linkedin, setLinkedin] = useState('');
+
+  // CV
   const [cvFile, setCvFile] = useState<File | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  // Professional
   const [workEligibility, setWorkEligibility] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('');
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [otherLanguage, setOtherLanguage] = useState('');
+  const [functionalExpertise, setFunctionalExpertise] = useState<string[]>([]);
+  const [otherExpertise, setOtherExpertise] = useState('');
   const [highlight, setHighlight] = useState('');
-  const [showDetails, setShowDetails] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
+
+  // Preferences
+  const [desiredRoles, setDesiredRoles] = useState('');
+  const [noticePeriod, setNoticePeriod] = useState('');
+  const [desiredLocations, setDesiredLocations] = useState<string[]>([]);
+  const [salaryMin, setSalaryMin] = useState('');
+  const [salaryMax, setSalaryMax] = useState('');
+
+  // Form state
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -35,13 +139,20 @@ export default function NewCandidatePage() {
     setMarket(m);
     localStorage.setItem('talentPoolMarket', m);
     setWorkEligibility('');
+    setLanguages([]);
+    setDesiredLocations([]);
   };
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files[0];
-    if (file && (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+    if (
+      file &&
+      (file.type === 'application/pdf' ||
+        file.type ===
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    ) {
       setCvFile(file);
     }
   }, []);
@@ -49,6 +160,18 @@ export default function NewCandidatePage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setCvFile(file);
+  };
+
+  const showTradingSubs =
+    functionalExpertise.includes('Trading') ||
+    functionalExpertise.some((e) => TRADING_SUB_OPTIONS.includes(e));
+
+  const handleExpertiseToggle = (vals: string[]) => {
+    if (!vals.includes('Trading')) {
+      setFunctionalExpertise(vals.filter((v) => !TRADING_SUB_OPTIONS.includes(v)));
+    } else {
+      setFunctionalExpertise(vals);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,13 +185,28 @@ export default function NewCandidatePage() {
       formData.append('lastName', lastName);
       formData.append('email', email);
       formData.append('market', market);
-      if (phone) formData.append('phone', phone);
-      if (phone) formData.append('phoneCode', config.phoneCode);
+
+      if (phone) {
+        formData.append('phone', phone);
+        formData.append('phoneCode', config.phoneCode);
+      }
       if (linkedin) formData.append('linkedin', linkedin);
       if (workEligibility) formData.append('workEligibility', workEligibility);
       if (yearsOfExperience) formData.append('yearsOfExperience', yearsOfExperience);
       if (highlight) formData.append('highlight', highlight);
       if (cvFile) formData.append('cv', cvFile);
+
+      if (languages.length > 0) formData.append('languages', JSON.stringify(languages));
+      if (otherLanguage) formData.append('otherLanguage', otherLanguage);
+      if (functionalExpertise.length > 0)
+        formData.append('functionalExpertise', JSON.stringify(functionalExpertise));
+      if (otherExpertise) formData.append('otherExpertise', otherExpertise);
+      if (desiredRoles) formData.append('desiredRoles', desiredRoles);
+      if (noticePeriod) formData.append('noticePeriod', noticePeriod);
+      if (desiredLocations.length > 0)
+        formData.append('desiredLocations', JSON.stringify(desiredLocations));
+      if (salaryMin) formData.append('salaryMin', salaryMin);
+      if (salaryMax) formData.append('salaryMax', salaryMax);
 
       const res = await fetch('/api/candidates/create', { method: 'POST', body: formData });
       const data = await res.json();
@@ -88,7 +226,6 @@ export default function NewCandidatePage() {
 
   return (
     <div className="max-w-2xl mx-auto animate-in fade-in">
-      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => router.back()}
@@ -116,85 +253,10 @@ export default function NewCandidatePage() {
                     : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
                 }`}
               >
-                {mc.flag} {mc.name}
+                {mc.code} — {mc.name}
               </button>
             );
           })}
-        </div>
-
-        {/* Contact Details */}
-        <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-4">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
-            Contact Details
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">
-                First Name <span className="text-[var(--error)]">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-                placeholder="First name"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">
-                Last Name <span className="text-[var(--error)]">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-                placeholder="Last name"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">
-              Email <span className="text-[var(--error)]">*</span>
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-              placeholder="candidate@email.com"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">Phone</label>
-              <div className="flex gap-1.5">
-                <span className="flex items-center px-2.5 text-xs text-[var(--text-muted)] bg-[var(--bg-surface-3)] border border-[var(--border-subtle)] rounded-md shrink-0">
-                  {config.phoneCode}
-                </span>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-                  placeholder="Phone number"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">LinkedIn</label>
-              <input
-                type="url"
-                value={linkedin}
-                onChange={(e) => setLinkedin(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-                placeholder="linkedin.com/in/..."
-              />
-            </div>
-          </div>
         </div>
 
         {/* CV Upload */}
@@ -202,7 +264,6 @@ export default function NewCandidatePage() {
           <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
             CV / Resume
           </h2>
-
           {cvFile ? (
             <div className="flex items-center gap-3 p-3 bg-[var(--bg-surface-2)] rounded-md">
               <FileText size={20} className="text-[var(--primary-hover)] shrink-0" />
@@ -214,7 +275,10 @@ export default function NewCandidatePage() {
               </div>
               <button
                 type="button"
-                onClick={() => { setCvFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+                onClick={() => {
+                  setCvFile(null);
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }}
                 className="p-1 text-[var(--text-muted)] hover:text-[var(--error)] transition-colors cursor-pointer"
               >
                 <X size={16} />
@@ -222,7 +286,10 @@ export default function NewCandidatePage() {
             </div>
           ) : (
             <div
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
@@ -232,9 +299,13 @@ export default function NewCandidatePage() {
                   : 'border-[var(--border-subtle)] hover:border-[var(--text-muted)] hover:bg-[var(--bg-surface-2)]'
               }`}
             >
-              <Upload size={24} className={dragOver ? 'text-[var(--primary-hover)]' : 'text-[var(--text-muted)]'} />
+              <Upload
+                size={24}
+                className={dragOver ? 'text-[var(--primary-hover)]' : 'text-[var(--text-muted)]'}
+              />
               <div className="text-sm text-[var(--text-secondary)]">
-                Drop CV here or <span className="text-[var(--primary-hover)] font-medium">browse</span>
+                Drop CV here or{' '}
+                <span className="text-[var(--primary-hover)] font-medium">browse</span>
               </div>
               <div className="text-[11px] text-[var(--text-muted)]">PDF or DOCX, max 5MB</div>
             </div>
@@ -251,65 +322,273 @@ export default function NewCandidatePage() {
           </p>
         </div>
 
-        {/* Additional Details (collapsible) */}
-        <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setShowDetails(!showDetails)}
-            className="w-full flex items-center justify-between px-5 py-3.5 text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] transition-colors cursor-pointer"
-          >
-            <span>Additional Details</span>
-            {showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </button>
-
-          {showDetails && (
-            <div className="px-5 pb-5 space-y-4 border-t border-[var(--border-subtle)] pt-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">
-                    Work Eligibility
-                  </label>
-                  <select
-                    value={workEligibility}
-                    onChange={(e) => setWorkEligibility(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-                  >
-                    <option value="">Select...</option>
-                    {config.workEligibility.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">
-                    Years of Experience
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="50"
-                    value={yearsOfExperience}
-                    onChange={(e) => setYearsOfExperience(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-                    placeholder="e.g. 5"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[11px] font-medium text-[var(--text-muted)] mb-1">
-                  Key Highlight / Notes
-                </label>
-                <textarea
-                  value={highlight}
-                  onChange={(e) => setHighlight(e.target.value)}
-                  maxLength={500}
-                  rows={3}
-                  className="w-full px-3 py-2 text-sm bg-[var(--bg-surface-2)] border border-[var(--border-subtle)] rounded-md text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] resize-none"
-                  placeholder="Quick notes about this candidate..."
+        {/* Contact Details */}
+        <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-4">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+            Contact Details
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>
+                First Name <span className="text-[var(--error)]">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className={inputClass}
+                placeholder="First name"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>
+                Last Name <span className="text-[var(--error)]">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className={inputClass}
+                placeholder="Last name"
+              />
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>
+              Email <span className="text-[var(--error)]">*</span>
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={inputClass}
+              placeholder="candidate@email.com"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>Phone</label>
+              <div className="flex gap-1.5">
+                <span className="flex items-center px-2.5 text-xs text-[var(--text-muted)] bg-[var(--bg-surface-3)] border border-[var(--border-subtle)] rounded-md shrink-0">
+                  {config.phoneCode}
+                </span>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className={inputClass}
+                  placeholder="Phone number"
                 />
               </div>
             </div>
-          )}
+            <div>
+              <label className={labelClass}>LinkedIn</label>
+              <input
+                type="url"
+                value={linkedin}
+                onChange={(e) => setLinkedin(e.target.value)}
+                className={inputClass}
+                placeholder="linkedin.com/in/..."
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Professional Details */}
+        <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-4">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+            Professional Details
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>Work Eligibility</label>
+              <select
+                value={workEligibility}
+                onChange={(e) => setWorkEligibility(e.target.value)}
+                className={inputClass}
+              >
+                <option value="">Select...</option>
+                {config.workEligibility.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>Years of Experience</label>
+              <input
+                type="number"
+                min="0"
+                max="50"
+                value={yearsOfExperience}
+                onChange={(e) => setYearsOfExperience(e.target.value)}
+                className={inputClass}
+                placeholder="e.g. 5"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelClass}>Languages</label>
+            <MultiSelect
+              options={config.languages.map((l) => ({ value: l, label: l }))}
+              selected={languages}
+              onChange={setLanguages}
+            />
+            <input
+              type="text"
+              value={otherLanguage}
+              onChange={(e) => setOtherLanguage(e.target.value)}
+              className={`${inputClass} mt-2`}
+              placeholder="Other languages (semicolon-separated)"
+            />
+          </div>
+
+          <div>
+            <label className={labelClass}>
+              Functional Expertise{' '}
+              <span className="text-[var(--text-muted)] font-normal">(max 5)</span>
+            </label>
+            <MultiSelect
+              options={FUNCTIONAL_EXPERTISE_OPTIONS.map((e) => ({ value: e, label: e }))}
+              selected={functionalExpertise.filter(
+                (e) => FUNCTIONAL_EXPERTISE_OPTIONS.includes(e),
+              )}
+              onChange={handleExpertiseToggle}
+              max={5}
+            />
+            {showTradingSubs && (
+              <div className="mt-2 pl-3 border-l-2 border-[var(--primary-dim)]">
+                <label className={labelClass}>Trading Specialisation</label>
+                <MultiSelect
+                  options={TRADING_SUB_OPTIONS.map((e) => ({ value: e, label: e }))}
+                  selected={functionalExpertise.filter((e) => TRADING_SUB_OPTIONS.includes(e))}
+                  onChange={(subs) => {
+                    const nonTrading = functionalExpertise.filter(
+                      (e) => !TRADING_SUB_OPTIONS.includes(e),
+                    );
+                    setFunctionalExpertise([...nonTrading, ...subs]);
+                  }}
+                />
+              </div>
+            )}
+            {functionalExpertise.includes('Other') && (
+              <input
+                type="text"
+                value={otherExpertise}
+                onChange={(e) => setOtherExpertise(e.target.value)}
+                className={`${inputClass} mt-2`}
+                placeholder="Other expertise (semicolon-separated)"
+              />
+            )}
+          </div>
+
+          <div>
+            <label className={labelClass}>Key Highlight / Notes</label>
+            <textarea
+              value={highlight}
+              onChange={(e) => setHighlight(e.target.value)}
+              maxLength={500}
+              rows={3}
+              className={`${inputClass} resize-none`}
+              placeholder="Quick notes about this candidate..."
+            />
+          </div>
+        </div>
+
+        {/* Job Preferences */}
+        <div className="bg-[var(--bg-surface-1)] border border-[var(--border-subtle)] rounded-lg p-5 space-y-4">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.8px] text-[var(--text-secondary)]">
+            Job Preferences
+          </h2>
+
+          <div>
+            <label className={labelClass}>Desired Roles</label>
+            <input
+              type="text"
+              value={desiredRoles}
+              onChange={(e) => setDesiredRoles(e.target.value)}
+              className={inputClass}
+              placeholder="e.g. Senior Trader; Risk Manager"
+            />
+            <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
+              Separate multiple roles with semicolons
+            </p>
+          </div>
+
+          <div>
+            <label className={labelClass}>Notice Period</label>
+            <select
+              value={noticePeriod}
+              onChange={(e) => setNoticePeriod(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">Select...</option>
+              {NOTICE_PERIOD_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className={labelClass}>
+              Desired Locations{' '}
+              <span className="text-[var(--text-muted)] font-normal">(max 5)</span>
+            </label>
+            <MultiSelect
+              options={config.locations}
+              selected={desiredLocations}
+              onChange={setDesiredLocations}
+              max={5}
+            />
+          </div>
+
+          <div>
+            <label className={labelClass}>
+              Salary Expectation{' '}
+              <span className="text-[var(--text-muted)] font-normal">
+                ({config.currency.symbol} / year, optional)
+              </span>
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[var(--text-muted)]">
+                  {config.currency.symbol}
+                </span>
+                <input
+                  type="number"
+                  min={config.salaryRange.min}
+                  max={config.salaryRange.max}
+                  step={config.salaryRange.step}
+                  value={salaryMin}
+                  onChange={(e) => setSalaryMin(e.target.value)}
+                  className={`${inputClass} pl-10`}
+                  placeholder="Min"
+                />
+              </div>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[var(--text-muted)]">
+                  {config.currency.symbol}
+                </span>
+                <input
+                  type="number"
+                  min={config.salaryRange.min}
+                  max={config.salaryRange.max}
+                  step={config.salaryRange.step}
+                  value={salaryMax}
+                  onChange={(e) => setSalaryMax(e.target.value)}
+                  className={`${inputClass} pl-10`}
+                  placeholder="Max"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Error */}
@@ -339,7 +618,9 @@ export default function NewCandidatePage() {
                 Adding...
               </>
             ) : (
-              <>Add to {config.flag} {config.name} Pool</>
+              <>
+                Add to {config.name} Pool
+              </>
             )}
           </button>
         </div>
