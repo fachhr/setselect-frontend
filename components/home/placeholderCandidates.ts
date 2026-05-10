@@ -171,15 +171,81 @@ export const PLACEHOLDER_CANDIDATES: Candidate[] = [
     },
 ];
 
+const PLACEHOLDER_CANDIDATES_BG: Candidate[] = [
+    {
+        id: 'REF-BG1',
+        role: 'Energy Trading Analyst',
+        highlight: 'Optimized natural gas procurement for Southeastern European portfolio',
+        skills: ['Power Markets', 'ETRM Systems', 'SQL'],
+        experience: '5 years',
+        seniority: 'Mid-level',
+        cantons: ['Sofia'],
+        salaryMin: 80000,
+        salaryMax: 100000,
+        availability: '1 month',
+        entryDate: 'Apr 2026',
+        education: 'MSc Energy Economics, Sofia University',
+        workPermit: 'bg_citizen',
+        languages: ['English', 'Bulgarian', 'German'],
+        functionalExpertise: ['Trading', 'Analytics'],
+        previousRoles: [
+            { role: 'Junior Gas Trader', duration: '2 years', location: 'Sofia' },
+            { role: 'Energy Market Analyst', duration: '2 years', location: 'Vienna' },
+        ],
+    },
+    {
+        id: 'REF-BG2',
+        role: 'Risk & Compliance Manager',
+        highlight: 'Built compliance framework for cross-border energy trading operations',
+        skills: ['Risk Management', 'REMIT', 'Internal Audit'],
+        experience: '8 years',
+        seniority: 'Senior',
+        cantons: ['Sofia', 'Plovdiv'],
+        salaryMin: 100000,
+        salaryMax: 130000,
+        availability: '2 months',
+        entryDate: 'Mar 2026',
+        education: 'MSc Finance, University of National and World Economy',
+        workPermit: 'eu_citizen',
+        languages: ['English', 'Bulgarian', 'Russian'],
+        functionalExpertise: ['Risk', 'Compliance', 'Operations'],
+        previousRoles: [
+            { role: 'Compliance Officer', duration: '3 years', location: 'Sofia' },
+            { role: 'Risk Analyst', duration: '3 years', location: 'Bucharest' },
+        ],
+    },
+    {
+        id: 'REF-BG3',
+        role: 'Software Engineer',
+        highlight: 'Developed real-time energy market data platform processing 500K events/sec',
+        skills: ['Java', 'Kafka', 'Kubernetes'],
+        experience: '6 years',
+        seniority: 'Senior',
+        cantons: ['Sofia', 'Remote'],
+        salaryMin: 90000,
+        salaryMax: 120000,
+        availability: 'Immediate',
+        entryDate: 'May 2026',
+        education: 'BSc Computer Science, Technical University of Sofia',
+        workPermit: 'bg_citizen',
+        languages: ['English', 'Bulgarian'],
+        functionalExpertise: ['Technology', 'Engineering'],
+        previousRoles: [
+            { role: 'Backend Engineer at Energy Startup', duration: '3 years', location: 'Sofia' },
+            { role: 'Platform Developer', duration: '2 years', location: 'Berlin' },
+        ],
+    },
+];
+
 // Helper to get placeholders for locked view with view-specific limits
 export function getPlaceholderCandidates(
     viewMode: 'grid' | 'table',
-    isMobile: boolean = false
+    isMobile: boolean = false,
+    market: string = 'CH'
 ): Candidate[] {
-    // Mobile always shows 1 (table toggle isn't visible on mobile)
+    const candidates = market === 'BG' ? PLACEHOLDER_CANDIDATES_BG : PLACEHOLDER_CANDIDATES;
     if (isMobile) {
-        return PLACEHOLDER_CANDIDATES.slice(0, 1);
+        return candidates.slice(0, 2);
     }
-    // Desktop: 8 for table, 3 for grid
-    return PLACEHOLDER_CANDIDATES.slice(0, viewMode === 'table' ? 8 : 3);
+    return candidates.slice(0, viewMode === 'table' ? 8 : 3);
 }

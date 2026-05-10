@@ -776,7 +776,7 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
 
     const displayCandidates = useMemo(() => {
         if (!user) {
-            return getPlaceholderCandidates(viewMode, isMobile);
+            return getPlaceholderCandidates(viewMode, isMobile, market);
         }
         return viewMode === 'table' ? sortedCandidates : filteredCandidates;
     }, [user, viewMode, sortedCandidates, filteredCandidates, isMobile]);
