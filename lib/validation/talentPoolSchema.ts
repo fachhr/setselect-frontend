@@ -122,14 +122,14 @@ export const talentPoolBaseSchema = z.object({
   salary_min: z.number({
     invalid_type_error: 'Please enter a valid number'
   })
-    .min(1, 'Minimum salary must be at least 1 CHF')
+    .min(1, 'Minimum salary must be at least 1')
     .nullable()
     .optional(),
 
   salary_max: z.number({
     invalid_type_error: 'Please enter a valid number'
   })
-    .min(1, 'Maximum salary must be at least 1 CHF')
+    .min(1, 'Maximum salary must be at least 1')
     .nullable()
     .optional(),
 
