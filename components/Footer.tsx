@@ -2,10 +2,14 @@
 
 import Link from 'next/link';
 import { Layers } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useZenMode } from '@/contexts/ZenModeContext';
+import { getMarketFromPathname, getMarketConfig } from '@/lib/markets';
 
 export function Footer() {
   const { isZenMode } = useZenMode();
+  const pathname = usePathname();
+  const marketConfig = getMarketConfig(getMarketFromPathname(pathname));
 
   // Hide footer in Zen Mode
   if (isZenMode) {
@@ -22,7 +26,7 @@ export function Footer() {
           </div>
           <div className="flex flex-col">
             <span className="font-title font-bold tracking-tight text-[var(--text-primary)] text-sm leading-none">Set<span className="font-light text-[var(--text-secondary)]">Select</span></span>
-            <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Energy & Commodities Recruitment</span>
+            <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">{marketConfig.tagline}</span>
           </div>
         </div>
 
@@ -70,7 +74,7 @@ export function Footer() {
             </div>
             <div className="flex flex-col">
               <span className="font-title font-bold tracking-tight text-[var(--text-primary)] text-sm leading-none">Set<span className="font-light text-[var(--text-secondary)]">Select</span></span>
-              <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Energy & Commodities Recruitment</span>
+              <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">{marketConfig.tagline}</span>
             </div>
           </div>
           <div className="text-sm text-[var(--text-secondary)] flex flex-wrap justify-center gap-x-8 gap-y-2">

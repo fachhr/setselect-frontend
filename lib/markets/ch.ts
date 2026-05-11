@@ -4,6 +4,7 @@ export const CH_CONFIG: MarketConfig = {
   code: 'CH',
   name: 'Switzerland',
   flag: '🇨🇭',
+  tagline: 'Energy & Commodities Recruitment',
 
   locations: [
     { code: 'Basel', name: 'Basel' },

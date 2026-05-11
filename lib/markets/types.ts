@@ -4,6 +4,7 @@ export interface MarketConfig {
   code: Market;
   name: string;
   flag: string;
+  tagline: string;
 
   // Form options
   locations: { code: string; name: string }[];

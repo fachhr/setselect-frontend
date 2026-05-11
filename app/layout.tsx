@@ -42,10 +42,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SetSelect - Energy & Commodities Talent in Switzerland",
-  description: "Browse pre-screened and selected energy & commodities talent in Switzerland.",
+  title: {
+    default: 'SetSelect - Pre-screened & Selected Talent',
+    template: '%s | SetSelect',
+  },
+  description: 'Browse pre-screened and selected talent. Find and connect with top professionals within just a few clicks.',
   icons: {
-    icon: "/favicon.svg",
+    icon: '/favicon.svg',
   },
 };
 

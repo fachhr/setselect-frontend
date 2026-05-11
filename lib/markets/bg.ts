@@ -4,6 +4,7 @@ export const BG_CONFIG: MarketConfig = {
   code: 'BG',
   name: 'Bulgaria',
   flag: '🇧🇬',
+  tagline: 'Senior & Executive Recruitment',
 
   locations: [
     { code: 'Sofia', name: 'Sofia' },
