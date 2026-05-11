@@ -5,12 +5,14 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get('code');
+  const next = searchParams.get('next');
+  const safePath = next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
 
   if (!code) {
-    return NextResponse.redirect(`${origin}/`);
+    return NextResponse.redirect(`${origin}${safePath}`);
   }
 
-  const response = NextResponse.redirect(`${origin}/`);
+  const response = NextResponse.redirect(`${origin}${safePath}`);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    return NextResponse.redirect(`${origin}/`);
+    return NextResponse.redirect(`${origin}${safePath}`);
   }
 
   // Set first_login_at if not already set

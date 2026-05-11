@@ -82,7 +82,9 @@ export default function InviteCallbackPage() {
         // Set first_login_at via API route (needs admin client)
         await fetch('/api/auth/first-login', { method: 'POST' });
 
-        router.replace('/');
+        const next = new URLSearchParams(window.location.search).get('next');
+        const safePath = next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
+        router.replace(safePath);
       } catch {
         setErrorInfo({
           title: 'Something Went Wrong',

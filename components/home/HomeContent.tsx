@@ -189,7 +189,7 @@ function LockedOverlay({ market = 'CH' }: { market?: Market }) {
             const { error } = await supabase.auth.signInWithOtp({
                 email,
                 options: {
-                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/callback`,
+                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/callback?next=${encodeURIComponent(overlayConfig.basePath || '/')}`,
                 },
             });
 

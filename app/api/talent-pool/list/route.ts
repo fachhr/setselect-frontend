@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getCompanyFromRequest } from '@/lib/auth/getCompanyFromRequest';
+import { isValidMarket } from '@/lib/markets';
 import {
   SeniorityLevel
 } from '@/types/talentPool';
@@ -48,9 +49,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
 
     // Parse params
-    const VALID_MARKETS = ['CH', 'BG'];
     const marketParam = searchParams.get('market') || 'CH';
-    const market = VALID_MARKETS.includes(marketParam) ? marketParam : 'CH';
+    const market = isValidMarket(marketParam) ? marketParam : 'CH';
     const seniority = searchParams.get('seniority') as SeniorityLevel | 'all' | null;
     const cantonsParam = searchParams.get('cantons') || searchParams.get('locations');
     const salaryMax = searchParams.get('salary_max');
