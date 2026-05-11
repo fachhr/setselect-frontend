@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { sendEmail } from '@/lib/email';
 import { isValidMarket, getMarketConfig } from '@/lib/markets';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.io';
 
 function getInviteCallbackUrl(marketBasePath: string): string {
   return `${SITE_URL}/auth/invite-callback?next=${encodeURIComponent(marketBasePath || '/')}`;

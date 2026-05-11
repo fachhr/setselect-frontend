@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { Market } from './types';
 import { getMarketConfig, MARKETS } from './index';
 
-const SITE_URL = 'https://setselect.io';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.io';
 
 const alternateLanguages = Object.fromEntries(
   MARKETS.map(m => {

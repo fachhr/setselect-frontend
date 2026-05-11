@@ -190,7 +190,7 @@ function LockedOverlay({ market = 'CH' }: { market?: Market }) {
             const { error } = await supabase.auth.signInWithOtp({
                 email,
                 options: {
-                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/callback?next=${encodeURIComponent(overlayConfig.basePath || '/')}`,
+                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.io'}/auth/callback?next=${encodeURIComponent(overlayConfig.basePath || '/')}`,
                 },
             });
 
@@ -443,7 +443,7 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
         async function fetchCandidates() {
             try {
                 setIsLoading(true);
-                const response = await fetch(`/api/talent-pool/list?market=${market}`);
+                const response = await fetch('/api/talent-pool/list');
                 const result = await response.json();
 
                 if (result.success && result.data.market && result.data.market !== market) {

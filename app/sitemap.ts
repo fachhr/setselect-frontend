@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { MARKETS, getMarketConfig } from '@/lib/markets';
 
-const SITE_URL = 'https://setselect.io';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.io';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];

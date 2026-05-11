@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { getMarketFromPathname, getMarketConfig } from '@/lib/markets';
+import { getMarketFromPathname, getMarketConfig, MARKETS } from '@/lib/markets';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -36,15 +36,17 @@ export async function updateSession(request: NextRequest) {
   // Public paths that don't require authentication
   const publicPaths = [
     '/',
-    '/bg',
     '/auth/callback',
     '/auth/invite-callback',
-    '/join',
     '/contact',
     '/terms',
     '/privacy',
     '/impressum',
     '/cookies',
+    ...MARKETS.flatMap(m => {
+      const c = getMarketConfig(m);
+      return [c.basePath, c.joinPath].filter(Boolean);
+    }),
   ];
 
   const isPublicPath = publicPaths.some(
