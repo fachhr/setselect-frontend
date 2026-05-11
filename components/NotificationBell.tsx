@@ -117,68 +117,72 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div
-          ref={popoverRef}
-          className="absolute right-0 top-full mt-2 w-[380px] max-w-[calc(100vw-2rem)] z-50 bg-[var(--bg-nested)] border border-[var(--border-subtle)] rounded-lg shadow-2xl overflow-hidden"
-        >
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
-            <span className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
-              Notifications
-              {unreadCount > 0 && <span className="ml-2 text-[var(--text-muted)] normal-case font-normal">· {unreadCount} unread</span>}
-            </span>
-            {unreadCount > 0 && (
-              <button
-                onClick={markAllRead}
-                className="text-[11px] text-[var(--text-muted)] hover:text-[var(--text-tertiary)] transition-colors cursor-pointer"
-              >
-                Mark all read
-              </button>
-            )}
-          </div>
+        <>
+          <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setOpen(false)} />
 
-          <div className="max-h-[420px] overflow-y-auto">
-            {visible.length === 0 ? (
-              <div className="px-4 py-8 text-center text-xs text-[var(--text-muted)]">
-                No new jobs since you last checked.
-                <br />
-                <span className="text-[var(--text-tertiary)]">Cron polls every 6 hours.</span>
-              </div>
-            ) : (
-              <div className="divide-y divide-[var(--border-subtle)]">
-                {visible.map((n) => (
-                  <a
-                    key={n.id}
-                    href={n.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => markRead(n.id)}
-                    className={`block px-4 py-3 hover:bg-[var(--bg-surface-2)] transition-colors ${
-                      !n.read_at ? 'bg-[var(--bg-surface-1)]' : ''
-                    }`}
-                  >
-                    <div className="flex items-start gap-2">
-                      {!n.read_at && (
-                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--primary)] shrink-0" />
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-xs font-semibold text-[var(--text-primary)]">{n.company_name}</span>
-                          <ExternalLink className="w-3 h-3 text-[var(--text-muted)]" />
-                        </div>
-                        <div className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{n.title}</div>
-                        <div className="text-[10px] text-[var(--text-muted)] mt-1 flex items-center gap-2">
-                          {n.seniority && <span>{n.seniority}</span>}
-                          {n.location && <span>· {n.location}</span>}
-                          <span>· {timeAgo(n.created_at)}</span>
+          <div
+            ref={popoverRef}
+            className="fixed inset-x-3 top-[52px] z-50 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[380px] bg-[var(--bg-nested)] border border-[var(--border-subtle)] rounded-lg shadow-2xl overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
+              <span className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)]">
+                Notifications
+                {unreadCount > 0 && <span className="ml-2 text-[var(--text-muted)] normal-case font-normal">· {unreadCount} unread</span>}
+              </span>
+              {unreadCount > 0 && (
+                <button
+                  onClick={markAllRead}
+                  className="text-[11px] text-[var(--text-muted)] hover:text-[var(--text-tertiary)] transition-colors cursor-pointer"
+                >
+                  Mark all read
+                </button>
+              )}
+            </div>
+
+            <div className="max-h-[calc(100vh-120px)] sm:max-h-[420px] overflow-y-auto">
+              {visible.length === 0 ? (
+                <div className="px-4 py-8 text-center text-xs text-[var(--text-muted)]">
+                  No new jobs since you last checked.
+                  <br />
+                  <span className="text-[var(--text-tertiary)]">Cron polls every 6 hours.</span>
+                </div>
+              ) : (
+                <div className="divide-y divide-[var(--border-subtle)]">
+                  {visible.map((n) => (
+                    <a
+                      key={n.id}
+                      href={n.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => markRead(n.id)}
+                      className={`block px-4 py-3.5 sm:py-3 hover:bg-[var(--bg-surface-2)] transition-colors ${
+                        !n.read_at ? 'bg-[var(--bg-surface-1)]' : ''
+                      }`}
+                    >
+                      <div className="flex items-start gap-2.5 sm:gap-2">
+                        {!n.read_at && (
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--primary)] shrink-0" />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-xs font-semibold text-[var(--text-primary)]">{n.company_name}</span>
+                            <ExternalLink className="w-3 h-3 text-[var(--text-muted)]" />
+                          </div>
+                          <div className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{n.title}</div>
+                          <div className="text-[10px] text-[var(--text-muted)] mt-1 flex items-center gap-2 flex-wrap">
+                            {n.seniority && <span>{n.seniority}</span>}
+                            {n.location && <span>· {n.location}</span>}
+                            <span>· {timeAgo(n.created_at)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
