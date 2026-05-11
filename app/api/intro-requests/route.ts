@@ -34,6 +34,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'talentId is required' }, { status: 400 });
   }
 
+  const { data: candidate, error: candidateError } = await supabaseAdmin
+    .from('talent_profiles')
+    .select('talent_id, market')
+    .eq('talent_id', talentId)
+    .single();
+
+  if (candidateError || !candidate) {
+    return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });
+  }
+
+  if (candidate.market !== company.market) {
+    return NextResponse.json(
+      { error: 'Candidate not available in your market' },
+      { status: 403 }
+    );
+  }
+
   // Check if a non-cancelled request already exists
   const { data: existing } = await supabaseAdmin
     .from('intro_requests')
@@ -73,7 +90,7 @@ export async function POST(request: NextRequest) {
       from: 'SetSelect <noreply@setberry.com>',
       to: 'hello@setberry.com',
       replyTo: company.contactEmail,
-      subject: `New Intro Request: ${talentId} from ${company.companyName}`,
+      subject: `New Intro Request [${company.market}]: ${talentId} from ${company.companyName}`,
       text: [
         `New introduction request submitted.`,
         ``,

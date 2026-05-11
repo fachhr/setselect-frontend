@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getCompanyFromRequest } from '@/lib/auth/getCompanyFromRequest';
 
+
 export async function GET() {
   const company = await getCompanyFromRequest();
   if (!company) {
@@ -31,6 +32,23 @@ export async function POST(request: NextRequest) {
 
   if (!talentId) {
     return NextResponse.json({ error: 'talentId is required' }, { status: 400 });
+  }
+
+  const { data: candidate, error: candidateError } = await supabaseAdmin
+    .from('talent_profiles')
+    .select('talent_id, market')
+    .eq('talent_id', talentId)
+    .single();
+
+  if (candidateError || !candidate) {
+    return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });
+  }
+
+  if (candidate.market !== company.market) {
+    return NextResponse.json(
+      { error: 'Candidate not available in your market' },
+      { status: 403 }
+    );
   }
 
   const { error } = await supabaseAdmin

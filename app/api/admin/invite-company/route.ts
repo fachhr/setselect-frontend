@@ -2,8 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { timingSafeEqual } from 'crypto';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { sendEmail } from '@/lib/email';
+import { isValidMarket, getMarketConfig } from '@/lib/markets';
 
-async function sendMagicLinkEmail(email: string, actionLink: string, companyName: string) {
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io';
+
+function getInviteCallbackUrl(marketBasePath: string): string {
+  return `${SITE_URL}/auth/invite-callback?next=${encodeURIComponent(marketBasePath || '/')}`;
+}
+
+async function sendMagicLinkEmail(email: string, actionLink: string, companyName: string, marketBasePath: string) {
+  const homeUrl = marketBasePath ? `${SITE_URL}${marketBasePath}` : SITE_URL;
   await sendEmail({
     from: 'SetSelect <noreply@setberry.com>',
     to: email,
@@ -16,7 +24,7 @@ async function sendMagicLinkEmail(email: string, actionLink: string, companyName
       `Click the link below to sign in:`,
       actionLink,
       ``,
-      `This link expires in 24 hours. If it has expired, you can request a new one at ${process.env.NEXT_PUBLIC_SITE_URL || 'https://setselect.vercel.app'}/`,
+      `This link expires in 24 hours. If it has expired, you can request a new one at ${homeUrl}`,
       ``,
       `— The SetSelect Team`,
     ].join('\n'),
@@ -34,7 +42,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { email, companyName, invitedBy } = await request.json();
+    const { email, companyName, invitedBy, market } = await request.json();
 
     if (!email || !companyName) {
       return NextResponse.json(
@@ -42,6 +50,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const resolvedMarket = market && isValidMarket(market) ? market : 'CH';
+    const { basePath } = getMarketConfig(resolvedMarket);
 
     // Check if company already exists with this email
     const { data: existing } = await supabaseAdmin
@@ -73,7 +84,7 @@ export async function POST(request: NextRequest) {
             type: 'magiclink',
             email,
             options: {
-              redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/invite-callback`,
+              redirectTo: getInviteCallbackUrl(basePath),
             },
           });
 
@@ -90,6 +101,7 @@ export async function POST(request: NextRequest) {
             auth_user_id: linkData.user.id,
             company_name: companyName,
             contact_email: email,
+            market: resolvedMarket,
             invited_by: invitedBy || null,
             invited_at: new Date().toISOString(),
           });
@@ -103,12 +115,12 @@ export async function POST(request: NextRequest) {
 
         // generateLink does NOT send emails — send via Resend
         try {
-          await sendMagicLinkEmail(email, linkData.properties.action_link, companyName);
+          await sendMagicLinkEmail(email, linkData.properties.action_link, companyName, basePath);
         } catch (emailError) {
           console.error('Failed to send magic link email:', emailError);
           return NextResponse.json({
             success: true,
-            warning: 'Account created but invitation email failed. User can request a new link at /.',
+            warning: 'Account created but invitation email failed.',
           });
         }
 
@@ -131,6 +143,7 @@ export async function POST(request: NextRequest) {
         auth_user_id: authUser.user.id,
         company_name: companyName,
         contact_email: email,
+        market: resolvedMarket,
         invited_by: invitedBy || null,
         invited_at: new Date().toISOString(),
       });
@@ -150,7 +163,7 @@ export async function POST(request: NextRequest) {
         type: 'magiclink',
         email,
         options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.setselect.io'}/auth/invite-callback`,
+          redirectTo: getInviteCallbackUrl(basePath),
         },
       });
 
@@ -164,12 +177,12 @@ export async function POST(request: NextRequest) {
 
     // generateLink does NOT send emails — send via Resend
     try {
-      await sendMagicLinkEmail(email, linkData.properties.action_link, companyName);
+      await sendMagicLinkEmail(email, linkData.properties.action_link, companyName, basePath);
     } catch (emailError) {
       console.error('Failed to send magic link email:', emailError);
       return NextResponse.json({
         success: true,
-        warning: 'Account created but invitation email failed. User can request a new link at /.',
+        warning: 'Account created but invitation email failed.',
       });
     }
 

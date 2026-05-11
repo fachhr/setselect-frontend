@@ -1,10 +1,12 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import type { Market } from '@/lib/markets';
 
 export interface CompanySession {
   companyId: string;
   companyName: string;
   contactEmail: string;
+  market: Market;
 }
 
 export async function getCompanyFromRequest(): Promise<CompanySession | null> {
@@ -18,7 +20,7 @@ export async function getCompanyFromRequest(): Promise<CompanySession | null> {
 
     const { data: company, error } = await supabaseAdmin
       .from('company_accounts')
-      .select('id, company_name, contact_email, status')
+      .select('id, company_name, contact_email, status, market')
       .eq('auth_user_id', user.id)
       .single();
 
@@ -31,6 +33,7 @@ export async function getCompanyFromRequest(): Promise<CompanySession | null> {
       companyId: company.id,
       companyName: company.company_name,
       contactEmail: company.contact_email,
+      market: company.market as Market,
     };
   } catch (error) {
     console.error('getCompanyFromRequest failed:', error);

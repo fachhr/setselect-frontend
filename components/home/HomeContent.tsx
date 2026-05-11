@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Search,
     MapPin,
@@ -344,6 +345,7 @@ function LockedOverlay({ market = 'CH' }: { market?: Market }) {
 }
 
 export default function HomeContent({ market = 'CH' }: { market?: Market }) {
+    const router = useRouter();
     const marketConfig = getMarketConfig(market);
     const { currency } = marketConfig;
     const { isZenMode, toggleZenMode } = useZenMode();
@@ -443,6 +445,12 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                 setIsLoading(true);
                 const response = await fetch(`/api/talent-pool/list?market=${market}`);
                 const result = await response.json();
+
+                if (result.success && result.data.market && result.data.market !== market) {
+                    const correctPath = getMarketConfig(result.data.market).basePath || '/';
+                    router.replace(correctPath);
+                    return;
+                }
 
                 if (result.success && result.data.candidates) {
                     // Transform API response to match Candidate interface
