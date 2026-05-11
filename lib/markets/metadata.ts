@@ -15,11 +15,13 @@ export function talentPoolMetadata(market: Market): Metadata {
   const { talentPool, basePath } = getMarketConfig(market);
   const url = basePath ? `${SITE_URL}${basePath}` : SITE_URL;
 
+  const ogTitle = `${talentPool.title} | SetSelect`;
+
   return {
     title: talentPool.title,
     description: talentPool.description,
     openGraph: {
-      title: talentPool.title,
+      title: ogTitle,
       description: talentPool.description,
       url,
       siteName: 'SetSelect',
@@ -27,7 +29,7 @@ export function talentPoolMetadata(market: Market): Metadata {
     },
     twitter: {
       card: 'summary',
-      title: talentPool.title,
+      title: ogTitle,
       description: talentPool.description,
     },
     alternates: {

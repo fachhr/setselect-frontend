@@ -14,13 +14,23 @@ export function getMarketConfig(market: Market): MarketConfig {
 }
 
 export function getMarketFromPathname(pathname: string): Market {
+  let best: Market = 'CH';
+  let bestLen = 0;
+
   for (const market of MARKETS) {
-    const { basePath } = MARKET_CONFIGS[market];
-    if (basePath && (pathname === basePath || pathname.startsWith(basePath + '/'))) {
-      return market;
+    const { basePath, joinPath } = MARKET_CONFIGS[market];
+    for (const prefix of [basePath, joinPath]) {
+      if (!prefix) continue;
+      if (pathname === prefix || pathname.startsWith(prefix + '/')) {
+        if (prefix.length > bestLen) {
+          best = market;
+          bestLen = prefix.length;
+        }
+      }
     }
   }
-  return 'CH';
+
+  return best;
 }
 
 export function isValidMarket(value: string): value is Market {

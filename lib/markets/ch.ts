@@ -42,7 +42,7 @@ export const CH_CONFIG: MarketConfig = {
   joinPath: '/join',
 
   joinPage: {
-    title: 'Join the Talent Pool | SetSelect',
+    title: 'Join the Talent Pool',
     description: 'Create your profile and connect with top energy & commodities opportunities in Switzerland.',
     heading: 'Join SetSelect',
     subheading: 'Create your profile and connect with top energy & commodities opportunities in Switzerland.',
@@ -50,7 +50,7 @@ export const CH_CONFIG: MarketConfig = {
   },
 
   talentPool: {
-    title: "SetSelect – Switzerland's Leading Energy & Commodities Talent Pool",
+    title: "Switzerland's Leading Energy & Commodities Talent Pool",
     description: 'Browse pre-screened and selected energy & commodities talent in Switzerland. Find and connect with top professionals within just a few clicks.',
     ctaBanner: 'Get seen by leading energy & commodities employers in Switzerland',
     heroHeadline: "Switzerland's Leading",

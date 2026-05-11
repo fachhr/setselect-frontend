@@ -40,7 +40,7 @@ export const BG_CONFIG: MarketConfig = {
   joinPath: '/join/bg',
 
   joinPage: {
-    title: 'Join the Talent Pool | SetSelect Bulgaria',
+    title: 'Join the Talent Pool – Bulgaria',
     description: 'Create your profile and connect with top opportunities in Bulgaria.',
     heading: 'Join SetSelect',
     subheading: 'Create your profile and connect with top opportunities in Bulgaria.',
@@ -48,7 +48,7 @@ export const BG_CONFIG: MarketConfig = {
   },
 
   talentPool: {
-    title: 'SetSelect – Senior & Executive Talent in Bulgaria',
+    title: 'Senior & Executive Talent in Bulgaria',
     description: 'Browse pre-screened senior & executive talent in Bulgaria. Find and connect with top professionals within just a few clicks.',
     ctaBanner: 'Get seen by leading employers in Bulgaria',
     heroHeadline: 'Senior & Executive',
