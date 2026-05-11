@@ -35,19 +35,24 @@ export const BG_CONFIG: MarketConfig = {
 
   popularPhoneCode: '+359',
 
+  basePath: '/bg',
   joinPath: '/join/bg',
 
   joinPage: {
+    title: 'Join the Talent Pool | SetSelect Bulgaria',
+    description: 'Create your profile and connect with top opportunities in Bulgaria.',
     heading: 'Join SetSelect',
-    subheading: 'Create your profile and connect with top energy & commodities opportunities in Bulgaria.',
-    successBody: "Bulgaria's energy & commodities sector",
+    subheading: 'Create your profile and connect with top opportunities in Bulgaria.',
+    successBody: "Bulgaria's professional talent market",
   },
 
   talentPool: {
-    title: 'SetSelect – Energy & Commodities Talent Pool Bulgaria',
-    description: 'Browse pre-screened energy & commodities talent in Bulgaria.',
-    ctaBanner: 'Get seen by leading energy & commodities employers in Bulgaria',
-    heroHeadline: 'Energy & Commodities',
-    heroHighlight: 'Talent Pool Bulgaria',
+    title: 'SetSelect – Senior & Executive Talent in Bulgaria',
+    description: 'Browse pre-screened senior & executive talent in Bulgaria. Find and connect with top professionals within just a few clicks.',
+    ctaBanner: 'Get seen by leading employers in Bulgaria',
+    heroHeadline: 'Senior & Executive',
+    heroHighlight: 'Talent in Bulgaria',
+    heroSubtitle: 'Access carefully selected professionals across leadership, technology, operations, commercial, and strategic roles.',
+    joinPoolDescription: 'Get discovered by top employers in Bulgaria.',
   },
 };

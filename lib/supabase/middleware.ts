@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
+import { getMarketFromPathname, getMarketConfig } from '@/lib/markets';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -58,17 +59,20 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
+  const market = getMarketFromPathname(pathname);
+  const homePath = getMarketConfig(market).basePath || '/';
+
   // Redirect /login to homepage (consolidated)
   if (pathname === '/login') {
     const url = request.nextUrl.clone();
-    url.pathname = pathname.startsWith('/bg') ? '/bg' : '/';
+    url.pathname = homePath;
     return NextResponse.redirect(url);
   }
 
   // Redirect unauthenticated users to homepage (except public paths)
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone();
-    url.pathname = pathname.startsWith('/bg') ? '/bg' : '/';
+    url.pathname = homePath;
     return NextResponse.redirect(url);
   }
 

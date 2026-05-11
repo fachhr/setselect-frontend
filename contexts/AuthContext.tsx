@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User } from '@supabase/supabase-js';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
 import { useRouter, usePathname } from 'next/navigation';
+import { getMarketFromPathname, getMarketConfig } from '@/lib/markets';
 
 interface AuthContextType {
   user: User | null;
@@ -18,7 +19,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
-  const isBgMarket = pathname.startsWith('/bg') || pathname.startsWith('/join/bg');
+  const market = getMarketFromPathname(pathname);
+  const homePath = getMarketConfig(market).basePath || '/';
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
@@ -44,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
     setUser(null);
-    router.push(isBgMarket ? '/bg' : '/');
+    router.push(homePath);
   };
 
   return (

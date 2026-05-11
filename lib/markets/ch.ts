@@ -37,9 +37,12 @@ export const CH_CONFIG: MarketConfig = {
 
   popularPhoneCode: '+41',
 
+  basePath: '',
   joinPath: '/join',
 
   joinPage: {
+    title: 'Join the Talent Pool | SetSelect',
+    description: 'Create your profile and connect with top energy & commodities opportunities in Switzerland.',
     heading: 'Join SetSelect',
     subheading: 'Create your profile and connect with top energy & commodities opportunities in Switzerland.',
     successBody: "Switzerland's energy & commodities sector",
@@ -47,9 +50,11 @@ export const CH_CONFIG: MarketConfig = {
 
   talentPool: {
     title: "SetSelect – Switzerland's Leading Energy & Commodities Talent Pool",
-    description: 'Browse pre-screened and selected energy & commodities talent in Switzerland.',
+    description: 'Browse pre-screened and selected energy & commodities talent in Switzerland. Find and connect with top professionals within just a few clicks.',
     ctaBanner: 'Get seen by leading energy & commodities employers in Switzerland',
     heroHeadline: "Switzerland's Leading",
     heroHighlight: 'Energy & Commodities Talent Pool',
+    heroSubtitle: 'Browse pre‑screened and selected talent. Within just a few clicks, get contact information of the candidates you like.',
+    joinPoolDescription: 'Get discovered by top employers in the energy and commodities sector.',
   },
 };

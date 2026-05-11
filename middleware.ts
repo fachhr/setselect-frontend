@@ -1,21 +1,26 @@
 import { updateSession } from '@/lib/supabase/middleware';
 import { geolocation } from '@vercel/functions';
 import { NextResponse, type NextRequest } from 'next/server';
+import { MARKETS, getMarketConfig } from '@/lib/markets';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const { country } = geolocation(request);
 
-  if (country === 'BG') {
-    if (pathname === '/') {
-      const url = request.nextUrl.clone();
-      url.pathname = '/bg';
-      return NextResponse.redirect(url);
-    }
-    if (pathname === '/join') {
-      const url = request.nextUrl.clone();
-      url.pathname = '/join/bg';
-      return NextResponse.redirect(url);
+  for (const marketCode of MARKETS) {
+    const config = getMarketConfig(marketCode);
+    if (config.basePath && country === marketCode) {
+      if (pathname === '/') {
+        const url = request.nextUrl.clone();
+        url.pathname = config.basePath;
+        return NextResponse.redirect(url);
+      }
+      if (pathname === '/join') {
+        const url = request.nextUrl.clone();
+        url.pathname = config.joinPath;
+        return NextResponse.redirect(url);
+      }
+      break;
     }
   }
 

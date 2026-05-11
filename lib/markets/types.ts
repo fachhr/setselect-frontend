@@ -20,10 +20,13 @@ export interface MarketConfig {
   popularPhoneCode: string;
 
   // Routes
+  basePath: string;
   joinPath: string;
 
   // Copy
   joinPage: {
+    title: string;
+    description: string;
     heading: string;
     subheading: string;
     successBody: string;
@@ -34,5 +37,7 @@ export interface MarketConfig {
     ctaBanner: string;
     heroHeadline: string;
     heroHighlight: string;
+    heroSubtitle: string;
+    joinPoolDescription: string;
   };
 }

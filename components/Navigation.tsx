@@ -8,15 +8,17 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useZenMode } from '@/contexts/ZenModeContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { getMarketFromPathname, getMarketConfig } from '@/lib/markets';
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isZenMode } = useZenMode();
   const { user, isLoading, signOut } = useAuth();
   const pathname = usePathname();
-  const isBgMarket = pathname.startsWith('/bg') || pathname.startsWith('/join/bg');
-  const homePath = isBgMarket ? '/bg' : '/';
-  const joinPath = isBgMarket ? '/join/bg' : '/join';
+  const market = getMarketFromPathname(pathname);
+  const marketConfig = getMarketConfig(market);
+  const homePath = marketConfig.basePath || '/';
+  const joinPath = marketConfig.joinPath;
 
   // Hide navigation in Zen Mode
   if (isZenMode) {
@@ -41,7 +43,7 @@ export function Navigation() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             <a
-              href="https://setberry.com/home/"
+              href="https://setberry.com"
               className="nav-link flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               <Image src="/setberry-logo.svg" alt="Setberry" width={10} height={10} className="inline-block" style={{ filter: 'brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(170deg) brightness(1.8)', opacity: 1 }} />
@@ -92,7 +94,7 @@ export function Navigation() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-[var(--bg-root)]/95 backdrop-blur-xl border-b border-[var(--border-subtle)] p-4 space-y-4 shadow-xl animate-in slide-in-from-top-2 z-50">
           <a
-            href="https://setberry.com/home/"
+            href="https://setberry.com"
             className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           >
             <Image src="/setberry-logo.svg" alt="Setberry" width={10} height={10} className="inline-block" style={{ filter: 'brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(170deg) brightness(1.8)', opacity: 1 }} />

@@ -1,26 +1,7 @@
-import { Metadata } from 'next';
 import HomeContent from '@/components/home/HomeContent';
+import { talentPoolMetadata } from '@/lib/markets/metadata';
 
-export const metadata: Metadata = {
-  title: "SetSelect - Switzerland's Leading Energy & Commodities Talent Pool",
-  description: "Browse pre-screened and selected energy & commodities talent in Switzerland. Find and connect with top professionals within just a few clicks.",
-  openGraph: {
-    title: "SetSelect - Switzerland's Leading Energy & Commodities Talent Pool",
-    description: "Browse pre-screened and selected energy & commodities talent in Switzerland. Find and connect with top professionals within just a few clicks.",
-    url: "https://setselect.io",
-    siteName: "SetSelect",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "SetSelect - Switzerland's Leading Energy & Commodities Talent Pool",
-    description: "Browse pre-screened and selected energy & commodities talent in Switzerland. Find and connect with top professionals within just a few clicks.",
-  },
-  alternates: {
-    canonical: "https://setselect.io",
-    languages: { "en-CH": "https://setselect.io", "en-BG": "https://setselect.io/bg" },
-  },
-};
+export const metadata = talentPoolMetadata('CH');
 
 export default function HomePage() {
   return <HomeContent />;

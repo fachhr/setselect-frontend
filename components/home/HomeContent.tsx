@@ -319,7 +319,7 @@ function LockedOverlay({ market = 'CH' }: { market?: Market }) {
                         <h3 className="text-xl font-bold text-[var(--text-primary)] mb-1">Join the Pool</h3>
                         <p className="text-xs text-[var(--text-tertiary)] mb-2">For Professionals</p>
                         <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">
-                            Get discovered by top employers in the energy and commodities sector.
+                            {overlayConfig.talentPool.joinPoolDescription}
                         </p>
 
                         <div className="space-y-3 mb-6 text-left max-w-xs mx-auto">
@@ -804,7 +804,7 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                             </span>
                         </h1>
                         <p className="mt-6 text-lg text-[var(--text-secondary)] max-w-2xl mx-auto font-light leading-relaxed">
-                            Browse pre‑screened and selected talent. Within just a few clicks, get contact information of the candidates you like.
+                            {marketConfig.talentPool.heroSubtitle}
                         </p>
                         <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
                             <Button

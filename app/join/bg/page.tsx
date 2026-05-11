@@ -1,12 +1,9 @@
-import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import JoinForm from '../JoinForm';
 import { MARKET_FLAGS } from '@/lib/featureFlags';
+import { joinPageMetadata } from '@/lib/markets/metadata';
 
-export const metadata: Metadata = {
-  title: 'Join the Talent Pool | SetSelect Bulgaria',
-  description: 'Create your profile and connect with top energy & commodities opportunities in Bulgaria.',
-};
+export const metadata = joinPageMetadata('BG');
 
 export default function JoinBulgariaRoute() {
   if (!MARKET_FLAGS.bulgaria) return notFound();

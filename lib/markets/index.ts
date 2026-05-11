@@ -13,6 +13,16 @@ export function getMarketConfig(market: Market): MarketConfig {
   return MARKET_CONFIGS[market];
 }
 
+export function getMarketFromPathname(pathname: string): Market {
+  for (const market of MARKETS) {
+    const { basePath } = MARKET_CONFIGS[market];
+    if (basePath && (pathname === basePath || pathname.startsWith(basePath + '/'))) {
+      return market;
+    }
+  }
+  return 'CH';
+}
+
 export function isValidMarket(value: string): value is Market {
   return value in MARKET_CONFIGS;
 }

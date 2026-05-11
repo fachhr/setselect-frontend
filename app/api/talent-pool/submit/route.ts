@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { talentPoolServerSchemaRefined } from '@/lib/validation/talentPoolSchema';
 import { verifyRecaptchaToken } from '@/lib/recaptcha';
 import { correctGrammar } from '@/lib/ai/grammarCorrection';
+import { isValidMarket } from '@/lib/markets';
 
 /**
  * POST /api/talent-pool/submit
@@ -41,8 +42,7 @@ export async function POST(req: NextRequest) {
     // Extract languages and functional_expertise separately
     const { cvStoragePath, originalFilename, languages, functional_expertise, other_expertise, market, ...formData } = body;
 
-    // Market defaults to 'CH' for backward compatibility
-    const resolvedMarket = market === 'BG' ? 'BG' : 'CH';
+    const resolvedMarket = isValidMarket(market) ? market : 'CH';
 
     // Validate form data using server schema (expects cvStoragePath, not File)
     const validationResult = talentPoolServerSchemaRefined.safeParse({

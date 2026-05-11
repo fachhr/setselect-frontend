@@ -1,10 +1,7 @@
-import { Metadata } from 'next';
 import JoinForm from './JoinForm';
+import { joinPageMetadata } from '@/lib/markets/metadata';
 
-export const metadata: Metadata = {
-  title: 'Join the Talent Pool | SetSelect',
-  description: 'Create your profile and connect with top energy & commodities opportunities in Switzerland.',
-};
+export const metadata = joinPageMetadata('CH');
 
 export default function JoinRoute() {
   return <JoinForm />;
