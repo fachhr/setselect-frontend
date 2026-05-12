@@ -128,7 +128,7 @@ export function NotificationBell({ fullscreen = false }: { fullscreen?: boolean 
     <div ref={panelRef}>
       {fullscreen && (
         <div
-          style={{ position: 'fixed', inset: '4rem 0 0 0', backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 100 }}
+          style={{ position: 'fixed', top: '4rem', right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 100 }}
           aria-hidden
           onClick={() => setOpen(false)}
         />
@@ -139,7 +139,7 @@ export function NotificationBell({ fullscreen = false }: { fullscreen?: boolean 
         aria-label="Recent job notifications"
         style={
           fullscreen
-            ? { position: 'fixed', inset: '4rem 0 0 0', zIndex: 101 }
+            ? { position: 'fixed', top: '4rem', right: 0, bottom: 0, left: 0, zIndex: 101 }
             : panelPos
               ? { position: 'fixed', top: panelPos.top, right: panelPos.right, zIndex: 101 }
               : undefined
