@@ -410,7 +410,7 @@
 }
 
 /* Notification panel: desktop positioning via CSS custom properties set by JS */
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   [data-notif-panel] {
     top: var(--dt) !important;
     right: var(--dr) !important;

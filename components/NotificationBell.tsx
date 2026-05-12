@@ -123,7 +123,7 @@ export function NotificationBell() {
     <div ref={panelRef}>
       {/* Backdrop — mobile only */}
       <div
-        className="md:hidden fixed left-0 top-16 bottom-0 w-screen bg-black/40 z-[100]"
+        className="lg:hidden fixed left-0 top-16 bottom-0 w-screen bg-black/40 z-[100]"
         aria-hidden
         onClick={() => setOpen(false)}
       />
@@ -133,7 +133,7 @@ export function NotificationBell() {
         role="dialog"
         aria-label="Recent job notifications"
         data-notif-panel
-        className="fixed left-0 top-16 bottom-0 w-screen flex flex-col md:inset-auto md:bottom-auto md:w-[380px] md:rounded-lg md:border md:border-[var(--border-subtle)] md:block bg-[var(--bg-root)] shadow-2xl overflow-hidden z-[101]"
+        className="fixed left-0 top-16 bottom-0 w-screen flex flex-col lg:inset-auto lg:bottom-auto lg:w-[380px] lg:rounded-lg lg:border lg:border-[var(--border-subtle)] lg:block bg-[var(--bg-root)] shadow-2xl overflow-hidden z-[101]"
         style={desktopPos ? {
           '--dt': `${desktopPos.top}px`,
           '--dr': `${desktopPos.right}px`,
@@ -154,7 +154,7 @@ export function NotificationBell() {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto md:max-h-[60vh]">
+        <div className="flex-1 overflow-y-auto lg:max-h-[60vh]">
           {loading ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
               Loading…
