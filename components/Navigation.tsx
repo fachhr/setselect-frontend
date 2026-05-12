@@ -27,8 +27,9 @@ export function Navigation() {
   }
 
   return (
-    <nav className="sticky top-0 z-40 bg-[var(--bg-root)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-40 border-b border-[var(--border-subtle)]">
+      <div className="absolute inset-0 bg-[var(--bg-root)]/90 backdrop-blur-md" aria-hidden="true" />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href={homePath} className="flex items-center gap-3 group">
