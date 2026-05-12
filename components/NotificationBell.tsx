@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Bell, X } from 'lucide-react';
 import { useNotifications, type JobNotification } from '@/hooks/useNotifications';
 
-// Lightweight time-ago helper. No new dependency.
 function timeAgo(iso: string): string {
   const then = new Date(iso).getTime();
   if (isNaN(then)) return '';
@@ -78,13 +78,31 @@ function NotificationItem({
 export function NotificationBell() {
   const { items, unreadCount, loading, markRead, markAllRead } = useNotifications();
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const bellRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [desktopPos, setDesktopPos] = useState<{ top: number; right: number } | null>(null);
 
-  // Click-outside / Escape to close.
+  const updateDesktopPos = useCallback(() => {
+    if (!bellRef.current) return;
+    const rect = bellRef.current.getBoundingClientRect();
+    setDesktopPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    updateDesktopPos();
+    window.addEventListener('resize', updateDesktopPos);
+    return () => window.removeEventListener('resize', updateDesktopPos);
+  }, [open, updateDesktopPos]);
+
   useEffect(() => {
     if (!open) return;
     function onDoc(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        bellRef.current && !bellRef.current.contains(target) &&
+        panelRef.current && !panelRef.current.contains(target)
+      ) {
         setOpen(false);
       }
     }
@@ -101,9 +119,71 @@ export function NotificationBell() {
 
   const visible = items.slice(0, 20);
 
+  const panel = (
+    <div ref={panelRef}>
+      {/* Backdrop — mobile only */}
+      <div
+        className="md:hidden fixed inset-0 top-16 bg-black/40 z-[100]"
+        aria-hidden
+        onClick={() => setOpen(false)}
+      />
+
+      {/* Panel — mobile: full screen below nav, desktop: dropdown */}
+      <div
+        role="dialog"
+        aria-label="Recent job notifications"
+        data-notif-panel
+        className="fixed inset-x-0 top-16 bottom-0 flex flex-col md:inset-auto md:bottom-auto md:w-[380px] md:rounded-lg md:border md:border-[var(--border-subtle)] md:block bg-[var(--bg-root)] shadow-2xl overflow-hidden z-[101]"
+        style={desktopPos ? {
+          '--dt': `${desktopPos.top}px`,
+          '--dr': `${desktopPos.right}px`,
+        } as React.CSSProperties : undefined}
+      >
+        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+            Notifications{unreadCount > 0 ? ` · ${unreadCount} unread` : ''}
+          </span>
+          {unreadCount > 0 && (
+            <button
+              type="button"
+              onClick={markAllRead}
+              className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              Mark all read
+            </button>
+          )}
+        </div>
+
+        <div className="flex-1 overflow-y-auto md:max-h-[60vh]">
+          {loading ? (
+            <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
+              Loading…
+            </div>
+          ) : visible.length === 0 ? (
+            <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
+              No new jobs since you last checked.<br />
+              <span className="text-xs">Cron polls every hour.</span>
+            </div>
+          ) : (
+            visible.map((n) => (
+              <NotificationItem key={n.id} n={n} onMarkRead={markRead} />
+            ))
+          )}
+        </div>
+
+        {items.length > 20 && (
+          <div className="px-4 py-2 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--text-tertiary)]">
+            Showing 20 of {items.length} recent
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
-    <div ref={containerRef} className="relative">
+    <>
       <button
+        ref={bellRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
@@ -121,60 +201,7 @@ export function NotificationBell() {
         )}
       </button>
 
-      {open && (
-        <>
-          {/* Backdrop — mobile only */}
-          <div
-            className="md:hidden fixed inset-0 top-16 bg-black/40 z-40"
-            aria-hidden
-            onClick={() => setOpen(false)}
-          />
-
-          <div
-            role="dialog"
-            aria-label="Recent job notifications"
-            className="fixed inset-x-0 top-16 bottom-0 mx-0 rounded-none border-x-0 border-t-0 flex flex-col md:absolute md:inset-auto md:right-0 md:top-auto md:bottom-auto md:mt-2 md:w-[380px] md:rounded-lg md:border md:mx-0 md:block bg-[var(--bg-root)] border-b border-[var(--border-subtle)] shadow-2xl overflow-hidden z-50"
-          >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
-                Notifications{unreadCount > 0 ? ` · ${unreadCount} unread` : ''}
-              </span>
-              {unreadCount > 0 && (
-                <button
-                  type="button"
-                  onClick={markAllRead}
-                  className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
-                >
-                  Mark all read
-                </button>
-              )}
-            </div>
-
-            <div className="flex-1 overflow-y-auto md:max-h-[60vh]">
-              {loading ? (
-                <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
-                  Loading…
-                </div>
-              ) : visible.length === 0 ? (
-                <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
-                  No new jobs since you last checked.<br />
-                  <span className="text-xs">Cron polls every hour.</span>
-                </div>
-              ) : (
-                visible.map((n) => (
-                  <NotificationItem key={n.id} n={n} onMarkRead={markRead} />
-                ))
-              )}
-            </div>
-
-            {items.length > 20 && (
-              <div className="px-4 py-2 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--text-tertiary)]">
-                Showing 20 of {items.length} recent
-              </div>
-            )}
-          </div>
-        </>
-      )}
-    </div>
+      {open && typeof document !== 'undefined' && createPortal(panel, document.body)}
+    </>
   );
 }

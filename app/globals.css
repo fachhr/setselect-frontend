@@ -203,7 +203,6 @@
 
   .btn-gold:hover {
     background: var(--primary-hover);
-    transform: translateY(-1px);
     box-shadow: 0 0 25px rgba(0, 180, 216, 0.3), 0 4px 15px rgba(0, 0, 0, 0.2);
   }
 
@@ -408,6 +407,16 @@
 /* Font utility for Inter (main font) */
 .font-sans {
   font-family: var(--font-sans);
+}
+
+/* Notification panel: desktop positioning via CSS custom properties set by JS */
+@media (min-width: 768px) {
+  [data-notif-panel] {
+    top: var(--dt) !important;
+    right: var(--dr) !important;
+    left: auto !important;
+    bottom: auto !important;
+  }
 }
 
 /* Hide reCAPTCHA badge - required branding text is shown in form */
