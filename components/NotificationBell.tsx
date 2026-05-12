@@ -122,49 +122,58 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div
-          role="dialog"
-          aria-label="Recent job notifications"
-          className="absolute right-0 mt-2 w-[380px] max-w-[calc(100vw-2rem)] bg-[var(--bg-root)]/95 backdrop-blur-xl border border-[var(--border-subtle)] rounded-lg shadow-2xl overflow-hidden z-50"
-        >
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
-            <span className="text-sm font-semibold text-[var(--text-primary)]">
-              Notifications{unreadCount > 0 ? ` · ${unreadCount} unread` : ''}
-            </span>
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                onClick={markAllRead}
-                className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
-              >
-                Mark all read
-              </button>
-            )}
-          </div>
+        <>
+          {/* Backdrop — mobile only */}
+          <div
+            className="md:hidden fixed inset-0 top-16 bg-black/40 z-40"
+            aria-hidden
+            onClick={() => setOpen(false)}
+          />
 
-          <div className="max-h-[60vh] overflow-y-auto">
-            {loading ? (
-              <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
-                Loading…
-              </div>
-            ) : visible.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
-                No new jobs since you last checked.<br />
-                <span className="text-xs">Cron polls every hour.</span>
-              </div>
-            ) : (
-              visible.map((n) => (
-                <NotificationItem key={n.id} n={n} onMarkRead={markRead} />
-              ))
-            )}
-          </div>
-
-          {items.length > 20 && (
-            <div className="px-4 py-2 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--text-tertiary)]">
-              Showing 20 of {items.length} recent
+          <div
+            role="dialog"
+            aria-label="Recent job notifications"
+            className="fixed inset-x-0 top-16 mx-0 rounded-none border-x-0 border-t-0 md:absolute md:inset-auto md:right-0 md:top-auto md:mt-2 md:w-[380px] md:rounded-lg md:border md:mx-0 bg-[var(--bg-root)] backdrop-blur-xl border-b border-[var(--border-subtle)] shadow-2xl overflow-hidden z-50"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+                Notifications{unreadCount > 0 ? ` · ${unreadCount} unread` : ''}
+              </span>
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={markAllRead}
+                  className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+                >
+                  Mark all read
+                </button>
+              )}
             </div>
-          )}
-        </div>
+
+            <div className="max-h-[calc(100vh-8rem)] md:max-h-[60vh] overflow-y-auto">
+              {loading ? (
+                <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
+                  Loading…
+                </div>
+              ) : visible.length === 0 ? (
+                <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
+                  No new jobs since you last checked.<br />
+                  <span className="text-xs">Cron polls every hour.</span>
+                </div>
+              ) : (
+                visible.map((n) => (
+                  <NotificationItem key={n.id} n={n} onMarkRead={markRead} />
+                ))
+              )}
+            </div>
+
+            {items.length > 20 && (
+              <div className="px-4 py-2 border-t border-[var(--border-subtle)] text-center text-xs text-[var(--text-tertiary)]">
+                Showing 20 of {items.length} recent
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
