@@ -82,7 +82,7 @@ export function Navigation() {
 
           {/* Mobile Nav Controls */}
           <div className="md:hidden flex items-center gap-1">
-            {!isLoading && user && <NotificationBell />}
+            {!isLoading && user && <NotificationBell fullscreen />}
             <button
               className="p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)]"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

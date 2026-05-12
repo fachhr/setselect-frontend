@@ -75,25 +75,29 @@ function NotificationItem({
   );
 }
 
-export function NotificationBell() {
+export function NotificationBell({ fullscreen = false }: { fullscreen?: boolean }) {
   const { items, unreadCount, loading, markRead, markAllRead } = useNotifications();
   const [open, setOpen] = useState(false);
   const bellRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const [desktopPos, setDesktopPos] = useState<{ top: number; right: number } | null>(null);
+  const [panelPos, setPanelPos] = useState<{ top: number; right: number } | null>(null);
 
-  const updateDesktopPos = useCallback(() => {
-    if (!bellRef.current) return;
+  const updatePos = useCallback(() => {
+    if (fullscreen || !bellRef.current) return;
     const rect = bellRef.current.getBoundingClientRect();
-    setDesktopPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
-  }, []);
+    setPanelPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+  }, [fullscreen]);
 
   useEffect(() => {
-    if (!open) return;
-    updateDesktopPos();
-    window.addEventListener('resize', updateDesktopPos);
-    return () => window.removeEventListener('resize', updateDesktopPos);
-  }, [open, updateDesktopPos]);
+    if (!open || fullscreen) return;
+    updatePos();
+    window.addEventListener('resize', updatePos);
+    return () => window.removeEventListener('resize', updatePos);
+  }, [open, fullscreen, updatePos]);
+
+  useEffect(() => {
+    if (!open) setPanelPos(null);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -118,26 +122,33 @@ export function NotificationBell() {
   }, [open]);
 
   const visible = items.slice(0, 20);
+  const showPanel = open && (fullscreen || panelPos !== null);
 
   const panel = (
     <div ref={panelRef}>
-      {/* Backdrop — mobile only */}
-      <div
-        className="lg:hidden fixed left-0 top-16 bottom-0 w-screen bg-black/40 z-[100]"
-        aria-hidden
-        onClick={() => setOpen(false)}
-      />
+      {fullscreen && (
+        <div
+          style={{ position: 'fixed', inset: '4rem 0 0 0', backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 100 }}
+          aria-hidden
+          onClick={() => setOpen(false)}
+        />
+      )}
 
-      {/* Panel — mobile: full screen below nav, desktop: dropdown */}
       <div
         role="dialog"
         aria-label="Recent job notifications"
-        data-notif-panel
-        className="fixed left-0 top-16 bottom-0 w-screen flex flex-col lg:inset-auto lg:bottom-auto lg:w-[380px] lg:rounded-lg lg:border lg:border-[var(--border-subtle)] lg:block bg-[var(--bg-root)] shadow-2xl overflow-hidden z-[101]"
-        style={desktopPos ? {
-          '--dt': `${desktopPos.top}px`,
-          '--dr': `${desktopPos.right}px`,
-        } as React.CSSProperties : undefined}
+        style={
+          fullscreen
+            ? { position: 'fixed', inset: '4rem 0 0 0', zIndex: 101 }
+            : panelPos
+              ? { position: 'fixed', top: panelPos.top, right: panelPos.right, zIndex: 101 }
+              : undefined
+        }
+        className={
+          fullscreen
+            ? "flex flex-col bg-[var(--bg-root)] shadow-2xl overflow-hidden"
+            : "w-[380px] rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-root)] shadow-2xl overflow-hidden"
+        }
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
@@ -154,7 +165,7 @@ export function NotificationBell() {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto lg:max-h-[60vh]">
+        <div className={fullscreen ? "flex-1 overflow-y-auto" : "overflow-y-auto max-h-[60vh]"}>
           {loading ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
               Loading…
@@ -201,7 +212,7 @@ export function NotificationBell() {
         )}
       </button>
 
-      {open && typeof document !== 'undefined' && createPortal(panel, document.body)}
+      {showPanel && typeof document !== 'undefined' && createPortal(panel, document.body)}
     </>
   );
 }

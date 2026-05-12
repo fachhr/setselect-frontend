@@ -409,16 +409,6 @@
   font-family: var(--font-sans);
 }
 
-/* Notification panel: desktop positioning via CSS custom properties set by JS */
-@media (min-width: 1024px) {
-  [data-notif-panel] {
-    top: var(--dt) !important;
-    right: var(--dr) !important;
-    left: auto !important;
-    bottom: auto !important;
-  }
-}
-
 /* Hide reCAPTCHA badge - required branding text is shown in form */
 .grecaptcha-badge {
   visibility: hidden;
