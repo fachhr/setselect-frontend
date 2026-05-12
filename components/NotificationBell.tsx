@@ -123,7 +123,7 @@ export function NotificationBell() {
     <div ref={panelRef}>
       {/* Backdrop — mobile only */}
       <div
-        className="md:hidden fixed inset-0 top-16 bg-black/40 z-[100]"
+        className="md:hidden fixed left-0 top-16 bottom-0 w-screen bg-black/40 z-[100]"
         aria-hidden
         onClick={() => setOpen(false)}
       />
@@ -133,7 +133,7 @@ export function NotificationBell() {
         role="dialog"
         aria-label="Recent job notifications"
         data-notif-panel
-        className="fixed inset-x-0 top-16 bottom-0 flex flex-col md:inset-auto md:bottom-auto md:w-[380px] md:rounded-lg md:border md:border-[var(--border-subtle)] md:block bg-[var(--bg-root)] shadow-2xl overflow-hidden z-[101]"
+        className="fixed left-0 top-16 bottom-0 w-screen flex flex-col md:inset-auto md:bottom-auto md:w-[380px] md:rounded-lg md:border md:border-[var(--border-subtle)] md:block bg-[var(--bg-root)] shadow-2xl overflow-hidden z-[101]"
         style={desktopPos ? {
           '--dt': `${desktopPos.top}px`,
           '--dr': `${desktopPos.right}px`,
