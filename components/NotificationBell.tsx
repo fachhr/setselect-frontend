@@ -133,7 +133,7 @@ export function NotificationBell() {
           <div
             role="dialog"
             aria-label="Recent job notifications"
-            className="fixed inset-x-0 top-16 mx-0 rounded-none border-x-0 border-t-0 md:absolute md:inset-auto md:right-0 md:top-auto md:mt-2 md:w-[380px] md:rounded-lg md:border md:mx-0 bg-[var(--bg-root)] backdrop-blur-xl border-b border-[var(--border-subtle)] shadow-2xl overflow-hidden z-50"
+            className="fixed inset-x-0 top-16 bottom-0 mx-0 rounded-none border-x-0 border-t-0 flex flex-col md:absolute md:inset-auto md:right-0 md:top-auto md:bottom-auto md:mt-2 md:w-[380px] md:rounded-lg md:border md:mx-0 md:block bg-[var(--bg-root)] backdrop-blur-xl border-b border-[var(--border-subtle)] shadow-2xl overflow-hidden z-50"
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)]">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
@@ -150,7 +150,7 @@ export function NotificationBell() {
               )}
             </div>
 
-            <div className="max-h-[calc(100vh-8rem)] md:max-h-[60vh] overflow-y-auto">
+            <div className="flex-1 overflow-y-auto md:max-h-[60vh]">
               {loading ? (
                 <div className="px-4 py-8 text-center text-sm text-[var(--text-tertiary)]">
                   Loading…
