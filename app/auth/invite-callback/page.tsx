@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
 
@@ -35,7 +34,6 @@ function parseHashError(hash: string): ErrorInfo | null {
 }
 
 export default function InviteCallbackPage() {
-  const router = useRouter();
   const [errorInfo, setErrorInfo] = useState<ErrorInfo | null>(null);
 
   useEffect(() => {
@@ -84,7 +82,7 @@ export default function InviteCallbackPage() {
 
         const next = new URLSearchParams(window.location.search).get('next');
         const safePath = next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
-        router.replace(safePath);
+        window.location.href = safePath;
       } catch {
         setErrorInfo({
           title: 'Something Went Wrong',
@@ -95,7 +93,7 @@ export default function InviteCallbackPage() {
     }
 
     handleInviteCallback();
-  }, [router]);
+  }, []);
 
   if (errorInfo) {
     return (
