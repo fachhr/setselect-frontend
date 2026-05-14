@@ -41,6 +41,13 @@ export default function InviteCallbackPage() {
       try {
         const hash = window.location.hash.substring(1);
 
+        // Clear hash immediately — the Supabase client's detectSessionInUrl
+        // races with our manual setSession() and calls _removeSession() on failure,
+        // wiping the cookies we just stored.
+        if (hash) {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+
         // Check for Supabase error params in hash first
         const hashError = parseHashError(hash);
         if (hashError) {
