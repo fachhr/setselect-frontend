@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, ArrowRight, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { NotificationBell } from '@/components/NotificationBell';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useZenMode } from '@/contexts/ZenModeContext';
@@ -58,7 +57,6 @@ export function Navigation() {
                 >
                   Talent Pool
                 </Link>
-                <NotificationBell />
                 <div className="h-4 w-px bg-[var(--border-strong)]"></div>
                 <Button variant="outline" icon={LogOut} onClick={signOut}>
                   Logout
@@ -82,7 +80,6 @@ export function Navigation() {
 
           {/* Mobile Nav Controls */}
           <div className="md:hidden flex items-center gap-1">
-            {!isLoading && user && <NotificationBell fullscreen />}
             <button
               className="p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--bg-root)]"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
