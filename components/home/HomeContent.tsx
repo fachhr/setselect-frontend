@@ -851,7 +851,7 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                             )}
                         </h2>
 
-                        <div className="flex items-center gap-3 flex-shrink-0 ml-auto lg:ml-0">
+                        <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
                             {/* Mobile only: Shortlist, Filters, Sort (icon buttons) */}
                             <div className="flex sm:hidden items-center gap-2">
                                 {favorites.length > 0 && (
