@@ -882,7 +882,7 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    className="!bg-transparent !border-none !outline-none flex-1 min-w-[60px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] h-6 !p-0 focus:!ring-0 focus:!shadow-none"
+                                    className="!bg-transparent !border-none !outline-none flex-1 min-w-[60px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] h-5 !p-0 focus:!ring-0 focus:!shadow-none"
                                     placeholder={searchTags.length === 0 ? "Search by role, skill, location, language..." : ""}
                                     value={searchInput}
                                     onChange={(e) => setSearchInput(e.target.value)}
