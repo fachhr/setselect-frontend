@@ -2,24 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { v4 as uuidv4 } from 'uuid';
 import { MAX_CV_FILE_SIZE, VALID_CV_MIME_TYPES, MIME_TO_EXTENSION } from '@/lib/formOptions';
+import { verifyRecaptchaToken } from '@/lib/recaptcha';
 
-/**
- * POST /api/talent-pool/upload-cv
- *
- * Handles CV file upload to Supabase Storage.
- *
- * Flow:
- * 1. Receive CV file from form
- * 2. Validate file (type, size)
- * 3. Generate unique profile ID
- * 4. Upload to Supabase Storage: talent-pool-cvs/{profileId}/cv.{ext}
- * 5. Return profileId and storage path
- */
 export async function POST(req: NextRequest) {
   try {
-    // Get file from form data
     const formData = await req.formData();
     const file = formData.get('file') as File;
+    const recaptchaToken = formData.get('recaptchaToken') as string;
+
+    const recaptchaResult = await verifyRecaptchaToken(recaptchaToken || '', 'upload_cv');
+    if (!recaptchaResult.success) {
+      return NextResponse.json(
+        { success: false, error: 'Security verification failed' },
+        { status: 403 }
+      );
+    }
 
     if (!file) {
       return NextResponse.json(

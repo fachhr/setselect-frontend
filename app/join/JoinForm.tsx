@@ -122,10 +122,10 @@ const JoinForm: React.FC<{ market?: Market }> = ({ market = 'CH' }) => {
     const onSubmit = async (data: TalentPoolFormData) => {
         setSubmitError(null);
         try {
-            // STEP 0: Execute reCAPTCHA
-            let recaptchaToken = '';
+            // STEP 0: Execute reCAPTCHA (separate tokens for upload and submit — tokens are single-use)
+            let uploadRecaptchaToken = '';
             try {
-                recaptchaToken = await executeRecaptcha('join_form');
+                uploadRecaptchaToken = await executeRecaptcha('upload_cv');
             } catch (err) {
                 throw new Error('Unable to verify you are human. Please refresh and try again.');
             }
@@ -133,6 +133,7 @@ const JoinForm: React.FC<{ market?: Market }> = ({ market = 'CH' }) => {
             // STEP 1: Upload CV
             const uploadFormData = new FormData();
             uploadFormData.append('file', data.cvFile);
+            uploadFormData.append('recaptchaToken', uploadRecaptchaToken);
 
             const uploadResponse = await fetch('/api/talent-pool/upload-cv', {
                 method: 'POST',
@@ -145,6 +146,14 @@ const JoinForm: React.FC<{ market?: Market }> = ({ market = 'CH' }) => {
             }
 
             const { cvStoragePath, originalFilename } = await uploadResponse.json();
+
+            // Fresh token for submit (upload consumed the first one)
+            let recaptchaToken = '';
+            try {
+                recaptchaToken = await executeRecaptcha('join_form');
+            } catch (err) {
+                throw new Error('Unable to verify you are human. Please refresh and try again.');
+            }
 
             // Process languages: include base selections + split "Other" by semicolon
             const baseLanguages = data.languages || [];
