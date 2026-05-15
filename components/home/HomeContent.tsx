@@ -820,7 +820,11 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                                 className="h-12 px-8 text-base"
                                 icon={Search}
                                 onClick={() => {
-                                    document.getElementById('dashboard-section')?.scrollIntoView({ behavior: 'smooth' });
+                                    const el = document.getElementById('dashboard-section');
+                                    if (el) {
+                                        const y = el.getBoundingClientRect().top + window.scrollY - 80;
+                                        window.scrollTo({ top: y, behavior: 'smooth' });
+                                    }
                                 }}
                             >
                                 Browse Candidates
