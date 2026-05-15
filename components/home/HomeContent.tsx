@@ -858,7 +858,7 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                         {/* Search bar — inline filter, wraps to own row on mobile */}
                         {!!user && (
                             <div
-                                className="order-last lg:order-none basis-full lg:basis-0 lg:flex-1 lg:ml-4 min-h-[42px] px-3 py-2 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm focus-within:border-[var(--secondary)] focus-within:shadow-[0_0_0_3px_var(--secondary-dim),0_0_20px_var(--primary-glow)] transition-all flex flex-wrap gap-2 items-center cursor-text"
+                                className="order-last lg:order-none basis-full lg:basis-0 lg:flex-1 lg:ml-4 px-3 py-2 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm focus-within:border-[var(--secondary)] focus-within:shadow-[0_0_0_3px_var(--secondary-dim),0_0_20px_var(--primary-glow)] transition-all flex flex-wrap gap-2 items-center cursor-text"
                                 onClick={() => searchInputRef.current?.focus()}
                             >
                                 <Search className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
