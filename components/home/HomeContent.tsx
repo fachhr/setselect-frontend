@@ -851,6 +851,53 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                             )}
                         </h2>
 
+                        {/* Search bar — inline filter, wraps to own row on mobile */}
+                        {!!user && (
+                            <div
+                                className="order-last lg:order-none basis-full lg:basis-0 lg:flex-1 min-h-[42px] px-3 py-2 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm focus-within:border-[var(--secondary)] focus-within:shadow-[0_0_0_3px_var(--secondary-dim),0_0_20px_var(--primary-glow)] transition-all flex flex-wrap gap-2 items-center cursor-text"
+                                onClick={() => searchInputRef.current?.focus()}
+                            >
+                                <Search className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
+                                {searchTags.map((tag) => (
+                                    <span
+                                        key={tag}
+                                        role="listitem"
+                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-[var(--bg-surface-1)] border border-[var(--border-strong)] text-[var(--text-primary)] shadow-sm animate-in fade-in zoom-in duration-200"
+                                    >
+                                        {tag}
+                                        <button
+                                            type="button"
+                                            aria-label={`Remove search filter: ${tag}`}
+                                            onClick={(e) => { e.stopPropagation(); setSearchTags((prev) => prev.filter((t) => t !== tag)); }}
+                                            className="text-[var(--text-tertiary)] hover:text-red-400 transition-colors p-0.5 rounded-full hover:bg-[var(--bg-surface-2)]"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </span>
+                                ))}
+                                <input
+                                    ref={searchInputRef}
+                                    type="text"
+                                    className="!bg-transparent !border-none !outline-none flex-1 min-w-[60px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] h-6 !p-0 focus:!ring-0 focus:!shadow-none"
+                                    placeholder={searchTags.length === 0 ? "Search by role, skill, location, language..." : ""}
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            const trimmed = searchInput.trim();
+                                            if (trimmed && !searchTags.some((t) => t.toLowerCase() === trimmed.toLowerCase())) {
+                                                setSearchTags((prev) => [...prev, trimmed]);
+                                            }
+                                            setSearchInput('');
+                                        } else if (e.key === 'Backspace' && !searchInput && searchTags.length > 0) {
+                                            setSearchTags((prev) => prev.slice(0, -1));
+                                        }
+                                    }}
+                                />
+                            </div>
+                        )}
+
                         <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
                             {/* Mobile only: Shortlist, Filters, Sort (icon buttons) */}
                             <div className="flex sm:hidden items-center gap-2">
@@ -977,53 +1024,6 @@ export default function HomeContent({ market = 'CH' }: { market?: Market }) {
                                 {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                             </button>
                         </div>
-
-                        {/* Search bar — inline filter, wraps to own row on mobile */}
-                        {!!user && (
-                            <div
-                                className="order-last lg:order-none basis-full lg:basis-0 lg:flex-1 min-h-[42px] px-3 py-2 bg-[var(--bg-surface-2)] border border-[var(--border-strong)] rounded-lg text-sm focus-within:border-[var(--secondary)] focus-within:shadow-[0_0_0_3px_var(--secondary-dim),0_0_20px_var(--primary-glow)] transition-all flex flex-wrap gap-2 items-center cursor-text"
-                                onClick={() => searchInputRef.current?.focus()}
-                            >
-                                <Search className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
-                                {searchTags.map((tag) => (
-                                    <span
-                                        key={tag}
-                                        role="listitem"
-                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-[var(--bg-surface-1)] border border-[var(--border-strong)] text-[var(--text-primary)] shadow-sm animate-in fade-in zoom-in duration-200"
-                                    >
-                                        {tag}
-                                        <button
-                                            type="button"
-                                            aria-label={`Remove search filter: ${tag}`}
-                                            onClick={(e) => { e.stopPropagation(); setSearchTags((prev) => prev.filter((t) => t !== tag)); }}
-                                            className="text-[var(--text-tertiary)] hover:text-red-400 transition-colors p-0.5 rounded-full hover:bg-[var(--bg-surface-2)]"
-                                        >
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                    </span>
-                                ))}
-                                <input
-                                    ref={searchInputRef}
-                                    type="text"
-                                    className="!bg-transparent !border-none !outline-none flex-1 min-w-[60px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] h-6 !p-0 focus:!ring-0 focus:!shadow-none"
-                                    placeholder={searchTags.length === 0 ? "Search by role, skill, location, language..." : ""}
-                                    value={searchInput}
-                                    onChange={(e) => setSearchInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            const trimmed = searchInput.trim();
-                                            if (trimmed && !searchTags.some((t) => t.toLowerCase() === trimmed.toLowerCase())) {
-                                                setSearchTags((prev) => [...prev, trimmed]);
-                                            }
-                                            setSearchInput('');
-                                        } else if (e.key === 'Backspace' && !searchInput && searchTags.length > 0) {
-                                            setSearchTags((prev) => prev.slice(0, -1));
-                                        }
-                                    }}
-                                />
-                            </div>
-                        )}
                     </div>
                 </div>
 
