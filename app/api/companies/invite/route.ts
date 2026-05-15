@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
 
+function toInviteLink(actionLink: string): string {
+  const url = new URL(actionLink);
+  const token = url.searchParams.get('token');
+  const frontendUrl = process.env.FRONTEND_URL || 'https://www.setselect.io';
+  return `${frontendUrl}/auth/invite?token=${token}`;
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Validate recruiter session
@@ -55,7 +62,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `New login link generated for "${companyName}".`,
-        actionLink: linkData.properties.action_link,
+        actionLink: toInviteLink(linkData.properties.action_link),
       });
     }
 
@@ -103,7 +110,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: `Company "${companyName}" created (existing auth user linked).`,
-          actionLink: linkData.properties.action_link,
+          actionLink: toInviteLink(linkData.properties.action_link),
         });
       }
 
@@ -151,7 +158,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Company "${companyName}" invited successfully.`,
-      actionLink: linkData.properties.action_link,
+      actionLink: toInviteLink(linkData.properties.action_link),
     });
   } catch (error) {
     console.error('Failed to invite company:', error);
