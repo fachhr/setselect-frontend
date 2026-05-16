@@ -11,7 +11,7 @@ import { STATUS_OPTIONS, EXPERIENCE_OPTIONS, STATUS_PILL_COLORS } from '@/lib/co
 import { Pagination } from '@/components/ui/Pagination';
 import { toast } from '@/components/ui/Toast';
 import { useMarket } from '@/lib/MarketContext';
-import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission, SubmissionCompany } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission, SubmissionCompany, SubmissionStatus } from '@/types/recruiter';
 
 const STALE_AMBER_DAYS = 5;
 const STALE_RED_DAYS = 7;
@@ -54,6 +54,7 @@ interface CandidateTableProps {
   onDownloadCv: (profileId: string) => void;
   onToggleFavorite: (profileId: string) => void;
   onStatusChange?: (profileId: string, status: RecruiterStatus) => void;
+  onUpdateSubmission?: (submissionId: string, status: SubmissionStatus) => void;
   allSubmissions?: CandidateSubmission[];
   companies: SubmissionCompany[];
   onCreateSubmission: (profileId: string, companyId: string, submittedBy: string, notes: string) => Promise<void>;
@@ -330,6 +331,7 @@ export function CandidateTable({
   onDownloadCv,
   onToggleFavorite,
   onStatusChange,
+  onUpdateSubmission,
   allSubmissions = [],
   companies,
   onCreateSubmission,
@@ -514,10 +516,20 @@ export function CandidateTable({
                     return subs.length > 0 ? (
                       <div className="space-y-1">
                         {subs.map(s => (
-                          <div key={s.id} className="flex items-center gap-1.5 text-[10px] truncate max-w-[160px]">
+                          <div key={s.id} className="flex items-center gap-1.5 text-[10px] max-w-[160px]">
                             <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: SUB_DOT[s.status] || 'var(--text-muted)' }} />
-                            <span className="text-[var(--text-primary)]">{s.company_name}</span>
-                            <span className="text-[var(--text-muted)]">· {s.status}</span>
+                            <span className="text-[var(--text-primary)] truncate">{s.company_name}</span>
+                            <select
+                              value={s.status}
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={(e) => { e.stopPropagation(); onUpdateSubmission?.(s.id, e.target.value as SubmissionStatus); }}
+                              className="text-[10px] bg-transparent border-none cursor-pointer p-0 outline-none"
+                              style={{ color: SUB_DOT[s.status] || 'var(--text-muted)' }}
+                            >
+                              {(['submitted', 'interviewing', 'offer', 'rejected', 'placed'] as SubmissionStatus[]).map(st => (
+                                <option key={st} value={st}>{st}</option>
+                              ))}
+                            </select>
                           </div>
                         ))}
                       </div>

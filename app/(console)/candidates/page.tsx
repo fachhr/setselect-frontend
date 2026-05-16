@@ -474,14 +474,18 @@ function CandidatesContent() {
   };
 
   const handleUpdateSubmission = async (submissionId: string, status: SubmissionStatus) => {
-    const oldSubmission = submissions.find(s => s.id === submissionId);
+    const oldSubmission = allSubmissions.find(s => s.id === submissionId);
+    if (!oldSubmission) return;
+    const profileId = oldSubmission.profile_id;
     // Optimistic update
-    setSubmissions((prev) =>
-      prev.map((s) => (s.id === submissionId ? { ...s, status } : s))
-    );
     setAllSubmissions((prev) =>
       prev.map((s) => (s.id === submissionId ? { ...s, status } : s))
     );
+    if (selected?.profile_id === profileId) {
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === submissionId ? { ...s, status } : s))
+      );
+    }
     try {
       const res = await fetch(`/api/submissions/${submissionId}`, {
         method: 'PATCH',
@@ -490,31 +494,27 @@ function CandidatesContent() {
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      // Sync candidate status + add timeline entry locally
-      if (oldSubmission && selected) {
-        updateCandidateLocally(selected.profile_id, (c) => ({
-          ...c,
-          status: data.candidate_status || c.status,
-          notes: [{
-            type: 'submission_update' as const,
-            id: crypto.randomUUID(),
-            company_name: oldSubmission.company_name,
-            submission_id: submissionId,
-            from: oldSubmission.status,
-            to: status,
-            author: 'System',
-            created_at: new Date().toISOString(),
-          }, ...c.notes],
-        }));
-      }
+      updateCandidateLocally(profileId, (c) => ({
+        ...c,
+        status: data.candidate_status || c.status,
+        notes: [{
+          type: 'submission_update' as const,
+          id: crypto.randomUUID(),
+          company_name: oldSubmission.company_name,
+          submission_id: submissionId,
+          from: oldSubmission.status,
+          to: status,
+          author: 'System',
+          created_at: new Date().toISOString(),
+        }, ...c.notes],
+      }));
       toast('success', 'Submission updated');
     } catch {
-      // Revert optimistic updates
-      if (oldSubmission) {
+      setAllSubmissions((prev) =>
+        prev.map((s) => (s.id === submissionId ? { ...s, status: oldSubmission.status } : s))
+      );
+      if (selected?.profile_id === profileId) {
         setSubmissions((prev) =>
-          prev.map((s) => (s.id === submissionId ? { ...s, status: oldSubmission.status } : s))
-        );
-        setAllSubmissions((prev) =>
           prev.map((s) => (s.id === submissionId ? { ...s, status: oldSubmission.status } : s))
         );
       }
@@ -789,6 +789,7 @@ function CandidatesContent() {
           onDownloadCv={handleDownloadCv}
           onToggleFavorite={handleToggleFavorite}
           onStatusChange={handleUpdateStatus}
+          onUpdateSubmission={handleUpdateSubmission}
           allSubmissions={allSubmissions}
           companies={companies}
           onCreateSubmission={handleCreateSubmission}
