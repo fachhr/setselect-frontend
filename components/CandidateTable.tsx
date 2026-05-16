@@ -509,7 +509,7 @@ export function CandidateTable({
 
                 {/* Status */}
                 <td className="px-3 py-2.5">
-                  {onStatusChange ? (
+                  {onStatusChange && !allSubmissions.some(s => s.profile_id === c.profile_id) ? (
                     <select
                       value={c.status}
                       onClick={(e) => e.stopPropagation()}
@@ -526,7 +526,7 @@ export function CandidateTable({
                         backgroundPosition: 'right 6px center',
                       }}
                     >
-                      {(['new', 'screening', 'interviewing', 'offer', 'placed', 'rejected'] as RecruiterStatus[]).map(s => (
+                      {(['new', 'screening', 'rejected'] as RecruiterStatus[]).map(s => (
                         <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
                       ))}
                     </select>
