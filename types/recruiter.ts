@@ -123,7 +123,7 @@ export interface RecruiterStats {
   newThisWeek: number;
 }
 
-export type SubmissionStatus = 'submitted' | 'interviewing' | 'rejected' | 'placed';
+export type SubmissionStatus = 'submitted' | 'interviewing' | 'offer' | 'rejected' | 'placed';
 
 export interface CandidateSubmission {
   id: string;

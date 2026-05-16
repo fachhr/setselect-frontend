@@ -19,6 +19,7 @@ import type {
 const SUBMISSION_STATUSES: { value: SubmissionStatus; label: string }[] = [
   { value: 'submitted', label: 'Submitted' },
   { value: 'interviewing', label: 'Interviewing' },
+  { value: 'offer', label: 'Offer' },
   { value: 'rejected', label: 'Rejected' },
   { value: 'placed', label: 'Placed' },
 ];
@@ -43,6 +44,7 @@ function dotColor(entry: ActivityEntry): string {
     case 'submission_update': {
       const to = entry.to;
       if (to === 'placed') return 'var(--status-placed)';
+      if (to === 'offer') return 'var(--status-offer)';
       if (to === 'rejected') return 'var(--status-rejected)';
       if (to === 'interviewing') return 'var(--status-interviewing)';
       return 'var(--text-tertiary)';

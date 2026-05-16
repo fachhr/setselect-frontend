@@ -4,7 +4,7 @@ import type { SubmissionStatus, SubmissionUpdateEntry } from '@/types/recruiter'
 import { syncCandidateStatus } from '@/lib/statusSync';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const VALID_STATUSES: SubmissionStatus[] = ['submitted', 'interviewing', 'rejected', 'placed'];
+const VALID_STATUSES: SubmissionStatus[] = ['submitted', 'interviewing', 'offer', 'rejected', 'placed'];
 
 export async function PATCH(
   request: NextRequest,

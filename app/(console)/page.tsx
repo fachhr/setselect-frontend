@@ -69,7 +69,7 @@ function activityDotColor(entry: ActivityEntry): string {
     case 'submission_created':
       return 'var(--status-new)';
     case 'submission_update':
-      return `var(--status-${entry.to === 'interviewing' ? 'interviewing' : entry.to === 'placed' ? 'placed' : entry.to === 'rejected' ? 'rejected' : 'new'})`;
+      return `var(--status-${entry.to === 'interviewing' ? 'interviewing' : entry.to === 'offer' ? 'offer' : entry.to === 'placed' ? 'placed' : entry.to === 'rejected' ? 'rejected' : 'new'})`;
     case 'note':
       return 'var(--status-screening)';
     default:

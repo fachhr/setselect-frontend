@@ -29,6 +29,7 @@ function submissionDotColor(status: string): string {
   switch (status) {
     case 'submitted': return 'var(--status-new)';
     case 'interviewing': return 'var(--status-interviewing)';
+    case 'offer': return 'var(--status-offer)';
     case 'placed': return 'var(--status-placed)';
     case 'rejected': return 'var(--text-muted)';
     default: return 'var(--text-muted)';

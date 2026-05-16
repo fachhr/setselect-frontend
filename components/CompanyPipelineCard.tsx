@@ -6,7 +6,7 @@ export interface CompanyPipelineData {
   submissions: {
     profile_id: string;
     candidate_name: string;
-    status: 'submitted' | 'interviewing' | 'rejected' | 'placed';
+    status: 'submitted' | 'interviewing' | 'offer' | 'rejected' | 'placed';
     submitted_at: string;
     updated_at: string;
   }[];
@@ -19,6 +19,7 @@ interface CompanyPipelineCardProps {
 const STATUS_COLORS: Record<CompanyPipelineData['submissions'][number]['status'], string> = {
   submitted: 'var(--status-new)',
   interviewing: 'var(--status-interviewing)',
+  offer: 'var(--status-offer)',
   placed: 'var(--status-placed)',
   rejected: 'var(--text-muted)',
 };
@@ -26,6 +27,7 @@ const STATUS_COLORS: Record<CompanyPipelineData['submissions'][number]['status']
 const STATUS_LABELS: Record<CompanyPipelineData['submissions'][number]['status'], string> = {
   submitted: 'Submitted',
   interviewing: 'Interviewing',
+  offer: 'Offer',
   placed: 'Placed',
   rejected: 'Rejected',
 };
@@ -46,6 +48,7 @@ export function CompanyPipelineCard({ company }: CompanyPipelineCardProps) {
   const counts = {
     submitted: 0,
     interviewing: 0,
+    offer: 0,
     placed: 0,
     rejected: 0,
   };
