@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { Trash2, Play, Pause, TestTube, AlertTriangle, Loader2, X, Plus } from 'lucide-react';
 import type { JobSource } from '@/types/recruiter';
-import { TARGET_COUNTRY_OPTIONS, DEFAULT_TARGET_COUNTRIES } from '@/lib/constants';
+import { TARGET_COUNTRY_OPTIONS } from '@/lib/constants';
 import { toast } from '@/components/ui/Toast';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { useMarket, } from '@/lib/MarketContext';
+import { marketToCountry } from '@/lib/markets';
 
 interface JobSourcesTableProps {
   sources: JobSource[];
@@ -20,9 +22,11 @@ export function JobSourcesTable({
   onSourceUpdated,
   onSourceDeleted,
 }: JobSourcesTableProps) {
+  const { market } = useMarket();
+  const defaultCountry = marketToCountry(market);
   const [companyName, setCompanyName] = useState('');
   const [careerUrl, setCareerUrl] = useState('');
-  const [newCountries, setNewCountries] = useState<string[]>([...DEFAULT_TARGET_COUNTRIES]);
+  const [newCountries, setNewCountries] = useState<string[]>([defaultCountry]);
   const [adding, setAdding] = useState(false);
   const [testingSources, setTestingSources] = useState<Set<string>>(new Set());
   const [deleteTarget, setDeleteTarget] = useState<JobSource | null>(null);
@@ -51,7 +55,7 @@ export function JobSourcesTable({
       onSourceAdded(data.source);
       setCompanyName('');
       setCareerUrl('');
-      setNewCountries([...DEFAULT_TARGET_COUNTRIES]);
+      setNewCountries([defaultCountry]);
       toast('success', `Added ${data.source.company_name}`);
     } catch {
       toast('error', 'Failed to add source');
@@ -114,7 +118,7 @@ export function JobSourcesTable({
             `${source.company_name}: ${r.new_listings} new, ${r.updated} existing, ${r.removed} removed${countryNote}`,
           );
         }
-        const srcRes = await fetch('/api/job-sources');
+        const srcRes = await fetch(`/api/job-sources?market=${market}`);
         const srcData = await srcRes.json();
         const updated = (srcData.sources || []).find((s: JobSource) => s.id === source.id);
         if (updated) onSourceUpdated(updated);
