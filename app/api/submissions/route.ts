@@ -82,6 +82,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'notes must be a string' }, { status: 400 });
     }
 
+    // Validate market compatibility: candidate's market must be in the company's markets array
+    const [candidateResult, companyResult] = await Promise.all([
+      supabaseAdmin
+        .from('user_profiles')
+        .select('market')
+        .eq('id', profile_id)
+        .single(),
+      supabaseAdmin
+        .from('submission_companies')
+        .select('markets')
+        .eq('id', company_id)
+        .single(),
+    ]);
+
+    if (candidateResult.error || !candidateResult.data) {
+      return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });
+    }
+    if (companyResult.error || !companyResult.data) {
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 });
+    }
+
+    const candidateMarket = candidateResult.data.market;
+    const companyMarkets: string[] = companyResult.data.markets ?? [];
+    if (candidateMarket && !companyMarkets.includes(candidateMarket)) {
+      return NextResponse.json(
+        { error: `Market mismatch: candidate is ${candidateMarket} but company serves ${companyMarkets.join(', ')}` },
+        { status: 422 },
+      );
+    }
+
     const { data, error } = await supabaseAdmin
       .from('candidate_submissions')
       .insert({
