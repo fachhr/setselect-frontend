@@ -273,7 +273,7 @@ export function CandidateDetailPanel({
                   <select value={c.status} onChange={(e) => onUpdateStatus(c.profile_id, e.target.value as RecruiterStatus)}
                     className="text-[10px] font-semibold rounded-[10px] border-none cursor-pointer appearance-none"
                     style={{ padding: '2px 18px 2px 10px', background: PILL_BG[c.status], color: PILL_TEXT[c.status], backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(PILL_TEXT[c.status])}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}>
-                    {(['new', 'screening'] as RecruiterStatus[]).map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
+                    {(['new', 'screening', 'rejected'] as RecruiterStatus[]).map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                   </select>
                 )}
               </div>

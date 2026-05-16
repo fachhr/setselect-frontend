@@ -119,9 +119,19 @@ export async function PATCH(
           .select('id', { count: 'exact', head: true })
           .eq('profile_id', id);
 
-        if (count && count > 0) {
+        const hasSubmissions = (count ?? 0) > 0;
+
+        if (hasSubmissions) {
           return NextResponse.json(
             { error: 'Status is driven by submissions — update the submission status instead' },
+            { status: 422 },
+          );
+        }
+
+        const REQUIRES_SUBMISSION: RecruiterStatus[] = ['interviewing', 'offer', 'placed'];
+        if (REQUIRES_SUBMISSION.includes(body.status)) {
+          return NextResponse.json(
+            { error: 'Submit the candidate to a company first' },
             { status: 422 },
           );
         }
