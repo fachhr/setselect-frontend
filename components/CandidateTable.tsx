@@ -530,9 +530,20 @@ export function CandidateTable({
                         <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
                       ))}
                     </select>
-                  ) : (
-                    <StatusBadge status={c.status} />
-                  )}
+                  ) : (() => {
+                    const subs = allSubmissions.filter(s => s.profile_id === c.profile_id);
+                    const priority: Record<string, number> = { placed: 4, offer: 3, interviewing: 2, submitted: 1, rejected: 0 };
+                    const best = subs.length > 0 ? subs.reduce((a, b) => (priority[b.status] ?? 0) > (priority[a.status] ?? 0) ? b : a) : null;
+                    const showCompany = best && ['interviewing', 'offer', 'placed'].includes(c.status);
+                    return (
+                      <div>
+                        <StatusBadge status={c.status} />
+                        {showCompany && (
+                          <div className="text-[9px] text-[var(--text-muted)] mt-0.5 truncate max-w-[120px]">→ {best.company_name}</div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </td>
 
                 {/* Owner */}
