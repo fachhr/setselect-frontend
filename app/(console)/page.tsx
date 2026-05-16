@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
 import type { RecruiterStatus, ActivityEntry } from '@/types/recruiter';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useMarket } from '@/lib/MarketContext';
@@ -134,13 +134,19 @@ export default function CommandCenterPage() {
   const { market } = useMarket();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [attentionExpanded, setAttentionExpanded] = useState(false);
 
   const fetchData = useCallback(() => {
     setLoading(true);
+    setFetchError(null);
     fetch(`/api/dashboard?market=${market}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`Failed to load dashboard (${r.status})`);
+        return r.json();
+      })
       .then(setData)
+      .catch((err) => setFetchError(err.message || 'Connection error'))
       .finally(() => setLoading(false));
   }, [market]);
 
@@ -232,7 +238,19 @@ export default function CommandCenterPage() {
     <div className="space-y-5 animate-in fade-in">
       <PageHeader title="Command Center" />
       {/* Pipeline Strip */}
-      {loading ? (
+      {fetchError ? (
+        <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+          <AlertTriangle className="w-8 h-8 text-[var(--error)]" />
+          <p className="text-sm text-[var(--text-muted)]">{fetchError}</p>
+          <button
+            onClick={fetchData}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--bg-surface-3)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] transition-colors cursor-pointer"
+          >
+            <RefreshCw size={12} />
+            Retry
+          </button>
+        </div>
+      ) : loading ? (
         <PipelineSkeleton />
       ) : data ? (
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-[2px] rounded-lg overflow-hidden">

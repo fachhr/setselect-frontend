@@ -51,12 +51,18 @@ export default function CompaniesPage() {
     fetchCompanies();
   }, [fetchCompanies]);
 
+  const [pipelineError, setPipelineError] = useState<string | null>(null);
+
   useEffect(() => {
     setPipelineLoading(true);
+    setPipelineError(null);
     fetch(`/api/companies/pipeline?market=${market}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error(`Failed to load pipeline (${res.status})`);
+        return res.json();
+      })
       .then(data => setPipelineData(data.companies ?? []))
-      .catch(() => {})
+      .catch((err) => setPipelineError(err.message || 'Connection error'))
       .finally(() => setPipelineLoading(false));
   }, [market]);
 
@@ -144,7 +150,11 @@ export default function CompaniesPage() {
 
       {companyView === 'board' && (
         <div className="space-y-3">
-          {pipelineLoading ? (
+          {pipelineError ? (
+            <div className="glass-panel rounded-lg p-12 text-center">
+              <p className="text-sm text-[var(--error)]">{pipelineError}</p>
+            </div>
+          ) : pipelineLoading ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-2 border-[var(--primary)] border-t-transparent" />
             </div>

@@ -48,18 +48,20 @@ function ConsoleShell({ children }: { children: React.ReactNode }) {
   });
 
   useEffect(() => {
-    fetch(`/api/candidates?limit=0&page=1&market=${market}`)
-      .then(r => r.json())
+    const safeFetch = (url: string) => fetch(url).then(r => {
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    });
+
+    safeFetch(`/api/candidates?limit=0&page=1&market=${market}`)
       .then(data => setCounts(prev => ({ ...prev, candidates: data.pagination?.total ?? data.candidates?.length ?? 0 })))
-      .catch(() => {});
-    fetch(`/api/submission-companies?market=${market}`)
-      .then(r => r.json())
+      .catch(() => setCounts(prev => ({ ...prev, candidates: 0 })));
+    safeFetch(`/api/submission-companies?market=${market}`)
       .then(data => setCounts(prev => ({ ...prev, companies: data.companies?.length ?? 0 })))
-      .catch(() => {});
-    fetch(`/api/jobs/count?market=${market}`)
-      .then(r => r.json())
+      .catch(() => setCounts(prev => ({ ...prev, companies: 0 })));
+    safeFetch(`/api/jobs/count?market=${market}`)
       .then(data => setCounts(prev => ({ ...prev, jobs: data.total ?? 0 })))
-      .catch(() => {});
+      .catch(() => setCounts(prev => ({ ...prev, jobs: 0 })));
   }, [market]);
 
   const handleSignOut = async () => {
