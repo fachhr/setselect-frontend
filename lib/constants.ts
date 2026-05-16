@@ -16,6 +16,7 @@ export function getWorkEligibilityOptionsForMarket(market: Market) {
 export const STATUS_OPTIONS = [
   { value: 'new', label: 'New' },
   { value: 'screening', label: 'Screening' },
+  { value: 'submitted', label: 'Submitted' },
   { value: 'interviewing', label: 'Interviewing' },
   { value: 'offer', label: 'Offer' },
   { value: 'placed', label: 'Placed' },
@@ -37,7 +38,7 @@ export const STATUS_PILL_COLORS: Record<string, { bg: string; text: string }> = 
   offer:         { bg: '#3d1f0a', text: '#fdba74' },
   placed:        { bg: '#064e3b', text: '#6ee7b7' },
   rejected:      { bg: '#1a1020', text: '#94a3b8' },
-  submitted:     { bg: '#1e3a5f', text: '#93c5fd' },
+  submitted:     { bg: '#1a2e4a', text: '#60a5fa' },
 };
 
 // --- Job Scraping constants ---

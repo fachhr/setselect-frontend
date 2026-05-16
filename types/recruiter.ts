@@ -2,7 +2,7 @@ import type { Market } from '@/lib/markets';
 
 export type { Market };
 
-export type RecruiterStatus = 'new' | 'screening' | 'interviewing' | 'offer' | 'placed' | 'rejected';
+export type RecruiterStatus = 'new' | 'screening' | 'submitted' | 'interviewing' | 'offer' | 'placed' | 'rejected';
 
 export interface RecruiterNote {
   id: string;

@@ -18,7 +18,7 @@ import type {
 } from '@/types/recruiter';
 
 const ALL_STATUSES: RecruiterStatus[] = [
-  'new', 'screening', 'interviewing', 'offer', 'placed', 'rejected',
+  'new', 'screening', 'submitted', 'interviewing', 'offer', 'placed', 'rejected',
 ];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -256,7 +256,7 @@ export function CandidateDetailPanel({
                 {submissions.length > 0 ? (() => {
                   const priority: Record<string, number> = { placed: 4, offer: 3, interviewing: 2, submitted: 1, rejected: 0 };
                   const best = submissions.reduce((a, b) => (priority[b.status] ?? 0) > (priority[a.status] ?? 0) ? b : a);
-                  const showCompany = ['interviewing', 'offer', 'placed'].includes(c.status);
+                  const showCompany = ['submitted', 'interviewing', 'offer', 'placed'].includes(c.status);
                   return (
                     <div>
                       <span

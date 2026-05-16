@@ -523,10 +523,10 @@ export function CandidateTable({
                     const statusLabel = c.status.charAt(0).toUpperCase() + c.status.slice(1);
 
                     let label: string;
-                    if (['interviewing', 'offer', 'placed'].includes(best.status)) {
+                    if (['submitted', 'interviewing', 'offer', 'placed'].includes(best.status)) {
                       label = `${statusLabel} · ${best.company_name}`;
                     } else if (activeSubs.length > 0) {
-                      label = `${statusLabel} · ${activeSubs.length} submitted`;
+                      label = `${statusLabel} · ${activeSubs.length} active`;
                     } else {
                       label = statusLabel;
                     }

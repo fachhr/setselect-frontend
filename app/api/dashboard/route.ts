@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
 
     // Pipeline counts
     const pipeline_counts: Record<string, number> = {
-      new: 0, screening: 0, interviewing: 0, offer: 0, placed: 0, rejected: 0,
+      new: 0, screening: 0, submitted: 0, interviewing: 0, offer: 0, placed: 0, rejected: 0,
     };
     for (const c of candidates) {
       pipeline_counts[c.status] = (pipeline_counts[c.status] || 0) + 1;
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
 
     // Company breakdown: for post-submission stages, which companies are involved
     const company_breakdown: Record<string, string[]> = {
-      interviewing: [], offer: [], placed: [],
+      submitted: [], interviewing: [], offer: [], placed: [],
     };
     for (const s of submissions) {
       const stage = s.status as string;

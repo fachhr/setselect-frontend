@@ -25,7 +25,7 @@ function deriveStatus(submissions: { status: SubmissionStatus }[]): RecruiterSta
   if (highest >= 3) return 'offer';
   if (highest >= 2) return 'interviewing';
 
-  return 'screening';
+  return 'submitted';
 }
 
 export async function syncCandidateStatus(
@@ -49,7 +49,7 @@ export async function syncCandidateStatus(
   if (!current) return null;
 
   if (!derived) {
-    const SUBMISSION_DRIVEN: RecruiterStatus[] = ['interviewing', 'offer', 'placed', 'rejected'];
+    const SUBMISSION_DRIVEN: RecruiterStatus[] = ['submitted', 'interviewing', 'offer', 'placed', 'rejected'];
     if (SUBMISSION_DRIVEN.includes(current.status as RecruiterStatus)) {
       derived = 'screening';
     } else {

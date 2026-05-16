@@ -55,6 +55,7 @@
     /* Pipeline Status */
     --status-new: #818cf8;
     --status-screening: #a78bfa;
+    --status-submitted: #60a5fa;
     --status-interviewing: #f59e0b;
     --status-offer: #fb923c;
     --status-placed: #22c55e;

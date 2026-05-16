@@ -4,6 +4,7 @@ import type { RecruiterStatus } from '@/types/recruiter';
 const statusConfig: Record<RecruiterStatus, { label: string; variant: 'blue' | 'purple' | 'gold' | 'warning' | 'success' | 'error' | 'muted' }> = {
   new: { label: 'New', variant: 'blue' },
   screening: { label: 'Screening', variant: 'purple' },
+  submitted: { label: 'Submitted', variant: 'blue' },
   interviewing: { label: 'Interviewing', variant: 'gold' },
   offer: { label: 'Offer', variant: 'warning' },
   placed: { label: 'Placed', variant: 'success' },

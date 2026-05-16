@@ -12,6 +12,7 @@ interface BoardViewProps {
 const STAGES: { key: RecruiterStatus; label: string; color: string }[] = [
   { key: 'new', label: 'New', color: 'var(--status-new)' },
   { key: 'screening', label: 'Screening', color: 'var(--status-screening)' },
+  { key: 'submitted', label: 'Submitted', color: 'var(--status-submitted)' },
   { key: 'interviewing', label: 'Interviewing', color: 'var(--status-interviewing)' },
   { key: 'offer', label: 'Offer', color: 'var(--status-offer)' },
   { key: 'placed', label: 'Placed', color: 'var(--status-placed)' },
@@ -123,7 +124,7 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                       <div className="text-xs font-semibold text-[var(--text-primary)] truncate">
                         {c.contact_first_name} {c.contact_last_name}
                       </div>
-                      {['interviewing', 'offer', 'placed'].includes(stage.key) && profileSubs.length > 0 && (() => {
+                      {['submitted', 'interviewing', 'offer', 'placed'].includes(stage.key) && profileSubs.length > 0 && (() => {
                         const priority: Record<string, number> = { placed: 4, offer: 3, interviewing: 2, submitted: 1, rejected: 0 };
                         const best = profileSubs.reduce((a, b) => (priority[b.status] ?? 0) > (priority[a.status] ?? 0) ? b : a);
                         return (

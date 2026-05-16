@@ -7,6 +7,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const VALID_STATUSES: RecruiterStatus[] = [
   'new',
   'screening',
+  'submitted',
   'interviewing',
   'offer',
   'placed',
@@ -112,7 +113,7 @@ export async function PATCH(
         return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
       }
 
-      const SUBMISSION_DRIVEN: RecruiterStatus[] = ['interviewing', 'offer', 'placed', 'rejected'];
+      const SUBMISSION_DRIVEN: RecruiterStatus[] = ['submitted', 'interviewing', 'offer', 'placed', 'rejected'];
       if (SUBMISSION_DRIVEN.includes(body.status)) {
         const { count } = await supabaseAdmin
           .from('candidate_submissions')
@@ -128,7 +129,7 @@ export async function PATCH(
           );
         }
 
-        const REQUIRES_SUBMISSION: RecruiterStatus[] = ['interviewing', 'offer', 'placed'];
+        const REQUIRES_SUBMISSION: RecruiterStatus[] = ['submitted', 'interviewing', 'offer', 'placed'];
         if (REQUIRES_SUBMISSION.includes(body.status)) {
           return NextResponse.json(
             { error: 'Submit the candidate to a company first' },

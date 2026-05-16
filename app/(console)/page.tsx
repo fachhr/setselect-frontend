@@ -46,6 +46,7 @@ interface DashboardData {
 const STAGES: { key: RecruiterStatus; label: string; color: string }[] = [
   { key: 'new', label: 'New', color: 'var(--status-new)' },
   { key: 'screening', label: 'Screening', color: 'var(--status-screening)' },
+  { key: 'submitted', label: 'Submitted', color: 'var(--status-submitted)' },
   { key: 'interviewing', label: 'Interviewing', color: 'var(--status-interviewing)' },
   { key: 'offer', label: 'Offer', color: 'var(--status-offer)' },
   { key: 'placed', label: 'Placed', color: 'var(--status-placed)' },
@@ -226,6 +227,7 @@ export default function CommandCenterPage() {
         const stale = data.stale_candidates.filter(c => c.status === key).length;
         return stale > 0 ? `${stale} stale (5d+)` : 'all active';
       }
+      case 'submitted':
       case 'interviewing':
       case 'offer':
         if (companies?.length) return companies.join(' · ');
