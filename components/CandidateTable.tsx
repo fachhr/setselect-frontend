@@ -309,7 +309,6 @@ const COLUMNS: ColumnDef[] = [
   { key: 'contact', label: 'Contact', sortable: false, filterType: 'text', filterKey: 'contact', responsive: 'hidden md:table-cell' },
   { key: 'location', label: 'Location', sortable: true, filterType: 'multi-select', filterKey: 'location', responsive: 'hidden lg:table-cell' },
   { key: 'experience', label: 'Experience', sortable: true, filterType: 'multi-select', filterKey: 'experience', responsive: 'hidden lg:table-cell' },
-  { key: 'submissions', label: 'Submissions', sortable: false, filterType: 'none', responsive: 'hidden lg:table-cell' },
   { key: 'status', label: 'Status', sortable: true, filterType: 'multi-select', filterKey: 'status', responsive: '' },
   { key: 'owner', label: 'Owner', sortable: true, filterType: 'text', filterKey: 'owner', responsive: 'hidden lg:table-cell' },
   { key: 'last_activity', label: 'Last Activity', sortable: true, filterType: 'none', responsive: 'hidden sm:table-cell' },
@@ -486,27 +485,6 @@ export function CandidateTable({
                   </span>
                 </td>
 
-                {/* Submissions */}
-                <td className="px-3 py-2.5 hidden lg:table-cell">
-                  {(() => {
-                    const subs = allSubmissions.filter(s => s.profile_id === c.profile_id);
-                    if (subs.length === 0) return <span className="text-[var(--text-muted)] text-[11px]">—</span>;
-                    return (
-                      <span className="inline-flex items-center gap-1 text-[11px]">
-                        {subs.map(s => (
-                          <span
-                            key={s.id}
-                            className="w-1.5 h-1.5 rounded-full inline-block"
-                            style={{ background: s.status === 'submitted' ? 'var(--status-new)' : s.status === 'interviewing' ? 'var(--status-interviewing)' : s.status === 'placed' ? 'var(--status-placed)' : 'var(--text-muted)' }}
-                            title={`${s.company_name} — ${s.status}`}
-                          />
-                        ))}
-                        <span className="text-[var(--text-tertiary)] ml-0.5">{subs.length}</span>
-                      </span>
-                    );
-                  })()}
-                </td>
-
                 {/* Status */}
                 <td className="px-3 py-2.5">
                   {onStatusChange && !allSubmissions.some(s => s.profile_id === c.profile_id) ? (
@@ -532,14 +510,19 @@ export function CandidateTable({
                     </select>
                   ) : (() => {
                     const subs = allSubmissions.filter(s => s.profile_id === c.profile_id);
-                    const priority: Record<string, number> = { placed: 4, offer: 3, interviewing: 2, submitted: 1, rejected: 0 };
-                    const best = subs.length > 0 ? subs.reduce((a, b) => (priority[b.status] ?? 0) > (priority[a.status] ?? 0) ? b : a) : null;
-                    const showCompany = best && ['interviewing', 'offer', 'placed'].includes(c.status);
+                    const SUB_DOT: Record<string, string> = { submitted: 'var(--status-new)', interviewing: 'var(--status-interviewing)', offer: 'var(--status-offer)', placed: 'var(--status-placed)', rejected: 'var(--text-muted)' };
                     return (
                       <div>
                         <StatusBadge status={c.status} />
-                        {showCompany && (
-                          <div className="text-[9px] text-[var(--text-muted)] mt-0.5 truncate max-w-[120px]">→ {best.company_name}</div>
+                        {subs.length > 0 && (
+                          <div className="mt-1 space-y-0.5">
+                            {subs.map(s => (
+                              <div key={s.id} className="flex items-center gap-1 text-[9px] text-[var(--text-muted)] truncate max-w-[140px]">
+                                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: SUB_DOT[s.status] || 'var(--text-muted)' }} />
+                                {s.company_name} · {s.status}
+                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     );
