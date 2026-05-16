@@ -11,7 +11,7 @@ export async function GET() {
 
   const { data, error } = await supabaseAdmin
     .from('job_notifications')
-    .select('id, listing_id, source_id, event_type, title, company_name, url, location, seniority, date_posted, created_at, read_at')
+    .select('id, listing_id, source_id, event_type, title, company_name, url, location, seniority, date_posted, created_at, read_at, job_sources(target_countries)')
     .order('created_at', { ascending: false })
     .limit(50);
 
@@ -19,7 +19,13 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ notifications: data ?? [] });
+  const notifications = (data ?? []).map((row: Record<string, unknown>) => {
+    const source = row.job_sources as { target_countries: string[] } | null;
+    const { job_sources: _, ...rest } = row;
+    return { ...rest, markets: source?.target_countries ?? [] };
+  });
+
+  return NextResponse.json({ notifications });
 }
 
 // PATCH — mark all unread as read.

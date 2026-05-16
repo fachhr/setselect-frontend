@@ -1,17 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
+import { MARKETS, type Market } from '@/lib/markets';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const token = await getSessionToken();
   if (!token || !(await validateSessionToken(token))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data, error } = await supabaseAdmin
+  const { searchParams } = new URL(request.url);
+  const marketParam = searchParams.get('market');
+  const market: Market | null = marketParam && MARKETS.includes(marketParam as Market)
+    ? (marketParam as Market)
+    : null;
+
+  let query = supabaseAdmin
     .from('job_sources')
     .select('*')
     .order('created_at', { ascending: true });
+  if (market) query = query.contains('target_countries', [market]);
+
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

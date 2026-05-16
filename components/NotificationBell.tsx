@@ -16,6 +16,7 @@ interface Notification {
   date_posted: string | null;
   created_at: string;
   read_at: string | null;
+  markets: string[];
 }
 
 const POLL_MS = 30_000;
@@ -170,6 +171,11 @@ export function NotificationBell() {
                           </div>
                           <div className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{n.title}</div>
                           <div className="text-[10px] text-[var(--text-muted)] mt-1 flex items-center gap-2 flex-wrap">
+                            {n.markets?.length > 0 && (
+                              <span className="text-[9px] font-semibold px-1.5 py-px rounded bg-[var(--bg-surface-2)] text-[var(--text-tertiary)]">
+                                {n.markets.join(' · ')}
+                              </span>
+                            )}
                             {n.seniority && <span>{n.seniority}</span>}
                             {n.location && <span>· {n.location}</span>}
                             <span>· {timeAgo(n.created_at)}</span>

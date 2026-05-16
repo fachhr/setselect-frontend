@@ -60,13 +60,13 @@ export default function JobsPage() {
 
   const fetchSources = useCallback(async () => {
     try {
-      const res = await fetch('/api/job-sources');
+      const res = await fetch(`/api/job-sources?market=${market}`);
       const data = await res.json();
       if (res.ok) setSources(data.sources || []);
     } catch {
       // silent
     }
-  }, []);
+  }, [market]);
 
   useEffect(() => {
     Promise.all([fetchListings(), fetchSources()]).finally(() => setLoading(false));
