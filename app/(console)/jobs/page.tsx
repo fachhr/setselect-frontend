@@ -10,10 +10,12 @@ import { toast } from '@/components/ui/Toast';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Pagination } from '@/components/ui/Pagination';
+import { useMarket } from '@/lib/MarketContext';
 
 type View = 'listings' | 'sources';
 
 export default function JobsPage() {
+  const { market } = useMarket();
   const [view, setView] = useState<View>('listings');
   const [listings, setListings] = useState<JobListing[]>([]);
   const [sources, setSources] = useState<JobSource[]>([]);
@@ -36,6 +38,7 @@ export default function JobsPage() {
     const params = new URLSearchParams();
     params.set('page', String(page));
     params.set('limit', '20');
+    params.set('market', market);
     if (statusFilter.length > 0) params.set('status', statusFilter.join(','));
     if (seniorityFilter.length > 0) params.set('seniority', seniorityFilter.join(','));
     if (sourceFilter) params.set('source_id', sourceFilter);
@@ -53,7 +56,7 @@ export default function JobsPage() {
     } catch {
       toast('error', 'Failed to load job listings');
     }
-  }, [page, statusFilter, seniorityFilter, sourceFilter, debouncedSearch, includeRemoved]);
+  }, [page, market, statusFilter, seniorityFilter, sourceFilter, debouncedSearch, includeRemoved]);
 
   const fetchSources = useCallback(async () => {
     try {

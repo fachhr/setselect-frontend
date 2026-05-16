@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Upload, X, FileText, ArrowLeft, Loader2, Check } from 'lucide-react';
-import { getMarketConfig, type Market } from '@/lib/markets';
+import { getMarketConfig } from '@/lib/markets';
+import { useMarket } from '@/lib/MarketContext';
 
 const FUNCTIONAL_EXPERTISE_OPTIONS = [
   'Analytics',
@@ -95,12 +96,7 @@ export default function NewCandidatePage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [market, setMarket] = useState<Market>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('talentPoolMarket') as Market) || 'CH';
-    }
-    return 'CH';
-  });
+  const { market } = useMarket();
 
   // Contact
   const [firstName, setFirstName] = useState('');
@@ -138,13 +134,11 @@ export default function NewCandidatePage() {
 
   const config = getMarketConfig(market);
 
-  const handleMarketSwitch = (m: Market) => {
-    setMarket(m);
-    localStorage.setItem('talentPoolMarket', m);
+  useEffect(() => {
     setWorkEligibility('');
     setLanguages([]);
     setDesiredLocations([]);
-  };
+  }, [market]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -243,25 +237,8 @@ export default function NewCandidatePage() {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Context: Market + Owner */}
         <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex gap-1 p-1 bg-[var(--bg-surface-2)] rounded-lg w-fit">
-            {(['CH', 'BG'] as const).map((m) => {
-              const mc = getMarketConfig(m);
-              const active = market === m;
-              return (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => handleMarketSwitch(m)}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${
-                    active
-                      ? 'bg-[var(--primary)] text-white shadow-sm'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
-                  }`}
-                >
-                  {mc.code} — {mc.name}
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-surface-2)] rounded-lg text-sm font-medium text-[var(--text-secondary)]">
+            {config.code} — {config.name}
           </div>
           <div className="flex items-center gap-2">
             <label className="text-[11px] font-medium text-[var(--text-muted)] whitespace-nowrap">Owner</label>

@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { RecruiterStatus, ActivityEntry, RecruiterNote } from '@/types/recruiter';
+import { MARKETS, type Market } from '@/lib/markets';
 
 interface StaleCandidate {
   profile_id: string;
@@ -42,42 +43,56 @@ function daysSince(dateStr: string): number {
   return Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const marketParam = searchParams.get('market');
+    const market: Market | null = marketParam && MARKETS.includes(marketParam as Market)
+      ? (marketParam as Market)
+      : null;
+
     // Parallel queries for all dashboard data
+    let candidatesQuery = supabaseAdmin
+      .from('recruiter_candidates')
+      .select(`
+        profile_id,
+        status,
+        notes,
+        status_changed_at,
+        created_at,
+        user_profiles!inner (
+          contact_first_name,
+          contact_last_name
+        )
+      `);
+    if (market) candidatesQuery = candidatesQuery.eq('market', market);
+
+    let submissionsQuery = supabaseAdmin
+      .from('candidate_submissions')
+      .select(`
+        id,
+        profile_id,
+        status,
+        submitted_at,
+        updated_at,
+        submission_companies!inner ( name ),
+        user_profiles:profile_id!inner (
+          contact_first_name,
+          contact_last_name
+        )
+      `);
+
+    let newJobsQuery = supabaseAdmin
+      .from('job_listings')
+      .select('id, job_sources!inner(target_countries)', { count: 'exact', head: true })
+      .eq('status', 'new')
+      .is('removed_at', null);
+    if (market) newJobsQuery = newJobsQuery.contains('job_sources.target_countries', [market]);
+
     const [candidatesResult, submissionsResult, newJobsResult] = await Promise.all([
-      supabaseAdmin
-        .from('recruiter_candidates')
-        .select(`
-          profile_id,
-          status,
-          notes,
-          status_changed_at,
-          created_at,
-          user_profiles!inner (
-            contact_first_name,
-            contact_last_name
-          )
-        `),
-      supabaseAdmin
-        .from('candidate_submissions')
-        .select(`
-          id,
-          profile_id,
-          status,
-          submitted_at,
-          updated_at,
-          submission_companies!inner ( name ),
-          user_profiles:profile_id!inner (
-            contact_first_name,
-            contact_last_name
-          )
-        `),
-      supabaseAdmin
-        .from('job_listings')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'new')
-        .is('removed_at', null),
+      candidatesQuery,
+      submissionsQuery,
+      newJobsQuery,
     ]);
 
     if (candidatesResult.error) {
@@ -88,7 +103,11 @@ export async function GET() {
     }
 
     const candidates = candidatesResult.data || [];
-    const submissions = submissionsResult.data || [];
+    const allSubmissions = submissionsResult.data || [];
+    const candidateProfileIds = new Set(candidates.map(c => c.profile_id));
+    const submissions = market
+      ? allSubmissions.filter(s => candidateProfileIds.has(s.profile_id))
+      : allSubmissions;
 
     // Pipeline counts
     const pipeline_counts: Record<string, number> = {

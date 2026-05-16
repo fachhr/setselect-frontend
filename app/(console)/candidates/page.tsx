@@ -16,6 +16,7 @@ import { formatTalentId, formatEntryDate } from '@/lib/helpers';
 import { deepSearchCandidate, scoreCandidate } from '@/lib/search';
 import { SubmitCandidateButton } from '@/components/SubmitCandidateButton';
 import { toast } from '@/components/ui/Toast';
+import { useMarket } from '@/lib/MarketContext';
 import type { RecruiterCandidateView, RecruiterStatus, ProfileEditData, CandidateSubmission, SubmissionStatus, SubmissionCompany } from '@/types/recruiter';
 
 const EMPTY_FILTERS: TableFilters = {
@@ -53,12 +54,7 @@ function CandidatesContent() {
   const [submissions, setSubmissions] = useState<CandidateSubmission[]>([]);
   const [allSubmissions, setAllSubmissions] = useState<CandidateSubmission[]>([]);
   const [companies, setCompanies] = useState<SubmissionCompany[]>([]);
-  const [market, setMarket] = useState<'CH' | 'BG'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('talentPoolMarket') as 'CH' | 'BG') || 'CH';
-    }
-    return 'CH';
-  });
+  const { market } = useMarket();
   const [viewMode, setViewMode] = useState<'board' | 'table'>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('talentPoolView') as 'board' | 'table') || 'table';
@@ -70,11 +66,6 @@ function CandidatesContent() {
   const [semanticScores, setSemanticScores] = useState<Map<string, number>>(new Map());
   const [semanticLoading, setSemanticLoading] = useState(false);
   const searchParams = useSearchParams();
-
-  const handleMarketChange = (newMarket: 'CH' | 'BG') => {
-    setMarket(newMarket);
-    localStorage.setItem('talentPoolMarket', newMarket);
-  };
 
   const fetchCandidates = useCallback(async () => {
     setLoading(true);
@@ -720,15 +711,6 @@ function CandidatesContent() {
         title="Talent Pool"
         actions={
           <>
-            {/* Market Switcher */}
-            <SegmentedControl
-              options={[
-                { value: 'CH', label: 'CH' },
-                { value: 'BG', label: 'BG' },
-              ]}
-              value={market}
-              onChange={handleMarketChange}
-            />
             <SubmitCandidateButton />
             <SegmentedControl
               options={[

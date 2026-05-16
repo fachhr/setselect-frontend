@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import type { RecruiterStatus, ActivityEntry } from '@/types/recruiter';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { useMarket } from '@/lib/MarketContext';
 
 // --- Types ---
 
@@ -130,16 +131,18 @@ function PanelSkeleton() {
 
 export default function CommandCenterPage() {
   const router = useRouter();
+  const { market } = useMarket();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [attentionExpanded, setAttentionExpanded] = useState(false);
 
   const fetchData = useCallback(() => {
-    fetch('/api/dashboard')
+    setLoading(true);
+    fetch(`/api/dashboard?market=${market}`)
       .then((r) => r.json())
       .then(setData)
       .finally(() => setLoading(false));
-  }, []);
+  }, [market]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 

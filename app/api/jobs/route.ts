@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
+import { MARKETS, type Market } from '@/lib/markets';
 
 export async function GET(request: NextRequest) {
   const token = await getSessionToken();
@@ -14,12 +15,21 @@ export async function GET(request: NextRequest) {
   const seniority = searchParams.get('seniority');
   const search = searchParams.get('search');
   const includeRemoved = searchParams.get('include_removed') === 'true';
+  const marketParam = searchParams.get('market');
+  const market: Market | null = marketParam && MARKETS.includes(marketParam as Market)
+    ? (marketParam as Market)
+    : null;
   const page = Math.max(1, parseInt(searchParams.get('page') || '1') || 1);
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20') || 20));
 
   let query = supabaseAdmin
     .from('job_listings')
-    .select('*, job_sources!inner(company_name)', { count: 'exact' });
+    .select('*, job_sources!inner(company_name, target_countries)', { count: 'exact' });
+
+  // Market filter — match against source's target countries
+  if (market) {
+    query = query.contains('job_sources.target_countries', [market]);
+  }
 
   // Filter removed
   if (!includeRemoved) {
@@ -68,44 +78,45 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Denormalize company_name
+  // Denormalize company_name, strip join payload
   const listings = (data || []).map((row: Record<string, unknown>) => {
-    const source = row.job_sources as { company_name: string } | null;
+    const source = row.job_sources as { company_name: string; target_countries: string[] } | null;
     const { job_sources: _, ...rest } = row;
     return { ...rest, company_name: source?.company_name ?? '' };
   });
 
-  // Stats — counts must NOT reflect the active filters; they describe the
-  // dataset as a whole. Pagination, on the other hand, uses the filtered count.
-  const totalQuery = supabaseAdmin
-    .from('job_listings')
-    .select('id', { count: 'exact', head: true });
+  // Stats — scoped to market when provided, otherwise whole dataset.
+  function marketScopedJobQuery() {
+    let q = supabaseAdmin
+      .from('job_listings')
+      .select('id, job_sources!inner(target_countries)', { count: 'exact', head: true });
+    if (market) q = q.contains('job_sources.target_countries', [market]);
+    return q;
+  }
+
+  const totalQuery = marketScopedJobQuery();
   if (!includeRemoved) totalQuery.is('removed_at', null);
+
+  let sourcesQuery = supabaseAdmin
+    .from('job_sources')
+    .select('id', { count: 'exact', head: true });
+  if (market) sourcesQuery = sourcesQuery.contains('target_countries', [market]);
 
   const [totalResult, newCountResult, pursuingCountResult, sourcesCountResult] = await Promise.all([
     totalQuery,
-    supabaseAdmin
-      .from('job_listings')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'new')
-      .is('removed_at', null),
-    supabaseAdmin
-      .from('job_listings')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'pursuing')
-      .is('removed_at', null),
-    supabaseAdmin
-      .from('job_sources')
-      .select('id', { count: 'exact', head: true }),
+    marketScopedJobQuery().eq('status', 'new').is('removed_at', null),
+    marketScopedJobQuery().eq('status', 'pursuing').is('removed_at', null),
+    sourcesQuery,
   ]);
 
-  const { data: lastScrape } = await supabaseAdmin
+  let lastScrapeQuery = supabaseAdmin
     .from('job_sources')
     .select('last_scraped_at')
     .not('last_scraped_at', 'is', null)
     .order('last_scraped_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(1);
+  if (market) lastScrapeQuery = lastScrapeQuery.contains('target_countries', [market]);
+  const { data: lastScrape } = await lastScrapeQuery.maybeSingle();
 
   const filteredCount = count ?? 0;
 

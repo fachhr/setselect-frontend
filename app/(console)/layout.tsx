@@ -6,6 +6,9 @@ import Link from 'next/link';
 import { Layers, LogOut, Menu, X } from 'lucide-react';
 import { ToastContainer } from '@/components/ui/Toast';
 import { NotificationBell } from '@/components/NotificationBell';
+import { MarketProvider, useMarket } from '@/lib/MarketContext';
+import { MARKETS } from '@/lib/markets';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 
 interface NavTab {
   href: string;
@@ -26,8 +29,17 @@ export default function ConsoleLayout({
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <MarketProvider>
+      <ConsoleShell>{children}</ConsoleShell>
+    </MarketProvider>
+  );
+}
+
+function ConsoleShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { market, setMarket } = useMarket();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [counts, setCounts] = useState<{ candidates: number; companies: number; jobs: number }>({
     candidates: 0,
@@ -107,8 +119,13 @@ export default function ConsoleLayout({
             </nav>
           </div>
 
-          {/* Right side: add candidate + notifications + sign out + mobile menu */}
+          {/* Right side: market switcher + notifications + sign out + mobile menu */}
           <div className="flex items-center gap-3">
+            <SegmentedControl
+              options={MARKETS.map(m => ({ value: m, label: m }))}
+              value={market}
+              onChange={setMarket}
+            />
             <NotificationBell />
             <button
               onClick={handleSignOut}
