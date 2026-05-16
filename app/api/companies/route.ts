@@ -1,19 +1,32 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
+import { MARKETS, type Market } from '@/lib/markets';
 import type { CompanyAccount } from '@/types/recruiter';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const token = await getSessionToken();
     if (!token || !(await validateSessionToken(token))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: companies, error } = await supabaseAdmin
+    const { searchParams } = new URL(request.url);
+    const marketParam = searchParams.get('market');
+    const market: Market | null = marketParam && MARKETS.includes(marketParam as Market)
+      ? (marketParam as Market)
+      : null;
+
+    let query = supabaseAdmin
       .from('company_accounts')
-      .select('id, company_name, contact_email, invited_by, invited_at, auth_user_id')
+      .select('id, company_name, contact_email, market, invited_by, invited_at, auth_user_id')
       .order('invited_at', { ascending: false });
+
+    if (market) {
+      query = query.eq('market', market);
+    }
+
+    const { data: companies, error } = await query;
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -43,6 +56,7 @@ export async function GET() {
       id: company.id,
       company_name: company.company_name,
       contact_email: company.contact_email,
+      market: company.market || 'CH',
       invited_by: company.invited_by,
       invited_at: company.invited_at,
       last_sign_in_at: company.auth_user_id

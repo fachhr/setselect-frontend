@@ -17,8 +17,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { email, companyName, invitedBy, regenerateLink } =
+    const { email, companyName, invitedBy, regenerateLink, market: bodyMarket } =
       await request.json();
+    const market = bodyMarket || 'CH';
 
     if (!email || !companyName) {
       return NextResponse.json(
@@ -29,11 +30,11 @@ export async function POST(request: NextRequest) {
 
     const redirectTo = `${process.env.FRONTEND_URL || 'https://www.setselect.io'}/auth/invite-callback`;
 
-    // Check if company already exists with this email
     const { data: existing } = await supabaseAdmin
       .from('company_accounts')
       .select('id')
       .eq('contact_email', email)
+      .eq('market', market)
       .maybeSingle();
 
     if (existing && !regenerateLink) {
@@ -96,6 +97,7 @@ export async function POST(request: NextRequest) {
             auth_user_id: linkData.user.id,
             company_name: companyName,
             contact_email: email,
+            market,
             invited_by: invitedBy || null,
             invited_at: new Date().toISOString(),
           });
@@ -120,13 +122,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create company_accounts row
     const { error: insertError } = await supabaseAdmin
       .from('company_accounts')
       .insert({
         auth_user_id: authUser.user.id,
         company_name: companyName,
         contact_email: email,
+        market,
         invited_by: invitedBy || null,
         invited_at: new Date().toISOString(),
       });

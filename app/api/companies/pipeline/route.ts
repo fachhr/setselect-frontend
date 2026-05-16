@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { MARKETS, type Market } from '@/lib/markets';
 
 interface SubmissionRow {
   profile_id: string;
@@ -24,22 +25,37 @@ interface CompanyPipelineData {
 
 const ACTIVE_STATUSES = new Set(['submitted', 'interviewing']);
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { searchParams } = new URL(request.url);
+    const marketParam = searchParams.get('market');
+    const market: Market | null = marketParam && MARKETS.includes(marketParam as Market)
+      ? (marketParam as Market)
+      : null;
+
+    let query = supabaseAdmin
       .from('candidate_submissions')
       .select(`
         profile_id,
         status,
         submitted_at,
         updated_at,
-        submission_companies!inner ( id, name ),
+        submission_companies!inner ( id, name, markets ),
         user_profiles:profile_id!inner (
           contact_first_name,
-          contact_last_name
+          contact_last_name,
+          market
         )
       `)
       .order('submitted_at', { ascending: false });
+
+    if (market) {
+      query = query
+        .eq('user_profiles.market', market)
+        .contains('submission_companies.markets', [market]);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Pipeline query error:', error);
@@ -48,7 +64,6 @@ export async function GET() {
 
     const rows = (data || []) as unknown as SubmissionRow[];
 
-    // Group submissions by company
     const companyMap = new Map<string, CompanyPipelineData>();
 
     for (const row of rows) {
@@ -80,7 +95,6 @@ export async function GET() {
       });
     }
 
-    // Sort companies by total active submissions descending
     const companies = Array.from(companyMap.values()).sort((a, b) => {
       const activeA = a.submissions.filter(s => ACTIVE_STATUSES.has(s.status)).length;
       const activeB = b.submissions.filter(s => ACTIVE_STATUSES.has(s.status)).length;

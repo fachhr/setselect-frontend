@@ -141,6 +141,7 @@ export interface CompanyAccount {
   id: string;
   company_name: string;
   contact_email: string;
+  market: string;
   invited_by: string | null;
   invited_at: string;
   last_sign_in_at: string | null;
@@ -149,6 +150,7 @@ export interface CompanyAccount {
 export interface SubmissionCompany {
   id: string;
   name: string;
+  markets: string[];
   created_at: string;
 }
 

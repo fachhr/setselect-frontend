@@ -112,13 +112,12 @@ function CandidatesContent() {
       .catch(() => {/* non-blocking */});
   }, []);
 
-  // Fetch submission companies (separate from platform-access companies)
   useEffect(() => {
-    fetch('/api/submission-companies')
+    fetch(`/api/submission-companies?market=${market}`)
       .then((res) => res.json())
       .then((data) => setCompanies(data.companies ?? []))
       .catch(() => {/* non-blocking */});
-  }, []);
+  }, [market]);
 
   // Fetch submissions when a candidate is selected
   useEffect(() => {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Send, Copy, Check, AlertCircle, X } from 'lucide-react';
+import { useMarket } from '@/lib/MarketContext';
 
 interface InviteCompanyDialogProps {
   open: boolean;
@@ -10,6 +11,7 @@ interface InviteCompanyDialogProps {
 }
 
 export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyDialogProps) {
+  const { market } = useMarket();
   const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [invitedBy, setInvitedBy] = useState('');
@@ -58,7 +60,7 @@ export function InviteCompanyDialog({ open, onClose, onSuccess }: InviteCompanyD
       const res = await fetch('/api/companies/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, companyName, invitedBy: invitedBy || undefined }),
+        body: JSON.stringify({ email, companyName, invitedBy: invitedBy || undefined, market }),
       });
 
       const data = await res.json();

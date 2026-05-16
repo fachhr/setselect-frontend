@@ -6,6 +6,7 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { toast } from '@/components/ui/Toast';
 import { formatEntryDate } from '@/lib/helpers';
 import { STATUS_PILL_COLORS } from '@/lib/constants';
+import { useMarket } from '@/lib/MarketContext';
 import { toActivityEntry } from '@/types/recruiter';
 import type {
   RecruiterCandidateView,
@@ -138,6 +139,7 @@ export function CandidatePipeline({
   onDeleteSubmission,
   onCompanyAdded,
 }: CandidatePipelineProps) {
+  const { market } = useMarket();
   const [noteText, setNoteText] = useState('');
   const [addingNote, setAddingNote] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -178,7 +180,7 @@ export function CandidatePipeline({
       const res = await fetch('/api/submission-companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, markets: [market] }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

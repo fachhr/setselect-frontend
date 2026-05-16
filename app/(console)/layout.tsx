@@ -52,7 +52,7 @@ function ConsoleShell({ children }: { children: React.ReactNode }) {
       .then(r => r.json())
       .then(data => setCounts(prev => ({ ...prev, candidates: data.pagination?.total ?? data.candidates?.length ?? 0 })))
       .catch(() => {});
-    fetch('/api/submission-companies')
+    fetch(`/api/submission-companies?market=${market}`)
       .then(r => r.json())
       .then(data => setCounts(prev => ({ ...prev, companies: data.companies?.length ?? 0 })))
       .catch(() => {});

@@ -1,13 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { MARKETS, type Market } from '@/lib/markets';
 import type { SubmissionCompany } from '@/types/recruiter';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { searchParams } = new URL(request.url);
+    const marketParam = searchParams.get('market');
+    const market: Market | null = marketParam && MARKETS.includes(marketParam as Market)
+      ? (marketParam as Market)
+      : null;
+
+    let query = supabaseAdmin
       .from('submission_companies')
-      .select('id, name, created_at')
+      .select('id, name, markets, created_at')
       .order('name', { ascending: true });
+
+    if (market) {
+      query = query.contains('markets', [market]);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Submission companies query error:', error);
@@ -17,6 +30,7 @@ export async function GET() {
     const companies: SubmissionCompany[] = (data || []).map((row) => ({
       id: row.id,
       name: row.name,
+      markets: row.markets,
       created_at: row.created_at,
     }));
 
@@ -31,6 +45,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const name = typeof body.name === 'string' ? body.name.trim() : '';
+    const markets: string[] = Array.isArray(body.markets) && body.markets.length > 0
+      ? body.markets.filter((m: string) => MARKETS.includes(m as Market))
+      : [...MARKETS];
 
     if (!name) {
       return NextResponse.json({ error: 'Company name is required' }, { status: 400 });
@@ -38,8 +55,8 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabaseAdmin
       .from('submission_companies')
-      .insert({ name })
-      .select('id, name, created_at')
+      .insert({ name, markets })
+      .select('id, name, markets, created_at')
       .single();
 
     if (error) {
@@ -56,6 +73,7 @@ export async function POST(request: NextRequest) {
     const company: SubmissionCompany = {
       id: data.id,
       name: data.name,
+      markets: data.markets,
       created_at: data.created_at,
     };
 

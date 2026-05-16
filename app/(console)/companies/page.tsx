@@ -8,9 +8,11 @@ import type { CompanyPipelineData } from '@/components/CompanyPipelineCard';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { formatEntryDate } from '@/lib/helpers';
+import { useMarket } from '@/lib/MarketContext';
 import type { CompanyAccount } from '@/types/recruiter';
 
 export default function CompaniesPage() {
+  const { market } = useMarket();
   const [companies, setCompanies] = useState<CompanyAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -30,7 +32,7 @@ export default function CompaniesPage() {
     setRegenerateError(null);
     setRegeneratedLink(null);
     try {
-      const res = await fetch('/api/companies');
+      const res = await fetch(`/api/companies?market=${market}`);
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         setFetchError(data.error || `Failed to load companies (${res.status})`);
@@ -43,7 +45,7 @@ export default function CompaniesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [market]);
 
   useEffect(() => {
     fetchCompanies();
@@ -51,12 +53,12 @@ export default function CompaniesPage() {
 
   useEffect(() => {
     setPipelineLoading(true);
-    fetch('/api/companies/pipeline')
+    fetch(`/api/companies/pipeline?market=${market}`)
       .then(res => res.json())
       .then(data => setPipelineData(data.companies ?? []))
       .catch(() => {})
       .finally(() => setPipelineLoading(false));
-  }, []);
+  }, [market]);
 
   useEffect(() => {
     return () => clearTimeout(copyTimerRef.current);

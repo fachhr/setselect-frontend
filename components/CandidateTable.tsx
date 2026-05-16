@@ -10,6 +10,7 @@ import { buildHighlightRegex } from '@/lib/search';
 import { STATUS_OPTIONS, EXPERIENCE_OPTIONS, STATUS_PILL_COLORS } from '@/lib/constants';
 import { Pagination } from '@/components/ui/Pagination';
 import { toast } from '@/components/ui/Toast';
+import { useMarket } from '@/lib/MarketContext';
 import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission, SubmissionCompany } from '@/types/recruiter';
 
 const STALE_AMBER_DAYS = 5;
@@ -117,6 +118,7 @@ interface QuickSubmitButtonProps {
 }
 
 function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmission, onCompanyAdded }: QuickSubmitButtonProps) {
+  const { market } = useMarket();
   const [open, setOpen] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
   const [submittedBy, setSubmittedBy] = useState('');
@@ -157,7 +159,7 @@ function QuickSubmitButton({ candidate, companies, submissions, onCreateSubmissi
       const res = await fetch('/api/submission-companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, markets: [market] }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
