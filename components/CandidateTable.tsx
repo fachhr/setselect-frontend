@@ -511,20 +511,18 @@ export function CandidateTable({
                   ) : (() => {
                     const subs = allSubmissions.filter(s => s.profile_id === c.profile_id);
                     const SUB_DOT: Record<string, string> = { submitted: 'var(--status-new)', interviewing: 'var(--status-interviewing)', offer: 'var(--status-offer)', placed: 'var(--status-placed)', rejected: 'var(--text-muted)' };
-                    return (
-                      <div>
-                        <StatusBadge status={c.status} />
-                        {subs.length > 0 && (
-                          <div className="mt-1 space-y-0.5">
-                            {subs.map(s => (
-                              <div key={s.id} className="flex items-center gap-1 text-[9px] text-[var(--text-muted)] truncate max-w-[140px]">
-                                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: SUB_DOT[s.status] || 'var(--text-muted)' }} />
-                                {s.company_name} · {s.status}
-                              </div>
-                            ))}
+                    return subs.length > 0 ? (
+                      <div className="space-y-1">
+                        {subs.map(s => (
+                          <div key={s.id} className="flex items-center gap-1.5 text-[10px] truncate max-w-[160px]">
+                            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: SUB_DOT[s.status] || 'var(--text-muted)' }} />
+                            <span className="text-[var(--text-primary)]">{s.company_name}</span>
+                            <span className="text-[var(--text-muted)]">· {s.status}</span>
                           </div>
-                        )}
+                        ))}
                       </div>
+                    ) : (
+                      <StatusBadge status={c.status} />
                     );
                   })()}
                 </td>
