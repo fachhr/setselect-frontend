@@ -62,10 +62,11 @@ export async function GET(request: NextRequest) {
         created_at,
         user_profiles!inner (
           contact_first_name,
-          contact_last_name
+          contact_last_name,
+          market
         )
       `);
-    if (market) candidatesQuery = candidatesQuery.eq('market', market);
+    if (market) candidatesQuery = candidatesQuery.eq('user_profiles.market', market);
 
     let submissionsQuery = supabaseAdmin
       .from('candidate_submissions')
@@ -78,9 +79,11 @@ export async function GET(request: NextRequest) {
         submission_companies!inner ( name ),
         user_profiles:profile_id!inner (
           contact_first_name,
-          contact_last_name
+          contact_last_name,
+          market
         )
       `);
+    if (market) submissionsQuery = submissionsQuery.eq('user_profiles.market', market);
 
     let newJobsQuery = supabaseAdmin
       .from('job_listings')
@@ -103,11 +106,7 @@ export async function GET(request: NextRequest) {
     }
 
     const candidates = candidatesResult.data || [];
-    const allSubmissions = submissionsResult.data || [];
-    const candidateProfileIds = new Set(candidates.map(c => c.profile_id));
-    const submissions = market
-      ? allSubmissions.filter(s => candidateProfileIds.has(s.profile_id))
-      : allSubmissions;
+    const submissions = submissionsResult.data || [];
 
     // Pipeline counts
     const pipeline_counts: Record<string, number> = {
