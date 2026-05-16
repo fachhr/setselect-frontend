@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
-import { MARKETS, type Market } from '@/lib/markets';
+import { MARKETS, type Market, marketToCountry } from '@/lib/markets';
 
 export async function GET(request: NextRequest) {
   const token = await getSessionToken();
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
   // Market filter — match against source's target countries
   if (market) {
-    query = query.contains('job_sources.target_countries', [market]);
+    query = query.contains('job_sources.target_countries', [marketToCountry(market!)]);
   }
 
   // Filter removed
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
     let q = supabaseAdmin
       .from('job_listings')
       .select('id, job_sources!inner(target_countries)', { count: 'exact', head: true });
-    if (market) q = q.contains('job_sources.target_countries', [market]);
+    if (market) q = q.contains('job_sources.target_countries', [marketToCountry(market!)]);
     return q;
   }
 
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
   let sourcesQuery = supabaseAdmin
     .from('job_sources')
     .select('id', { count: 'exact', head: true });
-  if (market) sourcesQuery = sourcesQuery.contains('target_countries', [market]);
+  if (market) sourcesQuery = sourcesQuery.contains('target_countries', [marketToCountry(market!)]);
 
   const [totalResult, newCountResult, pursuingCountResult, sourcesCountResult] = await Promise.all([
     totalQuery,
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
     .not('last_scraped_at', 'is', null)
     .order('last_scraped_at', { ascending: false })
     .limit(1);
-  if (market) lastScrapeQuery = lastScrapeQuery.contains('target_countries', [market]);
+  if (market) lastScrapeQuery = lastScrapeQuery.contains('target_countries', [marketToCountry(market!)]);
   const { data: lastScrape } = await lastScrapeQuery.maybeSingle();
 
   const filteredCount = count ?? 0;

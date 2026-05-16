@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
-import { MARKETS, type Market } from '@/lib/markets';
+import { MARKETS, type Market, marketToCountry } from '@/lib/markets';
 
 export async function GET(request: NextRequest) {
   const token = await getSessionToken();
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     .from('job_sources')
     .select('*')
     .order('created_at', { ascending: true });
-  if (market) query = query.contains('target_countries', [market]);
+  if (market) query = query.contains('target_countries', [marketToCountry(market)]);
 
   const { data, error } = await query;
 

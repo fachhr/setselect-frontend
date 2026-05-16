@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { RecruiterStatus, ActivityEntry, RecruiterNote } from '@/types/recruiter';
-import { MARKETS, type Market } from '@/lib/markets';
+import { MARKETS, type Market, marketToCountry } from '@/lib/markets';
 
 interface StaleCandidate {
   profile_id: string;
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       .select('id, job_sources!inner(target_countries)', { count: 'exact', head: true })
       .eq('status', 'new')
       .is('removed_at', null);
-    if (market) newJobsQuery = newJobsQuery.contains('job_sources.target_countries', [market]);
+    if (market) newJobsQuery = newJobsQuery.contains('job_sources.target_countries', [marketToCountry(market)]);
 
     const [candidatesResult, submissionsResult, newJobsResult] = await Promise.all([
       candidatesQuery,

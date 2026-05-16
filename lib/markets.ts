@@ -76,3 +76,16 @@ export const MARKETS: Market[] = ['CH', 'BG'];
 export function getMarketConfig(market: Market): MarketConfig {
   return MARKET_CONFIGS[market];
 }
+
+const COUNTRY_TO_CODE: Record<string, Market> = {
+  Switzerland: 'CH',
+  Bulgaria: 'BG',
+};
+
+export function marketToCountry(market: Market): string {
+  return MARKET_CONFIGS[market].name;
+}
+
+export function countryToMarket(country: string): Market | null {
+  return COUNTRY_TO_CODE[country] ?? null;
+}

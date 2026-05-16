@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getSessionToken, validateSessionToken } from '@/lib/auth';
+import { countryToMarket } from '@/lib/markets';
 
 // GET — return the latest 50 notifications, newest first.
 export async function GET() {
@@ -22,7 +23,10 @@ export async function GET() {
   const notifications = (data ?? []).map((row: Record<string, unknown>) => {
     const source = row.job_sources as { target_countries: string[] } | null;
     const { job_sources: _, ...rest } = row;
-    return { ...rest, markets: source?.target_countries ?? [] };
+    const markets = (source?.target_countries ?? [])
+      .map(countryToMarket)
+      .filter((c): c is NonNullable<typeof c> => c !== null);
+    return { ...rest, markets };
   });
 
   return NextResponse.json({ notifications });
