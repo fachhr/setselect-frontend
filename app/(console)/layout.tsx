@@ -47,23 +47,20 @@ function ConsoleShell({ children }: { children: React.ReactNode }) {
     jobs: 0,
   });
 
-  // Nav badges = inventory size, consistent across tabs. Untriaged-attention
-  // signals live on the page itself (status pills, stats line) — not at the
-  // nav level where they'd compete with totals from sibling tabs.
   useEffect(() => {
-    fetch('/api/candidates?limit=0&page=1')
+    fetch(`/api/candidates?limit=0&page=1&market=${market}`)
       .then(r => r.json())
-      .then(data => setCounts(prev => ({ ...prev, candidates: data.candidates?.length ?? 0 })))
+      .then(data => setCounts(prev => ({ ...prev, candidates: data.pagination?.total ?? data.candidates?.length ?? 0 })))
       .catch(() => {});
     fetch('/api/submission-companies')
       .then(r => r.json())
       .then(data => setCounts(prev => ({ ...prev, companies: data.companies?.length ?? 0 })))
       .catch(() => {});
-    fetch('/api/jobs/count')
+    fetch(`/api/jobs/count?market=${market}`)
       .then(r => r.json())
       .then(data => setCounts(prev => ({ ...prev, jobs: data.total ?? 0 })))
       .catch(() => {});
-  }, []);
+  }, [market]);
 
   const handleSignOut = async () => {
     await fetch('/api/auth', { method: 'DELETE' });
