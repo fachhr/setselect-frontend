@@ -490,7 +490,7 @@ export function CandidateTable({
                   {(() => {
                     const subs = allSubmissions.filter(s => s.profile_id === c.profile_id);
 
-                    if (subs.length === 0 && onStatusChange) {
+                    if (subs.length === 0 && onStatusChange && (c.status === 'new' || c.status === 'screening')) {
                       return (
                         <select
                           value={c.status}
@@ -508,7 +508,7 @@ export function CandidateTable({
                             backgroundPosition: 'right 6px center',
                           }}
                         >
-                          {(['new', 'screening', 'rejected'] as RecruiterStatus[]).map(s => (
+                          {(['new', 'screening'] as RecruiterStatus[]).map(s => (
                             <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
                           ))}
                         </select>
@@ -522,13 +522,11 @@ export function CandidateTable({
                     const activeSubs = subs.filter(s => s.status !== 'rejected');
                     const statusLabel = c.status.charAt(0).toUpperCase() + c.status.slice(1);
 
-                    let label: string;
+                    let detail = '';
                     if (['submitted', 'interviewing', 'offer', 'placed'].includes(best.status)) {
-                      label = `${statusLabel} · ${best.company_name}`;
+                      detail = best.company_name;
                     } else if (activeSubs.length > 0) {
-                      label = `${statusLabel} · ${activeSubs.length} active`;
-                    } else {
-                      label = statusLabel;
+                      detail = `${activeSubs.length} active`;
                     }
 
                     return (
@@ -536,7 +534,8 @@ export function CandidateTable({
                         className="text-[10px] font-semibold rounded-full inline-block whitespace-nowrap"
                         style={{ padding: '2px 10px', background: STATUS_PILL_CONFIG[c.status]?.bg, color: STATUS_PILL_CONFIG[c.status]?.text }}
                       >
-                        {label}
+                        {statusLabel}
+                        {detail && <span className="hidden sm:inline"> · {detail}</span>}
                       </span>
                     );
                   })()}
@@ -574,7 +573,7 @@ export function CandidateTable({
                           e.stopPropagation();
                           onDownloadCv(c.profile_id);
                         }}
-                        className="p-1.5 sm:p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)]"
+                        className="hidden sm:block p-2 hover:bg-[var(--bg-surface-2)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--secondary)] transition-all duration-150 cursor-pointer border border-[var(--border-subtle)]"
                         title="Download CV"
                       >
                         <FileText size={15} />
