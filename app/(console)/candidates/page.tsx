@@ -457,6 +457,7 @@ function CandidatesContent() {
       const sub = data.submission;
       updateCandidateLocally(profileId, (c) => ({
         ...c,
+        status: data.candidate_status || c.status,
         notes: [{
           type: 'submission_created' as const,
           id: crypto.randomUUID(),
@@ -478,6 +479,9 @@ function CandidatesContent() {
     setSubmissions((prev) =>
       prev.map((s) => (s.id === submissionId ? { ...s, status } : s))
     );
+    setAllSubmissions((prev) =>
+      prev.map((s) => (s.id === submissionId ? { ...s, status } : s))
+    );
     try {
       const res = await fetch(`/api/submissions/${submissionId}`, {
         method: 'PATCH',
@@ -485,10 +489,12 @@ function CandidatesContent() {
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error();
-      // Add timeline entry locally
+      const data = await res.json();
+      // Sync candidate status + add timeline entry locally
       if (oldSubmission && selected) {
         updateCandidateLocally(selected.profile_id, (c) => ({
           ...c,
+          status: data.candidate_status || c.status,
           notes: [{
             type: 'submission_update' as const,
             id: crypto.randomUUID(),
@@ -503,11 +509,14 @@ function CandidatesContent() {
       }
       toast('success', 'Submission updated');
     } catch {
-      // Revert — refetch
-      if (selected) {
-        fetch(`/api/submissions?profile_id=${selected.profile_id}`)
-          .then((res) => res.json())
-          .then((data) => setSubmissions(data.submissions ?? []));
+      // Revert optimistic updates
+      if (oldSubmission) {
+        setSubmissions((prev) =>
+          prev.map((s) => (s.id === submissionId ? { ...s, status: oldSubmission.status } : s))
+        );
+        setAllSubmissions((prev) =>
+          prev.map((s) => (s.id === submissionId ? { ...s, status: oldSubmission.status } : s))
+        );
       }
       toast('error', 'Failed to update submission');
     }
@@ -519,10 +528,12 @@ function CandidatesContent() {
       const data = await res.json();
       if (!res.ok) throw new Error();
       setSubmissions((prev) => prev.filter((s) => s.id !== submissionId));
-      // Also remove related timeline entries from candidate's local notes
+      setAllSubmissions((prev) => prev.filter((s) => s.id !== submissionId));
+      // Sync candidate status + remove related timeline entries
       if (data.profile_id) {
         updateCandidateLocally(data.profile_id, (c) => ({
           ...c,
+          status: data.candidate_status || c.status,
           notes: c.notes.filter((n) => !('submission_id' in n) || (n as { submission_id?: string }).submission_id !== submissionId),
         }));
       }

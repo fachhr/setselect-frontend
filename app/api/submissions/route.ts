@@ -174,13 +174,15 @@ export async function POST(request: NextRequest) {
       console.warn('Failed to log submission creation activity (non-blocking):', noteErr);
     }
 
+    let candidateStatus: string | undefined;
     try {
-      await syncCandidateStatus(supabaseAdmin, profile_id, submission.company_name);
+      const synced = await syncCandidateStatus(supabaseAdmin, profile_id, submission.company_name);
+      if (synced) candidateStatus = synced;
     } catch (syncErr) {
       console.warn('Failed to sync candidate status (non-blocking):', syncErr);
     }
 
-    return NextResponse.json({ submission }, { status: 201 });
+    return NextResponse.json({ submission, candidate_status: candidateStatus }, { status: 201 });
   } catch (err) {
     console.error('Submissions POST error:', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

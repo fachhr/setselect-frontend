@@ -32,14 +32,13 @@ export async function syncCandidateStatus(
   supabase: SupabaseClient,
   profileId: string,
   drivingCompanyName?: string,
-): Promise<void> {
+): Promise<RecruiterStatus | null> {
   const { data: submissions } = await supabase
     .from('candidate_submissions')
     .select('status')
     .eq('profile_id', profileId);
 
-  const derived = deriveStatus((submissions ?? []) as { status: SubmissionStatus }[]);
-  if (!derived) return;
+  let derived = deriveStatus((submissions ?? []) as { status: SubmissionStatus }[]);
 
   const { data: current } = await supabase
     .from('recruiter_candidates')
@@ -47,7 +46,18 @@ export async function syncCandidateStatus(
     .eq('profile_id', profileId)
     .single();
 
-  if (!current || current.status === derived) return;
+  if (!current) return null;
+
+  if (!derived) {
+    const SUBMISSION_DRIVEN: RecruiterStatus[] = ['interviewing', 'offer', 'placed', 'rejected'];
+    if (SUBMISSION_DRIVEN.includes(current.status as RecruiterStatus)) {
+      derived = 'screening';
+    } else {
+      return current.status as RecruiterStatus;
+    }
+  }
+
+  if (current.status === derived) return derived;
 
   const now = new Date().toISOString();
   const existingNotes: ActivityEntry[] = current.notes || [];
@@ -70,4 +80,6 @@ export async function syncCandidateStatus(
       notes: [statusEntry, ...existingNotes],
     })
     .eq('profile_id', profileId);
+
+  return derived;
 }

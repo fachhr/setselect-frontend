@@ -79,6 +79,7 @@ export async function PATCH(
     }
 
     // Best-effort: log submission status change and sync candidate pipeline status
+    let candidateStatus: string | undefined;
     const newStatus = body.status as SubmissionStatus | undefined;
     if (oldStatus && newStatus && oldStatus !== newStatus && submissionProfileId) {
       try {
@@ -104,13 +105,14 @@ export async function PATCH(
       }
 
       try {
-        await syncCandidateStatus(supabaseAdmin, submissionProfileId, companyName);
+        const synced = await syncCandidateStatus(supabaseAdmin, submissionProfileId, companyName);
+        if (synced) candidateStatus = synced;
       } catch (syncErr) {
         console.warn('Failed to sync candidate status (non-blocking):', syncErr);
       }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, candidate_status: candidateStatus });
   } catch (err) {
     console.error('Submission PATCH error:', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
@@ -152,6 +154,7 @@ export async function DELETE(
     }
 
     // Clean up related timeline entries and re-derive candidate status
+    let candidateStatus: string | undefined;
     if (submission?.profile_id) {
       try {
         await supabaseAdmin.rpc('delete_notes_by_submission', {
@@ -164,13 +167,14 @@ export async function DELETE(
       }
 
       try {
-        await syncCandidateStatus(supabaseAdmin, submission.profile_id);
+        const synced = await syncCandidateStatus(supabaseAdmin, submission.profile_id);
+        if (synced) candidateStatus = synced;
       } catch (syncErr) {
         console.warn('Failed to sync candidate status after delete (non-blocking):', syncErr);
       }
     }
 
-    return NextResponse.json({ success: true, profile_id: submission?.profile_id });
+    return NextResponse.json({ success: true, profile_id: submission?.profile_id, candidate_status: candidateStatus });
   } catch (err) {
     console.error('Submission DELETE error:', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
