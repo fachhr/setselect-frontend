@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Layers, LogOut, Menu, X } from 'lucide-react';
@@ -13,14 +13,13 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl';
 interface NavTab {
   href: string;
   label: string;
-  countKey?: 'candidates' | 'companies' | 'jobs';
 }
 
 const NAV_TABS: NavTab[] = [
   { href: '/', label: 'Command Center' },
-  { href: '/candidates', label: 'Talent Pool', countKey: 'candidates' },
-  { href: '/companies', label: 'Companies', countKey: 'companies' },
-  { href: '/jobs', label: 'Jobs', countKey: 'jobs' },
+  { href: '/candidates', label: 'Talent Pool' },
+  { href: '/companies', label: 'Companies' },
+  { href: '/jobs', label: 'Jobs' },
   { href: '/settings', label: 'Settings' },
 ];
 
@@ -41,28 +40,6 @@ function ConsoleShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { market, setMarket } = useMarket();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [counts, setCounts] = useState<{ candidates: number; companies: number; jobs: number }>({
-    candidates: 0,
-    companies: 0,
-    jobs: 0,
-  });
-
-  useEffect(() => {
-    const safeFetch = (url: string) => fetch(url).then(r => {
-      if (!r.ok) throw new Error(r.statusText);
-      return r.json();
-    });
-
-    safeFetch(`/api/candidates?limit=0&page=1&market=${market}`)
-      .then(data => setCounts(prev => ({ ...prev, candidates: data.pagination?.total ?? data.candidates?.length ?? 0 })))
-      .catch(() => setCounts(prev => ({ ...prev, candidates: 0 })));
-    safeFetch(`/api/submission-companies?market=${market}`)
-      .then(data => setCounts(prev => ({ ...prev, companies: data.companies?.length ?? 0 })))
-      .catch(() => setCounts(prev => ({ ...prev, companies: 0 })));
-    safeFetch(`/api/jobs/count?market=${market}`)
-      .then(data => setCounts(prev => ({ ...prev, jobs: data.total ?? 0 })))
-      .catch(() => setCounts(prev => ({ ...prev, jobs: 0 })));
-  }, [market]);
 
   const handleSignOut = async () => {
     await fetch('/api/auth', { method: 'DELETE' });
@@ -103,15 +80,6 @@ function ConsoleShell({ children }: { children: React.ReactNode }) {
                     }`}
                   >
                     {tab.label}
-                    {tab.countKey && counts[tab.countKey] > 0 && (
-                      <span className={`ml-1.5 text-[10px] px-1.5 py-px rounded-lg ${
-                        isActive
-                          ? 'bg-[var(--border-hover)] text-[var(--text-primary)]'
-                          : 'bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]'
-                      }`}>
-                        {counts[tab.countKey]}
-                      </span>
-                    )}
                   </Link>
                 );
               })}
@@ -163,11 +131,6 @@ function ConsoleShell({ children }: { children: React.ReactNode }) {
                   }`}
                 >
                   {tab.label}
-                  {tab.countKey && counts[tab.countKey] > 0 && (
-                    <span className="ml-2 text-[10px] px-1.5 py-px rounded-md bg-[var(--bg-surface-3)] text-[var(--text-tertiary)]">
-                      {counts[tab.countKey]}
-                    </span>
-                  )}
                 </Link>
               );
             })}
