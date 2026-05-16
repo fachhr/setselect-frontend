@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { CandidateSubmission, SubmissionStatus, SubmissionCreatedEntry } from '@/types/recruiter';
+import { syncCandidateStatus } from '@/lib/statusSync';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -171,6 +172,12 @@ export async function POST(request: NextRequest) {
       });
     } catch (noteErr) {
       console.warn('Failed to log submission creation activity (non-blocking):', noteErr);
+    }
+
+    try {
+      await syncCandidateStatus(supabaseAdmin, profile_id, submission.company_name);
+    } catch (syncErr) {
+      console.warn('Failed to sync candidate status (non-blocking):', syncErr);
     }
 
     return NextResponse.json({ submission }, { status: 201 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import type { SubmissionStatus, SubmissionUpdateEntry } from '@/types/recruiter';
+import { syncCandidateStatus } from '@/lib/statusSync';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const VALID_STATUSES: SubmissionStatus[] = ['submitted', 'interviewing', 'rejected', 'placed'];
@@ -77,7 +78,7 @@ export async function PATCH(
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Best-effort: log submission status change to candidate's activity feed
+    // Best-effort: log submission status change and sync candidate pipeline status
     const newStatus = body.status as SubmissionStatus | undefined;
     if (oldStatus && newStatus && oldStatus !== newStatus && submissionProfileId) {
       try {
@@ -100,6 +101,12 @@ export async function PATCH(
         });
       } catch (noteErr) {
         console.warn('Failed to log submission status change activity (non-blocking):', noteErr);
+      }
+
+      try {
+        await syncCandidateStatus(supabaseAdmin, submissionProfileId, companyName);
+      } catch (syncErr) {
+        console.warn('Failed to sync candidate status (non-blocking):', syncErr);
       }
     }
 
@@ -144,7 +151,7 @@ export async function DELETE(
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Clean up related timeline entries from candidate's notes JSONB
+    // Clean up related timeline entries and re-derive candidate status
     if (submission?.profile_id) {
       try {
         await supabaseAdmin.rpc('delete_notes_by_submission', {
@@ -154,6 +161,12 @@ export async function DELETE(
         });
       } catch (cleanupErr) {
         console.warn('Timeline cleanup failed (non-blocking):', cleanupErr);
+      }
+
+      try {
+        await syncCandidateStatus(supabaseAdmin, submission.profile_id);
+      } catch (syncErr) {
+        console.warn('Failed to sync candidate status after delete (non-blocking):', syncErr);
       }
     }
 

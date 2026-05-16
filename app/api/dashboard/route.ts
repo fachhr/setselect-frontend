@@ -22,6 +22,7 @@ interface PendingSubmission {
 
 interface DashboardResponse {
   pipeline_counts: Record<RecruiterStatus, number>;
+  company_breakdown: Record<string, string[]>;
   stale_candidates: StaleCandidate[];
   pending_submissions: PendingSubmission[];
   unreviewed_new: { profile_id: string; name: string; days_old: number }[];
@@ -114,6 +115,21 @@ export async function GET(request: NextRequest) {
     };
     for (const c of candidates) {
       pipeline_counts[c.status] = (pipeline_counts[c.status] || 0) + 1;
+    }
+
+    // Company breakdown: for post-submission stages, which companies are involved
+    const company_breakdown: Record<string, string[]> = {
+      interviewing: [], offer: [], placed: [],
+    };
+    for (const s of submissions) {
+      const stage = s.status as string;
+      if (stage in company_breakdown) {
+        const company = s.submission_companies as unknown as { name: string };
+        const name = company?.name;
+        if (name && !company_breakdown[stage].includes(name)) {
+          company_breakdown[stage].push(name);
+        }
+      }
     }
 
     // Stale candidates: in non-terminal stage with last_activity_at 5+ days ago
@@ -217,6 +233,7 @@ export async function GET(request: NextRequest) {
 
     const response: DashboardResponse = {
       pipeline_counts: pipeline_counts as Record<RecruiterStatus, number>,
+      company_breakdown,
       stale_candidates,
       pending_submissions,
       unreviewed_new,

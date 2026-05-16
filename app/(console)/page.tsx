@@ -26,6 +26,7 @@ interface PendingSubmission {
 
 interface DashboardData {
   pipeline_counts: Record<RecruiterStatus, number>;
+  company_breakdown: Record<string, string[]>;
   stale_candidates: StaleCandidate[];
   pending_submissions: PendingSubmission[];
   unreviewed_new: { profile_id: string; name: string; days_old: number }[];
@@ -215,20 +216,26 @@ export default function CommandCenterPage() {
   // Meta lines for pipeline stages
   function stageMeta(key: RecruiterStatus): string {
     if (!data) return '';
+    const companies = data.company_breakdown?.[key];
     switch (key) {
       case 'new': {
         const unreviewed = data.unreviewed_new.length;
         return unreviewed > 0 ? `${unreviewed} unreviewed` : 'all reviewed';
       }
-      case 'screening':
-      case 'interviewing': {
+      case 'screening': {
         const stale = data.stale_candidates.filter(c => c.status === key).length;
         return stale > 0 ? `${stale} stale (5d+)` : 'all active';
       }
+      case 'interviewing':
       case 'offer':
-        return data.pipeline_counts.offer > 0 ? 'closing' : '—';
+        if (companies?.length) return companies.join(' · ');
+        return data.stale_candidates.filter(c => c.status === key).length > 0
+          ? `${data.stale_candidates.filter(c => c.status === key).length} stale (5d+)`
+          : '—';
       case 'placed':
-        return `${data.metrics.placements_mtd} this month`;
+        return companies?.length
+          ? `${data.metrics.placements_mtd} this month`
+          : `${data.metrics.placements_mtd} this month`;
       default:
         return '';
     }

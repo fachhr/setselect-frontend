@@ -112,6 +112,21 @@ export async function PATCH(
         return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
       }
 
+      const SUBMISSION_DRIVEN: RecruiterStatus[] = ['interviewing', 'offer', 'placed', 'rejected'];
+      if (SUBMISSION_DRIVEN.includes(body.status)) {
+        const { count } = await supabaseAdmin
+          .from('candidate_submissions')
+          .select('id', { count: 'exact', head: true })
+          .eq('profile_id', id);
+
+        if (count && count > 0) {
+          return NextResponse.json(
+            { error: 'Status is driven by submissions — update the submission status instead' },
+            { status: 422 },
+          );
+        }
+      }
+
       // Read current status and notes to auto-log the change
       const { data: currentRow, error: fetchErr } = await supabaseAdmin
         .from('recruiter_candidates')

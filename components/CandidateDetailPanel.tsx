@@ -253,11 +253,29 @@ export function CandidateDetailPanel({
               {/* Status */}
               <div className="mb-4">
                 <div className="text-[9px] font-semibold uppercase tracking-[1.2px] text-[var(--text-muted)] mb-1">Status</div>
-                <select value={c.status} onChange={(e) => onUpdateStatus(c.profile_id, e.target.value as RecruiterStatus)}
-                  className="text-[10px] font-semibold rounded-[10px] border-none cursor-pointer appearance-none"
-                  style={{ padding: '2px 18px 2px 10px', background: PILL_BG[c.status], color: PILL_TEXT[c.status], backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(PILL_TEXT[c.status])}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}>
-                  {ALL_STATUSES.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
-                </select>
+                {submissions.length > 0 ? (() => {
+                  const priority: Record<string, number> = { placed: 4, offer: 3, interviewing: 2, submitted: 1, rejected: 0 };
+                  const best = submissions.reduce((a, b) => (priority[b.status] ?? 0) > (priority[a.status] ?? 0) ? b : a);
+                  const showCompany = ['interviewing', 'offer', 'placed'].includes(c.status);
+                  return (
+                    <div>
+                      <span
+                        className="text-[10px] font-semibold rounded-[10px] inline-block"
+                        style={{ padding: '2px 10px', background: PILL_BG[c.status], color: PILL_TEXT[c.status] }}
+                      >
+                        {c.status.charAt(0).toUpperCase() + c.status.slice(1)}
+                        {showCompany && ` → ${best.company_name}`}
+                      </span>
+                      <div className="text-[9px] text-[var(--text-muted)] mt-1">Driven by submissions</div>
+                    </div>
+                  );
+                })() : (
+                  <select value={c.status} onChange={(e) => onUpdateStatus(c.profile_id, e.target.value as RecruiterStatus)}
+                    className="text-[10px] font-semibold rounded-[10px] border-none cursor-pointer appearance-none"
+                    style={{ padding: '2px 18px 2px 10px', background: PILL_BG[c.status], color: PILL_TEXT[c.status], backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(PILL_TEXT[c.status])}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 4px center' }}>
+                    {(['new', 'screening'] as RecruiterStatus[]).map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
+                  </select>
+                )}
               </div>
               {/* Owner */}
               <div className="mb-4">

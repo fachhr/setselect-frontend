@@ -122,6 +122,15 @@ export function BoardView({ candidates, submissions, onSelect }: BoardViewProps)
                       <div className="text-xs font-semibold text-[var(--text-primary)] truncate">
                         {c.contact_first_name} {c.contact_last_name}
                       </div>
+                      {['interviewing', 'offer', 'placed'].includes(stage.key) && profileSubs.length > 0 && (() => {
+                        const priority: Record<string, number> = { placed: 4, offer: 3, interviewing: 2, submitted: 1, rejected: 0 };
+                        const best = profileSubs.reduce((a, b) => (priority[b.status] ?? 0) > (priority[a.status] ?? 0) ? b : a);
+                        return (
+                          <div className="text-[10px] truncate mt-0.5" style={{ color: stage.color }}>
+                            → {best.company_name}
+                          </div>
+                        );
+                      })()}
                       <div className="text-[10px] text-[var(--text-tertiary)] truncate mt-0.5">
                         {c.desired_roles || 'No role specified'}
                       </div>
