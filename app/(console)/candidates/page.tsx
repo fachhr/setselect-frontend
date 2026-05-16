@@ -789,7 +789,6 @@ function CandidatesContent() {
           onDownloadCv={handleDownloadCv}
           onToggleFavorite={handleToggleFavorite}
           onStatusChange={handleUpdateStatus}
-          onUpdateSubmission={handleUpdateSubmission}
           allSubmissions={allSubmissions}
           companies={companies}
           onCreateSubmission={handleCreateSubmission}

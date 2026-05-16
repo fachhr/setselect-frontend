@@ -11,7 +11,7 @@ import { STATUS_OPTIONS, EXPERIENCE_OPTIONS, STATUS_PILL_COLORS } from '@/lib/co
 import { Pagination } from '@/components/ui/Pagination';
 import { toast } from '@/components/ui/Toast';
 import { useMarket } from '@/lib/MarketContext';
-import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission, SubmissionCompany, SubmissionStatus } from '@/types/recruiter';
+import type { RecruiterCandidateView, RecruiterStatus, CandidateSubmission, SubmissionCompany } from '@/types/recruiter';
 
 const STALE_AMBER_DAYS = 5;
 const STALE_RED_DAYS = 7;
@@ -54,7 +54,6 @@ interface CandidateTableProps {
   onDownloadCv: (profileId: string) => void;
   onToggleFavorite: (profileId: string) => void;
   onStatusChange?: (profileId: string, status: RecruiterStatus) => void;
-  onUpdateSubmission?: (submissionId: string, status: SubmissionStatus) => void;
   allSubmissions?: CandidateSubmission[];
   companies: SubmissionCompany[];
   onCreateSubmission: (profileId: string, companyId: string, submittedBy: string, notes: string) => Promise<void>;
@@ -331,7 +330,6 @@ export function CandidateTable({
   onDownloadCv,
   onToggleFavorite,
   onStatusChange,
-  onUpdateSubmission,
   allSubmissions = [],
   companies,
   onCreateSubmission,
@@ -489,52 +487,57 @@ export function CandidateTable({
 
                 {/* Status */}
                 <td className="px-3 py-2.5">
-                  {onStatusChange && !allSubmissions.some(s => s.profile_id === c.profile_id) ? (
-                    <select
-                      value={c.status}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        onStatusChange(c.profile_id, e.target.value as RecruiterStatus);
-                      }}
-                      className="text-[10px] font-semibold pl-2.5 pr-5 py-1 rounded-full border-none cursor-pointer appearance-none bg-no-repeat"
-                      style={{
-                        background: STATUS_PILL_CONFIG[c.status].bg,
-                        color: STATUS_PILL_CONFIG[c.status].text,
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(STATUS_PILL_CONFIG[c.status].text)}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'right 6px center',
-                      }}
-                    >
-                      {(['new', 'screening', 'rejected'] as RecruiterStatus[]).map(s => (
-                        <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
-                      ))}
-                    </select>
-                  ) : (() => {
+                  {(() => {
                     const subs = allSubmissions.filter(s => s.profile_id === c.profile_id);
-                    const SUB_DOT: Record<string, string> = { submitted: 'var(--status-new)', interviewing: 'var(--status-interviewing)', offer: 'var(--status-offer)', placed: 'var(--status-placed)', rejected: 'var(--text-muted)' };
-                    return subs.length > 0 ? (
-                      <div className="space-y-1">
-                        {subs.map(s => (
-                          <div key={s.id} className="flex items-center gap-1.5 text-[10px] max-w-[160px]">
-                            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: SUB_DOT[s.status] || 'var(--text-muted)' }} />
-                            <span className="text-[var(--text-primary)] truncate">{s.company_name}</span>
-                            <select
-                              value={s.status}
-                              onClick={(e) => e.stopPropagation()}
-                              onChange={(e) => { e.stopPropagation(); onUpdateSubmission?.(s.id, e.target.value as SubmissionStatus); }}
-                              className="text-[10px] bg-transparent border-none cursor-pointer p-0 outline-none"
-                              style={{ color: SUB_DOT[s.status] || 'var(--text-muted)' }}
-                            >
-                              {(['submitted', 'interviewing', 'offer', 'rejected', 'placed'] as SubmissionStatus[]).map(st => (
-                                <option key={st} value={st}>{st}</option>
-                              ))}
-                            </select>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <StatusBadge status={c.status} />
+
+                    if (subs.length === 0 && onStatusChange) {
+                      return (
+                        <select
+                          value={c.status}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            onStatusChange(c.profile_id, e.target.value as RecruiterStatus);
+                          }}
+                          className="text-[10px] font-semibold pl-2.5 pr-5 py-1 rounded-full border-none cursor-pointer appearance-none bg-no-repeat"
+                          style={{
+                            background: STATUS_PILL_CONFIG[c.status].bg,
+                            color: STATUS_PILL_CONFIG[c.status].text,
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(STATUS_PILL_CONFIG[c.status].text)}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'right 6px center',
+                          }}
+                        >
+                          {(['new', 'screening', 'rejected'] as RecruiterStatus[]).map(s => (
+                            <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                          ))}
+                        </select>
+                      );
+                    }
+
+                    if (subs.length === 0) return <StatusBadge status={c.status} />;
+
+                    const priority: Record<string, number> = { placed: 4, offer: 3, interviewing: 2, submitted: 1, rejected: 0 };
+                    const best = subs.reduce((a, b) => (priority[b.status] ?? 0) > (priority[a.status] ?? 0) ? b : a);
+                    const activeSubs = subs.filter(s => s.status !== 'rejected');
+                    const statusLabel = c.status.charAt(0).toUpperCase() + c.status.slice(1);
+
+                    let label: string;
+                    if (['interviewing', 'offer', 'placed'].includes(best.status)) {
+                      label = `${statusLabel} · ${best.company_name}`;
+                    } else if (activeSubs.length > 0) {
+                      label = `${statusLabel} · ${activeSubs.length} submitted`;
+                    } else {
+                      label = statusLabel;
+                    }
+
+                    return (
+                      <span
+                        className="text-[10px] font-semibold rounded-full inline-block whitespace-nowrap"
+                        style={{ padding: '2px 10px', background: STATUS_PILL_CONFIG[c.status]?.bg, color: STATUS_PILL_CONFIG[c.status]?.text }}
+                      >
+                        {label}
+                      </span>
                     );
                   })()}
                 </td>
